@@ -22,4 +22,15 @@ npm run db:types
 
 Database 구조는 [`docs/07-database.md`](docs/07-database.md)를 참고합니다.
 
+## Authentication Setup
+
+Supabase Dashboard의 `Authentication → URL Configuration`에서 다음을 설정합니다.
+
+```text
+Site URL: http://localhost:3000
+Redirect URL: http://localhost:3000/auth/callback
+```
+
+Email Provider가 활성화되어 있어야 합니다. Google OAuth는 아직 설정하지 않습니다. 로컬 실행 후 `/signup`, `/login`, `/app`에서 이메일 인증 흐름을 수동 확인합니다. Service Role Key는 Auth UI에서 사용하지 않습니다.
+
 `Service Role Key`는 브라우저에 노출하지 않으며, 일반 사용자 요청 처리에 기본 사용하지 않습니다. Key 원문을 로그나 채팅에 출력하지 말고, `.env.local`은 Git에 포함하지 않습니다.

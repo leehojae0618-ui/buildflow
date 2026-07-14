@@ -11,10 +11,10 @@
 
 ## Current Status
 
-- Phase: Foundation Complete
-- Sprint: Sprint 1 — Completed
-- Current Task: S1-005 — Resolve Foundation Audit Blockers
-- Development Readiness: Ready for Authentication
+- Phase: Authentication
+- Sprint: Sprint 2 — Authentication
+- Current Task: S2-001 — Email Authentication Foundation
+- Development Readiness: Ready
 - Billing Recommendation: Excluded from initial Beta
 - Repository Status: Local Git initialized
 - Next.js Status: Initialized
@@ -79,11 +79,15 @@
 
 ### Sprint 2 — Authentication
 
-- Email Auth
+- [x] Email Signup
+- [x] Email Login
+- [x] Logout
+- [x] Session Refresh
+- [x] Protected App Route
+- [x] Auth Callback
+- [x] Minimal Auth UI
 - Google OAuth
-- Session
-- Protected Route
-- Minimal Profile
+- Password Reset
 
 ### Sprint 3 — Core Data
 
@@ -148,7 +152,7 @@
 
 ## Next Task
 
-S2-001 — Authentication Architecture and Email Auth Foundation
+S2-002 — Google OAuth and Authentication QA
 
 ## Operating Rule
 

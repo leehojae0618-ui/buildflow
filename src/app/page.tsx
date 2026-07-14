@@ -4,6 +4,7 @@ const highlights = [
 ];
 
 import { getSupabaseConfigurationStatus } from '@/lib/supabase/status';
+import Link from 'next/link';
 
 export default function Home() {
   const { publicConfigured } = getSupabaseConfigurationStatus();
@@ -49,13 +50,10 @@ export default function Home() {
           </div>
 
           <div className="mt-10">
-            <button
-              type="button"
-              disabled
-              className="inline-flex cursor-not-allowed items-center border border-cyan-400/30 bg-cyan-400/10 px-5 py-3 text-sm font-medium text-cyan-200 opacity-80"
-            >
-              개발 준비 중
-            </button>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/signup" className="inline-flex items-center border border-cyan-400/50 bg-cyan-400/10 px-5 py-3 text-sm font-medium text-cyan-200 hover:bg-cyan-400/20">시작하기</Link>
+              <Link href="/login" className="inline-flex items-center border border-zinc-700 px-5 py-3 text-sm font-medium text-zinc-300 hover:border-cyan-400/50 hover:text-cyan-200">로그인</Link>
+            </div>
           </div>
         </div>
       </section>
