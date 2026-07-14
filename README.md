@@ -12,4 +12,14 @@ AI Result Design Platform
 4. `npm run dev`를 실행합니다.
 5. `/api/health`에서 연결 상태를 확인합니다.
 
+Database 작업:
+
+```bash
+npx supabase migration list
+npx supabase db push
+npm run db:types
+```
+
+Database 구조는 [`docs/07-database.md`](docs/07-database.md)를 참고합니다.
+
 `Service Role Key`는 브라우저에 노출하지 않으며, 일반 사용자 요청 처리에 기본 사용하지 않습니다. Key 원문을 로그나 채팅에 출력하지 말고, `.env.local`은 Git에 포함하지 않습니다.
