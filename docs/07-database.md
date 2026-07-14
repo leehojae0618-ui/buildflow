@@ -8,6 +8,7 @@
 - Internal Codename: Project Flow
 - Last Updated: 2026-07-14
 - Source Migration: `supabase/migrations/20260714000100_initial_schema.sql`
+- Auth Profile Migration: `supabase/migrations/20260714095556_add_profile_creation_trigger.sql`
 
 ## 1. Purpose
 
@@ -90,6 +91,8 @@ tools
 현재 Migration에는 16개의 Policy가 있다. RLS 우회가 필요한 관리 작업은 명시적인 서버 내부 Admin Client에서만 수행한다.
 
 ## 9. Trigger and Index
+
+`public.handle_new_user()`는 `auth.users` Insert 후 `public.profiles`에 최소 Profile을 생성하고, `on conflict (id) do nothing`으로 중복을 방지한다. `on_auth_user_created` Trigger는 `security definer`와 명시적인 빈 `search_path`를 사용하는 새 Migration에서 정의된다. 이 자동 생성은 신규 Auth 사용자에게만 적용되며 기존 사용자에게 소급되지 않는다.
 
 `public.set_updated_at()` Trigger Function은 `profiles`, `projects`, `tools`, `workflow_templates`, `recommendations`, `project_workflows`의 변경 시 `updated_at`을 UTC 현재 시각으로 갱신한다. 단계와 Usage 기록처럼 변경 시각이 필요하지 않은 Table에는 `updated_at`을 두지 않는다.
 

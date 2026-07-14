@@ -13,8 +13,8 @@
 
 - Phase: Authentication
 - Sprint: Sprint 2 — Authentication
-- Current Task: S2-001 — Email Authentication Foundation
-- Development Readiness: Ready
+- Current Task: S2-002 — Profile Trigger and Email Authentication QA
+- Development Readiness: Manual Email Authentication QA Pending
 - Billing Recommendation: Excluded from initial Beta
 - Repository Status: Local Git initialized
 - Next.js Status: Initialized
@@ -86,6 +86,11 @@
 - [x] Protected App Route
 - [x] Auth Callback
 - [x] Minimal Auth UI
+- [x] Profile Creation Trigger
+- [ ] Email Signup QA
+- [ ] Email Login QA
+- [x] Protected Route QA
+- [x] Auth Redirect QA
 - Google OAuth
 - Password Reset
 
@@ -152,7 +157,7 @@
 
 ## Next Task
 
-S2-002 — Google OAuth and Authentication QA
+S2-003 — Google OAuth and Authentication Completion
 
 ## Operating Rule
 
