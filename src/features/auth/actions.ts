@@ -38,3 +38,15 @@ export async function logout() {
   await supabase.auth.signOut();
   redirect("/login");
 }
+
+export async function signInWithGoogle(formData: FormData) {
+  const supabase = await createSupabaseServerClient();
+  const next = getSafeRedirect(String(formData.get("next") || "/app"));
+  const redirectTo = `${appUrl}/auth/callback?next=${encodeURIComponent(next)}`;
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo },
+  });
+  if (error || !data.url) redirect("/login?error=oauth");
+  redirect(data.url);
+}

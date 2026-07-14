@@ -31,6 +31,6 @@ Site URL: http://localhost:3000
 Redirect URL: http://localhost:3000/auth/callback
 ```
 
-Email Provider가 활성화되어 있어야 합니다. Google OAuth는 아직 설정하지 않습니다. 로컬 실행 후 `/signup`, `/login`, `/app`에서 이메일 인증 흐름을 수동 확인합니다. 신규 Auth 사용자는 `handle_new_user()` Trigger를 통해 `profiles`가 자동 생성됩니다. 이 Trigger는 기존 사용자에게 소급 적용되지 않습니다. Service Role Key는 Auth UI에서 사용하지 않습니다.
+Email Provider와 Google Provider가 활성화되어 있어야 합니다. Google OAuth Client의 Callback URL은 Supabase Dashboard가 제공하는 Provider 설정값을 사용하고, Supabase `Authentication → URL Configuration`에는 위 Callback URL을 등록합니다. 로컬 실행 후 `/signup`, `/login`, `/app`에서 Email 및 Google 인증 흐름을 수동 확인합니다. 신규 Auth 사용자는 `handle_new_user()` Trigger를 통해 `profiles`가 자동 생성됩니다. 이 Trigger는 기존 사용자에게 소급 적용되지 않습니다. Service Role Key는 Auth UI에서 사용하지 않습니다.
 
 `Service Role Key`는 브라우저에 노출하지 않으며, 일반 사용자 요청 처리에 기본 사용하지 않습니다. Key 원문을 로그나 채팅에 출력하지 말고, `.env.local`은 Git에 포함하지 않습니다.

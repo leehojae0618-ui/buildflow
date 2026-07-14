@@ -13,8 +13,8 @@
 
 - Phase: Authentication
 - Sprint: Sprint 2 — Authentication
-- Current Task: S2-002 — Profile Trigger and Email Authentication QA
-- Development Readiness: Manual Email Authentication QA Pending
+- Current Task: S2-003 — Google OAuth Authentication
+- Development Readiness: Ready for Sprint 3
 - Billing Recommendation: Excluded from initial Beta
 - Repository Status: Local Git initialized
 - Next.js Status: Initialized
@@ -87,11 +87,11 @@
 - [x] Auth Callback
 - [x] Minimal Auth UI
 - [x] Profile Creation Trigger
-- [ ] Email Signup QA
-- [ ] Email Login QA
+- [x] Email Signup QA
+- [x] Email Login QA
 - [x] Protected Route QA
 - [x] Auth Redirect QA
-- Google OAuth
+- [x] Google OAuth
 - Password Reset
 
 ### Sprint 3 — Core Data
@@ -157,7 +157,7 @@
 
 ## Next Task
 
-S2-003 — Google OAuth and Authentication Completion
+S3-001 — Project CRUD Foundation
 
 ## Operating Rule
 
