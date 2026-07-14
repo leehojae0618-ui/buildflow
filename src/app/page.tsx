@@ -3,7 +3,10 @@ const highlights = [
   'Foundation',
 ];
 
+import { getSupabaseConfigurationStatus } from '@/lib/supabase/status';
+
 export default function Home() {
+  const { publicConfigured } = getSupabaseConfigurationStatus();
   return (
     <main className="min-h-screen bg-[#090909] text-zinc-100">
       <section className="mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center px-6 py-16 sm:px-10 lg:px-12">
@@ -35,6 +38,14 @@ export default function Home() {
                 {item}
               </span>
             ))}
+          </div>
+
+          <div className="mt-6 border border-zinc-800 px-3 py-3 text-sm text-zinc-400">
+            <span className="text-zinc-200">Next.js Ready</span>
+            <span className="mx-2 text-zinc-700">·</span>
+            <span className={publicConfigured ? 'text-cyan-300' : 'text-amber-300'}>
+              {publicConfigured ? 'Supabase Configured' : 'Supabase Setup Pending'}
+            </span>
           </div>
 
           <div className="mt-10">
