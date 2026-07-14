@@ -1,0 +1,3 @@
+import Link from "next/link";
+import type { Project } from "@/features/projects/types";
+export function ProjectCard({ project }: { project: Project }) { return <Link href={`/app/projects/${project.id}`} className="block border border-zinc-800 bg-zinc-950/70 p-5 hover:border-cyan-400/50"><div className="flex items-start justify-between gap-4"><h2 className="font-medium text-zinc-100">{project.title}</h2><span className="text-xs text-zinc-500">{project.status}</span></div><p className="mt-3 line-clamp-2 text-sm text-zinc-400">{project.goal}</p><p className="mt-4 text-xs text-zinc-600">{new Date(project.updated_at).toLocaleDateString("ko-KR")}</p></Link>; }

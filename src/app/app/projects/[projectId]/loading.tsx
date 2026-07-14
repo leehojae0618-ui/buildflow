@@ -1,0 +1,1 @@
+export default function Loading() { return <main className="min-h-screen bg-[#090909] px-6 py-12 text-zinc-500"><div className="mx-auto max-w-2xl border border-zinc-800 p-8">프로젝트를 불러오는 중...</div></main>; }

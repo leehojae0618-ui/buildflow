@@ -1,0 +1,1 @@
+export default function NotFound() { return <main className="min-h-screen bg-[#090909] px-6 py-12 text-zinc-100"><div className="mx-auto max-w-2xl border border-zinc-800 p-8"><h1 className="text-xl font-medium">프로젝트를 찾을 수 없습니다.</h1><p className="mt-3 text-sm text-zinc-500">접근 권한이 없거나 이미 보관된 프로젝트일 수 있습니다.</p></div></main>; }
