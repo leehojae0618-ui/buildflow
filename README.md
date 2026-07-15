@@ -54,4 +54,6 @@ Email Provider와 Google Provider가 활성화되어 있어야 합니다. Google
 
 추천 결과에서 Workflow를 선택하면 `/app/workflows/[workflowId]` 실행 가이드로 이동합니다. Template Step, 예상 시간, 난이도와 상태를 표시하며 Step 완료 체크는 초기 버전에서 브라우저 로컬 상태로만 유지됩니다.
 
+Workflow Step 완료/취소는 Supabase에 저장되며 새로고침과 재로그인 후에도 유지됩니다. 전체 Step 집계로 진행률과 Workflow 상태를 계산하고, 선택됨·진행 중·완료·보관됨 상태를 표시합니다.
+
 `Service Role Key`는 브라우저에 노출하지 않으며, 일반 사용자 요청 처리에 기본 사용하지 않습니다. Key 원문을 로그나 채팅에 출력하지 말고, `.env.local`은 Git에 포함하지 않습니다.

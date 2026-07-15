@@ -46,31 +46,40 @@ export type Database = {
       }
       project_workflow_steps: {
         Row: {
+          completed_at: string | null
           description: string
           id: string
+          is_completed: boolean
           project_workflow_id: string
           snapshot: Json
           status: string
           step_order: number
           title: string
+          updated_at: string
         }
         Insert: {
+          completed_at?: string | null
           description?: string
           id?: string
+          is_completed?: boolean
           project_workflow_id: string
           snapshot?: Json
           status?: string
           step_order: number
           title: string
+          updated_at?: string
         }
         Update: {
+          completed_at?: string | null
           description?: string
           id?: string
+          is_completed?: boolean
           project_workflow_id?: string
           snapshot?: Json
           status?: string
           step_order?: number
           title?: string
+          updated_at?: string
         }
         Relationships: [
           {

@@ -13,7 +13,7 @@
 
 - Phase: Recommendation
 - Sprint: Sprint 4 — Recommendation
-- Current Task: S4-003 — Recommendation Debugging and Error Recovery
+- Current Task: S5-001 — Workflow Progress Persistence
 - Development Readiness: Code Complete / Recommendation QA Pending
 - Billing Recommendation: Excluded from initial Beta
 - Repository Status: Local Git initialized
@@ -130,6 +130,7 @@
 - [x] Workflow Selection
 - [x] Workflow Detail
 - [x] Guided Execution Step Checklist (local state)
+- [x] Workflow Progress Persistence
 - Dashboard
 - Project Detail
 - Recommendation Results
@@ -173,7 +174,7 @@
 
 ## Next Task
 
-S4-004 — Workflow Selection and Project Workflow Detail
+S5-002 — Workflow Progress QA and Dashboard Summary
 
 ## Operating Rule
 
