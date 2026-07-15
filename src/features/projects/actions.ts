@@ -39,7 +39,8 @@ export async function updateProject(_state: ProjectFormState, formData: FormData
 export async function archiveProject(formData: FormData) {
   const projectId = String(formData.get("projectId") || "");
   const { supabase, user } = await requireUser();
-  await supabase.from("projects").update({ status: "archived" }).eq("id", projectId).eq("user_id", user.id);
+  const { error } = await supabase.from("projects").update({ status: "archived" }).eq("id", projectId).eq("user_id", user.id);
+  if (error) redirect(`/app/projects/${projectId}?error=archive`);
   revalidatePath("/app"); revalidatePath("/app/projects");
   redirect("/app/projects");
 }
