@@ -77,4 +77,4 @@ Vitest로 UI와 독립된 순수 함수를 검증한다. 정규화, Category 분
 
 ## 14. Future OpenAI Enrichment
 
-다음 Task에서 OpenAI는 후보 설명과 자연어 정규화 보조에만 사용할 수 있다. 가격, 권한, 실행 지원 수준, 최종 점수는 계속 Database 기준 데이터와 Rule Engine이 결정한다. Structured Output과 Schema Validation을 적용하며, OpenAI 실패 시 V1의 Rule 기반 결과를 유지할 수 있어야 한다.
+S4-002에서 OpenAI는 이미 확정된 후보의 한국어 설명만 생성한다. Responses API와 Zod Structured Output을 사용하며, 한 Recommendation당 요청은 최대 1회다. 가격, 권한, 실행 지원 수준, 최종 점수는 계속 Database 기준 데이터와 Rule Engine이 결정한다. API Key가 없거나 Provider 오류·Timeout·잘못된 출력이 발생하면 Rule 기반 설명으로 Fallback한다. 실제 API 비용과 사용 한도는 OpenAI API Dashboard에서 별도로 관리한다.

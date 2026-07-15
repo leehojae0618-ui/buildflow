@@ -13,8 +13,8 @@
 
 - Phase: Recommendation
 - Sprint: Sprint 4 — Recommendation
-- Current Task: S4-001 — Recommendation Engine V1 Architecture and Rule Matching
-- Development Readiness: Ready for LLM Explanation
+- Current Task: S4-002 — OpenAI Recommendation Explanation
+- Development Readiness: Code Complete / API QA Pending
 - Billing Recommendation: Excluded from initial Beta
 - Repository Status: Local Git initialized
 - Next.js Status: Initialized
@@ -114,7 +114,12 @@
 - [x] Recommendation Persistence
 - [x] Rule-based Result UI
 - [x] Recommendation Unit Tests
-- OpenAI Explanation
+- [x] OpenAI Client
+- [x] Responses API
+- [x] Structured Explanation
+- [x] LLM Fallback
+- [ ] Recommendation Enrichment QA
+- OpenAI Explanation QA
 - Structured Output
 
 ### Sprint 5 — Workflow Experience
@@ -162,7 +167,7 @@
 
 ## Next Task
 
-S4-002 — OpenAI Recommendation Explanation and Structured Output
+S4-003 — Workflow Selection and Project Workflow Detail
 
 ## Operating Rule
 
