@@ -13,8 +13,8 @@
 
 - Phase: Core Product
 - Sprint: Sprint 3 — Core Data and Projects
-- Current Task: S3-001 — Project CRUD Architecture and Create Project Flow
-- Development Readiness: Ready for Recommendation Input
+- Current Task: S3-002 — Tool and Workflow Template Seed Data
+- Development Readiness: Ready for Recommendation Engine
 - Billing Recommendation: Excluded from initial Beta
 - Repository Status: Local Git initialized
 - Next.js Status: Initialized
@@ -96,11 +96,13 @@
 
 ### Sprint 3 — Core Data
 
-- Project
-- Tool Seed
-- Workflow Template Seed
-- RLS
-- Generated Types
+- [x] Project
+- [x] Tool Seed
+- [x] Workflow Template Seed
+- [x] RLS
+- [x] Generated Types
+- [x] Reference Data Verification
+- [x] Guided Execution Candidates
 
 ### Sprint 4 — Recommendation
 
@@ -157,7 +159,7 @@
 
 ## Next Task
 
-S3-002 — Workflow Template and Tool Seed Data
+S4-001 — Recommendation Engine V1 Architecture and Rule Matching
 
 ## Operating Rule
 

@@ -22,6 +22,12 @@ npm run db:types
 
 Database 구조는 [`docs/07-database.md`](docs/07-database.md)를 참고합니다.
 
+Reference Seed 데이터는 [`docs/08-seed-data.md`](docs/08-seed-data.md)에서 확인할 수 있습니다.
+
+```bash
+npm run db:seed
+```
+
 ## Authentication Setup
 
 Supabase Dashboard의 `Authentication → URL Configuration`에서 다음을 설정합니다.
