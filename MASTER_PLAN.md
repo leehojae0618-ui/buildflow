@@ -13,7 +13,8 @@
 
 - Phase: Recommendation
 - Sprint: Sprint 4 — Recommendation
-- Current Task: S6-002 — Tool Explorer and Workflow Library
+- Current Phase: Guided Execution
+- Current Task: S7-001 — Guided Execution Step Detail and Prompt Assets
 - Development Readiness: Code Complete / Manual Auth QA Pending
 - Development Readiness: Code Complete / Recommendation QA Pending
 - Billing Recommendation: Excluded from initial Beta
@@ -161,6 +162,17 @@
 - 제한된 Validation 또는 Test
 - Usage 기록
 
+### Sprint 7 — Execution Assets
+
+- [x] Step Detail View Model
+- [x] Why / Prerequisites / Instructions
+- [x] Completion Criteria
+- [x] Tool Links
+- [x] Prompt Asset Registry
+- [x] Prompt Copy UI
+- [x] Template Preview Detail
+- [x] First Incomplete Step UX
+
 ### Sprint 7 — Beta Release
 
 - Error States
@@ -192,7 +204,7 @@
 
 ## Next Task
 
-S7-001 — Guided Execution Step Detail and Prompt Assets
+S7-002 — Interactive Prompt Builder and Export
 
 ## Operating Rule
 

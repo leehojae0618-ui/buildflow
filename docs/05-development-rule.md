@@ -250,6 +250,10 @@ BuildFlow 초기 디자인 기준:
 - Prompt와 출력 Version 관리를 고려한다.
 - 실패 응답은 저장 또는 추적한다.
 - 사용자 입력을 로그에 무조건 저장하지 않는다.
+- 실행 가이드는 외부 Tool UI를 과도하게 단정하지 않는다.
+- Prompt Asset에는 Secret과 개인정보를 포함하지 않는다.
+- Prompt Registry는 결정론적이고 테스트 가능하게 유지한다.
+- 실시간 LLM Prompt 생성은 별도 Task로 분리한다.
 - Provider 교체를 고려하되 과도한 Adapter를 미리 만들지 않는다.
 
 ## 17. Error Handling
