@@ -11,10 +11,10 @@
 
 ## Current Status
 
-- Phase: Core Product
-- Sprint: Sprint 3 — Core Data and Projects
-- Current Task: S3-002 — Tool and Workflow Template Seed Data
-- Development Readiness: Ready for Recommendation Engine
+- Phase: Recommendation
+- Sprint: Sprint 4 — Recommendation
+- Current Task: S4-001 — Recommendation Engine V1 Architecture and Rule Matching
+- Development Readiness: Ready for LLM Explanation
 - Billing Recommendation: Excluded from initial Beta
 - Repository Status: Local Git initialized
 - Next.js Status: Initialized
@@ -106,13 +106,16 @@
 
 ### Sprint 4 — Recommendation
 
-- Goal Input
-- Rule Engine
-- Candidate Retrieval
-- Cost
-- Difficulty
-- LLM Explanation
-- Structured Result
+- [x] Input Normalization
+- [x] Category Classification
+- [x] Rule Filtering
+- [x] Template Scoring
+- [x] Candidate Ranking
+- [x] Recommendation Persistence
+- [x] Rule-based Result UI
+- [x] Recommendation Unit Tests
+- OpenAI Explanation
+- Structured Output
 
 ### Sprint 5 — Workflow Experience
 
@@ -159,7 +162,7 @@
 
 ## Next Task
 
-S4-001 — Recommendation Engine V1 Architecture and Rule Matching
+S4-002 — OpenAI Recommendation Explanation and Structured Output
 
 ## Operating Rule
 

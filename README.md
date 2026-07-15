@@ -23,6 +23,7 @@ npm run db:types
 Database 구조는 [`docs/07-database.md`](docs/07-database.md)를 참고합니다.
 
 Reference Seed 데이터는 [`docs/08-seed-data.md`](docs/08-seed-data.md)에서 확인할 수 있습니다.
+Recommendation Engine 설계는 [`docs/09-recommendation-engine.md`](docs/09-recommendation-engine.md)에서 확인할 수 있습니다.
 
 ```bash
 npm run db:seed

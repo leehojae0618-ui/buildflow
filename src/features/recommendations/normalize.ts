@@ -1,0 +1,7 @@
+import type { NormalizedRecommendationInput } from "@/features/recommendations/types";
+const clean = (value: string | null | undefined) => value?.trim().replace(/\s+/g, " ") ?? "";
+export function normalizeRecommendationInput(project: { title: string; goal: string | null; goal_description: string | null; goal_constraints: unknown }): NormalizedRecommendationInput {
+  const constraints = (project.goal_constraints ?? {}) as Record<string, unknown>;
+  const tools = Array.isArray(constraints.current_tools) ? constraints.current_tools : String(constraints.current_tools ?? "").split(",");
+  return { goalOriginal: clean(project.goal ?? project.title), goalNormalized: clean(project.goal ?? project.title).toLocaleLowerCase("ko-KR"), descriptionNormalized: clean(project.goal_description) || null, aiSkillLevel: constraints.ai_skill_level === "advanced" || constraints.ai_skill_level === "intermediate" ? constraints.ai_skill_level : "beginner", canCode: constraints.can_code === true || constraints.can_code === "true", budgetRange: ["free", "low", "medium", "high"].includes(String(constraints.budget_range)) ? constraints.budget_range as NormalizedRecommendationInput["budgetRange"] : "unknown", automationLevel: ["guide", "partial", "high"].includes(String(constraints.automation_level)) ? constraints.automation_level as NormalizedRecommendationInput["automationLevel"] : "unknown", currentTools: [...new Set(tools.map((tool) => clean(String(tool)).toLocaleLowerCase("en-US")).filter(Boolean))] };
+}

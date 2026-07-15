@@ -1,0 +1,5 @@
+export type Category = "content" | "productivity" | "email" | "marketing" | "ecommerce" | "data" | "communication" | "unknown";
+export type NormalizedRecommendationInput = { goalOriginal: string; goalNormalized: string; descriptionNormalized: string | null; aiSkillLevel: "beginner" | "intermediate" | "advanced"; canCode: boolean; budgetRange: "free" | "low" | "medium" | "high" | "unknown"; automationLevel: "guide" | "partial" | "high" | "unknown"; currentTools: string[] };
+export type RecommendationScoreBreakdown = { category: number; keyword: number; constraints: number; toolReuse: number; difficulty: number; executionSupport: number; total: number };
+export type EngineTemplate = { id: string; slug: string; name: string; description: string; category: string; goal_summary: string; alternatives: unknown; cost_model: unknown; difficulty: string | null; estimated_setup_minutes: number | null; execution_support_level: string | null; steps: { toolSlug: string }[] };
+export type RecommendationCandidateResult = { template: EngineTemplate; score: RecommendationScoreBreakdown; reason: string; lowConfidence: boolean };

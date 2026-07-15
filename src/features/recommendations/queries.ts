@@ -1,0 +1,2 @@
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+export async function getLatestRecommendation(projectId: string) { const supabase = await createSupabaseServerClient(); const { data } = await supabase.from("recommendations").select("*, recommendation_candidates(*, workflow_templates(*))").eq("project_id", projectId).order("created_at", { ascending: false }).limit(1).maybeSingle(); return data; }
