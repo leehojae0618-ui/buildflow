@@ -13,7 +13,8 @@
 
 - Phase: Recommendation
 - Sprint: Sprint 4 — Recommendation
-- Current Task: S6-001 — Dashboard 2.0
+- Current Task: S6-001-QA — Dashboard Automated QA and Stabilization
+- Development Readiness: Automated QA Partial / Manual Auth QA Pending
 - Development Readiness: Code Complete / Recommendation QA Pending
 - Billing Recommendation: Excluded from initial Beta
 - Repository Status: Local Git initialized
@@ -143,6 +144,7 @@
 - [x] Continue Working
 - [x] Recent Projects, Recommendations, Activity
 - [x] Dashboard Empty State
+- [ ] Dashboard Authenticated Browser QA
 
 ### Sprint 6 — Guided Execution
 
@@ -181,7 +183,7 @@
 
 ## Next Task
 
-S5-002 — Workflow Progress QA and Dashboard Summary
+S6-002 — Tool Explorer and Workflow Library
 
 ## Operating Rule
 
