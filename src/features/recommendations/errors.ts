@@ -1,0 +1,2 @@
+const messages: Record<string, string> = { auth_required: "로그인이 필요합니다.", project_not_found: "프로젝트를 찾을 수 없습니다.", recommendation_in_progress: "추천을 생성하고 있습니다. 잠시 후 다시 확인해주세요.", template_query_failed: "추천 기준 데이터를 불러오지 못했습니다.", no_templates: "현재 목표에 적용할 수 있는 워크플로를 찾지 못했습니다.", candidate_save_failed: "추천 결과를 저장하지 못했습니다.", recommendation_finalize_failed: "추천 결과 마무리 중 문제가 발생했습니다.", recommendation_failed: "추천을 생성하지 못했습니다. 잠시 후 다시 시도해주세요." };
+export function getRecommendationErrorMessage(code?: string) { return (code && messages[code]) || messages.recommendation_failed; }

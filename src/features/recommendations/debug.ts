@@ -1,0 +1,7 @@
+export type RecommendationStage = "auth" | "project" | "processing-check" | "recommendation-create" | "normalize" | "template-query" | "rule-engine" | "openai" | "candidate-save" | "recommendation-finalize" | "redirect";
+export type RecommendationFailure = { stage: RecommendationStage; code: string; message: string; retryable: boolean };
+
+const shortId = (id: string | undefined) => id ? id.slice(0, 8) : undefined;
+export function logRecommendationEvent(input: { event: string; stage: RecommendationStage; recommendationId?: string; projectId?: string; durationMs?: number; candidateCount?: number; code?: string }) { console.info(JSON.stringify({ scope: "recommendation", ...input, recommendationId: shortId(input.recommendationId), projectId: shortId(input.projectId), timestamp: new Date().toISOString() })); }
+export function logRecommendationError(input: { event: string; stage: RecommendationStage; code: string; recommendationId?: string; projectId?: string; durationMs?: number }) { console.error(JSON.stringify({ scope: "recommendation", ...input, recommendationId: shortId(input.recommendationId), projectId: shortId(input.projectId), timestamp: new Date().toISOString() })); }
+export function toRecommendationFailure(stage: RecommendationStage, code: string, message = "추천을 생성하지 못했습니다. 잠시 후 다시 시도해주세요."): RecommendationFailure { return { stage, code, message, retryable: !["auth_required", "project_not_found", "no_templates"].includes(code) }; }

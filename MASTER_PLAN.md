@@ -13,8 +13,8 @@
 
 - Phase: Recommendation
 - Sprint: Sprint 4 — Recommendation
-- Current Task: S4-002 — OpenAI Recommendation Explanation
-- Development Readiness: Code Complete / API QA Pending
+- Current Task: S4-003 — Recommendation Debugging and Error Recovery
+- Development Readiness: Code Complete / Recommendation QA Pending
 - Billing Recommendation: Excluded from initial Beta
 - Repository Status: Local Git initialized
 - Next.js Status: Initialized
@@ -120,6 +120,9 @@
 - [x] LLM Fallback
 - [ ] Recommendation Enrichment QA
 - OpenAI Explanation QA
+- [x] Recommendation Observability
+- [x] Recommendation Error Recovery
+- [ ] Recommendation Creation QA
 - Structured Output
 
 ### Sprint 5 — Workflow Experience
@@ -167,7 +170,7 @@
 
 ## Next Task
 
-S4-003 — Workflow Selection and Project Workflow Detail
+S4-004 — Workflow Selection and Project Workflow Detail
 
 ## Operating Rule
 

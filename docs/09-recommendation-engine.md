@@ -78,3 +78,13 @@ Vitest로 UI와 독립된 순수 함수를 검증한다. 정규화, Category 분
 ## 14. Future OpenAI Enrichment
 
 S4-002에서 OpenAI는 이미 확정된 후보의 한국어 설명만 생성한다. Responses API와 Zod Structured Output을 사용하며, 한 Recommendation당 요청은 최대 1회다. 가격, 권한, 실행 지원 수준, 최종 점수는 계속 Database 기준 데이터와 Rule Engine이 결정한다. API Key가 없거나 Provider 오류·Timeout·잘못된 출력이 발생하면 Rule 기반 설명으로 Fallback한다. 실제 API 비용과 사용 한도는 OpenAI API Dashboard에서 별도로 관리한다.
+
+## 15. Debugging and Recovery
+
+Recommendation 생성은 `auth`, `project`, `processing-check`, `recommendation-create`, `normalize`, `template-query`, `rule-engine`, `openai`, `candidate-save`, `recommendation-finalize`, `redirect` 단계로 로그를 남긴다. 각 단계는 시작·완료·실패 시각을 기록하고 전체 Goal, 이메일, Cookie, API Key, 전체 UUID, Provider 응답을 로그에 남기지 않는다.
+
+실패 시 안전한 code와 stage만 Query에 전달하고, Recommendation Row가 이미 생성된 경우 `input_snapshot.failure`에 실패 단계와 code를 기록하며 `failed`로 전환한다. OpenAI 실패는 Rule 후보가 정상인 경우 `completed`와 `enrichment.fallback`으로 처리한다. 따라서 Provider 장애가 전체 추천 결과를 가리지 않는다.
+
+개발 환경에서는 Project 상세에 `stage / code`를 작게 표시할 수 있지만 Production에는 표시하지 않는다. 로그는 외부 Logging Service 없이 Next.js 개발 서버 로그를 사용한다. 단일 dev server만 실행하고 `.next/dev/logs/next-development.log`에서 단계 흐름을 확인한다.
+
+주요 사용자 오류 code는 `auth_required`, `project_not_found`, `recommendation_in_progress`, `template_query_failed`, `no_templates`, `candidate_save_failed`, `recommendation_finalize_failed`, `recommendation_failed`다. 사용자에게 Provider 원문이나 Stack Trace를 노출하지 않는다.
