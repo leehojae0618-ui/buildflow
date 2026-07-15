@@ -13,8 +13,8 @@
 
 - Phase: Recommendation
 - Sprint: Sprint 4 — Recommendation
-- Current Task: S6-001-QA — Dashboard Automated QA and Stabilization
-- Development Readiness: Automated QA Partial / Manual Auth QA Pending
+- Current Task: S6-002 — Tool Explorer and Workflow Library
+- Development Readiness: Code Complete / Manual Auth QA Pending
 - Development Readiness: Code Complete / Recommendation QA Pending
 - Billing Recommendation: Excluded from initial Beta
 - Repository Status: Local Git initialized
@@ -146,6 +146,15 @@
 - [x] Dashboard Empty State
 - [ ] Dashboard Authenticated Browser QA
 
+### Sprint 6 — Discovery
+
+- [x] Tool Explorer
+- [x] Tool Detail
+- [x] Workflow Library
+- [x] Workflow Template Detail
+- [x] Discovery Search and Filters
+- [x] Template-to-Project CTA
+
 ### Sprint 6 — Guided Execution
 
 - n8n Template Handoff + Setup Guide
@@ -183,7 +192,7 @@
 
 ## Next Task
 
-S6-002 — Tool Explorer and Workflow Library
+S7-001 — Guided Execution Step Detail and Prompt Assets
 
 ## Operating Rule
 
