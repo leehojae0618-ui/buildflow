@@ -127,6 +127,9 @@
 
 ### Sprint 5 — Workflow Experience
 
+- [x] Workflow Selection
+- [x] Workflow Detail
+- [x] Guided Execution Step Checklist (local state)
 - Dashboard
 - Project Detail
 - Recommendation Results

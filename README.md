@@ -2,7 +2,7 @@
 
 AI Result Design Platform
 
-현재는 Foundation 단계입니다.
+현재는 Workflow Experience 단계입니다.
 
 ## Supabase Setup
 
@@ -48,6 +48,10 @@ Email Provider와 Google Provider가 활성화되어 있어야 합니다. Google
 
 로그인 후 `/app`에서 최근 프로젝트를 확인하고, `/app/projects/new`에서 목표와 조건을 입력해 새 프로젝트를 만들 수 있습니다. `/app/projects`는 보관되지 않은 자신의 프로젝트만 표시하며, 상세 화면에서 기본 수정과 Archive를 지원합니다. Recommendation 생성은 다음 단계에서 추가합니다.
 
-수동 QA: 프로젝트 생성 validation → 상세 이동 → 수정 후 새로고침 → Archive 후 목록에서 숨김 → 다른 사용자 Project ID 접근 시 Not Found 처리를 확인합니다.
+수동 QA: 프로젝트 생성 validation → 상세 이동 → 수정 후 새로고침 → Archive 후 목록에서 숨김 → 추천 결과에서 Workflow 선택 → 실행 가이드 Step 체크를 확인합니다.
+
+## Workflow Experience
+
+추천 결과에서 Workflow를 선택하면 `/app/workflows/[workflowId]` 실행 가이드로 이동합니다. Template Step, 예상 시간, 난이도와 상태를 표시하며 Step 완료 체크는 초기 버전에서 브라우저 로컬 상태로만 유지됩니다.
 
 `Service Role Key`는 브라우저에 노출하지 않으며, 일반 사용자 요청 처리에 기본 사용하지 않습니다. Key 원문을 로그나 채팅에 출력하지 말고, `.env.local`은 Git에 포함하지 않습니다.
