@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { calculateWorkflowProgress, workflowStatusForProgress } from "@/features/workflows/progress";
+import { calculateProgressFromSteps, workflowStatusForProgress } from "@/features/workflows/progress";
 
 export async function selectWorkflow(formData: FormData) {
   const templateId = String(formData.get("templateId") ?? "");
@@ -38,7 +38,7 @@ export async function toggleWorkflowStep(formData: FormData) {
   const { error } = await supabase.from("project_workflow_steps").update({ is_completed: nextCompleted, completed_at: nextCompleted ? new Date().toISOString() : null }).eq("id", stepId);
   if (error) redirect(`/app/workflows/${workflowId}?error=step_update_failed`);
   const { data: steps } = await supabase.from("project_workflow_steps").select("is_completed").eq("project_workflow_id", workflowId);
-  const progress = calculateWorkflowProgress(steps?.length ?? 0, steps?.filter((item) => item.is_completed).length ?? 0);
+  const progress = calculateProgressFromSteps(steps ?? []);
   const { error: statusError } = await supabase.from("project_workflows").update({ status: workflowStatusForProgress(progress.totalSteps, progress.completedSteps) }).eq("id", workflowId);
   if (statusError) redirect(`/app/workflows/${workflowId}?error=workflow_status_update_failed`);
   revalidatePath(`/app/workflows/${workflowId}`); revalidatePath(`/app/projects/${workflow.project_id}`); revalidatePath("/app");

@@ -4,6 +4,10 @@ export function calculateWorkflowProgress(totalSteps: number, completedSteps: nu
   return { totalSteps: total, completedSteps: completed, progressPercent: total === 0 ? 0 : Math.round((completed / total) * 100), isCompleted: total > 0 && completed === total };
 }
 
+export function calculateProgressFromSteps(steps: { is_completed: boolean }[]) {
+  return calculateWorkflowProgress(steps.length, steps.filter((step) => step.is_completed).length);
+}
+
 export function workflowStatusForProgress(totalSteps: number, completedSteps: number): "selected" | "in_progress" | "completed" {
   if (completedSteps <= 0 || totalSteps <= 0) return "selected";
   return completedSteps >= totalSteps ? "completed" : "in_progress";
