@@ -13,7 +13,7 @@
 
 - Phase: Recommendation
 - Sprint: Sprint 4 — Recommendation
-- Current Task: S5-001 — Workflow Progress Persistence
+- Current Task: S6-001 — Dashboard 2.0
 - Development Readiness: Code Complete / Recommendation QA Pending
 - Billing Recommendation: Excluded from initial Beta
 - Repository Status: Local Git initialized
@@ -136,6 +136,13 @@
 - Recommendation Results
 - Workflow Steps
 - Save and Resume
+
+### Sprint 6 — Dashboard
+
+- [x] Dashboard Summary
+- [x] Continue Working
+- [x] Recent Projects, Recommendations, Activity
+- [x] Dashboard Empty State
 
 ### Sprint 6 — Guided Execution
 

@@ -56,4 +56,8 @@ Email Provider와 Google Provider가 활성화되어 있어야 합니다. Google
 
 Workflow Step 완료/취소는 Supabase에 저장되며 새로고침과 재로그인 후에도 유지됩니다. 전체 Step 집계로 진행률과 Workflow 상태를 계산하고, 선택됨·진행 중·완료·보관됨 상태를 표시합니다.
 
+## Dashboard
+
+`/app` Dashboard에서 보관되지 않은 프로젝트 수, Workflow 진행 현황, 평균 진행률, 계속 진행할 Workflow, 최근 프로젝트·추천·활동을 확인할 수 있습니다. 프로젝트가 없으면 목표 예시와 첫 프로젝트 CTA를 표시합니다.
+
 `Service Role Key`는 브라우저에 노출하지 않으며, 일반 사용자 요청 처리에 기본 사용하지 않습니다. Key 원문을 로그나 채팅에 출력하지 말고, `.env.local`은 Git에 포함하지 않습니다.
