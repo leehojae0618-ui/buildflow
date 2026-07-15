@@ -59,13 +59,13 @@ V1은 Template Seed의 `cost_model`, `difficulty`, `estimated_setup_minutes`, `e
 
 ## 10. Persistence
 
-정상 흐름은 로그인 확인, Project 소유권 확인, Recommendation `processing` 생성, Engine 실행, Candidate 최대 3개 저장, Recommendation `completed` 갱신 순서다. `input_snapshot`에는 Engine Version, 목표 요약, 분류 Category, low confidence를 저장한다. Candidate에는 제목, 요약, 점수, reason, 난이도, 준비 시간, 지원 수준, 비용 모델, breakdown을 Snapshot으로 저장한다.
+정상 흐름은 로그인 확인, Project 소유권 확인, Recommendation `pending` 생성, Engine 실행, Candidate 최대 3개 저장, Recommendation `completed` 갱신 순서다. `input_snapshot`에는 Engine Version, 목표 요약, 분류 Category, low confidence를 저장한다. Candidate에는 제목, 요약, 점수, reason, 난이도, 준비 시간, 지원 수준, 비용 모델, breakdown을 Snapshot으로 저장한다.
 
 실패 시 Recommendation을 `failed`로 갱신하고 사용자에게 일반 오류를 표시한다. Candidate 일부 저장 가능성은 남아 있으므로 이후 Transaction 또는 RPC로 원자성을 강화할 수 있다. 일반 사용자 Flow는 Service Role을 사용하지 않는다.
 
 ## 11. Duplicate Requests
 
-동일 Project에 `processing` Recommendation이 있으면 새 요청을 만들지 않고 현재 상태 안내로 보낸다. 버튼은 Server Action form으로 연결되며, 다음 UI Task에서 명시적 pending 상태를 더 강화할 수 있다. Recommendation Revision은 V1 범위가 아니다.
+동일 Project에 `pending` Recommendation이 있으면 새 요청을 만들지 않고 현재 상태 안내로 보낸다. 버튼은 Server Action form으로 연결되며, 다음 UI Task에서 명시적 pending 상태를 더 강화할 수 있다. Recommendation Revision은 V1 범위가 아니다.
 
 ## 12. Result UI
 

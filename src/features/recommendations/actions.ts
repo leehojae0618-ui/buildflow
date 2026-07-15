@@ -8,7 +8,7 @@ import { normalizeRecommendationInput } from "@/features/recommendations/normali
 import { recommend } from "@/features/recommendations/engine";
 import { enrichRecommendationWithOpenAI } from "@/features/recommendations/enrich";
 import { recommendationRequestSchema } from "@/features/recommendations/validation";
-import { logRecommendationError, logRecommendationEvent, type RecommendationStage } from "@/features/recommendations/debug";
+import { logRecommendationDatabaseError, logRecommendationError, logRecommendationEvent, type RecommendationStage } from "@/features/recommendations/debug";
 
 const stage = (name: RecommendationStage, projectId?: string, recommendationId?: string) => { const started = Date.now(); logRecommendationEvent({ event: "recommendation_stage_started", stage: name, projectId, recommendationId }); return (candidateCount?: number, code?: string) => { logRecommendationEvent({ event: "recommendation_stage_completed", stage: name, projectId, recommendationId, durationMs: Date.now() - started, candidateCount, code }); }; };
 async function fail(supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>, projectId: string, code: string, stageName: RecommendationStage, recommendationId?: string) { logRecommendationError({ event: "recommendation_stage_failed", stage: stageName, code, projectId, recommendationId }); if (recommendationId) await supabase.from("recommendations").update({ status: "failed", input_snapshot: { failure: { stage: stageName, code, failed_at: new Date().toISOString() } } }).eq("id", recommendationId); redirect(`/app/projects/${projectId}?recommendation=error&code=${encodeURIComponent(code)}&stage=${stageName}`); }
@@ -26,13 +26,15 @@ export async function createRecommendation(formData: FormData) {
   try { project = await getProject(parsed.data.projectId); } catch { return fail(supabase, parsed.data.projectId, "project_not_found", "project"); }
   projectDone();
   const processingDone = stage("processing-check", project.id);
-  const { data: processing } = await supabase.from("recommendations").select("id").eq("project_id", project.id).eq("status", "processing").maybeSingle();
+  const { data: processing } = await supabase.from("recommendations").select("id").eq("project_id", project.id).eq("status", "pending").maybeSingle();
   processingDone();
   if (processing) redirect(`/app/projects/${project.id}?recommendation=processing&code=recommendation_in_progress`);
   const createDone = stage("recommendation-create", project.id);
-  const { data: recommendation, error: recommendationError } = await supabase.from("recommendations").insert({ project_id: project.id, user_id: user.id, status: "processing", input_snapshot: { engine_version: "recommendation-v1-rule", started_at: new Date().toISOString() } }).select("id").single();
+  const recommendationPayload = { project_id: project.id, user_id: user.id, status: "pending" as const, input_snapshot: { engine_version: "recommendation-v1-rule", started_at: new Date().toISOString() } };
+  const { data: recommendation, error: recommendationError } = await supabase.from("recommendations").insert(recommendationPayload).select("id").single();
+  if (recommendationError) logRecommendationDatabaseError({ stage: "recommendation-create", operation: "recommendations.insert.select.single", projectId: project.id, code: recommendationError.code, message: recommendationError.message, details: recommendationError.details, hint: recommendationError.hint, payloadKeys: Object.keys(recommendationPayload) });
   if (recommendationError || !recommendation) return fail(supabase, project.id, "recommendation_create_failed", "recommendation-create");
-  createDone(undefined, "processing");
+  createDone(undefined, "pending");
   const normalizeDone = stage("normalize", project.id, recommendation.id);
   const input = normalizeRecommendationInput(project);
   normalizeDone();
