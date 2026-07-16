@@ -2,11 +2,11 @@
 
 ## Task ID
 
-MARKET-003
+BETA-QA-001
 
 ## Title
 
-AI System Package Installer
+Production Evidence QA
 
 ## Status
 
@@ -14,12 +14,20 @@ REVIEW
 
 ## Goal
 
-`.bfpkg`를 BPS v1.0 규격으로 검증하고 Execution 없이 Project와 READY 상태로 복원한다.
+실제 운영 환경에서 BuildFlow 정상 동작의 Evidence를 확보한다. 새 기능은 구현하지 않는다.
 
-## Scope
+## Result
 
-Package import, manifest/version/checksum/integrity/compatibility/dependency validation, credential and connector definition restore, Requirement/Architecture/Build Plan/Verification restore, preview, install summary UI.
+Beta Blocked. Automated domain evidence passes, but authenticated production/browser/device/account/Supabase RLS evidence is unavailable in this session.
 
-## Excluded
+## Evidence
 
-Marketplace, Search, Rating, Publishing, Community, and Execution.
+`docs/sprints/BETA-QA-001/EVIDENCE-REPORT.md`
+
+## Completion Criteria
+
+- Beta Ready 또는 Beta Blocked 판정
+- Critical/Major/Minor 목록
+- 전체 흐름 및 Package round-trip 결과
+- Secret/RLS/소유권 검증 결과
+- Commit/Push 없음

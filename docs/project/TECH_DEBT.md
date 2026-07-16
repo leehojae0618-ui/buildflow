@@ -13,6 +13,8 @@ This register records known limitations that are acceptable for the current impl
 | TD-007 | Candidate Selection | Candidate comparison selection is local UI state; durable selection and server-side recalculation remain deferred | Refresh or multi-device selection can lose the chosen candidate | Resolved | STABILIZE-003 |
 | TD-008 | External Provider QA | Provider connection validation adapters are not exercised without real user credentials | External verification remains READY_WITH_WARNINGS or WAITING_FOR_USER | Medium | Execution QA follow-up |
 | TD-009 | Verification Transactions | Run, target, and attempt inserts are sequential because the client-side Supabase path has no transaction RPC | A failed child insert can leave an incomplete run; cleanup/transaction RPC is follow-up | Medium | Stabilize follow-up after PM review |
+| TD-010 | Beta E2E QA | Authenticated browser and live cross-user Project/RLS flow could not be executed in the available QA session | Beta Ready evidence is incomplete; domain and contract tests pass | High | E2E QA rerun with authenticated Browser session |
+| TD-011 | Production Evidence QA | Login, second account, browser/device matrix, live Supabase, and live RLS/ownership denial evidence unavailable in the QA session | Production Beta evidence remains incomplete despite automated PASS | High | BETA-QA rerun with authenticated multi-session environment |
 
 ## Debt Rules
 
