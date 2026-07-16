@@ -25,7 +25,7 @@
 
 ## Requirement Foundation
 
-`src/features/requirements/` contains the first domain layer: Goal Parser, Requirement model, Clarification model, Constraint assessment, Consent requirements, and Requirement Snapshot creation. Project creation stores the snapshot inside the existing `projects.goal_constraints` JSONB field, so no Migration is needed. Recommendation code remains a downstream-compatible layer.
+`src/features/requirements/` contains the first domain layer: Goal Parser, Requirement model, Clarification model, Constraint assessment, Consent requirements, Capability Calculator, and Requirement Snapshot creation. Project creation stores the snapshot inside the existing `projects.goal_constraints` JSONB field, so no Migration is needed. Recommendation code remains a downstream-compatible layer. Future Build Planner and Installation Wizard components consume `Snapshot.capabilities` rather than inventing their own constraint vocabulary.
 
 ## Domain Translation
 
