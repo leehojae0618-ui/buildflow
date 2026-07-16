@@ -12,9 +12,12 @@ This file records user-visible product changes. Internal refactoring, documentat
 - Verification Foundation: 구조 검증과 Provider 연결 검증을 분리하고, Credential이 없으면 검증 대기 상태로 명확히 표시합니다.
 - Persistent Verification: Provider 검증 상태와 마지막 결과를 저장해 Project 재진입 후에도 동일한 상태를 복원합니다.
 - Package Builder: Project의 Requirement·Architecture·Connector·Build Plan·Verification Snapshot을 BPS v1.0 `.bfpkg`로 미리 보고 Export할 수 있습니다.
-- Package Installer: BPS `.bfpkg`를 검증하고 Credential 값 없이 새 Project로 복원하여 READY 상태까지 준비할 수 있습니다. Execution은 시작하지 않습니다.
+- Package Installer: BPS `.bfpkg`를 검증하고 Credential 값 없이 새 Project로 복원합니다. 복원 직후에는 READY가 아니라 연결·검증이 필요한 `SETUP_REQUIRED` 상태로 표시됩니다.
 - Autonomous Build Session Foundation: 기존 Preference·Execution·Approval·Verification을 하나의 서버 기준 Session 상태로 연결하고, Credential·Consent·Approval 단계에서 자동 재개할 수 있는 진행 상태를 제공합니다.
 - Secure Provider Provisioning Foundation: GitHub·Supabase·Vercel 작업을 승인 가능한 Provider Command와 Credential-missing USER_ACTION 경계로 준비합니다. 실제 외부 리소스 생성 QA는 별도 Credential 환경이 필요합니다.
+- Autonomous AI Service Build v1: 사용자의 목표를 반영한 AI 웹서비스를 Private GitHub Repository에 생성하고, 기존 Supabase Project에 안전한 Schema/RLS를 적용한 뒤 Vercel에 배포·검증하는 서버 실행 경로를 제공합니다. Secret은 암호화된 Vault에서 Provider Adapter만 사용합니다.
+- Completion Integrity: 저장된 Provider 검증, Health Check, 기능 테스트가 없거나 만료된 경우 READY로 표시하지 않습니다. 브라우저는 Session·Deployment·Verification 성공 증거를 직접 생성하거나 변경할 수 없습니다.
+- Live Autonomous Build Recovery: 저장된 Autonomous Session을 Project Detail에서 즉시 복원하고, Provider-safe Repository 이름과 공개 Vercel 배포 설정을 사용해 실제 GitHub·Supabase·Vercel 구축 및 OpenAI 기능 검증까지 이어갑니다.
 
 ## v0.3.0 — Builder Foundation
 
@@ -22,6 +25,9 @@ This file records user-visible product changes. Internal refactoring, documentat
 - 필요한 Clarification 질문과 다음 질문을 우선순위에 따라 표시
 - 자동 구축, 부분 자동, 동의 필요, 수동 작업, 전문가 필요, 지원 범위 외를 구분
 - Project Detail에서 Build Readiness, Capability, Build Receipt 확인
+- General CRUD Web App Blueprint 추가: 회원가입·로그인, 사용자별 CRUD,
+  검색, 상태 관리, 관리자 읽기, 반응형 UI를 GitHub·Supabase·Vercel에
+  자동 구축하고 실제 기능을 검증
 - Requirement에 맞는 Architecture Component, Connection, Dependency 요약 표시
 - 외부 계정 동의와 사용자가 수행할 작업을 구분해 표시
 - Architecture의 Component와 연결 구조를 기준으로 Build Score, 예상 시간, 운영비, 위험도, Confidence를 계산

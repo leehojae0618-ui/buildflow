@@ -63,3 +63,20 @@ PIVOT-010 will begin only after the next Level 2 Product Review. The frozen scop
 ## Final Operating Model Decision
 
 This review is the final planned operating-model change during MVP. Sprint operations, Product Review, Technical Debt, Release Management, approval gates, and Semantic Version rules are frozen until a serious issue requires a new Product Review.
+
+## Product Direction Amendment — 2026-07-17
+
+Status: **PRODUCT OWNER APPROVED**
+
+BuildFlow의 활성 제품 범위를 AI Agent 자동 구축과 Marketplace 공유에
+집중한다.
+
+- Core result: 배포·검증 가능한 AI Agent
+- Supporting surface: Agent 사용·관리용 Web UI, API, Database, Auth, Hosting
+- Marketplace unit: BPS-compatible AI Agent Package
+- Preserved evidence: `general-crud-v1`과 기존 Web App Live Evidence
+- On hold: 범용 Web App, SaaS, Platform Blueprint 확장
+
+이 변경은 기존 Evidence와 구현을 삭제하지 않는다. 현재 CAPABILITY-002
+Review를 완료한 뒤 후속 Sprint는 AI Agent 구축·검증·Package·Marketplace
+경로 안에서만 승인한다.

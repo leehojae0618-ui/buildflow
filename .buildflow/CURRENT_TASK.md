@@ -2,11 +2,11 @@
 
 ## Task ID
 
-BRAND-001
+CAPABILITY-002
 
 ## Title
 
-AI Communication Language
+General CRUD Web App Blueprint
 
 ## Status
 
@@ -14,16 +14,50 @@ REVIEW
 
 ## Goal
 
-BuildFlow의 말투, 성격, 신뢰 방식, 설명 방식을 AI Chief Engineer 기준으로 통일한다.
-
-## Result
-
-`docs/brand/AI_COMMUNICATION_LANGUAGE.md`에 Outcome First, Confidence Language, 상태별 메시지 예시, 금칙어, Developer Guide를 기록했다. 코드 변경은 없다.
+Task Manager를 예외적으로 하드코딩하지 않고 Auth, 사용자별 CRUD, 검색,
+상태 관리, 관리자 조회, 반응형 UI를 제공하는 일반 CRUD Web App
+Blueprint를 추가한다.
 
 ## Scope
 
-Deployment Session, Delivery Estimate, 상태 복원 저장 구조, Production Ready Report, 기술 상세 접기 UI.
+- Application Capability Model
+- AI 문의 Blueprint와 General CRUD Blueprint 분리
+- Capability 기반 Artifact, Schema, RLS, Verification 생성
+- 잘못된 Blueprint 매칭 차단
+- 기존 GitHub, Supabase, Vercel Adapter 재사용
+- 실제 Auth, CRUD, 검색, 상태 변경, 관리자 읽기, Cross-user 차단 검증
+- TEST B Live Evidence와 LIVE-EVIDENCE-002 재판정
 
 ## Excluded
 
-신규 Provider, Marketplace, 운영 배포 자동화 우회, Secret 저장, 자동 Commit, Push. 완료 후 신규 기능은 중단하고 PRODUCT REVIEW 003.5로 전환한다.
+- UI/UX 전면 개편
+- Marketplace
+- 신규 Provider
+- 백업 또는 모니터링 구현
+- 자연어 범용 앱 생성으로 과장
+- Mock 또는 Placeholder 성공
+- 자동 Commit
+- Push
+
+## Current Stage
+
+- Application Capability Model: PASS
+- General CRUD Blueprint implementation: PASS
+- Actual TEST B GitHub/Supabase/Vercel build: PASS
+- Auth, CRUD, search, status, administrator, Cross-user Verification: PASS
+- Idempotent re-run: PASS
+- PM/CTO Review required
+
+## Product Direction Note
+
+CAPABILITY-002 결과는 실제 자동 구축 범위를 검증한 Evidence로 보존한다.
+그러나 2026-07-17 Product Owner 지시에 따라 신규 제품 개발은 AI Agent
+자동 구축에 집중한다. General CRUD Web App과 범용 Platform 확장은 현재
+제품 Roadmap에서 중단하며, 후속 작업의 기본 산출물은 배포·검증 가능한
+AI Agent와 BPS 기반 AI Agent Package다.
+
+## Preserved Work
+
+`LIVE-EVIDENCE-001/002`, `STABILIZE-READY-001`, `PROJECT-REVIEW-001`,
+`PRODUCT-REVIEW-003.5`, `HARDEN-003`의 미커밋 작업을 삭제하거나
+덮어쓰지 않는다.
