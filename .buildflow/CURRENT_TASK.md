@@ -10,7 +10,7 @@ Agent Tool Resolution Planner
 
 ## Status
 
-APPROVED / SCOPE FROZEN
+REVIEW
 
 ## Goal
 
@@ -75,8 +75,19 @@ Provider commands, invoke MCP Tools, or connect to any Runtime path.
 - AGENT-GENERATOR-001 approved: PASS
 - Scope frozen: PASS
 - Sprint documents created: PASS
-- Code implementation: NOT STARTED
-- Next required step: First safe implementation unit
+- First implementation unit: PASS
+- Agent Capability Requirement type: PASS
+- MCP Tool Candidate type: PASS
+- Tool Resolution Status contract: PASS
+- `resolveAgentToolRequirements` pure function: PASS
+- Capability to MCP Tool capability matching: PASS
+- Credential availability check by input flag only: PASS
+- Approval requirement check by contract only: PASS
+- Unresolved dependency report: PASS
+- Unit tests: PASS
+- Out-of-scope MCP Tool Invocation, Gateway Runtime, Provider, Marketplace, UI, DB, Provisioning, Credential, Requirement Engine, Build Planner, Agent Runtime Compiler, and LLM arbitrary Tool selection changes: NOT INCLUDED
+- Final quality gate: PASS
+- Next required step: PM/CTO Review
 
 ## Product Direction Note
 
