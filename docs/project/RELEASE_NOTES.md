@@ -14,6 +14,7 @@ This file records user-visible product changes. Internal refactoring, documentat
 - Package Builder: Project의 Requirement·Architecture·Connector·Build Plan·Verification Snapshot을 BPS v1.0 `.bfpkg`로 미리 보고 Export할 수 있습니다.
 - Package Installer: BPS `.bfpkg`를 검증하고 Credential 값 없이 새 Project로 복원하여 READY 상태까지 준비할 수 있습니다. Execution은 시작하지 않습니다.
 - Autonomous Build Session Foundation: 기존 Preference·Execution·Approval·Verification을 하나의 서버 기준 Session 상태로 연결하고, Credential·Consent·Approval 단계에서 자동 재개할 수 있는 진행 상태를 제공합니다.
+- Secure Provider Provisioning Foundation: GitHub·Supabase·Vercel 작업을 승인 가능한 Provider Command와 Credential-missing USER_ACTION 경계로 준비합니다. 실제 외부 리소스 생성 QA는 별도 Credential 환경이 필요합니다.
 
 ## v0.3.0 — Builder Foundation
 

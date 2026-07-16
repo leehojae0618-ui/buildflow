@@ -2,11 +2,11 @@
 
 ## Task ID
 
-AUTO-001
+AUTO-002
 
 ## Title
 
-Autonomous Build Orchestrator Foundation
+Secure Provider Provisioning v1
 
 ## Status
 
@@ -14,15 +14,16 @@ REVIEW
 
 ## Goal
 
-Requirement, Architecture, Connector, Credential, Build Plan, Execution, Approval, and Verification을 하나의 영구 Autonomous Build Session으로 연결한다.
+GitHub·Supabase·Vercel 대표 경로를 공식 API 경계와 통합 Approval 안에서 안전하게 Provisioning한다.
+
+## Result
+
+Provider Command Model, allowlist validation, Adapter Contract, Secret-safe result sanitization, Credential-missing fallback을 구현했다. 실제 Credential QA와 외부 리소스 생성은 환경에 Credential이 없어 PENDING이다.
 
 ## Scope
 
-Session state machine, unified user action bundle, approval plan, automatic continuation, failure transitions, fatigue metrics, ownership/RLS, and Project Detail UI.
+GitHub repository/files/branch/variables, Supabase validation/schema/settings with USER_ACTION fallback, Vercel project/repository/environment/deployment commands, unified impact/approval boundary.
 
-## Completion Criteria
+## Excluded
 
-- Existing engines are reused; no new provider family is added.
-- Session state persists across refresh/re-login.
-- Secret-safe metrics/events and server ownership checks are maintained.
-- Tests, lint, typecheck, build, and diff check pass.
+Marketplace, 신규 Provider 대량 추가, Secret 저장, 사용자 승인 없는 외부 리소스 생성, Push.
