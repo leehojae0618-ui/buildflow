@@ -15,4 +15,6 @@ Product Review 001 freezes the next five Sprint targets. See `docs/project/PRODU
 | PIVOT-006 | Build Intelligence Engine | READY |
 | PIVOT-007 | Build Planner Foundation | REVIEW |
 | PIVOT-008 | Installation Wizard Foundation | REVIEW |
-| PIVOT-009 | Test Engine Foundation | READY |
+| PIVOT-009 | Test Engine Foundation | REVIEW |
+| PRODUCT-REVIEW-002 | MVP Completeness and Beta Readiness Review | REVIEW |
+| STABILIZE-002 | Test Summary Health Check Semantics | DONE |

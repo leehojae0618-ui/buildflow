@@ -1,0 +1,12 @@
+import type { ArchitectureSnapshot } from "../requirements/types";
+import type { BuildPlan } from "../planner/types";
+import type { InstallationSession } from "../installation/types";
+export type TestStatus = "PASS" | "WARNING" | "FAILED";
+export type TestSummaryStatus = "PASS" | "READY_WITH_WARNINGS" | "FAILED";
+export type TestCaseType = "ARCHITECTURE" | "BUILD_PLAN" | "INSTALLATION" | "HEALTH_CHECK";
+export type TestCase = { id: string; type: TestCaseType; title: string; description: string; status: TestStatus; details: string };
+export type TestResult = { status: TestSummaryStatus; passed: number; warnings: number; failed: number; details: string[] };
+export type Verification = { id: string; title: string; status: TestStatus; details: string };
+export type HealthCheck = { provider: string; category: "Provider" | "Database" | "Authentication" | "Automation" | "Notification"; status: TestStatus; details: string };
+export type TestSuite = { version: "test-suite-v1"; cases: TestCase[]; verifications: Verification[]; healthChecks: HealthCheck[]; result: TestResult; summary: string };
+export type TestEngineInput = { architecture: ArchitectureSnapshot; buildPlan: BuildPlan; installation: InstallationSession };

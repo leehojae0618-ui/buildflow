@@ -22,6 +22,8 @@ No unreleased user-visible changes.
 - Build Plan을 Installation Wizard의 현재 단계와 다음 단계 흐름으로 실행
 - 자동 준비, 사용자 작업, 전문가 작업을 설치 단계에서 구분
 - 설치 단계 완료 체크와 Installation Progress 표시
+- Architecture, Build Plan, Installation 구조를 자동 검증하고 PASS/WARNING/FAILED Test Summary 표시
+- Provider, Database, Authentication, Automation, Notification Health Check 상태 요약
 
 Release stage: Builder Foundation. RC is not started.
 
