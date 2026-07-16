@@ -2,40 +2,36 @@
 
 ## Task ID
 
-AGENT-GENERATOR-001
+AGENT-VALIDATION-001
 
 ## Title
 
-Agent Tool Resolution Planner
+Agent Definition and Tool Resolution Validation Gate
 
 ## Status
 
-CLOSED
+APPROVED / SCOPE FROZEN
 
 ## Goal
 
-Agent Capability Requirement와 MCP Tool Contract 후보를 받아
-`RESOLVED`, `UNSUPPORTED`, `USER_ACTION_REQUIRED`, `APPROVAL_REQUIRED`
-상태의 Agent Tool Resolution Plan을 생성하는 순수 함수와 타입을 구현한다.
+Agent Definition, Agent Blueprint, MCP Tool Contract, Tool Resolution Plan을
+실행 전에 검증하는 순수 Validation Gate를 만든다.
 
-이번 Sprint는 실제 Agent 실행이나 MCP Tool 호출을 구현하지 않는다. 목적은
-향후 Agent Generator가 Requirement, Agent Blueprint, MCP Tool Contract를
-안전하게 조합하기 위한 Source of Truth를 만드는 것이다.
+이번 Sprint는 실제 MCP Tool 호출, Gateway Runtime, Provider 실행, READY
+영구 저장을 구현하지 않는다. 목적은 Agent Runtime 또는 READY 판단 이전에
+어떤 조합이 안전하고 완전한지 판단할 수 있는 Source of Truth를 만드는
+것이다.
 
 ## Scope
 
-- Agent Capability Requirement type
-- MCP Tool Candidate type
-- Tool Resolution Status:
-  - `RESOLVED`
-  - `UNSUPPORTED`
-  - `USER_ACTION_REQUIRED`
-  - `APPROVAL_REQUIRED`
-- `resolveAgentToolRequirements` pure function
-- Capability ↔ MCP Tool capability matching
-- Credential availability check by input flag only
-- Approval requirement check by contract only
-- Unresolved dependency report
+- Agent Definition validation against Agent Blueprint
+- Tool Resolution Plan validation
+- Required capability coverage validation
+- MCP Tool permission and risk validation by contract
+- Approval requirement coverage validation
+- Credential / user-action unresolved dependency validation
+- Safe READY-blocking reasons
+- Pure validation functions
 - Unit tests
 
 ## Excluded
@@ -48,11 +44,9 @@ Agent Capability Requirement와 MCP Tool Contract 후보를 받아
 - DB migration
 - Provisioning execution path integration
 - Live Credential or Vault access
-- Credential validation
-- Requirement Engine direct integration
-- Build Planner direct integration
-- Agent Runtime Compiler
-- LLM prompt-based arbitrary Tool selection
+- Runtime Compiler integration
+- READY persistence integration
+- Verification persistence integration
 - Automatic Commit
 - Push
 
@@ -61,53 +55,33 @@ Agent Capability Requirement와 MCP Tool Contract 후보를 받아
 Only the following files may be created or modified for the first implementation
 unit:
 
-- `src/features/agents/tool-resolution.ts`
-- `src/features/agents/tool-resolution.test.ts`
+- `src/features/agents/validation-gate.ts`
+- `src/features/agents/validation-gate.test.ts`
 - `src/features/agents/index.ts`
 
-The first unit must remain pure TypeScript contract and resolver work. It must
-not call external services, read Credentials, create database tables, execute
-Provider commands, invoke MCP Tools, or connect to any Runtime path.
+The first unit must remain pure TypeScript validation work. It must not call
+external services, read Credentials, create database tables, execute Provider
+commands, invoke MCP Tools, or connect to any Runtime path.
 
 ## Current Stage
 
-- MCP-FOUNDATION-001 closed and pushed: PASS
-- AGENT-GENERATOR-001 approved: PASS
+- AGENT-GENERATOR-001 closed and pushed: PASS
+- AGENT-VALIDATION-001 approved: PASS
 - Scope frozen: PASS
 - Sprint documents created: PASS
-- First implementation unit: PASS
-- Agent Capability Requirement type: PASS
-- MCP Tool Candidate type: PASS
-- Tool Resolution Status contract: PASS
-- `resolveAgentToolRequirements` pure function: PASS
-- Capability to MCP Tool capability matching: PASS
-- Credential availability check by input flag only: PASS
-- Approval requirement check by contract only: PASS
-- Unresolved dependency report: PASS
-- Unit tests: PASS
-- Out-of-scope MCP Tool Invocation, Gateway Runtime, Provider, Marketplace, UI, DB, Provisioning, Credential, Requirement Engine, Build Planner, Agent Runtime Compiler, and LLM arbitrary Tool selection changes: NOT INCLUDED
-- Final quality gate: PASS
-- PM/CTO Review: PASS
-- Sprint closure: PASS
-- Next required step: Select and approve the next Sprint candidate
+- Code implementation: NOT STARTED
+- Next required step: First safe implementation unit
 
 ## Product Direction Note
 
 BuildFlow의 신규 제품 개발 기본 방향은 AI Agent 자동 구축, 배포, 검증,
-BPS Package 공유다. AGENT-GENERATOR-001은 Agent가 사용할 Tool 후보를
-선택·차단·사용자 작업·승인 필요 상태로 분류하는 계획 계층이며, 실제 실행
-또는 Runtime 연결은 이후 별도 Sprint에서 다룬다.
-
-## Closure Note
-
-AGENT-GENERATOR-001은 PM/CTO Review 완료 후 CLOSED 상태로 전환되었다.
-현재 활성 구현 Sprint는 없다. 다음 Sprint는 `.buildflow/NEXT_TASK.md`의
-후보를 PM/CTO가 승인하고 APPROVED / SCOPE FROZEN 상태로 확정한 뒤에만
-시작할 수 있다.
+BPS Package 공유다. AGENT-VALIDATION-001은 Agent Definition과 Tool
+Resolution Plan이 안전하게 실행 가능한지 판정하는 검증 계층이며, 실제 실행
+또는 READY 저장은 이후 별도 Sprint에서 다룬다.
 
 ## Preserved Work
 
 `CAPABILITY-002`, `LIVE-EVIDENCE-001/002`, `STABILIZE-READY-001`,
-`AGENT-FOUNDATION-001`, `MCP-FOUNDATION-001`, `PROJECT-REVIEW-001`,
-`PRODUCT-REVIEW-003.5`, `HARDEN-003`, `MCP-STRATEGY-001`의 완료 문서와
-커밋 이력을 삭제하거나 덮어쓰지 않는다.
+`AGENT-FOUNDATION-001`, `MCP-FOUNDATION-001`, `AGENT-GENERATOR-001`,
+`PROJECT-REVIEW-001`, `PRODUCT-REVIEW-003.5`, `HARDEN-003`,
+`MCP-STRATEGY-001`의 완료 문서와 커밋 이력을 삭제하거나 덮어쓰지 않는다.

@@ -1,10 +1,10 @@
 # BuildFlow Status
 
-- Workflow Status: BETWEEN_SPRINTS
-- Current Sprint: None
-- Current Task: None
-- Last Completed Task: AGENT-GENERATOR-001 (CLOSED; committed through `b16ed1c`)
-- Latest Known Commit: b16ed1c
-- Blockers: None for next Sprint selection. Actual Agent Validation implementation, MCP Tool Invocation, Gateway Runtime execution, Provider execution, Marketplace implementation, UI implementation, DB migration, Provisioning execution integration, live Credential or Vault access, and Runtime Compiler integration remain outside approved scope until a new Sprint is explicitly approved.
-- Next Action: Review `.buildflow/NEXT_TASK.md` and select the next Sprint candidate.
+- Workflow Status: READY
+- Current Sprint: AGENT-VALIDATION-001
+- Current Task: Agent Definition and Tool Resolution Validation Gate
+- Last Completed Task: AGENT-GENERATOR-001 (CLOSED; committed through `e95e85d`)
+- Latest Known Commit: e95e85d
+- Blockers: None for AGENT-VALIDATION-001 contract implementation. Actual MCP Tool Invocation, Gateway Runtime execution, Provider execution, Marketplace implementation, UI implementation, DB migration, Provisioning execution integration, live Credential or Vault access, Runtime Compiler integration, and READY persistence integration remain out of scope.
+- Next Action: Start AGENT-VALIDATION-001 first safe implementation unit after reviewing `docs/sprints/AGENT-VALIDATION-001/TASK.md` and `PLAN.md`.
 - Product Focus: AI Agent automatic build, deployment, verification, and BPS Package sharing. General Web App and Platform expansion is on hold.
