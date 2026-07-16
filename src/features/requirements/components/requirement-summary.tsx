@@ -29,6 +29,7 @@ export function RequirementSummary({ snapshot, projectId, selectCandidateAction,
     {snapshot.connectors && <VerificationSummary run={persistedVerificationRun ?? createVerificationRun(projectId ?? "preview", snapshot.connectors.map((connector) => ({ providerId: connector.providerId, required: connector.required })))} />}
     {projectId && <PackageSummary projectId={projectId} />}
     {projectId && <AutonomousSessionSummary projectId={projectId} initialSession={autonomousSession} />}
+    {projectId && snapshot.architecture && snapshot.buildPlan && <DeliverySummary projectId={projectId} estimate={estimateBuild(snapshot.architecture as never, snapshot.buildPlan as never)} />}
     {pending.length > 0 && <div className="mt-5"><h3 className="text-sm font-medium text-zinc-300">우선 확인할 질문</h3><ul className="mt-2 grid gap-2 text-sm text-zinc-500">{pending.map((question) => <li key={question.question}>• {question.question}</li>)}</ul></div>}
     <div className="mt-5"><h3 className="text-sm font-medium text-zinc-300">구축 가능 범위</h3><div className="mt-2 grid gap-2 text-sm text-zinc-500">{snapshot.capabilities?.map((item) => <p key={item.id}><span className="mr-2 text-cyan-300">{labels[item.level] ?? item.level}</span>{item.label} — {item.reason}</p>) ?? snapshot.constraints?.map((item) => <p key={item.reason}>{item.reason}</p>)}</div></div>
   </section>;
@@ -48,3 +49,5 @@ import { VerificationSummary } from "@/features/verification/components/verifica
 import { createVerificationRun } from "@/features/verification/runner";
 import { PackageSummary } from "@/features/package-builder/components/package-summary";
 import { AutonomousSessionSummary } from "@/features/autonomous/components/session-summary";
+import { DeliverySummary } from "@/features/deployment/components/delivery-summary";
+import { estimateBuild } from "@/features/deployment/engine";

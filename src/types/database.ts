@@ -14,6 +14,12 @@ export type Database = {
   }
   public: {
     Tables: {
+      deployment_sessions: {
+        Row: { id: string; project_id: string; user_id: string; state: string; current_stage: string; completed_stages: Json; estimate: Json; completion_report: Json; retry_count: number; automatic_recovery_count: number; created_at: string; updated_at: string }
+        Insert: { id?: string; project_id: string; user_id: string; state?: string; current_stage?: string; completed_stages?: Json; estimate?: Json; completion_report?: Json; retry_count?: number; automatic_recovery_count?: number; created_at?: string; updated_at?: string }
+        Update: { id?: string; project_id?: string; user_id?: string; state?: string; current_stage?: string; completed_stages?: Json; estimate?: Json; completion_report?: Json; retry_count?: number; automatic_recovery_count?: number; created_at?: string; updated_at?: string }
+        Relationships: [{ foreignKeyName: "deployment_sessions_project_id_fkey"; columns: ["project_id"]; isOneToOne: false; referencedRelation: "projects"; referencedColumns: ["id"] }]
+      }
       autonomous_build_sessions: {
         Row: { id: string; project_id: string; user_id: string; status: string; current_phase: string; completed_phases: Json; blocked_reason: string | null; next_user_action: Json; action_bundle: Json; approval_plan: Json; metrics: Json; execution_id: string | null; created_at: string; updated_at: string }
         Insert: { id?: string; project_id: string; user_id: string; status?: string; current_phase?: string; completed_phases?: Json; blocked_reason?: string | null; next_user_action?: Json; action_bundle?: Json; approval_plan?: Json; metrics?: Json; execution_id?: string | null; created_at?: string; updated_at?: string }

@@ -17,6 +17,7 @@ This register records known limitations that are acceptable for the current impl
 | TD-011 | Production Evidence QA | Login, second account, browser/device matrix, live Supabase, and live RLS/ownership denial evidence unavailable in the QA session | Production Beta evidence remains incomplete despite automated PASS | High | BETA-QA rerun with authenticated multi-session environment |
 | TD-012 | Autonomous Provider Execution | AUTO-001 orchestrates persisted state and existing Executor boundaries but does not add live provisioning adapters | Real external build completion still depends on existing provider QA and approved adapters | Medium | Follow-up provider execution sprint |
 | TD-013 | Live Provider Provisioning QA | AUTO-002 command/adapters are contract-tested, but no live GitHub/Supabase/Vercel Credential was available for resource creation and deployment QA | Representative production build path remains unproven; Supabase project creation uses USER_ACTION fallback | High | AUTO-002 credential QA rerun / provider execution follow-up |
+| TD-014 | Production Ready Live Gate | AUTO-003 records and displays the completion contract, but live deployment URL, health, backup, monitoring, and provider evidence still require approved test credentials | Production Ready cannot be asserted from contract state alone | High | PRODUCT REVIEW 003.5 / live provisioning QA |
 
 ## Debt Rules
 
