@@ -12,6 +12,7 @@ This file records user-visible product changes. Internal refactoring, documentat
 - Verification Foundation: 구조 검증과 Provider 연결 검증을 분리하고, Credential이 없으면 검증 대기 상태로 명확히 표시합니다.
 - Persistent Verification: Provider 검증 상태와 마지막 결과를 저장해 Project 재진입 후에도 동일한 상태를 복원합니다.
 - Package Builder: Project의 Requirement·Architecture·Connector·Build Plan·Verification Snapshot을 BPS v1.0 `.bfpkg`로 미리 보고 Export할 수 있습니다.
+- Package Installer: BPS `.bfpkg`를 검증하고 Credential 값 없이 새 Project로 복원하여 READY 상태까지 준비할 수 있습니다. Execution은 시작하지 않습니다.
 
 ## v0.3.0 — Builder Foundation
 

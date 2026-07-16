@@ -1,0 +1,4 @@
+import type { PackageManifest, PackageArtifact } from "@/features/package-builder/types";
+export type CompatibilityResult = { compatible: boolean; errors: string[] };
+export type ImportedPackage = { manifest: PackageManifest; files: Record<string, string>; artifacts: PackageArtifact[]; compatibility: CompatibilityResult; validation: { valid: boolean; errors: string[] }; credentialRequirements: Array<{ providerId: string; definitionId: string; required: boolean; rotation: string; expiration: string }>; restoredSnapshot: Record<string, unknown> };
+export type InstallPreview = { packageName: string; version: string; author: string; dependencies: string[]; credentials: number; connectors: number; automation: number; estimatedMinutes: number; estimatedCostCents: number; validation: string[]; compatible: boolean };
