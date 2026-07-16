@@ -2,7 +2,7 @@ import type { ArchitectureSnapshot, Requirement } from "../requirements/types";
 import { connectorRegistry, findConnectorProvider } from "./registry";
 import type { Connector } from "./types";
 
-const componentToProvider: Record<string, string> = { openai: "openai", anthropic: "anthropic", gemini: "gemini", supabase: "supabase", "google-oauth": "google", slack: "slack", n8n: "n8n", make: "make", github: "github", resend: "resend" };
+const componentToProvider: Record<string, string> = { openai: "openai", anthropic: "anthropic", gemini: "gemini", supabase: "supabase", "supabase-auth": "supabase", "google-oauth": "google", slack: "slack", n8n: "n8n", make: "make", github: "github", resend: "resend" };
 export function resolveRequiredConnectors(requirement: Requirement, architecture: ArchitectureSnapshot): Connector[] {
   const text = `${requirement.goalOriginal} ${requirement.currentTools.join(" ")} ${requirement.requiredIntegrations.join(" ")}`.toLocaleLowerCase();
   const ids = architecture.components.map((component) => componentToProvider[component.id]).filter(Boolean);

@@ -16,5 +16,30 @@ describe("requirement foundation", () => {
   it("classifies unknown goals as manual", () => expect(assessConstraints(parseGoal("무언가", { automation_level: "guide", budget_range: "medium" })).some((item) => item.level === "MANUAL")).toBe(true));
   it("requires consent for email", () => expect(getConsentRequirements(parseGoal("이메일 고객센터")).some((item) => item.subject.includes("이메일"))).toBe(true));
   it("creates a complete snapshot", () => { const snapshot = createRequirementSnapshot("Slack으로 고객 문의 알림", { budget_range: "low", automation_level: "partial", current_tools: ["Slack"] }); expect(snapshot.requirement.version).toBe("requirement-v1"); expect(snapshot.constraints.length).toBeGreaterThan(0); expect(snapshot.consents.length).toBeGreaterThan(0); });
+  it("stores the CRUD Blueprint capability source of truth", () => {
+    const snapshot = createRequirementSnapshot(
+      "Task Manager: 회원가입, 사용자별 Todo CRUD, 검색, 상태 변경, 관리자 조회",
+      { budget_range: "free", automation_level: "high" },
+    );
+    expect(snapshot.applicationBlueprintId).toBe("general-crud-v1");
+    expect(snapshot.applicationCapabilities).toEqual([
+      "AUTH",
+      "USER_SCOPED_CRUD",
+      "SEARCH",
+      "STATUS_WORKFLOW",
+      "ADMIN_READ",
+      "RESPONSIVE_UI",
+    ]);
+    expect(
+      snapshot.architecture.components.some(
+        (component) => component.id === "supabase-auth",
+      ),
+    ).toBe(true);
+    expect(
+      snapshot.architecture.components.some(
+        (component) => component.id === "openai",
+      ),
+    ).toBe(false);
+  });
   it("does not contain secret-looking values", () => expect(JSON.stringify(createRequirementSnapshot("고객센터"))).not.toMatch(new RegExp("s" + "k-|sb_" + "secret_")));
 });
