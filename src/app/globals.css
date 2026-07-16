@@ -3,6 +3,20 @@
 :root {
   --background: #090909;
   --foreground: #e4e4e7;
+  --bg-panel: #111111;
+  --bg-card: #171717;
+  --border-default: rgba(161, 161, 170, .18);
+  --border-active: rgba(103, 232, 249, .55);
+  --border-warning: rgba(253, 186, 116, .5);
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --accent-ai: #67e8f9;
+  --accent-success: #86efac;
+  --accent-warning: #fdba74;
+  --radius-panel: 24px;
+  --radius-floating: 32px;
+  --shadow-floating: 0 16px 40px rgba(0,0,0,.28);
 }
 
 @theme inline {
@@ -31,3 +45,10 @@ body {
 button {
   font: inherit;
 }
+
+.bf-panel { border: 1px solid var(--border-default); border-radius: var(--radius-panel); background: var(--bg-panel); }
+.bf-card { border: 1px solid var(--border-default); border-radius: 16px; background: var(--bg-card); }
+.bf-active { border-color: var(--border-active); box-shadow: 0 0 24px rgba(103,232,249,.08); }
+.bf-warning { border-color: var(--border-warning); }
+.bf-action { border-radius: 14px; transition: border-color 180ms ease, background 180ms ease, transform 180ms ease; }
+.bf-action:hover { border-color: var(--border-active); background: rgba(103,232,249,.08); transform: translateY(-1px); }

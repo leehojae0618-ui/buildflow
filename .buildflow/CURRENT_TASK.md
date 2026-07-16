@@ -2,11 +2,11 @@
 
 ## Task ID
 
-DESIGN-001
+HARDEN-003.5
 
 ## Title
 
-BuildFlow Design Language
+BuildFlow Visual Refactor
 
 ## Status
 
@@ -14,11 +14,11 @@ REVIEW
 
 ## Goal
 
-BuildFlow 전체 UI/UX의 결과 중심·AI Narrative·정보 계층·시각 토큰과 공통 Component 기준을 문서로 고정한다.
+DESIGN_LANGUAGE.md 기준으로 기존 Build Summary, Progress, Approval, Project Detail의 시각 계층을 통일한다. 기능은 변경하지 않는다.
 
 ## Result
 
-`docs/design/DESIGN_LANGUAGE.md`에 Color, Spacing, Border, Radius, Elevation, Motion, Typography와 Component 규칙을 기록한다. 코드 변경은 없다.
+공통 Color, Border, Radius, Elevation 토큰과 둥근 Panel·Active/Warning 상태를 적용했다. Engine·Provider·Execution·Migration은 변경하지 않는다.
 
 ## Scope
 
