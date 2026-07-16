@@ -38,3 +38,13 @@ Marketplace unit: `AI System Package` with Requirement, Blueprint, Prompt, Build
 ## Product Review Freeze
 
 Product Review 001 freezes the next five implementation targets: PIVOT-005 Architecture Foundation, PIVOT-006 Build Intelligence, PIVOT-007 Build Planner, PIVOT-008 Installation Wizard, and PIVOT-009 Test Engine. Mid-Sprint product direction changes require change control and are recorded in `docs/project/PRODUCT_REVIEW.md`.
+
+## Release Path
+
+```text
+Feature Sprint → Stabilize Sprint → Product Review → RC → Beta → Launch
+```
+
+RC permits only bug fixes, performance improvements, QA, and stabilization. No new feature enters RC.
+
+During MVP, ideas outside this frozen roadmap are classified as MVP-required, Beta backlog, or Future backlog and are not started without Product Review approval.

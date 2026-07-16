@@ -2,7 +2,11 @@
 
 This file records user-visible product changes. Internal refactoring, documentation updates, tests, operational process changes, and Technical Debt entries are intentionally excluded.
 
-## Unreleased — Builder Foundation
+## Unreleased
+
+No unreleased user-visible changes.
+
+## v0.3.0 — Builder Foundation
 
 - Requirement 입력을 Goal Type, Category, Expected Output과 구조화된 Requirement Snapshot으로 해석
 - 필요한 Clarification 질문과 다음 질문을 우선순위에 따라 표시
@@ -10,6 +14,13 @@ This file records user-visible product changes. Internal refactoring, documentat
 - Project Detail에서 Build Readiness, Capability, Build Receipt 확인
 - Requirement에 맞는 Architecture Component, Connection, Dependency 요약 표시
 - 외부 계정 동의와 사용자가 수행할 작업을 구분해 표시
+- Architecture의 Component와 연결 구조를 기준으로 Build Score, 예상 시간, 운영비, 위험도, Confidence를 계산
+- Build Receipt에 Architecture 기반 예상치를 표시
+- Architecture를 Preparation, Accounts, Environment, Database, Authentication, Automation, Deployment, Verification 단계의 Build Plan으로 변환
+- 각 Build Task를 자동 수행, 사용자 작업, 전문가 필요로 구분
+- Build Plan 전체 진행률과 Phase별 Task 요약 표시
+
+Release stage: Builder Foundation. RC is not started.
 
 ## v0.2.0 — Discovery and Guided Execution
 

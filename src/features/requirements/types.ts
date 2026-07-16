@@ -13,8 +13,9 @@ export type ConversationSummary = { understood: string[]; missing: string[]; nex
 export type Conversation = { state: ConversationState; queue: ClarificationQuestion[]; missing: string[]; summary: ConversationSummary };
 export type BuildIntelligence = { buildScore: number; automation: number; consent: number; manual: number; expert: number; unsupported: number; estimatedBuildMinutes: number; estimatedSetupMinutes: number; estimatedMonthlyCostCents: number; difficulty: "easy" | "moderate" | "hard"; riskScore: number; confidence: number; requiredAccounts: string[]; userActions: string[]; summary: string };
 export type ComponentCategory = "frontend" | "llm" | "database" | "automation" | "notification" | "auth" | "storage" | "deployment";
-export type ArchitectureComponent = { id: string; name: string; category: ComponentCategory; reason: string; required: boolean };
+export type ArchitectureComponent = { id: string; name: string; category: ComponentCategory; reason: string; required: boolean; setupMinutes?: number; monthlyCostCents?: number; riskWeight?: number };
 export type ArchitectureConnection = { from: string; to: string; label: string };
 export type ArchitectureDependency = { componentId: string; dependsOn: string[] };
 export type ArchitectureSnapshot = { version: "architecture-v1"; components: ArchitectureComponent[]; connections: ArchitectureConnection[]; dependencies: ArchitectureDependency[]; summary: string };
-export type RequirementSnapshot = { requirement: Requirement; clarificationQuestions: ClarificationQuestion[]; clarificationSummary: ClarificationSummary; conversation: Conversation; constraints: ConstraintAssessment[]; capabilities: Capability[]; capabilitySummary: CapabilitySummary; consents: ConsentRequirement[]; architecture: ArchitectureSnapshot; buildIntelligence: BuildIntelligence };
+export type RequirementSnapshot = { requirement: Requirement; clarificationQuestions: ClarificationQuestion[]; clarificationSummary: ClarificationSummary; conversation: Conversation; constraints: ConstraintAssessment[]; capabilities: Capability[]; capabilitySummary: CapabilitySummary; consents: ConsentRequirement[]; architecture: ArchitectureSnapshot; buildIntelligence: BuildIntelligence; buildPlan: BuildPlan };
+import type { BuildPlan } from "../planner/types";

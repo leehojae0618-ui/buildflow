@@ -4,7 +4,7 @@
 
 - Review scope: SETUP-001 through PIVOT-005
 - Review type: Level 2 Product Review
-- Status: APPROVED / ROADMAP FROZEN
+- Status: APPROVED / ROADMAP AND OPERATING MODEL FROZEN
 - Date: 2026-07-16
 
 ## Product Direction
@@ -59,3 +59,7 @@ PIVOT-010 will begin only after the next Level 2 Product Review. The frozen scop
 - Active implementation: one Sprint only
 - PIVOT-005 Commit approval: not granted
 - Push approval: not granted
+
+## Final Operating Model Decision
+
+This review is the final planned operating-model change during MVP. Sprint operations, Product Review, Technical Debt, Release Management, approval gates, and Semantic Version rules are frozen until a serious issue requires a new Product Review.

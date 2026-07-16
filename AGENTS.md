@@ -62,3 +62,9 @@ PLANNING → READY → IN_PROGRESS → REVIEW → QA → DONE
 - Every Sprint `REPORT.md` must include an `MVP Impact` section. Use a quantified percentage only when there is an agreed measurement basis; otherwise record a qualitative impact and why it is not quantified.
 - `docs/project/RELEASE_NOTES.md` records only user-visible product changes. Internal refactoring, documentation-only changes, test changes, and Technical Debt updates do not belong there.
 - Release notes are updated at a release/review gate, not for every internal commit.
+- Release flow is `Feature Sprint → Stabilize Sprint → Product Review → RC → Beta → Launch`.
+- RC is stabilization-only: no new features; only bugs, performance, QA, and release-blocking fixes are allowed.
+- Semantic versions during MVP: `v0.1.x` Foundation, `v0.2.x` Discovery, `v0.3.x` Builder Foundation, `v0.4.x` Architecture, `v0.5.x` Build Planner, `v0.6.x` Installer, `v0.7.x` Beta, `v1.0.0` Launch.
+- Commit Approval must precede Commit, and every user-visible committed change must have a matching Release Notes update before Push Approval.
+- During the MVP period, the operating process, review cadence, debt management, release management, approval gates, and semantic version rules are frozen. Changes require a serious operational or product integrity issue and Product Review approval.
+- New ideas during MVP are classified as MVP-required (must fit the frozen roadmap), Beta backlog, or Future backlog. Large features outside the frozen roadmap are not started.

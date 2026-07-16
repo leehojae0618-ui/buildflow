@@ -2,11 +2,11 @@
 
 ## Task ID
 
-PIVOT-006
+PIVOT-007
 
 ## Title
 
-Build Intelligence Engine Foundation
+Build Planner Foundation
 
 ## Status
 

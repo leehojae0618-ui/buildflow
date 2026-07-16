@@ -2,11 +2,11 @@
 
 ## Task ID
 
-PIVOT-007
+PIVOT-008
 
 ## Title
 
-Build Planner Foundation
+Installation Wizard Foundation
 
 ## Status
 
