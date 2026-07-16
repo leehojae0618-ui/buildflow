@@ -34,3 +34,7 @@ PIVOT-001 changes the product direction from an AI Recommendation Platform to an
 - Hosted agents
 
 Marketplace unit: `AI System Package` with Requirement, Blueprint, Prompt, Build Plan, Environment, Installer, Version, and Artifacts.
+
+## Product Review Freeze
+
+Product Review 001 freezes the next five implementation targets: PIVOT-005 Architecture Foundation, PIVOT-006 Build Intelligence, PIVOT-007 Build Planner, PIVOT-008 Installation Wizard, and PIVOT-009 Test Engine. Mid-Sprint product direction changes require change control and are recorded in `docs/project/PRODUCT_REVIEW.md`.

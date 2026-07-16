@@ -51,3 +51,14 @@
 ## Workflow
 
 PLANNING → READY → IN_PROGRESS → REVIEW → QA → DONE
+
+## Product Review and Change Control
+
+- A Sprint scope is frozen after approval. Mid-Sprint ideas are not implemented unless classified as an emergency fix.
+- Change classes: A (security/data-loss/critical DB issue: immediate), B (efficiency or direction improvement: backlog for review), C (new idea: document only).
+- Product Review occurs every five Sprints and is recorded in `docs/project/PRODUCT_REVIEW.md`.
+- Implementation Complete, PM Review, Commit Approval, and Push Approval are separate gates. Codex must not commit before explicit Commit Approval.
+- One active Sprint is allowed at a time; unrelated ideas are recorded for later review.
+- Every Sprint `REPORT.md` must include an `MVP Impact` section. Use a quantified percentage only when there is an agreed measurement basis; otherwise record a qualitative impact and why it is not quantified.
+- `docs/project/RELEASE_NOTES.md` records only user-visible product changes. Internal refactoring, documentation-only changes, test changes, and Technical Debt updates do not belong there.
+- Release notes are updated at a release/review gate, not for every internal commit.

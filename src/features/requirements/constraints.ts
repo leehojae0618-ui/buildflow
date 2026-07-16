@@ -11,7 +11,7 @@ export function assessConstraints(requirement: Requirement): ConstraintAssessmen
 export function calculateCapabilitySummary(capabilities: Capability[]): CapabilitySummary {
   const count = (level: AutomationLevel) => capabilities.filter((capability) => capability.level === level).length;
   const total = capabilities.length;
-  return { total, automation: total ? Math.round((count("AUTO") / total) * 100) : 0, consent: count("CONSENT_REQUIRED"), manual: count("MANUAL"), expert: count("EXPERT"), unsupported: count("UNSUPPORTED") };
+  return { total, automation: total ? Math.round((count("AUTO") / total) * 100) : 0, partial: count("PARTIAL"), consent: count("CONSENT_REQUIRED"), manual: count("MANUAL"), expert: count("EXPERT"), unsupported: count("UNSUPPORTED") };
 }
 
 export function calculateCapabilities(requirement: Requirement, consentCount: number): Capability[] {

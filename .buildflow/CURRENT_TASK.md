@@ -2,11 +2,11 @@
 
 ## Task ID
 
-PIVOT-004
+PIVOT-006
 
 ## Title
 
-Clarification Experience Foundation
+Build Intelligence Engine Foundation
 
 ## Status
 

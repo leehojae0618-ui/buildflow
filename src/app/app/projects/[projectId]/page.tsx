@@ -8,6 +8,7 @@ import { getLatestRecommendation } from "@/features/recommendations/queries";
 import { RecommendationResults } from "@/features/recommendations/components/recommendation-results";
 import { getRecommendationErrorMessage } from "@/features/recommendations/errors";
 import { RequirementSummary } from "@/features/requirements/components/requirement-summary";
+import { normalizeArchitectureSnapshot } from "@/features/architecture/fallback";
 
 export default async function ProjectDetailPage({ params, searchParams }: { params: Promise<{ projectId: string }>; searchParams: Promise<{ error?: string; code?: string; stage?: string; recommendation?: string }> }) {
   const { projectId } = await params;
@@ -15,7 +16,8 @@ export default async function ProjectDetailPage({ params, searchParams }: { para
   const project = await getProject(projectId);
   const recommendation = await getLatestRecommendation(projectId);
   const constraints = (project.goal_constraints ?? {}) as Record<string, unknown>;
-  const requirementSnapshot = constraints.requirement_snapshot as { requirement?: { expectedOutput?: string; category?: string }; clarificationQuestions?: { question: string; required: boolean }[]; constraints?: { level: string; reason: string }[] } | undefined;
+  const rawRequirementSnapshot = constraints.requirement_snapshot as Record<string, unknown> | undefined;
+  const requirementSnapshot = rawRequirementSnapshot ? { ...rawRequirementSnapshot, architecture: normalizeArchitectureSnapshot(rawRequirementSnapshot.architecture) ?? undefined } : undefined;
   const tools = Array.isArray(constraints.current_tools) ? constraints.current_tools.join(", ") : String(constraints.current_tools ?? "없음");
   const debugInfo = process.env.NODE_ENV === "development" && code && failedStage ? `${failedStage} / ${code}` : null;
   const snapshot = recommendation?.input_snapshot as { low_confidence?: boolean } | null;

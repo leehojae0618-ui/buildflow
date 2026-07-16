@@ -8,6 +8,7 @@
 - Constraint를 AUTO, PARTIAL, CONSENT_REQUIRED, MANUAL, EXPERT, UNSUPPORTED로 정리
 - Capability Summary를 Automation, Consent, Manual, Expert, Unsupported로 계산
 - Requirement Summary UI에 질문 진행 상태와 5종 Capability 지표 표시
+- Conversation State, Missing Requirement, Summary의 다음 질문을 Snapshot과 UI에 연결
 
 ## Product Deliverable
 
@@ -17,13 +18,20 @@
 
 ## Verification
 
-- Tests: 88 passing
+- Tests: 91 passing
 - lint: passed
 - typecheck: passed
 - build: passed
 - `git diff --check`: passed
 - Migration: 없음
 - Authenticated browser QA: 로그인 세션 부재로 보류
+
+## Conversation Engine Extension
+
+- State: `WAITING`, `ASKING`, `COMPLETE`, `READY_FOR_BUILD`
+- Queue: priority 순서로 다음 질문을 선택
+- Skip Logic: Requirement에 이미 반영된 값은 질문하지 않음
+- Commit: 없음 (사용자 지시로 자동 Commit 금지)
 
 ## Next Sprint
 

@@ -2,11 +2,11 @@
 
 ## Task ID
 
-PIVOT-005
+PIVOT-007
 
 ## Title
 
-Build Score Foundation
+Build Planner Foundation
 
 ## Status
 

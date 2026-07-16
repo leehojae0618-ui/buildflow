@@ -7,3 +7,9 @@
 | PIVOT-002 | Requirement Analysis Foundation | DONE |
 | PIVOT-003 | Constraint Classification | DONE |
 | PIVOT-004 | Clarification Experience | REVIEW |
+| PIVOT-005 | Architecture Foundation | REVIEW |
+
+Product Review 001 freezes the next five Sprint targets. See `docs/project/PRODUCT_REVIEW.md`.
+
+| STABILIZE-001 | Architecture and Build Intelligence Stabilization | REVIEW |
+| PIVOT-006 | Build Intelligence Engine | READY |
