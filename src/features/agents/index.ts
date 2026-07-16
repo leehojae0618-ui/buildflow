@@ -3,3 +3,4 @@ export * from "./validator";
 export * from "./generator";
 export * from "./compatibility";
 export * from "./tool-resolution";
+export * from "./validation-gate";
