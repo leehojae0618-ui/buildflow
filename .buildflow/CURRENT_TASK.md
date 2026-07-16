@@ -2,11 +2,11 @@
 
 ## Task ID
 
-HARDEN-001
+HARDEN-002
 
 ## Title
 
-Guided Build Experience
+Progress Experience
 
 ## Status
 
@@ -14,11 +14,11 @@ REVIEW
 
 ## Goal
 
-개발 지식이 없는 사용자도 목표, 예상 시간·비용, 자동화율, 사용자 작업을 즉시 이해하도록 기존 시작 경험을 개선한다.
+긴 구축 작업에서도 AI가 일하고 있다는 확신을 주도록 진행 상태, 현재 작업, 진행률, 대기·재개 상태를 결과 중심으로 표현한다.
 
 ## Result
 
-기존 Snapshot 데이터를 재사용하는 결과 중심 Build Summary와 준비·설계·구축·배포·완료 Timeline을 추가한다.
+기존 Autonomous Session 상태를 사용자 문구와 진행률로 매핑하고 기술 enum은 상세 보기로 분리한다.
 
 ## Scope
 
