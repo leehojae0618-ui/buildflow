@@ -2,87 +2,90 @@
 
 ## Task ID
 
-AGENT-FOUNDATION-001
+MCP-FOUNDATION-001
 
 ## Title
 
-AI Agent Capability and Contract Foundation
+MCP Server Registry and Secure Gateway Contract
 
 ## Status
 
-CLOSED
+APPROVED / SCOPE FROZEN
 
 ## Goal
 
-BuildFlow의 제품 방향을 AI Agent Builder / AI Agent Factory로 고정하기 위해
-Agent Capability, Delivery Mode, Interface Mode, Block Contract, Agent
-Blueprint, Agent Definition, Contract Validator의 Source of Truth를 만든다.
+BuildFlow Agent가 외부 시스템에서 안전하게 행동할 수 있도록 MCP Server,
+Tool, Discovery, Permission, Risk, Approval, Safety, Evidence의 계약과
+순수 검증 계층을 만든다.
 
-기존 `ai-inquiry-v1`을 첫 Agent Blueprint compatibility mapping으로
-정리하되, Provider Execution과 실제 MCP 실행은 재구현하지 않는다.
+이번 Sprint는 실제 MCP Server 연결이나 Tool 실행을 구현하지 않는다. 목적은
+향후 Agent Generator, Agent Validator, Agent Package, Marketplace가 공통으로
+사용할 MCP 계약의 Source of Truth를 만드는 것이다.
 
 ## Scope
 
-- Agent Capability Model
-- `HEADLESS`, `CHAT`, `BUSINESS` Delivery Mode
-- `API`, `WEBHOOK`, `SCHEDULE`, `WEB_CHAT`, `MCP_SERVER` Interface Mode
-- Model, Prompt, Trigger, Tool, Memory, Knowledge, Guardrail, Output,
-  Delivery Surface Block Contract
-- Tool Block의 MCP Server ID, Tool Capability, Permission, Approval,
-  input/output schema 참조 계약
-- Agent Blueprint Contract와 Version
-- Agent Definition Generator 계약
-- Contract Validator
-- `ai-inquiry-v1` compatibility mapping
-- Unit tests and Sprint documents
+- MCP Server Registry contract
+- MCP Tool Definition contract
+- Tool Discovery Snapshot contract
+- Compatibility, version, trust, and health contract
+- Credential Reference isolation contract
+- Permission, Risk, and Approval policy contract
+- Tool allowlist and server-side input validation contract
+- Timeout, retry, idempotency, and rate-limit policy contract
+- Safe Result and sanitized Verification Evidence contract
+- BPS MCP dependency mapping contract
+- Registry / Tool / Discovery validator pure functions
+- Unit tests
 
 ## Excluded
 
-- General Web App 또는 Platform Blueprint 추가
-- Marketplace UI와 Publishing
-- 신규 Provider
-- 실제 MCP Server 연결 또는 실행
-- MCP Registry 또는 Gateway 구현
-- Learning Engine
-- 자연어 범용 Agent 생성 주장
-- Migration
-- 자동 Commit
+- Actual MCP Server connection
+- Actual Tool Invocation
+- Gateway Runtime execution
+- Provider execution
+- Marketplace implementation
+- UI implementation
+- DB migration
+- Agent Generator integration
+- Provisioning execution path integration
+- Generated Agent MCP Server publication
+- Secret access or Vault reads
+- Automatic Commit
 - Push
+
+## First Safe Implementation Unit
+
+Only the following files may be created or modified for the first implementation
+unit:
+
+- `src/features/mcp/types.ts`
+- `src/features/mcp/validator.ts`
+- `src/features/mcp/index.ts`
+- `src/features/mcp/validator.test.ts`
+
+The first unit must remain pure TypeScript contract and validator work. It must
+not call external services, read Credentials, create database tables, execute
+Provider commands, or connect to any Runtime path.
 
 ## Current Stage
 
-- Sprint activated from `NEXT_TASK.md`: PASS
-- CAPABILITY-002 implementation and evidence preserved: PASS
-- Agent Capability Model: PASS
-- Delivery Mode and Interface Mode contract: PASS
-- Block Contract and MCP Reference Contract: PASS
-- Agent Blueprint and Agent Definition contract: PASS
-- Agent Definition Generator pure function: PASS
-- Contract Validator: PASS
-- `ai-inquiry-v1` compatibility mapping: PASS
-- Unit tests: PASS
-- Out-of-scope runtime, Provider, DB, Marketplace, UI, and Provisioning execution changes: NOT INCLUDED
-- Final quality gate: PASS
-- PM/CTO Review: PASS
-- Sprint closure: PASS
-- Next required step: Select and approve the next Sprint candidate
+- AGENT-FOUNDATION-001 closed and pushed: PASS
+- MCP-FOUNDATION-001 approved: PASS
+- Scope frozen: PASS
+- Sprint documents created: PASS
+- Code implementation: NOT STARTED
+- Next required step: First safe implementation unit
 
 ## Product Direction Note
 
 BuildFlow의 신규 제품 개발 기본 방향은 AI Agent 자동 구축, 배포, 검증,
-BPS Package 공유다. General Web App과 Platform 확장은 회귀 Evidence와
-장기 Roadmap으로 보존하며, AGENT-FOUNDATION-001에서는 Agent 계약과 검증
-가능한 Definition 기반만 만든다.
-
-## Closure Note
-
-AGENT-FOUNDATION-001은 PM/CTO Review 완료 후 CLOSED 상태로 전환되었다.
-현재 활성 구현 Sprint는 없다. 다음 Sprint는 `.buildflow/NEXT_TASK.md`의
-후보를 PM/CTO가 승인하고 APPROVED / SCOPE FROZEN 상태로 확정한 뒤에만
-시작할 수 있다.
+BPS Package 공유다. MCP는 Agent가 외부 세계에서 행동하기 위한 표준 Tool
+계층이지만, 실행 권한은 Compatibility, Permission, Risk, Approval,
+Verification Gate를 통과한 경우에만 부여된다.
 
 ## Preserved Work
 
 `CAPABILITY-002`, `LIVE-EVIDENCE-001/002`, `STABILIZE-READY-001`,
-`PROJECT-REVIEW-001`, `PRODUCT-REVIEW-003.5`, `HARDEN-003`,
-`MCP-STRATEGY-001`의 완료 문서와 커밋 이력을 삭제하거나 덮어쓰지 않는다.
+`AGENT-FOUNDATION-001`, `PROJECT-REVIEW-001`, `PRODUCT-REVIEW-003.5`,
+`HARDEN-003`, `MCP-STRATEGY-001`의 완료 문서와 커밋 이력을 삭제하거나
+덮어쓰지 않는다.
