@@ -9,6 +9,7 @@ This file records user-visible product changes. Internal refactoring, documentat
 - Architecture Options: 사용자가 무료 중심, 균형형, 성능 중심 후보를 비용·자동화율·작업량·시간 기준으로 비교할 수 있습니다.
 - Architecture Selection: 선택한 후보를 프로젝트에 저장하고, 이후 구축 계획과 연결 정보가 같은 Architecture를 기준으로 유지됩니다.
 - Build Execution Foundation: 확정된 Architecture와 Build Plan으로 실행 준비 상태와 안전한 Artifact 생성을 시작할 수 있습니다. 인증·비용 발생 작업은 사용자 승인 대기 상태로 유지됩니다.
+- Verification Foundation: 구조 검증과 Provider 연결 검증을 분리하고, Credential이 없으면 검증 대기 상태로 명확히 표시합니다.
 
 ## v0.3.0 — Builder Foundation
 

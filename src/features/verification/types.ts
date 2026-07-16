@@ -1,0 +1,9 @@
+export type VerificationStatus = "NOT_RUN" | "WAITING_FOR_CREDENTIAL" | "RUNNING" | "VERIFIED" | "WARNING" | "FAILED" | "EXPIRED" | "UNAVAILABLE";
+export type FinalVerificationStatus = "READY" | "READY_WITH_WARNINGS" | "BLOCKED" | "FAILED";
+export type VerificationStage = "STRUCTURE" | "CREDENTIAL_FORMAT" | "PROVIDER_CONNECTION" | "RESOURCE_EXISTENCE" | "FUNCTIONAL" | "END_TO_END";
+export type VerificationTarget = { id: string; providerId: string; required: boolean; stage: VerificationStage; status: VerificationStatus };
+export type VerificationEvidence = { providerId: string; checkedAt: string; statusCodeClass?: number; latencyMs?: number; safeErrorCode?: string; capabilities: string[]; expired: boolean };
+export type VerificationAttempt = { id: string; targetId: string; status: VerificationStatus; startedAt: string; finishedAt?: string; evidence?: VerificationEvidence };
+export type VerificationResult = { status: FinalVerificationStatus; verified: number; warnings: number; failed: number; blocked: number; details: string[] };
+export type VerificationError = { code: string; message: string; retryable: boolean };
+export type VerificationRun = { id: string; projectId: string; status: VerificationStatus; targets: VerificationTarget[]; attempts: VerificationAttempt[]; result: VerificationResult; lastRunAt?: string };
