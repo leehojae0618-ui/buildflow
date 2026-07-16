@@ -2,11 +2,11 @@
 
 ## Task ID
 
-HARDEN-003.5
+BRAND-001
 
 ## Title
 
-BuildFlow Visual Refactor
+AI Communication Language
 
 ## Status
 
@@ -14,11 +14,11 @@ REVIEW
 
 ## Goal
 
-DESIGN_LANGUAGE.md 기준으로 기존 Build Summary, Progress, Approval, Project Detail의 시각 계층을 통일한다. 기능은 변경하지 않는다.
+BuildFlow의 말투, 성격, 신뢰 방식, 설명 방식을 AI Chief Engineer 기준으로 통일한다.
 
 ## Result
 
-공통 Color, Border, Radius, Elevation 토큰과 둥근 Panel·Active/Warning 상태를 적용했다. Engine·Provider·Execution·Migration은 변경하지 않는다.
+`docs/brand/AI_COMMUNICATION_LANGUAGE.md`에 Outcome First, Confidence Language, 상태별 메시지 예시, 금칙어, Developer Guide를 기록했다. 코드 변경은 없다.
 
 ## Scope
 
