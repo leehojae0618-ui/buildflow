@@ -2,11 +2,11 @@
 
 ## Task ID
 
-EXECUTION-001
+EXEC-003
 
 ## Title
 
-Execution Layer Foundation
+Execution Layer Continuation
 
 ## Status
 
@@ -14,4 +14,4 @@ BACKLOG
 
 ## Goal
 
-BuildFlow의 추천, 설계, 구축 중심 제품 방향과 Marketplace 확장 방향을 공식 문서로 확정한다.
+EXEC-002 결과를 PM Review하고 다음 Execution Sprint 범위를 승인한다.

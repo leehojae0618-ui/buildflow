@@ -4,7 +4,8 @@ This file records user-visible product changes. Internal refactoring, documentat
 
 ## Unreleased
 
-No unreleased user-visible changes.
+- Connector Summary: Project Detail now shows required external providers and their connection status without executing OAuth or API calls.
+- Account Wizard Foundation: 필요한 계정별 동의 단계와 연결 상태를 Installation 흐름에서 확인할 수 있습니다. 실제 OAuth 인증은 실행하지 않습니다.
 
 ## v0.3.0 — Builder Foundation
 

@@ -2,19 +2,19 @@
 
 ## Task ID
 
-EXECUTION-PLANNING
+EXEC-002
 
 ## Title
 
-Execution Phase Planning
+OAuth & Account Wizard Foundation
 
 ## Status
 
-PLANNING
+REVIEW
 
 ## Goal
 
-GPT가 계획 문서를 작성하고 Codex가 이를 읽어 구현한 뒤 보고서를 작성하는 파일 기반 협업 체계를 구축한다.
+필요한 외부 계정을 사용자가 확인하고 동의할 수 있는 Account Connection Session과 Installation Wizard 연동을 구축한다. 실제 OAuth/API 호출은 제외한다.
 
 ## Working Directory
 
@@ -28,8 +28,7 @@ GPT가 계획 문서를 작성하고 Codex가 이를 읽어 구현한 뒤 보고
 
 ## Completion Criteria
 
-- 공통 폴더 구조가 존재한다.
-- 프로젝트 기준 문서가 존재한다.
-- 현재 작업과 상태 문서가 존재한다.
-- Sprint 문서 형식이 정의된다.
-- Codex가 작업 완료 보고서를 작성할 위치가 정의된다.
+- Provider별 계정 연결 단계와 Consent 흐름이 존재한다.
+- 연결 상태와 완료 확인 규칙이 존재한다.
+- Installation Wizard와 Account Summary UI가 연결된다.
+- 테스트, lint, typecheck, build, diff check가 통과한다.
