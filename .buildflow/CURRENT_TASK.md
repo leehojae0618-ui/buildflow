@@ -10,7 +10,7 @@ MCP Server Registry and Secure Gateway Contract
 
 ## Status
 
-REVIEW
+CLOSED
 
 ## Goal
 
@@ -88,7 +88,9 @@ Provider commands, or connect to any Runtime path.
 - Unit tests: PASS
 - Out-of-scope runtime, Provider, DB, Marketplace, UI, Agent Generator, and Provisioning execution changes: NOT INCLUDED
 - Final quality gate: PASS
-- Next required step: PM/CTO Review
+- PM/CTO Review: PASS
+- Sprint closure: PASS
+- Next required step: Select and approve the next Sprint candidate
 
 ## Product Direction Note
 
@@ -96,6 +98,13 @@ BuildFlow의 신규 제품 개발 기본 방향은 AI Agent 자동 구축, 배�
 BPS Package 공유다. MCP는 Agent가 외부 세계에서 행동하기 위한 표준 Tool
 계층이지만, 실행 권한은 Compatibility, Permission, Risk, Approval,
 Verification Gate를 통과한 경우에만 부여된다.
+
+## Closure Note
+
+MCP-FOUNDATION-001은 PM/CTO Review 완료 후 CLOSED 상태로 전환되었다.
+현재 활성 구현 Sprint는 없다. 다음 Sprint는 `.buildflow/NEXT_TASK.md`의
+후보를 PM/CTO가 승인하고 APPROVED / SCOPE FROZEN 상태로 확정한 뒤에만
+시작할 수 있다.
 
 ## Preserved Work
 

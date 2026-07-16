@@ -2,26 +2,55 @@
 
 ## Status
 
-PLACEHOLDER / CURRENT TASK MOVED
+PLACEHOLDER / NOT APPROVED
 
 ## Current Transition
 
-`MCP-FOUNDATION-001` has been approved, scope frozen, and moved to
-`.buildflow/CURRENT_TASK.md`.
+`MCP-FOUNDATION-001` is CLOSED after PM/CTO Review. There is no active
+implementation Sprint until the next candidate is explicitly approved.
 
 ## Next Candidate
 
-Not yet selected.
+AGENT-GENERATOR-001 — Agent Definition Generator and MCP Tool Resolution Plan
 
 ## Candidate Status
 
-NO NEXT CANDIDATE APPROVED
+NOT APPROVED / NOT SCOPE FROZEN
 
-This document no longer authorizes or describes MCP-FOUNDATION-001. The active
-Sprint scope is now owned by `.buildflow/CURRENT_TASK.md` and
-`docs/sprints/MCP-FOUNDATION-001/`.
+This document records only the next candidate. It does not authorize
+implementation.
 
 ## Candidate Notes
 
-The next candidate will be selected only after MCP-FOUNDATION-001 reaches PM/CTO
-Review. Do not define or start a new Sprint from this placeholder.
+`AGENT-GENERATOR-001` is the likely follow-up after MCP-FOUNDATION-001 because
+Agent contracts and MCP contracts now need a safe generator layer that can
+produce an Agent Definition plan from Requirement / Blueprint inputs and MCP
+Tool contract candidates.
+
+Candidate topics for later review:
+
+- Requirement Capability Requirement to Agent Definition planning
+- MCP Tool candidate resolution contract
+- Unsupported capability result
+- User action required result
+- Approval required result
+- No arbitrary LLM Tool or Command execution
+- Safe unresolved dependency reporting
+- Pure generator / resolver functions
+- Unit tests
+
+Excluded until separately approved:
+
+- Actual MCP Tool Invocation
+- Gateway Runtime execution
+- Provider execution
+- Marketplace implementation
+- UI implementation
+- DB migration
+- Provisioning execution path integration
+- Live Credential or Vault access
+
+Implementation must not start until AGENT-GENERATOR-001 is explicitly approved
+and marked APPROVED / SCOPE FROZEN.
+
+Do not start the next Sprint from this placeholder alone.
