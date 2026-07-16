@@ -11,12 +11,9 @@
 
 ## Current Status
 
-- Phase: Recommendation
-- Sprint: Sprint 4 — Recommendation
 - Current Phase: Guided Execution
-- Current Task: S7-001 — Guided Execution Step Detail and Prompt Assets
-- Development Readiness: Code Complete / Manual Auth QA Pending
-- Development Readiness: Code Complete / Recommendation QA Pending
+- Current Task: PIVOT-002 — Requirement Analysis Foundation
+- Development Readiness: Code Complete / Authenticated Browser QA Pending
 - Billing Recommendation: Excluded from initial Beta
 - Repository Status: Local Git initialized
 - Next.js Status: Initialized
@@ -173,6 +170,14 @@
 - [x] Template Preview Detail
 - [x] First Incomplete Step UX
 
+### PIVOT-002 — Requirement Analysis Foundation
+
+- [x] Requirement Domain and versioned Requirement Snapshot
+- [x] Goal Parser
+- [x] Clarification, Constraint, and Consent models
+- [x] Project create/update Snapshot persistence
+- [x] Requirement Summary UI and unit tests
+
 ### Sprint 7 — Beta Release
 
 - Error States
@@ -204,7 +209,7 @@
 
 ## Next Task
 
-S7-002 — Interactive Prompt Builder and Export
+PIVOT-003 — Constraint Classification Foundation
 
 ## Operating Rule
 

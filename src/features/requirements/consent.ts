@@ -1,0 +1,2 @@
+import type { ConsentRequirement, Requirement } from "./types";
+export function getConsentRequirements(requirement: Requirement): ConsentRequirement[] { const text = `${requirement.goalOriginal} ${requirement.currentTools.join(" ")}`.toLocaleLowerCase(); const integrations = ["gmail", "이메일", "slack", "구글", "google", "카페24", "쇼핑몰"].filter((keyword) => text.includes(keyword)); return [...new Set(integrations)].map((integration) => ({ id: integration, subject: `${integration} 계정 연결`, reason: "외부 계정 데이터와 권한을 사용하기 전에 사용자의 직접 동의가 필요합니다.", status: "required" as const })); }
