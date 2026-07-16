@@ -2,26 +2,78 @@
 
 ## Status
 
-PLACEHOLDER / CURRENT TASK MOVED
+NEXT CANDIDATE / NOT APPROVED / NOT SCOPE FROZEN
 
-## Current Transition
+## Candidate
 
-`AGENT-PACKAGE-001` has been approved, scope frozen, and moved to
-`.buildflow/CURRENT_TASK.md`.
+LIVE-EVIDENCE-AGENT-001
 
-## Next Candidate
+## Title
 
-Not yet selected.
+AI Agent Live Evidence and Package Readiness QA
 
 ## Candidate Status
 
-NO NEXT CANDIDATE APPROVED
+NOT APPROVED / NOT SCOPE FROZEN
 
-This document no longer authorizes or describes AGENT-PACKAGE-001. The active
-Sprint scope is now owned by `.buildflow/CURRENT_TASK.md` and
-`docs/sprints/AGENT-PACKAGE-001/`.
+This document is a candidate placeholder only. It does not authorize
+implementation, live execution, deployment, or Provider actions.
+
+LIVE-EVIDENCE-AGENT-001 must receive explicit PM/CTO approval and Scope Frozen
+status before it can move to `.buildflow/CURRENT_TASK.md`.
+
+## Context
+
+The completed Agent foundation now includes:
+
+- Agent Definition contracts
+- MCP Registry and Tool contracts
+- Agent Tool Resolution Planner
+- Agent Validation Gate
+- BPS-compatible Agent Package/Profile contract
+
+The natural next step is to verify, with explicit approval, whether the Agent
+path can produce live evidence for a representative AI Agent and package
+readiness flow. This is aligned with the Roadmap's Agent Evidence step, but this
+candidate name uses `LIVE-EVIDENCE-AGENT-001` to emphasize evidence-first QA.
+
+## Candidate Scope Draft
+
+- Confirm the representative Agent target and evidence checklist
+- Reuse existing validated Agent Definition and Package/Profile contracts
+- Verify required Provider Credentials are present before any live action
+- Verify approval boundaries before any external resource action
+- Collect safe Evidence for Agent build, deployment, verification, and package
+  readiness where supported
+- Record explicit PASS / BLOCKED / NOT SUPPORTED states
+- Preserve secret-safe logs, snapshots, and reports
+
+## Candidate Exclusions
+
+- Unapproved live execution
+- Unapproved deployment
+- Runtime implementation
+- New Provider implementation
+- MCP Tool Invocation unless separately approved and scoped
+- Gateway Runtime implementation
+- Marketplace implementation
+- Package publishing
+- UI implementation
+- DB migration
+- Credential or Vault value exposure
+- Mock success or placeholder READY
+
+## Candidate Risks
+
+- Live Credential availability and quota may block evidence.
+- Provider account policy may require user action.
+- Existing Agent Runtime may support only the representative `ai-inquiry-v1`
+  path.
+- Package/Profile contract readiness does not equal Marketplace publish
+  readiness.
 
 ## Candidate Notes
 
-The next candidate will be selected only after AGENT-PACKAGE-001 reaches
-PM/CTO Review. Do not define or start a new Sprint from this placeholder.
+Do not start implementation or live QA from this placeholder. The candidate must
+be reviewed and either approved as a live evidence Sprint or renamed/aligned with
+the Roadmap's `AGENT-EVIDENCE-001` before activation.

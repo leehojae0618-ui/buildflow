@@ -1,10 +1,10 @@
 # BuildFlow Status
 
-- Workflow Status: REVIEW
-- Current Sprint: AGENT-PACKAGE-001
-- Current Task: Agent Package Profile and Export Contract
-- Last Completed Task: AGENT-VALIDATION-001 (CLOSED; pushed through `7425bf0`)
-- Latest Known Commit: 3b2b94e
-- Blockers: None for Sprint review. Marketplace publishing, archive writing, UI, DB migration, Provider execution, MCP Tool Invocation, Gateway Runtime execution, live Credential or Vault access, Agent Runtime Compiler, and Installer changes remain out of scope.
-- Next Action: PM/CTO Review of AGENT-PACKAGE-001.
+- Workflow Status: BETWEEN_SPRINTS
+- Current Sprint: None
+- Current Task: None
+- Last Completed Task: AGENT-PACKAGE-001 (CLOSED; pushed through `be12055`)
+- Latest Known Commit: be12055
+- Blockers: None. Next Sprint must be explicitly approved and scope frozen before implementation begins.
+- Next Action: Review and approve the next Sprint candidate in `.buildflow/NEXT_TASK.md`.
 - Product Focus: AI Agent automatic build, deployment, verification, and BPS Package sharing. General Web App and Platform expansion is on hold.

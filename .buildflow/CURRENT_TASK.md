@@ -2,68 +2,44 @@
 
 ## Task ID
 
-AGENT-PACKAGE-001
+NONE
 
 ## Title
 
-Agent Package Profile and Export Contract
+Between Sprints
 
 ## Status
 
-APPROVED / SCOPE FROZEN
+BETWEEN_SPRINTS
 
 ## Goal
 
-Define the BPS-compatible AI Agent Package/Profile contract and secret-free
-export readiness validation layer.
+No active implementation Sprint is currently open.
 
-This Sprint does not implement Marketplace publishing, archive writing, package
-installation, UI, runtime execution, or live Provider/MCP actions. Its purpose is
-to make a validated Agent Definition and Tool Resolution Plan portable as a
-reviewable Package/Profile contract.
+The previous Sprint, `AGENT-PACKAGE-001`, is closed after PM/CTO Review and
+remote push. The repository is ready for the next Sprint to be reviewed,
+approved, and scope frozen before any implementation begins.
 
 ## Scope
 
-- BPS AI Agent Profile contract
-- Agent Definition package metadata
-- MCP Server and Tool dependency declarations
-- Capability and Interface declarations
-- Credential Definition references
-- Permission, Risk, and Approval Requirement declarations
-- Verification Rule and Fallback Policy declarations
-- Secret-free package validation contract
-- Package export readiness checks as pure functions
-- Unit tests
+- Preserve the completed `AGENT-PACKAGE-001` implementation and report.
+- Keep the repository in a clean BETWEEN_SPRINTS state.
+- Use `.buildflow/NEXT_TASK.md` for the next candidate only.
 
 ## Excluded
 
-- Marketplace implementation
-- Package publishing
-- UI implementation
+- Implementation work
+- Code changes
 - DB migration
-- Actual MCP Tool Invocation
-- Gateway Runtime execution
 - Provider execution
-- Live Credential or Vault access
-- Agent Runtime Compiler
-- BPS archive writing or file export
-- Installer implementation changes
+- MCP Tool Invocation
+- Gateway Runtime execution
+- Runtime implementation
+- Deployment
+- Marketplace implementation
+- UI implementation
 - Automatic Commit
 - Push
-
-## First Safe Implementation Unit
-
-Only the following files may be created or modified for the first implementation
-unit:
-
-- `src/features/agents/package-profile.ts`
-- `src/features/agents/package-profile.test.ts`
-- `src/features/agents/index.ts`
-
-The first unit must remain pure TypeScript contract and validation work. It must
-not write package archives, access Credentials, invoke MCP Tools, execute
-Provider commands, create database records, or connect to Marketplace,
-Installer, Runtime, or UI paths.
 
 ## Current Stage
 
@@ -84,7 +60,12 @@ Installer, Runtime, or UI paths.
 - Unit tests: PASS
 - Out-of-scope Marketplace, Package publishing, UI, DB, MCP Invocation, Gateway Runtime, Provider, Vault, Runtime Compiler, archive writing, and Installer changes: NOT INCLUDED
 - Final quality gate: PASS
-- Next required step: PM/CTO Review
+- AGENT-PACKAGE-001 PM/CTO Review: COMPLETE
+- AGENT-PACKAGE-001 push: COMPLETE
+- Current active Sprint: NONE
+- Current workflow state: BETWEEN_SPRINTS
+- Next candidate: LIVE-EVIDENCE-AGENT-001
+- Next required step: LIVE-EVIDENCE-AGENT-001 approval review before activation
 
 ## Product Direction Note
 
