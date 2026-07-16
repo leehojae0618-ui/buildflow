@@ -2,6 +2,32 @@
 
 ## Task ID
 
+MARKET-001
+
+## Title
+
+BuildFlow Package Specification (BPS)
+
+## Status
+
+REVIEW
+
+## Goal
+
+Define BPS v1.0 as the Source of Truth before Package Builder, Installer, or Marketplace implementation.
+
+## Scope
+
+Manifest, compatibility, requirement, architecture, connectors, credentials, build plan, artifacts, verification, versioning, dependencies, security, lifecycle, export/import, and examples.
+
+## Completion Criteria
+
+- `docs/specs/BPS-1.0.md` exists and is cross-referenced.
+- Package Builder, Installer, and Marketplace UI remain unimplemented.
+- Sprint Report includes MVP Impact and PM Review status.
+
+## Task ID
+
 STABILIZE-004
 
 ## Title

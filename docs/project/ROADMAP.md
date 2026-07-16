@@ -35,6 +35,8 @@ PIVOT-001 changes the product direction from an AI Recommendation Platform to an
 
 Marketplace unit: `AI System Package` with Requirement, Blueprint, Prompt, Build Plan, Environment, Installer, Version, and Artifacts.
 
+MARKET-001 defines `docs/specs/BPS-1.0.md` as the canonical Package Format and Source of Truth. Package Builder and Installer implementation follow the specification; Marketplace UI follows those foundations.
+
 ## Product Review Freeze
 
 Product Review 001 freezes the next five implementation targets: PIVOT-005 Architecture Foundation, PIVOT-006 Build Intelligence, PIVOT-007 Build Planner, PIVOT-008 Installation Wizard, and PIVOT-009 Test Engine. Mid-Sprint product direction changes require change control and are recorded in `docs/project/PRODUCT_REVIEW.md`.
