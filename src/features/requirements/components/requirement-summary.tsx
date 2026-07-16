@@ -10,6 +10,7 @@ export function RequirementSummary({ snapshot, projectId, selectCandidateAction,
   const clarification = snapshot.clarificationSummary;
   const conversation = snapshot.conversation;
   return <section className="mt-8 border border-cyan-400/20 bg-cyan-400/5 p-6">
+    <GuidedBuildSummary goal={snapshot.requirement.expectedOutput ?? "AI 서비스"} intelligence={snapshot.buildIntelligence} hasArchitecture={Boolean(snapshot.architecture)} hasPlan={Boolean(snapshot.buildPlan)} />
     <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Requirement Snapshot</p>
     <h2 className="mt-3 text-lg font-medium">현재까지 이해한 내용</h2>
     <p className="mt-2 text-sm text-zinc-300">{snapshot.requirement.expectedOutput ?? "AI 시스템"} · {snapshot.requirement.category ?? "확인 필요"}</p>
@@ -51,3 +52,4 @@ import { PackageSummary } from "@/features/package-builder/components/package-su
 import { AutonomousSessionSummary } from "@/features/autonomous/components/session-summary";
 import { DeliverySummary } from "@/features/deployment/components/delivery-summary";
 import { estimateBuild } from "@/features/deployment/engine";
+import { GuidedBuildSummary } from "./guided-build-summary";

@@ -2,11 +2,11 @@
 
 ## Task ID
 
-AUTO-003
+HARDEN-001
 
 ## Title
 
-Deployment, Delivery and Completion Engine
+Guided Build Experience
 
 ## Status
 
@@ -14,11 +14,11 @@ REVIEW
 
 ## Goal
 
-기존 Orchestrator와 Provider 경계를 연결해 사용자가 결과 중심으로 구축 진행을 이해하고 Production Ready를 판정한다.
+개발 지식이 없는 사용자도 목표, 예상 시간·비용, 자동화율, 사용자 작업을 즉시 이해하도록 기존 시작 경험을 개선한다.
 
 ## Result
 
-영속 Deployment Session, 시간·비용·자동화율 Estimate, 상태 전이, Production Ready 조건, 결과 중심 Delivery UI를 추가했다. 외부 Provider Live QA는 Credential Gate로 유지한다.
+기존 Snapshot 데이터를 재사용하는 결과 중심 Build Summary와 준비·설계·구축·배포·완료 Timeline을 추가한다.
 
 ## Scope
 
