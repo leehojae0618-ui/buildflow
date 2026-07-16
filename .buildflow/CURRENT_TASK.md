@@ -2,11 +2,11 @@
 
 ## Task ID
 
-HARDEN-002
+DESIGN-001
 
 ## Title
 
-Progress Experience
+BuildFlow Design Language
 
 ## Status
 
@@ -14,11 +14,11 @@ REVIEW
 
 ## Goal
 
-긴 구축 작업에서도 AI가 일하고 있다는 확신을 주도록 진행 상태, 현재 작업, 진행률, 대기·재개 상태를 결과 중심으로 표현한다.
+BuildFlow 전체 UI/UX의 결과 중심·AI Narrative·정보 계층·시각 토큰과 공통 Component 기준을 문서로 고정한다.
 
 ## Result
 
-기존 Autonomous Session 상태를 사용자 문구와 진행률로 매핑하고 기술 enum은 상세 보기로 분리한다.
+`docs/design/DESIGN_LANGUAGE.md`에 Color, Spacing, Border, Radius, Elevation, Motion, Typography와 Component 규칙을 기록한다. 코드 변경은 없다.
 
 ## Scope
 
