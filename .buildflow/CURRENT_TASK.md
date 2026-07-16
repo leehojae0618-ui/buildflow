@@ -10,7 +10,7 @@ MCP Server Registry and Secure Gateway Contract
 
 ## Status
 
-APPROVED / SCOPE FROZEN
+REVIEW
 
 ## Goal
 
@@ -73,8 +73,22 @@ Provider commands, or connect to any Runtime path.
 - MCP-FOUNDATION-001 approved: PASS
 - Scope frozen: PASS
 - Sprint documents created: PASS
-- Code implementation: NOT STARTED
-- Next required step: First safe implementation unit
+- First implementation unit: PASS
+- MCP Server Registry contract: PASS
+- MCP Tool Definition contract: PASS
+- Tool Discovery Snapshot contract: PASS
+- Compatibility, version, trust, and health contract: PASS
+- Credential Reference isolation contract: PASS
+- Permission, Risk, and Approval policy contract: PASS
+- Tool allowlist and server-side input validation contract: PASS
+- Timeout, retry, idempotency, and rate-limit policy contract: PASS
+- Safe Result and sanitized Verification Evidence contract: PASS
+- BPS MCP dependency mapping contract: PASS
+- Registry / Tool / Discovery validator pure functions: PASS
+- Unit tests: PASS
+- Out-of-scope runtime, Provider, DB, Marketplace, UI, Agent Generator, and Provisioning execution changes: NOT INCLUDED
+- Final quality gate: PASS
+- Next required step: PM/CTO Review
 
 ## Product Direction Note
 
