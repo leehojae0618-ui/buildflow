@@ -6,6 +6,8 @@ This file records user-visible product changes. Internal refactoring, documentat
 
 - Connector Summary: Project Detail now shows required external providers and their connection status without executing OAuth or API calls.
 - Account Wizard Foundation: 필요한 계정별 동의 단계와 연결 상태를 Installation 흐름에서 확인할 수 있습니다. 실제 OAuth 인증은 실행하지 않습니다.
+- Architecture Options: 사용자가 무료 중심, 균형형, 성능 중심 후보를 비용·자동화율·작업량·시간 기준으로 비교할 수 있습니다.
+- Architecture Selection: 선택한 후보를 프로젝트에 저장하고, 이후 구축 계획과 연결 정보가 같은 Architecture를 기준으로 유지됩니다.
 
 ## v0.3.0 — Builder Foundation
 

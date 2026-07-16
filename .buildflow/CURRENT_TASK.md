@@ -2,11 +2,11 @@
 
 ## Task ID
 
-EXEC-003
+STABILIZE-003
 
 ## Title
 
-Credential Manager Foundation
+Persist Architecture Candidate Selection
 
 ## Status
 
@@ -14,7 +14,7 @@ REVIEW
 
 ## Goal
 
-외부 서비스 Credential을 안전하게 입력·형식 검증·참조하는 기반을 구축한다. 실제 외부 검증과 영구 Secret 저장은 제외한다.
+사용자가 선택한 Architecture 후보를 서버 소유 프로젝트 Snapshot에 저장하고, 선택된 후보만 하위 Engine의 확정 입력으로 사용한다.
 
 ## Working Directory
 

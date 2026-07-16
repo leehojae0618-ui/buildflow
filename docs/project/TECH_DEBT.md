@@ -10,6 +10,7 @@ This register records known limitations that are acceptable for the current impl
 | TD-004 | Provider Pricing | Cost estimates use a small static heuristic rather than a versioned pricing catalog | Estimates are directional, not billing-grade | Medium | PIVOT-006 follow-up / post-MVP pricing policy |
 | TD-005 | Architecture UX | Architecture Summary exposes provider names more prominently than component roles | Users may see a tool list instead of a system explanation | Medium | PIVOT-006 UX refinement |
 | TD-006 | Test Coverage | Full pipeline tests for Expert/Unsupported propagation and all legacy fields are incomplete | Regression risk across domain boundaries | Medium | PIVOT-006 test gate |
+| TD-007 | Candidate Selection | Candidate comparison selection is local UI state; durable selection and server-side recalculation remain deferred | Refresh or multi-device selection can lose the chosen candidate | Resolved | STABILIZE-003 |
 
 ## Debt Rules
 
