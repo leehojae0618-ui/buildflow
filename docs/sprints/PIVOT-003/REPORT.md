@@ -4,7 +4,7 @@
 
 - `src/features/requirements/types.ts`에 AutomationLevel, Capability, CapabilitySummary 추가
 - `constraints.ts`에 Capability Calculator 추가
-- Consent가 있는 외부 연결을 USER_ACTION으로 분류
+- Consent가 있는 외부 연결을 CONSENT_REQUIRED로 분류
 - Requirement Snapshot에 capabilities와 capabilitySummary 저장
 - Requirement Summary에 자동 구축률, 사용자 작업, 전문가 필요, 지원 범위 외 표시
 - 기존 Recommendation과 DB schema는 변경하지 않음

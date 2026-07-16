@@ -44,7 +44,7 @@ These are implemented foundations, not claims that the future Builder Engines ar
 
 ## Requirement Foundation
 
-The first Builder layer converts a natural-language goal into a versioned Requirement Snapshot. The snapshot contains Business Goal, Goal Type, Category, Expected Output, Primary User, Automation Level, Budget, Deadline, Current Tools, Restrictions, and Required Integrations. Missing information becomes Clarification Questions; known operating limits become Constraint Assessments; external access needs become Consent Requirements. Capability Calculator classifies buildable components as AUTO_BUILD, PARTIAL_BUILD, USER_ACTION, EXPERT_REQUIRED, or UNSUPPORTED and calculates the automation percentage.
+The first Builder layer converts a natural-language goal into a versioned Requirement Snapshot. The snapshot contains Business Goal, Goal Type, Category, Expected Output, Primary User, Automation Level, Budget, Deadline, Current Tools, Restrictions, and Required Integrations. Missing information becomes prioritized Clarification Questions with skip logic; the snapshot exposes completeness and build readiness. Known operating limits become Constraint Assessments; external access needs become Consent Requirements. Capability Calculator classifies buildable components as AUTO, PARTIAL, CONSENT_REQUIRED, MANUAL, EXPERT, or UNSUPPORTED and calculates five capability measures.
 
 Requirement is the source layer for future Build Sessions. Existing Recommendation remains compatible and is not removed or replaced in this Sprint.
 

@@ -1,10 +1,11 @@
 export type GoalType = "customer_support" | "content_creation" | "data_analysis" | "communication" | "productivity" | "unknown";
-export type ConstraintLevel = "automatic" | "partial_automatic" | "user_required" | "expert_required" | "not_supported";
-export type AutomationLevel = "AUTO_BUILD" | "PARTIAL_BUILD" | "USER_ACTION" | "EXPERT_REQUIRED" | "UNSUPPORTED";
+export type ConstraintLevel = "AUTO" | "PARTIAL" | "CONSENT_REQUIRED" | "MANUAL" | "EXPERT" | "UNSUPPORTED";
+export type AutomationLevel = ConstraintLevel;
 export type Requirement = { version: "requirement-v1"; goalOriginal: string; goalType: GoalType; category: string; expectedOutput: string; businessGoal: string; primaryUser: string | null; automationLevel: string; budget: string; deadline: string | null; currentTools: string[]; restrictions: string[]; requiredIntegrations: string[] };
-export type ClarificationQuestion = { id: string; question: string; field: keyof Requirement | "platform" | "user_volume"; required: boolean };
+export type ClarificationQuestion = { id: string; question: string; field: keyof Requirement | "platform" | "user_volume"; required: boolean; priority: number };
 export type ConstraintAssessment = { level: ConstraintLevel; reason: string; requiresUserAction: boolean };
 export type ConsentRequirement = { id: string; subject: string; reason: string; status: "required" | "not_required" | "pending" };
 export type Capability = { id: string; label: string; level: AutomationLevel; reason: string; requiresConsent: boolean };
-export type CapabilitySummary = { total: number; automatic: number; partial: number; userAction: number; expertRequired: number; unsupported: number; automationPercentage: number };
-export type RequirementSnapshot = { requirement: Requirement; clarificationQuestions: ClarificationQuestion[]; constraints: ConstraintAssessment[]; capabilities: Capability[]; capabilitySummary: CapabilitySummary; consents: ConsentRequirement[] };
+export type CapabilitySummary = { total: number; automation: number; consent: number; manual: number; expert: number; unsupported: number };
+export type ClarificationSummary = { completeness: number; buildReadiness: number; answered: number; total: number };
+export type RequirementSnapshot = { requirement: Requirement; clarificationQuestions: ClarificationQuestion[]; clarificationSummary: ClarificationSummary; constraints: ConstraintAssessment[]; capabilities: Capability[]; capabilitySummary: CapabilitySummary; consents: ConsentRequirement[] };
