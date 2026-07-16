@@ -2,63 +2,91 @@
 
 ## Task ID
 
-NONE
+AGENT-PACKAGE-001
 
 ## Title
 
-Between Sprints
+Agent Package Profile and Export Contract
 
 ## Status
 
-BETWEEN_SPRINTS
+APPROVED / SCOPE FROZEN
 
 ## Goal
 
-No active implementation Sprint is currently open.
+Define the BPS-compatible AI Agent Package/Profile contract and secret-free
+export readiness validation layer.
 
-The previous Sprint, `AGENT-VALIDATION-001`, is closed after PM/CTO Review and
-remote push. The repository is ready for the next Sprint to be reviewed,
-approved, and scope frozen before any implementation begins.
+This Sprint does not implement Marketplace publishing, archive writing, package
+installation, UI, runtime execution, or live Provider/MCP actions. Its purpose is
+to make a validated Agent Definition and Tool Resolution Plan portable as a
+reviewable Package/Profile contract.
 
 ## Scope
 
-- Preserve the completed `AGENT-VALIDATION-001` implementation and report.
-- Keep the repository in a clean BETWEEN_SPRINTS state.
-- Use `.buildflow/NEXT_TASK.md` for the next candidate only.
+- BPS AI Agent Profile contract
+- Agent Definition package metadata
+- MCP Server and Tool dependency declarations
+- Capability and Interface declarations
+- Credential Definition references
+- Permission, Risk, and Approval Requirement declarations
+- Verification Rule and Fallback Policy declarations
+- Secret-free package validation contract
+- Package export readiness checks as pure functions
+- Unit tests
 
 ## Excluded
 
-- Implementation work
-- Code changes
-- DB migration
-- Provider execution
-- MCP Tool Invocation
-- Gateway Runtime execution
 - Marketplace implementation
+- Package publishing
 - UI implementation
+- DB migration
+- Actual MCP Tool Invocation
+- Gateway Runtime execution
+- Provider execution
+- Live Credential or Vault access
+- Agent Runtime Compiler
+- BPS archive writing or file export
+- Installer implementation changes
 - Automatic Commit
 - Push
 
+## First Safe Implementation Unit
+
+Only the following files may be created or modified for the first implementation
+unit:
+
+- `src/features/agents/package-profile.ts`
+- `src/features/agents/package-profile.test.ts`
+- `src/features/agents/index.ts`
+
+The first unit must remain pure TypeScript contract and validation work. It must
+not write package archives, access Credentials, invoke MCP Tools, execute
+Provider commands, create database records, or connect to Marketplace,
+Installer, Runtime, or UI paths.
+
 ## Current Stage
 
-- AGENT-VALIDATION-001 PM/CTO Review: COMPLETE
-- AGENT-VALIDATION-001 final quality gate: PASS
-- AGENT-VALIDATION-001 push: COMPLETE
-- Current active Sprint: NONE
-- Current workflow state: BETWEEN_SPRINTS
-- Next candidate: AGENT-PACKAGE-001
-- Next required step: AGENT-PACKAGE-001 approval review before activation
+- AGENT-VALIDATION-001 closed and pushed: PASS
+- AGENT-PACKAGE-001 approved: PASS
+- Scope frozen: PASS
+- Sprint documents created: PASS
+- First implementation unit: PENDING
+- Final quality gate: PENDING
+- Next required step: first implementation unit
 
 ## Product Direction Note
 
 BuildFlow의 신규 제품 개발 기본 방향은 AI Agent 자동 구축, 배포, 검증,
-BPS Package 공유다. AGENT-VALIDATION-001은 Agent Definition과 Tool
-Resolution Plan이 안전하게 실행 가능한지 판정하는 검증 계층이며, 실제 실행
-또는 READY 저장은 이후 별도 Sprint에서 다룬다.
+BPS Package 공유다. AGENT-PACKAGE-001은 검증된 Agent Definition과 Tool
+Resolution Plan을 BPS 호환 Agent Package/Profile로 표현하는 계약 계층이다.
+실제 Marketplace 등록, archive export, installer 변경은 이후 별도 Sprint에서
+다룬다.
 
 ## Preserved Work
 
 `CAPABILITY-002`, `LIVE-EVIDENCE-001/002`, `STABILIZE-READY-001`,
 `AGENT-FOUNDATION-001`, `MCP-FOUNDATION-001`, `AGENT-GENERATOR-001`,
-`PROJECT-REVIEW-001`, `PRODUCT-REVIEW-003.5`, `HARDEN-003`,
-`MCP-STRATEGY-001`의 완료 문서와 커밋 이력을 삭제하거나 덮어쓰지 않는다.
+`AGENT-VALIDATION-001`, `PROJECT-REVIEW-001`, `PRODUCT-REVIEW-003.5`,
+`HARDEN-003`, `MCP-STRATEGY-001`의 완료 문서와 커밋 이력을 삭제하거나
+덮어쓰지 않는다.
