@@ -11,6 +11,7 @@ This file records user-visible product changes. Internal refactoring, documentat
 - Build Execution Foundation: 확정된 Architecture와 Build Plan으로 실행 준비 상태와 안전한 Artifact 생성을 시작할 수 있습니다. 인증·비용 발생 작업은 사용자 승인 대기 상태로 유지됩니다.
 - Verification Foundation: 구조 검증과 Provider 연결 검증을 분리하고, Credential이 없으면 검증 대기 상태로 명확히 표시합니다.
 - Persistent Verification: Provider 검증 상태와 마지막 결과를 저장해 Project 재진입 후에도 동일한 상태를 복원합니다.
+- Package Builder: Project의 Requirement·Architecture·Connector·Build Plan·Verification Snapshot을 BPS v1.0 `.bfpkg`로 미리 보고 Export할 수 있습니다.
 
 ## v0.3.0 — Builder Foundation
 
