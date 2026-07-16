@@ -2,11 +2,11 @@
 
 ## Task ID
 
-STABILIZE-003
+EXEC-004
 
 ## Title
 
-Persist Architecture Candidate Selection
+Build Executor v1
 
 ## Status
 
@@ -14,7 +14,7 @@ REVIEW
 
 ## Goal
 
-사용자가 선택한 Architecture 후보를 서버 소유 프로젝트 Snapshot에 저장하고, 선택된 후보만 하위 Engine의 확정 입력으로 사용한다.
+확정된 Architecture와 Build Plan을 서버 실행 상태로 변환하고, 안전한 Artifact 작업과 대기·승인 상태를 관리한다.
 
 ## Working Directory
 

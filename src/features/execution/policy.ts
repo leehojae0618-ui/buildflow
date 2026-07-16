@@ -1,0 +1,10 @@
+import type { ExecutionApproval, ExecutionStatus, ExecutionTask } from "./types";
+export type TestExecutionState = { execute: "SUCCEEDED" | "FAILED" | "WAITING"; verify: "SUCCEEDED" | "FAILED" | "PENDING"; overall: "PASS" | "READY_WITH_WARNINGS" | "FAILED" };
+export function requiresApproval(task: ExecutionTask, estimatedCostCents: number, externalResource = false) { return task.action === "AUTO" && (estimatedCostCents > 0 || externalResource); }
+export function approvalPending(task: ExecutionTask, approval: ExecutionApproval | undefined) { return requiresApproval(task, approval?.estimatedCostCents ?? 0, Boolean(approval?.provider)) && approval?.status !== "APPROVED"; }
+export function approve(approval: ExecutionApproval): ExecutionApproval { return approval.status === "PENDING" ? { ...approval, status: "APPROVED", decidedAt: new Date().toISOString() } : approval; }
+export function reject(approval: ExecutionApproval): ExecutionApproval { return approval.status === "PENDING" ? { ...approval, status: "REJECTED", decidedAt: new Date().toISOString() } : approval; }
+export function pauseForTask(task: ExecutionTask): ExecutionStatus { return task.action === "USER_ACTION" ? "WAITING_FOR_USER" : task.action === "EXPERT_REQUIRED" ? "BLOCKED" : "READY"; }
+export function retryTask(task: ExecutionTask, retryable: boolean): ExecutionTask { if (!retryable || task.retryCount >= task.maxRetries || task.status === "SUCCEEDED") return task; return { ...task, retryCount: task.retryCount + 1, status: "READY" }; }
+export function cancelTask(task: ExecutionTask): ExecutionTask { return task.status === "SUCCEEDED" ? task : { ...task, status: "CANCELLED" }; }
+export function summarizeExecution(execute: TestExecutionState["execute"], verify: TestExecutionState["verify"]): TestExecutionState { if (execute === "FAILED" || verify === "FAILED") return { execute, verify, overall: "FAILED" }; if (execute === "WAITING" || verify === "PENDING") return { execute, verify, overall: "READY_WITH_WARNINGS" }; return { execute, verify, overall: "PASS" }; }

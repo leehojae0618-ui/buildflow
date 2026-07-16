@@ -14,6 +14,245 @@ export type Database = {
   }
   public: {
     Tables: {
+      build_executions: {
+        Row: {
+          architecture_snapshot: Json
+          build_plan_snapshot: Json
+          created_at: string
+          id: string
+          idempotency_key: string
+          project_id: string
+          selected_candidate_id: string | null
+          selected_strategy: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          architecture_snapshot?: Json
+          build_plan_snapshot?: Json
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          project_id: string
+          selected_candidate_id?: string | null
+          selected_strategy?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          architecture_snapshot?: Json
+          build_plan_snapshot?: Json
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          project_id?: string
+          selected_candidate_id?: string | null
+          selected_strategy?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "build_executions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      execution_approvals: {
+        Row: {
+          created_at: string
+          decided_at: string | null
+          description: string
+          estimated_cost_cents: number
+          execution_task_id: string
+          id: string
+          impact: string
+          provider: string | null
+          reversible: boolean
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          decided_at?: string | null
+          description: string
+          estimated_cost_cents?: number
+          execution_task_id: string
+          id?: string
+          impact?: string
+          provider?: string | null
+          reversible?: boolean
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          decided_at?: string | null
+          description?: string
+          estimated_cost_cents?: number
+          execution_task_id?: string
+          id?: string
+          impact?: string
+          provider?: string | null
+          reversible?: boolean
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "execution_approvals_execution_task_id_fkey"
+            columns: ["execution_task_id"]
+            isOneToOne: false
+            referencedRelation: "execution_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      execution_attempts: {
+        Row: {
+          attempt_number: number
+          error_code: string | null
+          error_message: string | null
+          execution_task_id: string
+          finished_at: string | null
+          id: string
+          started_at: string
+          status: string
+        }
+        Insert: {
+          attempt_number: number
+          error_code?: string | null
+          error_message?: string | null
+          execution_task_id: string
+          finished_at?: string | null
+          id?: string
+          started_at?: string
+          status: string
+        }
+        Update: {
+          attempt_number?: number
+          error_code?: string | null
+          error_message?: string | null
+          execution_task_id?: string
+          finished_at?: string | null
+          id?: string
+          started_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "execution_attempts_execution_task_id_fkey"
+            columns: ["execution_task_id"]
+            isOneToOne: false
+            referencedRelation: "execution_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      execution_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          execution_id: string
+          execution_task_id: string | null
+          id: string
+          safe_metadata: Json
+          status: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          execution_id: string
+          execution_task_id?: string | null
+          id?: string
+          safe_metadata?: Json
+          status?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          execution_id?: string
+          execution_task_id?: string | null
+          id?: string
+          safe_metadata?: Json
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "execution_events_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "build_executions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "execution_events_execution_task_id_fkey"
+            columns: ["execution_task_id"]
+            isOneToOne: false
+            referencedRelation: "execution_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      execution_tasks: {
+        Row: {
+          action: string
+          artifact_manifest: Json
+          created_at: string
+          dependency_keys: Json
+          execution_id: string
+          id: string
+          max_retries: number
+          retry_count: number
+          status: string
+          task_key: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          action: string
+          artifact_manifest?: Json
+          created_at?: string
+          dependency_keys?: Json
+          execution_id: string
+          id?: string
+          max_retries?: number
+          retry_count?: number
+          status?: string
+          task_key: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          artifact_manifest?: Json
+          created_at?: string
+          dependency_keys?: Json
+          execution_id?: string
+          id?: string
+          max_retries?: number
+          retry_count?: number
+          status?: string
+          task_key?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "execution_tasks_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "build_executions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           ai_experience: string | null

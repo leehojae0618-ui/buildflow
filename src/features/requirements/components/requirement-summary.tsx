@@ -3,7 +3,7 @@ const labels: Record<string, string> = { AUTO: "자동 구축", PARTIAL: "부분
 
 type Snapshot = { requirement?: { expectedOutput?: string; category?: string }; clarificationQuestions?: { question: string; required: boolean }[]; clarificationSummary?: { completeness: number; buildReadiness: number }; conversation?: { state: string; missing: string[]; summary: { nextQuestion: { question: string } | null } }; constraints?: { level: string; reason: string }[]; capabilities?: { id: string; label: string; level: string; reason: string }[]; capabilitySummary?: { automation: number; consent: number; manual: number; expert: number; unsupported: number }; architecture?: { summary: string; components: { id: string; name: string; category: string }[]; connections: { from: string; to: string; label: string }[] }; connectors?: { providerId: string; providerName: string; status: string; required: boolean }[]; credentialReferences?: Parameters<typeof CredentialSummary>[0]["references"]; accountConnection?: Parameters<typeof AccountSummary>[0]["initialSession"]; buildPlan?: { summary: string; phases: { id: string; title: string; taskIds: string[] }[]; tasks: { id: string; title: string; action: string; status: string }[]; progress: { percentage: number; completed: number; total: number } }; installation?: Parameters<typeof InstallationWizard>[0]["initialSession"]; testSuite?: { summary: string; result: { status: string; passed: number; warnings: number; failed: number }; healthChecks: { provider: string; status: string }[] }; buildIntelligence?: { buildScore: number; automation: number; estimatedBuildMinutes: number; estimatedSetupMinutes: number; estimatedMonthlyCostCents: number; difficulty: string; riskScore: number; confidence: number; requiredAccounts: string[]; userActions: string[]; summary: string } };
 
-export function RequirementSummary({ snapshot, projectId, selectCandidateAction }: { snapshot: Snapshot | undefined; projectId?: string; selectCandidateAction?: (formData: FormData) => Promise<{ error?: string }> }) {
+export function RequirementSummary({ snapshot, projectId, selectCandidateAction, startExecutionAction }: { snapshot: Snapshot | undefined; projectId?: string; selectCandidateAction?: (formData: FormData) => Promise<{ error?: string }>; startExecutionAction?: (formData: FormData) => Promise<{ error?: string; executionId?: string }> }) {
   if (!snapshot?.requirement) return null;
   const pending = snapshot.clarificationQuestions?.filter((question) => question.required) ?? [];
   const summary = snapshot.capabilitySummary;
@@ -25,6 +25,7 @@ export function RequirementSummary({ snapshot, projectId, selectCandidateAction 
     {snapshot.buildPlan && <PlannerSummary plan={snapshot.buildPlan} />}
     {snapshot.installation && <InstallationWizard initialSession={snapshot.installation} />}
     {snapshot.testSuite && <TestSummary suite={snapshot.testSuite} />}
+    <ExecutionSummary projectId={projectId} selectedCandidateId={(snapshot as Snapshot & { selectedCandidateId?: string | null }).selectedCandidateId} startAction={startExecutionAction} />
     {pending.length > 0 && <div className="mt-5"><h3 className="text-sm font-medium text-zinc-300">우선 확인할 질문</h3><ul className="mt-2 grid gap-2 text-sm text-zinc-500">{pending.map((question) => <li key={question.question}>• {question.question}</li>)}</ul></div>}
     <div className="mt-5"><h3 className="text-sm font-medium text-zinc-300">구축 가능 범위</h3><div className="mt-2 grid gap-2 text-sm text-zinc-500">{snapshot.capabilities?.map((item) => <p key={item.id}><span className="mr-2 text-cyan-300">{labels[item.level] ?? item.level}</span>{item.label} — {item.reason}</p>) ?? snapshot.constraints?.map((item) => <p key={item.reason}>{item.reason}</p>)}</div></div>
   </section>;
@@ -39,3 +40,4 @@ function TestSummary({ suite }: { suite: NonNullable<Snapshot["testSuite"]> }) {
 import { InstallationWizard } from "@/features/installation/components/installation-wizard";
 import { AccountSummary } from "@/features/connectors/components/account-summary";
 import { CredentialSummary } from "@/features/credentials/components/credential-summary";
+import { ExecutionSummary } from "@/features/execution/components/execution-summary";

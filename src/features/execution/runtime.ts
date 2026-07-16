@@ -1,0 +1,1 @@
+export type ExecutionResult = { ok: boolean; status: "SUCCEEDED" | "WAITING_FOR_USER" | "WAITING_FOR_APPROVAL" | "FAILED"; error?: { code: string; message: string; retryable: boolean }; artifacts?: string[] };

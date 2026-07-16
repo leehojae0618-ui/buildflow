@@ -1,0 +1,6 @@
+import type { BuildPlan } from "../planner/types";
+import type { ArchitectureSnapshot } from "../requirements/types";
+import type { ExecutionTask, ExecutionStatus } from "./types";
+
+export function executionTasksFromBuildPlan(plan: BuildPlan, architecture: ArchitectureSnapshot, selectedCandidateId?: string | null): { status: ExecutionStatus; tasks: ExecutionTask[] } { if (!selectedCandidateId || !architecture.components.length) return { status: "BLOCKED", tasks: [] }; const tasks = plan.tasks.map((task) => ({ id: `execution-task-${task.id}`, taskKey: task.id, title: task.title, action: task.action, status: task.action === "AUTO" ? "READY" as const : task.action === "USER_ACTION" ? "WAITING_FOR_USER" as const : "BLOCKED" as const, dependencyKeys: task.dependencyIds, retryCount: 0, maxRetries: 2, artifactManifest: [] })); return { status: tasks.some((task) => task.status === "BLOCKED") ? "BLOCKED" : tasks.some((task) => task.status === "WAITING_FOR_USER") ? "WAITING_FOR_USER" : "READY", tasks }; }
+export function nextRunnableTask(tasks: ExecutionTask[]): ExecutionTask | null { const succeeded = new Set(tasks.filter((task) => task.status === "SUCCEEDED").map((task) => task.taskKey)); return tasks.find((task) => task.status === "READY" && task.dependencyKeys.every((dependency) => succeeded.has(dependency))) ?? null; }

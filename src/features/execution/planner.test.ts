@@ -1,0 +1,4 @@
+import { describe, expect, it } from "vitest";
+import { executionTasksFromBuildPlan, nextRunnableTask } from "./planner";
+import { createRequirementSnapshot } from "../requirements/snapshot";
+describe("execution planner", () => { it("blocks execution without a selected candidate", () => { const snapshot = createRequirementSnapshot("AI 고객센터"); expect(executionTasksFromBuildPlan(snapshot.buildPlan, snapshot.architecture, null).status).toBe("BLOCKED"); }); it("keeps user and expert work out of automatic execution", () => { const snapshot = createRequirementSnapshot("AI 고객센터", { automation_level: "high" }); const plan = executionTasksFromBuildPlan(snapshot.buildPlan, snapshot.architecture, snapshot.selectedCandidateId); expect(plan.tasks.some((task) => task.status === "WAITING_FOR_USER")).toBe(true); expect(nextRunnableTask(plan.tasks)?.action).toBe("AUTO"); }); });
