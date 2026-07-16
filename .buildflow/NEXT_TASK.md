@@ -2,11 +2,11 @@
 
 ## Task ID
 
-PIVOT-008
+PRODUCT-REVIEW-002
 
 ## Title
 
-Installation Wizard Foundation
+Beta Readiness and Execution Layer Review
 
 ## Status
 

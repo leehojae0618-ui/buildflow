@@ -17,5 +17,6 @@ export type ArchitectureComponent = { id: string; name: string; category: Compon
 export type ArchitectureConnection = { from: string; to: string; label: string };
 export type ArchitectureDependency = { componentId: string; dependsOn: string[] };
 export type ArchitectureSnapshot = { version: "architecture-v1"; components: ArchitectureComponent[]; connections: ArchitectureConnection[]; dependencies: ArchitectureDependency[]; summary: string };
-export type RequirementSnapshot = { requirement: Requirement; clarificationQuestions: ClarificationQuestion[]; clarificationSummary: ClarificationSummary; conversation: Conversation; constraints: ConstraintAssessment[]; capabilities: Capability[]; capabilitySummary: CapabilitySummary; consents: ConsentRequirement[]; architecture: ArchitectureSnapshot; buildIntelligence: BuildIntelligence; buildPlan: BuildPlan };
+export type RequirementSnapshot = { requirement: Requirement; clarificationQuestions: ClarificationQuestion[]; clarificationSummary: ClarificationSummary; conversation: Conversation; constraints: ConstraintAssessment[]; capabilities: Capability[]; capabilitySummary: CapabilitySummary; consents: ConsentRequirement[]; architecture: ArchitectureSnapshot; buildIntelligence: BuildIntelligence; buildPlan: BuildPlan; installation: InstallationSession };
 import type { BuildPlan } from "../planner/types";
+import type { InstallationSession } from "../installation/types";

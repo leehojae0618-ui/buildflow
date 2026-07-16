@@ -19,6 +19,9 @@ No unreleased user-visible changes.
 - Architecture를 Preparation, Accounts, Environment, Database, Authentication, Automation, Deployment, Verification 단계의 Build Plan으로 변환
 - 각 Build Task를 자동 수행, 사용자 작업, 전문가 필요로 구분
 - Build Plan 전체 진행률과 Phase별 Task 요약 표시
+- Build Plan을 Installation Wizard의 현재 단계와 다음 단계 흐름으로 실행
+- 자동 준비, 사용자 작업, 전문가 작업을 설치 단계에서 구분
+- 설치 단계 완료 체크와 Installation Progress 표시
 
 Release stage: Builder Foundation. RC is not started.
 
