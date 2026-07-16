@@ -1,0 +1,7 @@
+export type AutonomousState = "ANALYZING" | "WAITING_FOR_PREFERENCE" | "PLANNING" | "WAITING_FOR_CREDENTIAL" | "WAITING_FOR_CONSENT" | "WAITING_FOR_APPROVAL" | "PROVISIONING" | "VERIFYING" | "RECOVERING" | "READY" | "READY_WITH_WARNINGS" | "BLOCKED" | "FAILED" | "CANCELLED";
+export type AutonomousPhase = "ANALYZING" | "PREFERENCE" | "PLANNING" | "PREPARATION" | "APPROVAL" | "PROVISIONING" | "VERIFICATION";
+export type UserAction = { id: string; label: string; required: boolean; kind: "CREDENTIAL" | "CONSENT" | "APPROVAL" | "PREFERENCE"; estimatedMinutes: number; estimatedCostCents: number; autoResume: boolean };
+export type ActionBundle = { required: UserAction[]; optional: UserAction[]; totalEstimatedMinutes: number; totalEstimatedCostCents: number; autoResume: boolean };
+export type ApprovalPlan = { resources: string[]; estimatedCostCents: number; permissionChanges: string[]; publicDeployment: boolean; reversible: boolean; scopeVersion: string };
+export type FatigueMetrics = { userInputCount: number; approvalCount: number; userInterruptionCount: number; automaticStepCount: number; retryCount: number; resumeCount: number; elapsedTime: number; timeWaitingForUser: number; automationPercentage: number };
+export type AutonomousSession = { id: string; projectId: string; userId: string; status: AutonomousState; currentPhase: AutonomousPhase; completedPhases: AutonomousPhase[]; blockedReason?: string; nextUserAction?: UserAction; actionBundle: ActionBundle; approvalPlan: ApprovalPlan; metrics: FatigueMetrics; executionId?: string };

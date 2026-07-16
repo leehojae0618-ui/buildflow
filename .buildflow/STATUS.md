@@ -1,9 +1,9 @@
 # BuildFlow Status
 
 - Workflow Status: REVIEW
-- Current Sprint: BETA-QA-001
-- Current Task: Production Evidence QA
-- Last Completed Task: MARKET-003
+- Current Sprint: AUTO-001
+- Current Task: Autonomous Build Orchestrator Foundation
+- Last Completed Task: BETA-QA-001
 - Latest Known Commit: 130f802
 - Blockers: None
-- Next Action: PM Review BETA-QA-001 — Beta Blocked pending production evidence rerun
+- Next Action: PM Review AUTO-001

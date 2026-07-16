@@ -1,0 +1,9 @@
+create table public.autonomous_build_sessions (
+  id uuid primary key default gen_random_uuid(), project_id uuid not null references public.projects(id) on delete cascade, user_id uuid not null references auth.users(id) on delete cascade,
+  status text not null default 'ANALYZING' check (status in ('ANALYZING','WAITING_FOR_PREFERENCE','PLANNING','WAITING_FOR_CREDENTIAL','WAITING_FOR_CONSENT','WAITING_FOR_APPROVAL','PROVISIONING','VERIFYING','RECOVERING','READY','READY_WITH_WARNINGS','BLOCKED','FAILED','CANCELLED')),
+  current_phase text not null default 'ANALYZING', completed_phases jsonb not null default '[]'::jsonb, blocked_reason text, next_user_action jsonb, action_bundle jsonb not null default '{}'::jsonb, approval_plan jsonb not null default '{}'::jsonb, metrics jsonb not null default '{}'::jsonb, execution_id uuid references public.build_executions(id) on delete set null, created_at timestamptz not null default timezone('utc', now()), updated_at timestamptz not null default timezone('utc', now()), unique(project_id, status)
+);
+create index autonomous_sessions_project_idx on public.autonomous_build_sessions(project_id, updated_at desc);
+create trigger autonomous_build_sessions_updated_at before update on public.autonomous_build_sessions for each row execute function public.set_updated_at();
+alter table public.autonomous_build_sessions enable row level security;
+create policy "Users can manage owned autonomous sessions" on public.autonomous_build_sessions for all to authenticated using ((select auth.uid()) = user_id and exists (select 1 from public.projects p where p.id = project_id and p.user_id = (select auth.uid()))) with check ((select auth.uid()) = user_id and exists (select 1 from public.projects p where p.id = project_id and p.user_id = (select auth.uid())));

@@ -14,6 +14,12 @@ export type Database = {
   }
   public: {
     Tables: {
+      autonomous_build_sessions: {
+        Row: { id: string; project_id: string; user_id: string; status: string; current_phase: string; completed_phases: Json; blocked_reason: string | null; next_user_action: Json; action_bundle: Json; approval_plan: Json; metrics: Json; execution_id: string | null; created_at: string; updated_at: string }
+        Insert: { id?: string; project_id: string; user_id: string; status?: string; current_phase?: string; completed_phases?: Json; blocked_reason?: string | null; next_user_action?: Json; action_bundle?: Json; approval_plan?: Json; metrics?: Json; execution_id?: string | null; created_at?: string; updated_at?: string }
+        Update: { id?: string; project_id?: string; user_id?: string; status?: string; current_phase?: string; completed_phases?: Json; blocked_reason?: string | null; next_user_action?: Json; action_bundle?: Json; approval_plan?: Json; metrics?: Json; execution_id?: string | null; created_at?: string; updated_at?: string }
+        Relationships: [{ foreignKeyName: "autonomous_build_sessions_project_id_fkey"; columns: ["project_id"]; isOneToOne: false; referencedRelation: "projects"; referencedColumns: ["id"] }, { foreignKeyName: "autonomous_build_sessions_execution_id_fkey"; columns: ["execution_id"]; isOneToOne: false; referencedRelation: "build_executions"; referencedColumns: ["id"] }]
+      }
       build_executions: {
         Row: {
           architecture_snapshot: Json

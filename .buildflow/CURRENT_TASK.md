@@ -2,11 +2,11 @@
 
 ## Task ID
 
-BETA-QA-001
+AUTO-001
 
 ## Title
 
-Production Evidence QA
+Autonomous Build Orchestrator Foundation
 
 ## Status
 
@@ -14,20 +14,15 @@ REVIEW
 
 ## Goal
 
-실제 운영 환경에서 BuildFlow 정상 동작의 Evidence를 확보한다. 새 기능은 구현하지 않는다.
+Requirement, Architecture, Connector, Credential, Build Plan, Execution, Approval, and Verification을 하나의 영구 Autonomous Build Session으로 연결한다.
 
-## Result
+## Scope
 
-Beta Blocked. Automated domain evidence passes, but authenticated production/browser/device/account/Supabase RLS evidence is unavailable in this session.
-
-## Evidence
-
-`docs/sprints/BETA-QA-001/EVIDENCE-REPORT.md`
+Session state machine, unified user action bundle, approval plan, automatic continuation, failure transitions, fatigue metrics, ownership/RLS, and Project Detail UI.
 
 ## Completion Criteria
 
-- Beta Ready 또는 Beta Blocked 판정
-- Critical/Major/Minor 목록
-- 전체 흐름 및 Package round-trip 결과
-- Secret/RLS/소유권 검증 결과
-- Commit/Push 없음
+- Existing engines are reused; no new provider family is added.
+- Session state persists across refresh/re-login.
+- Secret-safe metrics/events and server ownership checks are maintained.
+- Tests, lint, typecheck, build, and diff check pass.
