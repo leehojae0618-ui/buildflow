@@ -2,26 +2,67 @@
 
 ## Status
 
-PLACEHOLDER / CURRENT TASK MOVED
+NEXT CANDIDATE / NOT APPROVED / NOT SCOPE FROZEN
 
-## Current Transition
+## Candidate
 
-`AGENT-VALIDATION-001` has been approved, scope frozen, and moved to
-`.buildflow/CURRENT_TASK.md`.
+AGENT-PACKAGE-001
 
-## Next Candidate
+## Title
 
-Not yet selected.
+Agent Package Profile and Export Contract
 
 ## Candidate Status
 
-NO NEXT CANDIDATE APPROVED
+NOT APPROVED / NOT SCOPE FROZEN
 
-This document no longer authorizes or describes AGENT-VALIDATION-001. The active
-Sprint scope is now owned by `.buildflow/CURRENT_TASK.md` and
-`docs/sprints/AGENT-VALIDATION-001/`.
+This document is a candidate placeholder only. It does not authorize
+implementation. AGENT-PACKAGE-001 must receive explicit PM/CTO approval and
+Scope Frozen status before it can move to `.buildflow/CURRENT_TASK.md`.
+
+## Context
+
+The completed Agent sequence now includes:
+
+- Agent Definition contracts
+- MCP Registry and Tool contracts
+- Agent Tool Resolution Planner
+- Agent Validation Gate
+
+The natural next step is to define how a validated Agent becomes a
+BPS-compatible, secret-free, exportable Agent Package/Profile for later
+Marketplace sharing.
+
+## Candidate Scope Draft
+
+- BPS AI Agent Profile contract
+- Agent Definition package metadata
+- MCP Server and Tool dependency declarations
+- Capability and Interface declarations
+- Credential Definition references
+- Permission, Risk, and Approval Requirement declarations
+- Verification Rule and Fallback Policy declarations
+- Secret-free package validation contract
+- Package export readiness checks as pure functions
+- Unit tests
+
+## Candidate Exclusions
+
+- Marketplace implementation
+- Package publishing
+- UI implementation
+- DB migration
+- Actual MCP Tool Invocation
+- Gateway Runtime execution
+- Provider execution
+- Live Credential or Vault access
+- Agent Runtime Compiler
+- BPS archive writing or file export
+- Installer implementation changes
 
 ## Candidate Notes
 
-The next candidate will be selected only after AGENT-VALIDATION-001 reaches
-PM/CTO Review. Do not define or start a new Sprint from this placeholder.
+AGENT-PACKAGE-001 should remain contract and validation focused unless PM/CTO
+approval explicitly expands the scope. It should not claim that an Agent is
+published or Marketplace-ready without separate Evidence and Marketplace
+Sprints.

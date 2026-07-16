@@ -2,86 +2,52 @@
 
 ## Task ID
 
-AGENT-VALIDATION-001
+NONE
 
 ## Title
 
-Agent Definition and Tool Resolution Validation Gate
+Between Sprints
 
 ## Status
 
-REVIEW
+BETWEEN_SPRINTS
 
 ## Goal
 
-Agent Definition, Agent Blueprint, MCP Tool Contract, Tool Resolution Plan을
-실행 전에 검증하는 순수 Validation Gate를 만든다.
+No active implementation Sprint is currently open.
 
-이번 Sprint는 실제 MCP Tool 호출, Gateway Runtime, Provider 실행, READY
-영구 저장을 구현하지 않는다. 목적은 Agent Runtime 또는 READY 판단 이전에
-어떤 조합이 안전하고 완전한지 판단할 수 있는 Source of Truth를 만드는
-것이다.
+The previous Sprint, `AGENT-VALIDATION-001`, is closed after PM/CTO Review and
+remote push. The repository is ready for the next Sprint to be reviewed,
+approved, and scope frozen before any implementation begins.
 
 ## Scope
 
-- Agent Definition validation against Agent Blueprint
-- Tool Resolution Plan validation
-- Required capability coverage validation
-- MCP Tool permission and risk validation by contract
-- Approval requirement coverage validation
-- Credential / user-action unresolved dependency validation
-- Safe READY-blocking reasons
-- Pure validation functions
-- Unit tests
+- Preserve the completed `AGENT-VALIDATION-001` implementation and report.
+- Keep the repository in a clean BETWEEN_SPRINTS state.
+- Use `.buildflow/NEXT_TASK.md` for the next candidate only.
 
 ## Excluded
 
-- Actual MCP Tool Invocation
-- Gateway Runtime execution
+- Implementation work
+- Code changes
+- DB migration
 - Provider execution
+- MCP Tool Invocation
+- Gateway Runtime execution
 - Marketplace implementation
 - UI implementation
-- DB migration
-- Provisioning execution path integration
-- Live Credential or Vault access
-- Runtime Compiler integration
-- READY persistence integration
-- Verification persistence integration
 - Automatic Commit
 - Push
 
-## First Safe Implementation Unit
-
-Only the following files may be created or modified for the first implementation
-unit:
-
-- `src/features/agents/validation-gate.ts`
-- `src/features/agents/validation-gate.test.ts`
-- `src/features/agents/index.ts`
-
-The first unit must remain pure TypeScript validation work. It must not call
-external services, read Credentials, create database tables, execute Provider
-commands, invoke MCP Tools, or connect to any Runtime path.
-
 ## Current Stage
 
-- AGENT-GENERATOR-001 closed and pushed: PASS
-- AGENT-VALIDATION-001 approved: PASS
-- Scope frozen: PASS
-- Sprint documents created: PASS
-- First implementation unit: PASS
-- Agent Definition validation against Agent Blueprint: PASS
-- Tool Resolution Plan validation: PASS
-- Required capability coverage validation: PASS
-- MCP Tool permission and risk validation by contract: PASS
-- Approval requirement coverage validation: PASS
-- Credential / user-action unresolved dependency validation: PASS
-- Safe READY-blocking reasons: PASS
-- Pure validation functions: PASS
-- Unit tests: PASS
-- Out-of-scope MCP Tool Invocation, Gateway Runtime, Provider, Marketplace, UI, DB, Provisioning, Vault, Runtime Compiler, READY persistence, and Verification persistence changes: NOT INCLUDED
-- Final quality gate: PASS
-- Next required step: PM/CTO Review
+- AGENT-VALIDATION-001 PM/CTO Review: COMPLETE
+- AGENT-VALIDATION-001 final quality gate: PASS
+- AGENT-VALIDATION-001 push: COMPLETE
+- Current active Sprint: NONE
+- Current workflow state: BETWEEN_SPRINTS
+- Next candidate: AGENT-PACKAGE-001
+- Next required step: AGENT-PACKAGE-001 approval review before activation
 
 ## Product Direction Note
 
