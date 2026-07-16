@@ -2,11 +2,11 @@
 
 ## Task ID
 
-EXEC-QA-001
+STABILIZE-004
 
 ## Title
 
-OpenAI and Supabase Real Provider QA
+Persist Verification Runs and Results
 
 ## Status
 
@@ -14,7 +14,7 @@ REVIEW
 
 ## Goal
 
-실제 테스트 Credential로 OpenAI와 Supabase의 read-only Verification 흐름을 검증하고 API QA 결과를 기록한다.
+Provider Verification Run·Target·Attempt·Evidence를 서버에 저장하고 새로고침·재로그인 후 동일한 상태를 복원한다.
 
 ## Working Directory
 

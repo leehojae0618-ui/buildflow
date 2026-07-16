@@ -12,6 +12,7 @@ This register records known limitations that are acceptable for the current impl
 | TD-006 | Test Coverage | Full pipeline tests for Expert/Unsupported propagation and all legacy fields are incomplete | Regression risk across domain boundaries | Medium | PIVOT-006 test gate |
 | TD-007 | Candidate Selection | Candidate comparison selection is local UI state; durable selection and server-side recalculation remain deferred | Refresh or multi-device selection can lose the chosen candidate | Resolved | STABILIZE-003 |
 | TD-008 | External Provider QA | Provider connection validation adapters are not exercised without real user credentials | External verification remains READY_WITH_WARNINGS or WAITING_FOR_USER | Medium | Execution QA follow-up |
+| TD-009 | Verification Transactions | Run, target, and attempt inserts are sequential because the client-side Supabase path has no transaction RPC | A failed child insert can leave an incomplete run; cleanup/transaction RPC is follow-up | Medium | Stabilize follow-up after PM review |
 
 ## Debt Rules
 

@@ -593,6 +593,154 @@ export type Database = {
           },
         ]
       }
+      verification_attempts: {
+        Row: {
+          attempt_number: number
+          completed_at: string | null
+          id: string
+          safe_evidence: Json
+          started_at: string
+          status: string
+          verification_target_id: string
+        }
+        Insert: {
+          attempt_number: number
+          completed_at?: string | null
+          id?: string
+          safe_evidence?: Json
+          started_at?: string
+          status: string
+          verification_target_id: string
+        }
+        Update: {
+          attempt_number?: number
+          completed_at?: string | null
+          id?: string
+          safe_evidence?: Json
+          started_at?: string
+          status?: string
+          verification_target_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_attempts_verification_target_id_fkey"
+            columns: ["verification_target_id"]
+            isOneToOne: false
+            referencedRelation: "verification_targets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      verification_errors: {
+        Row: { id: string; verification_attempt_id: string; safe_error_code: string; message: string; retryable: boolean; created_at: string }
+        Insert: { id?: string; verification_attempt_id: string; safe_error_code: string; message: string; retryable?: boolean; created_at?: string }
+        Update: { id?: string; verification_attempt_id?: string; safe_error_code?: string; message?: string; retryable?: boolean; created_at?: string }
+        Relationships: [{ foreignKeyName: "verification_errors_verification_attempt_id_fkey"; columns: ["verification_attempt_id"]; isOneToOne: false; referencedRelation: "verification_attempts"; referencedColumns: ["id"] }]
+      }
+      verification_runs: {
+        Row: {
+          created_at: string
+          credential_snapshot_version: string | null
+          execution_id: string | null
+          final_status: string
+          id: string
+          project_id: string
+          result: Json
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credential_snapshot_version?: string | null
+          execution_id?: string | null
+          final_status?: string
+          id?: string
+          project_id: string
+          result?: Json
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credential_snapshot_version?: string | null
+          execution_id?: string | null
+          final_status?: string
+          id?: string
+          project_id?: string
+          result?: Json
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_runs_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "build_executions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "verification_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      verification_targets: {
+        Row: {
+          expires_at: string | null
+          id: string
+          last_attempt_at: string | null
+          latency_ms: number | null
+          provider: string
+          required: boolean
+          safe_error_code: string | null
+          status: string
+          verification_run_id: string
+          verification_stage: string
+          verified_capabilities: Json
+        }
+        Insert: {
+          expires_at?: string | null
+          id?: string
+          last_attempt_at?: string | null
+          latency_ms?: number | null
+          provider: string
+          required?: boolean
+          safe_error_code?: string | null
+          status?: string
+          verification_run_id: string
+          verification_stage: string
+          verified_capabilities?: Json
+        }
+        Update: {
+          expires_at?: string | null
+          id?: string
+          last_attempt_at?: string | null
+          latency_ms?: number | null
+          provider?: string
+          required?: boolean
+          safe_error_code?: string | null
+          status?: string
+          verification_run_id?: string
+          verification_stage?: string
+          verified_capabilities?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_targets_verification_run_id_fkey"
+            columns: ["verification_run_id"]
+            isOneToOne: false
+            referencedRelation: "verification_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workflow_template_steps: {
         Row: {
           description: string
