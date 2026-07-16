@@ -1,15 +1,16 @@
 "use server";
 
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { estimateBuild } from "./engine";
 import type { BuildEstimate, DeploymentSession } from "./types";
 
 async function owned(projectId: string) {
-  const supabase = await createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const client = await createSupabaseServerClient();
+  const { data: { user } } = await client.auth.getUser();
   if (!user) return null;
-  const { data: project } = await supabase.from("projects").select("id, user_id, goal_constraints").eq("id", projectId).eq("user_id", user.id).maybeSingle();
-  return project ? { supabase, user, project } : null;
+  const { data: project } = await client.from("projects").select("id, user_id, goal_constraints").eq("id", projectId).eq("user_id", user.id).maybeSingle();
+  return project ? { supabase: createSupabaseAdminClient(), user, project } : null;
 }
 
 export async function startDeploymentSession(projectId: string): Promise<{ error?: string; session?: DeploymentSession }> {

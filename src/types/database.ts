@@ -14,17 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
-      deployment_sessions: {
-        Row: { id: string; project_id: string; user_id: string; state: string; current_stage: string; completed_stages: Json; estimate: Json; completion_report: Json; retry_count: number; automatic_recovery_count: number; created_at: string; updated_at: string }
-        Insert: { id?: string; project_id: string; user_id: string; state?: string; current_stage?: string; completed_stages?: Json; estimate?: Json; completion_report?: Json; retry_count?: number; automatic_recovery_count?: number; created_at?: string; updated_at?: string }
-        Update: { id?: string; project_id?: string; user_id?: string; state?: string; current_stage?: string; completed_stages?: Json; estimate?: Json; completion_report?: Json; retry_count?: number; automatic_recovery_count?: number; created_at?: string; updated_at?: string }
-        Relationships: [{ foreignKeyName: "deployment_sessions_project_id_fkey"; columns: ["project_id"]; isOneToOne: false; referencedRelation: "projects"; referencedColumns: ["id"] }]
-      }
       autonomous_build_sessions: {
-        Row: { id: string; project_id: string; user_id: string; status: string; current_phase: string; completed_phases: Json; blocked_reason: string | null; next_user_action: Json; action_bundle: Json; approval_plan: Json; metrics: Json; execution_id: string | null; created_at: string; updated_at: string }
-        Insert: { id?: string; project_id: string; user_id: string; status?: string; current_phase?: string; completed_phases?: Json; blocked_reason?: string | null; next_user_action?: Json; action_bundle?: Json; approval_plan?: Json; metrics?: Json; execution_id?: string | null; created_at?: string; updated_at?: string }
-        Update: { id?: string; project_id?: string; user_id?: string; status?: string; current_phase?: string; completed_phases?: Json; blocked_reason?: string | null; next_user_action?: Json; action_bundle?: Json; approval_plan?: Json; metrics?: Json; execution_id?: string | null; created_at?: string; updated_at?: string }
-        Relationships: [{ foreignKeyName: "autonomous_build_sessions_project_id_fkey"; columns: ["project_id"]; isOneToOne: false; referencedRelation: "projects"; referencedColumns: ["id"] }, { foreignKeyName: "autonomous_build_sessions_execution_id_fkey"; columns: ["execution_id"]; isOneToOne: false; referencedRelation: "build_executions"; referencedColumns: ["id"] }]
+        Row: {
+          action_bundle: Json
+          approval_granted_at: string | null
+          approval_plan: Json
+          approval_scope_version: string | null
+          blocked_reason: string | null
+          completed_phases: Json
+          consent_granted_at: string | null
+          created_at: string
+          current_phase: string
+          execution_id: string | null
+          id: string
+          metrics: Json
+          next_user_action: Json | null
+          project_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          action_bundle?: Json
+          approval_granted_at?: string | null
+          approval_plan?: Json
+          approval_scope_version?: string | null
+          blocked_reason?: string | null
+          completed_phases?: Json
+          consent_granted_at?: string | null
+          created_at?: string
+          current_phase?: string
+          execution_id?: string | null
+          id?: string
+          metrics?: Json
+          next_user_action?: Json | null
+          project_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          action_bundle?: Json
+          approval_granted_at?: string | null
+          approval_plan?: Json
+          approval_scope_version?: string | null
+          blocked_reason?: string | null
+          completed_phases?: Json
+          consent_granted_at?: string | null
+          created_at?: string
+          current_phase?: string
+          execution_id?: string | null
+          id?: string
+          metrics?: Json
+          next_user_action?: Json | null
+          project_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "autonomous_build_sessions_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "build_executions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "autonomous_build_sessions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       build_executions: {
         Row: {
@@ -69,6 +132,59 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "build_executions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deployment_sessions: {
+        Row: {
+          automatic_recovery_count: number
+          completed_stages: Json
+          completion_report: Json
+          created_at: string
+          current_stage: string
+          estimate: Json
+          id: string
+          project_id: string
+          retry_count: number
+          state: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          automatic_recovery_count?: number
+          completed_stages?: Json
+          completion_report?: Json
+          created_at?: string
+          current_stage?: string
+          estimate?: Json
+          id?: string
+          project_id: string
+          retry_count?: number
+          state?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          automatic_recovery_count?: number
+          completed_stages?: Json
+          completion_report?: Json
+          created_at?: string
+          current_stage?: string
+          estimate?: Json
+          id?: string
+          project_id?: string
+          retry_count?: number
+          state?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deployment_sessions_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
@@ -433,6 +549,141 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_command_runs: {
+        Row: {
+          approval_scope: string
+          attempt_number: number
+          autonomous_session_id: string | null
+          command_id: string
+          command_kind: string
+          completed_at: string | null
+          created_at: string
+          execution_id: string | null
+          id: string
+          payload_checksum: string
+          project_id: string
+          provider: string
+          safe_result: Json
+          started_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approval_scope: string
+          attempt_number?: number
+          autonomous_session_id?: string | null
+          command_id: string
+          command_kind: string
+          completed_at?: string | null
+          created_at?: string
+          execution_id?: string | null
+          id?: string
+          payload_checksum: string
+          project_id: string
+          provider: string
+          safe_result?: Json
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approval_scope?: string
+          attempt_number?: number
+          autonomous_session_id?: string | null
+          command_id?: string
+          command_kind?: string
+          completed_at?: string | null
+          created_at?: string
+          execution_id?: string | null
+          id?: string
+          payload_checksum?: string
+          project_id?: string
+          provider?: string
+          safe_result?: Json
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_command_runs_autonomous_session_id_fkey"
+            columns: ["autonomous_session_id"]
+            isOneToOne: false
+            referencedRelation: "autonomous_build_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provider_command_runs_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "build_executions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provider_command_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      provider_credentials: {
+        Row: {
+          created_at: string
+          credential_version: number
+          expires_at: string | null
+          id: string
+          last_validated_at: string | null
+          project_id: string
+          provider: string
+          safe_metadata: Json
+          status: string
+          updated_at: string
+          user_id: string
+          vault_secret_id: string
+        }
+        Insert: {
+          created_at?: string
+          credential_version?: number
+          expires_at?: string | null
+          id?: string
+          last_validated_at?: string | null
+          project_id: string
+          provider: string
+          safe_metadata?: Json
+          status?: string
+          updated_at?: string
+          user_id: string
+          vault_secret_id: string
+        }
+        Update: {
+          created_at?: string
+          credential_version?: number
+          expires_at?: string | null
+          id?: string
+          last_validated_at?: string | null
+          project_id?: string
+          provider?: string
+          safe_metadata?: Json
+          status?: string
+          updated_at?: string
+          user_id?: string
+          vault_secret_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_credentials_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       recommendation_candidates: {
         Row: {
           id: string
@@ -644,10 +895,39 @@ export type Database = {
         ]
       }
       verification_errors: {
-        Row: { id: string; verification_attempt_id: string; safe_error_code: string; message: string; retryable: boolean; created_at: string }
-        Insert: { id?: string; verification_attempt_id: string; safe_error_code: string; message: string; retryable?: boolean; created_at?: string }
-        Update: { id?: string; verification_attempt_id?: string; safe_error_code?: string; message?: string; retryable?: boolean; created_at?: string }
-        Relationships: [{ foreignKeyName: "verification_errors_verification_attempt_id_fkey"; columns: ["verification_attempt_id"]; isOneToOne: false; referencedRelation: "verification_attempts"; referencedColumns: ["id"] }]
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          retryable: boolean
+          safe_error_code: string
+          verification_attempt_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          retryable?: boolean
+          safe_error_code: string
+          verification_attempt_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          retryable?: boolean
+          safe_error_code?: string
+          verification_attempt_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_errors_verification_attempt_id_fkey"
+            columns: ["verification_attempt_id"]
+            isOneToOne: false
+            referencedRelation: "verification_attempts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       verification_runs: {
         Row: {
@@ -857,7 +1137,55 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      clone_provider_credentials_for_worker: {
+        Args: {
+          p_providers: string[]
+          p_source_project_id: string
+          p_target_project_id: string
+          p_user_id: string
+        }
+        Returns: number
+      }
+      persist_verification_run: {
+        Args: {
+          p_attempts: Json
+          p_credential_snapshot_version: string
+          p_execution_id: string
+          p_final_status: string
+          p_project_id: string
+          p_result: Json
+          p_status: string
+          p_targets: Json
+        }
+        Returns: string
+      }
+      persist_verification_run_for_owner: {
+        Args: {
+          p_attempts: Json
+          p_credential_snapshot_version: string
+          p_execution_id: string
+          p_final_status: string
+          p_project_id: string
+          p_result: Json
+          p_status: string
+          p_targets: Json
+          p_user_id: string
+        }
+        Returns: string
+      }
+      resolve_provider_credential: {
+        Args: { p_project_id: string; p_provider: string; p_user_id: string }
+        Returns: string
+      }
+      store_provider_credential: {
+        Args: {
+          p_project_id: string
+          p_provider: string
+          p_safe_metadata?: Json
+          p_secret: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

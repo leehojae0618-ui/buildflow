@@ -8,6 +8,7 @@ export const credentialDefinitions: CredentialDefinition[] = [
   { id: "gemini-api-key", providerId: "gemini", name: "Gemini API Key", fields: [token()] },
   { id: "supabase-url-key", providerId: "supabase", name: "Supabase URL / Key", fields: [url(), token("key", "Project Key")] },
   { id: "github-token", providerId: "github", name: "GitHub Token", fields: [token("token", "Personal Access Token")] },
+  { id: "vercel-token", providerId: "vercel", name: "Vercel Token", fields: [token("token", "Access Token")] },
   { id: "google-oauth", providerId: "google", name: "Google OAuth", fields: [] },
   { id: "slack-token", providerId: "slack", name: "Slack Token or Webhook", fields: [token("token", "Token or Webhook")] },
   { id: "resend-api-key", providerId: "resend", name: "Resend API Key", fields: [token()] },
