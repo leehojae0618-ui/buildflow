@@ -7,7 +7,7 @@ CURRENT TASK COMPLETED
 Completed output:
 
 ```text
-docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-VERIFICATION.md
+docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-EVIDENCE-BUNDLE.md
 ```
 
 Current Package Readiness judgement:
@@ -74,6 +74,52 @@ VERIFIED_WITH_LIMITATIONS
 
 `VERIFIED` is intentionally not returned by the first implementation.
 
+## Completed Task
+
+```text
+PACKAGE-EVIDENCE-BUNDLE-001
+```
+
+Status:
+
+```text
+IMPLEMENTED
+PM REVIEW REQUIRED
+REFERENCE-ONLY PURE BUILDER
+```
+
+Completed:
+
+- reference-only Evidence Bundle contract
+- deterministic bundle id
+- deterministic core
+- bundle integrity checksum
+- evidence reference normalization, deduplication, and sorting
+- status model: `INCOMPLETE`, `VALID`, `VALID_WITH_LIMITATIONS`, `INVALID`
+- approval reference separation
+- secret-safe failure reporting
+
+Code implementation:
+
+```text
+IMPLEMENTED
+```
+
+Implemented output:
+
+```text
+src/features/agents/package-evidence-bundle.ts
+src/features/agents/package-evidence-bundle.test.ts
+```
+
+Current valid bundle status:
+
+```text
+VALID_WITH_LIMITATIONS
+```
+
+`VALID` is intentionally not returned by the first implementation.
+
 ## Next Single Task Candidate
 
 Do not start another follow-up without PM confirmation.
@@ -81,14 +127,15 @@ Do not start another follow-up without PM confirmation.
 Recommended:
 
 ```text
-PACKAGE-EVIDENCE-BUNDLE-001
-Define or implement the smallest deterministic Evidence Bundle contract.
+PACKAGE-VERIFICATION-PIPELINE-001
+Compose export → verification → evidence bundle as one pure pipeline.
 ```
 
 Suggested minimal file scope:
 
 ```text
 To be decided after PM review.
+src/features/agents/index.ts
 ```
 
 This must remain evidence-contract work unless PM explicitly approves

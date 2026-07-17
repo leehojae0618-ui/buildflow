@@ -7,3 +7,4 @@ export * from "./validation-gate";
 export * from "./package-profile";
 export * from "./package-export";
 export * from "./package-verification";
+export * from "./package-evidence-bundle";

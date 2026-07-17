@@ -262,3 +262,121 @@ Commit / Push / Deploy:
 - Commit: not performed
 - Push: not performed
 - Deploy: not performed
+
+## 2026-07-17 — PACKAGE-EVIDENCE-BUNDLE-001 Design Draft
+
+Created:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-EVIDENCE-BUNDLE.md`
+
+Updated:
+
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Verified existing implementation references:
+
+- `src/features/agents/package-export.ts`
+- `src/features/agents/package-verification.ts`
+- `src/features/agents/package-profile.ts`
+- `src/features/agents/validator.ts`
+- `src/features/agents/validation-gate.ts`
+- `src/features/agents/types.ts`
+- `src/features/agents/index.ts`
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/QA-SCOPE.md`
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-VERIFICATION.md`
+
+Design scope covered:
+
+- Evidence Bundle format and boundary
+- reference-first bundle contract
+- package artifact checksum/reference
+- verification report checksum/reference
+- evidence reference model
+- deterministic core
+- bundle integrity checksum
+- status model
+- approval reference separation
+- security requirements
+- Quality Score input candidates
+
+Code changes:
+
+- None for PACKAGE-EVIDENCE-BUNDLE-001 design.
+
+Runtime / MCP / Provider / Marketplace changes:
+
+- Runtime changes: none
+- MCP Tool Invocation: none
+- Provider execution: none
+- Marketplace implementation: none
+- Deployment: none
+- Vault or Credential access: none
+- DB/API/UI changes: none
+
+Commit / Push / Deploy:
+
+- Commit: not performed
+- Push: not performed
+- Deploy: not performed
+
+## 2026-07-17 — PACKAGE-EVIDENCE-BUNDLE-001 Pure Builder
+
+Modified implementation files:
+
+- `src/features/agents/package-evidence-bundle.ts`
+- `src/features/agents/package-evidence-bundle.test.ts`
+- `src/features/agents/index.ts`
+
+Modified documentation and memory files:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-EVIDENCE-BUNDLE.md`
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/QA-SCOPE.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Implemented bundle behavior:
+
+- consumes existing Package Export artifact and Package Verification report
+- stays reference-only
+- requires explicit artifact/report references instead of inventing them
+- creates deterministic bundle id
+- normalizes, deduplicates, and sorts evidence references
+- computes deterministic core and bundle integrity checksum
+- keeps approval reference separate from status
+- returns `VALID_WITH_LIMITATIONS` for current valid package evidence scope
+- returns `INCOMPLETE` for missing required references/evidence
+- returns `INVALID` for integrity, contract, status, or secret safety conflicts
+- does not return `VALID` in the first implementation
+
+Added tests:
+
+- `src/features/agents/package-evidence-bundle.test.ts`
+- 20 tests covering valid bundle, deterministic id/core/checksum, evidence
+  deduplication, evidence ordering, package id/version mismatch, artifact
+  checksum mismatch, invalid/unverified report status, missing evidence, secret
+  safety, credential references, approval reference handling, non-VALID
+  behavior, input non-mutation, metadata determinism, and secret-safe failures.
+
+Runtime / MCP / Provider / Marketplace changes:
+
+- Runtime changes: none
+- MCP Tool Invocation: none
+- Provider execution: none
+- Marketplace implementation: none
+- Deployment: none
+- Vault or Credential access: none
+- DB/API/UI changes: none
+
+Validation:
+
+- Target package evidence bundle test: PASS — 20 tests
+- Typecheck: PASS
+
+Commit / Push / Deploy:
+
+- Commit: not performed
+- Push: not performed
+- Deploy: not performed

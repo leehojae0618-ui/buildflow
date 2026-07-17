@@ -190,6 +190,68 @@ CONDITIONALLY_READY
 
 Further implementation still requires PM approval before starting.
 
+## Package Evidence Bundle Design
+
+Status:
+
+```text
+IMPLEMENTED
+PM REVIEW REQUIRED
+REFERENCE-ONLY PURE BUILDER
+```
+
+Design document:
+
+```text
+docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-EVIDENCE-BUNDLE.md
+```
+
+The design defines a minimal deterministic Evidence Bundle boundary for
+connecting Package Export artifacts and Package Verification Reports by
+reference:
+
+- reference-first bundle contract
+- package artifact checksum/reference
+- verification report checksum/reference
+- evidence reference normalization
+- deterministic core boundary
+- bundle integrity checksum model
+- status model: `INCOMPLETE`, `VALID`, `VALID_WITH_LIMITATIONS`, `INVALID`
+- approval reference separation
+- Quality Score input candidates
+- explicit exclusion of Runtime, MCP Invocation, Provider execution,
+  Marketplace, DB, API, UI, and deploy behavior
+
+Package Evidence Bundle code is now implemented as a pure reference-only
+builder:
+
+```text
+src/features/agents/package-evidence-bundle.ts
+src/features/agents/package-evidence-bundle.test.ts
+```
+
+Implemented behavior:
+
+- consumes existing `AgentPackageExportArtifact`
+- consumes existing `PackageVerificationReport`
+- accepts explicit package artifact and verification report references
+- builds deterministic `bundleId`
+- normalizes, deduplicates, and sorts evidence references
+- computes deterministic bundle core
+- computes bundle integrity checksum
+- returns `VALID_WITH_LIMITATIONS` for current valid package evidence scope
+- returns `INCOMPLETE` for missing required references/evidence
+- returns `INVALID` for integrity, contract, secret safety, or status conflicts
+- keeps approval reference separate from bundle status
+- does not return `VALID` in the first implementation
+
+Target bundle test:
+
+```text
+npx vitest run src/features/agents/package-evidence-bundle.test.ts
+PASS — 20 tests
+```
+
 ## Major Gaps
 
 - `GAP-001` / P1: Actual MCP Tool Invocation Evidence is not found.
@@ -198,6 +260,10 @@ Further implementation still requires PM approval before starting.
 - `GAP-002B` / P2: Package Verification pure verifier is implemented;
   standalone Evidence Bundle artifact, persisted verification report, and
   Approval Gate integration remain out of scope.
+- `GAP-002C` / P2: Package Evidence Bundle design exists; pure bundle builder,
+  reference-only pure bundle builder is implemented; persistence, pipeline
+  composition, API/UI presentation, and Approval Gate integration remain out of
+  scope.
 - `GAP-003` / P1: Marketplace publish readiness Evidence is not found.
 - `GAP-004` / P2: Runtime Compiler is planned but not implemented.
 - `GAP-005` / P2: `.buildflow/STATUS.md` Latest Known Commit mismatch.
