@@ -1,0 +1,352 @@
+# LIVE-EVIDENCE-AGENT-001
+
+## 1. Status
+
+```text
+DRAFT
+NOT APPROVED
+QA SCOPE UNDER REVIEW
+```
+
+This document defines a QA-only scope proposal. It does not activate the Sprint
+and does not authorize live execution, deployment, MCP Tool Invocation, Provider
+actions, Credential access, Vault access, Runtime implementation, Marketplace
+implementation, or Package publishing.
+
+Roadmap alignment:
+
+```text
+AGENT-EVIDENCE-001
+```
+
+## 2. Objective
+
+Confirm what BuildFlow can already prove about the representative AI Agent path
+using existing contracts, tests, and recorded Evidence, then separate that from
+Evidence that still requires future approved live action.
+
+The goal is not to make a new live deployment. The goal is to create a clear,
+evidence-backed QA boundary for:
+
+- Agent foundation contracts
+- MCP contract readiness
+- Tool Resolution readiness
+- Agent Validation readiness
+- Agent Package/Profile readiness
+- Existing live provider Evidence
+- Missing live Evidence that requires separate approval
+
+## 3. QA Scope
+
+### In Scope
+
+- Review current Agent and MCP contract implementation files.
+- Review existing tests for contract and validation behavior.
+- Review existing LIVE-EVIDENCE reports.
+- Define Evidence Checklist by module.
+- Define Package Readiness states.
+- Identify gaps between existing implementation and Evidence requirements.
+- Mark future live action needs without executing them.
+
+### Minimum Modules Reviewed
+
+| Contract or module | Status | Primary evidence |
+|---|---|---|
+| Agent Capability Contract | `IMPLEMENTED` | `src/features/agents/types.ts`, `src/features/agents/validator.test.ts` |
+| Block Contract | `IMPLEMENTED` | `src/features/agents/types.ts`, `src/features/agents/validator.test.ts` |
+| Blueprint Contract | `IMPLEMENTED` | `src/features/agents/types.ts`, `src/features/agents/compatibility.ts`, `src/features/agents/compatibility.test.ts` |
+| Agent Definition Contract | `IMPLEMENTED` | `src/features/agents/types.ts`, `src/features/agents/generator.ts`, `src/features/agents/generator.test.ts` |
+| MCP Registry Contract | `IMPLEMENTED` | `src/features/mcp/types.ts`, `src/features/mcp/validator.ts`, `src/features/mcp/validator.test.ts` |
+| MCP Tool Contract | `IMPLEMENTED` | `src/features/mcp/types.ts`, `src/features/mcp/validator.ts`, `src/features/mcp/validator.test.ts` |
+| Tool Resolution Planner | `IMPLEMENTED` | `src/features/agents/tool-resolution.ts`, `src/features/agents/tool-resolution.test.ts` |
+| Validation Gate | `IMPLEMENTED` | `src/features/agents/validation-gate.ts`, `src/features/agents/validation-gate.test.ts` |
+| Agent Package Contract | `IMPLEMENTED` | `src/features/agents/package-profile.ts`, `src/features/agents/package-profile.test.ts` |
+| Agent Profile Contract | `IMPLEMENTED` | `src/features/agents/package-profile.ts`, `docs/sprints/AGENT-PACKAGE-001/REPORT.md` |
+
+## 4. Out of Scope
+
+- Provider execution
+- Live Credential or Vault access
+- Deployment
+- Actual MCP Tool Invocation
+- Gateway Runtime implementation
+- Runtime implementation
+- Marketplace implementation
+- Package publishing
+- ZIP installer archive writing
+- DB migration
+- UI implementation
+- Secret or Credential value inspection
+- Mock success
+- Placeholder READY
+
+## 5. Contract and Module Inventory
+
+| Area | Files inspected | Current state | Notes |
+|---|---|---|---|
+| Agent capability and blocks | `src/features/agents/types.ts` | `IMPLEMENTED` | Defines `agentCapabilities`, delivery modes, interface modes, block kinds, blocks, Agent Blueprint, Agent Definition, and `aiInquiryV1AgentBlueprint`. |
+| Agent validator | `src/features/agents/validator.ts`, `src/features/agents/validator.test.ts` | `IMPLEMENTED` | Provides definition validation and test coverage for valid/invalid contracts. |
+| Agent generator | `src/features/agents/generator.ts`, `src/features/agents/generator.test.ts` | `IMPLEMENTED` | Pure function creates Agent Definition from Blueprint input. |
+| Agent compatibility | `src/features/agents/compatibility.ts`, `src/features/agents/compatibility.test.ts` | `IMPLEMENTED` | Maps `ai-inquiry-v1` compatibility without invoking provisioning. |
+| MCP contracts | `src/features/mcp/types.ts`, `src/features/mcp/validator.ts`, `src/features/mcp/validator.test.ts` | `IMPLEMENTED` | Defines server, tool, credential reference, permission, timeout, retry, idempotency, safe result, and evidence contracts. |
+| Tool Resolution | `src/features/agents/tool-resolution.ts`, `src/features/agents/tool-resolution.test.ts` | `IMPLEMENTED` | Resolves capability requirements to MCP Tool candidates by contract and input flags only. |
+| Validation Gate | `src/features/agents/validation-gate.ts`, `src/features/agents/validation-gate.test.ts` | `IMPLEMENTED` | Blocks invalid definition, unresolved dependencies, missing tool contracts, unsafe raw results, and approval mismatch. |
+| Package/Profile | `src/features/agents/package-profile.ts`, `src/features/agents/package-profile.test.ts` | `IMPLEMENTED` | Creates BPS AI Agent Profile candidate and validates secret-free export readiness. |
+| Existing live provider Evidence | `docs/sprints/LIVE-EVIDENCE-002/REPORT.md` | `IMPLEMENTED` for representative `ai-inquiry-v1` provider path | Confirms GitHub, Supabase, Vercel, OpenAI, health check, functional AI inquiry, verification persistence, idempotency, and ownership for TEST A. |
+| MCP live invocation Evidence | none found | `NOT FOUND` | Current contract files and reports explicitly do not execute MCP Tools. |
+| Package artifact export Evidence | `src/features/agents/package-export.ts`, `src/features/agents/package-export.test.ts` | `IMPLEMENTED` | Deterministic JSON artifact export exists for ready Agent Package/Profile data; ZIP, installer package, UI download, and Marketplace publishing remain out of scope. |
+| Marketplace publish Evidence | none found | `NOT FOUND` | Marketplace remains future/out of scope. |
+
+## 6. Evidence Checklist
+
+### Agent Capability / Block / Blueprint / Definition
+
+Required Evidence:
+
+- Type definitions exist for capabilities, delivery modes, interface modes, and
+  blocks.
+- Blueprint declares capabilities, delivery modes, interface modes, required
+  providers, compatibility, and blocks.
+- Validator rejects invalid Blueprint/Definition mismatches.
+- Generator creates deterministic Agent Definition output from Blueprint input.
+- Tests cover valid and invalid inputs.
+
+Current Evidence:
+
+- `src/features/agents/types.ts`
+- `src/features/agents/validator.test.ts`
+- `src/features/agents/generator.test.ts`
+- `src/features/agents/compatibility.test.ts`
+
+### MCP Registry / MCP Tool Contract
+
+Required Evidence:
+
+- Server and Tool definitions include version, transport, trust, health,
+  compatibility, schema, credential reference, permission, risk, timeout, retry,
+  idempotency, rate limit, safe result, verification, and allowlist fields.
+- Credential contract is reference-only.
+- Safe result policy forbids raw result storage.
+- Validator rejects unsafe or incomplete contracts.
+- Tests cover invalid and valid contracts.
+
+Current Evidence:
+
+- `src/features/mcp/types.ts`
+- `src/features/mcp/validator.ts`
+- `src/features/mcp/validator.test.ts`
+
+### Tool Resolution Planner
+
+Required Evidence:
+
+- Capability requirements are matched to MCP Tool capabilities.
+- Missing tools return `UNSUPPORTED`.
+- Missing credential flag returns `USER_ACTION_REQUIRED`.
+- Approval requirement returns `APPROVAL_REQUIRED`.
+- Disallowed tools are not silently resolved.
+- Summary counts are deterministic.
+- No Vault or Provider validation occurs.
+
+Current Evidence:
+
+- `src/features/agents/tool-resolution.ts`
+- `src/features/agents/tool-resolution.test.ts`
+
+### Validation Gate
+
+Required Evidence:
+
+- Agent Definition is checked against Blueprint.
+- Required capabilities are checked.
+- Tool Resolution summary consistency is checked.
+- Required unresolved dependencies block readiness.
+- MCP Tool contract absence blocks readiness.
+- Non-allowlisted tools block readiness.
+- Raw result storage blocks readiness.
+- Approval mismatch blocks readiness.
+- Output contains safe blocking reasons only.
+
+Current Evidence:
+
+- `src/features/agents/validation-gate.ts`
+- `src/features/agents/validation-gate.test.ts`
+
+### Agent Package / Profile
+
+Required Evidence:
+
+- Package/Profile metadata is defined.
+- Agent Definition metadata is represented.
+- Provider and MCP dependencies are declared by reference.
+- Credential references are reference-only.
+- Permission, risk, approval, verification, and fallback declarations exist.
+- Package readiness blocks missing metadata, unresolved dependencies, missing
+  MCP contracts, unsafe raw results, non-reference credentials, secret-like
+  values, and unsafe export state.
+- Package readiness does not write archives or publish Marketplace listings.
+- Tests cover ready and blocked states.
+
+Current Evidence:
+
+- `src/features/agents/package-profile.ts`
+- `src/features/agents/package-profile.test.ts`
+- `docs/sprints/AGENT-PACKAGE-001/REPORT.md`
+
+### Agent Package Artifact Export
+
+Required Evidence:
+
+- Export applies package readiness before serialization.
+- Export blocks unsupported artifact format versions.
+- Export blocks missing package identifiers and versions.
+- Export blocks not-ready package profiles.
+- Export blocks raw secret-like values and raw credential value fields.
+- Export preserves allowed credential references.
+- Export produces deterministic JSON for identical valid input.
+- Export includes artifact metadata: package format version, package id,
+  package version, checksum, byte length, content type, and deterministic flag.
+- Export does not mutate input objects.
+- Export does not write ZIP files, upload artifacts, publish packages, invoke
+  Providers, read Vault, or call MCP Tools.
+
+Current Evidence:
+
+- `src/features/agents/package-export.ts`
+- `src/features/agents/package-export.test.ts`
+
+### Existing Live Provider Evidence
+
+Required Evidence:
+
+- Representative AI Agent path has recorded live evidence.
+- Evidence must be secret-safe.
+- Evidence must distinguish unsupported scope from failed execution.
+
+Current Evidence:
+
+- `docs/sprints/LIVE-EVIDENCE-002/REPORT.md`
+- TEST A reports live GitHub, Supabase, Vercel, OpenAI, health check,
+  functional AI inquiry response, verification persistence, idempotency, and
+  ownership evidence for the representative AI inquiry path.
+
+## 7. Package Readiness Criteria
+
+### `NOT_READY`
+
+Use when any required package readiness condition is missing or blocked.
+
+Examples:
+
+- Agent Validation Gate is not ready.
+- Required Tool dependencies are unresolved.
+- Required MCP Tool contract is missing.
+- MCP Tool safe result policy stores raw results.
+- Credential reference is not reference-only.
+- Secret-like value is detected.
+- Export safety indicates archive writing, Marketplace publishing, raw Provider
+  responses, or live Credential values.
+
+### `CONDITIONALLY_READY`
+
+Use when package contract readiness exists but live execution Evidence,
+Marketplace publish readiness, or archive export Evidence is absent.
+
+This state means:
+
+- The profile can be evaluated as a secret-free package candidate.
+- The contract can be used for QA and planning.
+- It does not claim runtime execution, MCP Invocation, archive export,
+  installation, or Marketplace publish readiness.
+
+### `READY`
+
+Use only when all required Evidence exists:
+
+- Agent Definition and Validation Gate evidence exists.
+- Tool Resolution evidence exists.
+- Package/Profile readiness validation passes.
+- Required MCP dependency contracts exist and are safe.
+- Credential references are reference-only.
+- Secret-free export safety checks pass.
+- Required tests and quality gates pass.
+- If the claim includes live execution, then live Provider/MCP/Runtime Evidence
+  must also exist and be approved.
+
+`READY` must not be used to imply actual Runtime execution or Marketplace
+publish readiness unless those separate Evidence sets exist.
+
+## 8. Current Readiness Assessment
+
+Package readiness judgement:
+
+```text
+CONDITIONALLY_READY
+```
+
+Reason:
+
+- Agent Package/Profile contract exists.
+- Readiness validator exists.
+- Unit tests exist.
+- AGENT-PACKAGE-001 quality gate passed.
+- Deterministic Agent Package artifact export exists.
+- Export validation, secret-free enforcement, determinism, invalid input
+  rejection, and non-mutation tests exist.
+- Representative AI inquiry provider path has prior live Evidence.
+- Actual MCP Invocation Evidence is not found.
+- Marketplace publish Evidence is not found.
+
+Therefore BuildFlow can evaluate a secret-free Agent Package/Profile candidate,
+and can produce a deterministic JSON artifact for a ready profile. It must not
+claim that the Agent Package is live-executable through MCP, ZIP-exported,
+installable as an Agent extension, or Marketplace-publishable.
+
+## 9. Gap Analysis
+
+| Gap ID | Module | Current state | Missing Evidence | Risk | Recommended follow-up | Priority |
+|---|---|---|---|---|---|---|
+| GAP-001 | MCP Tool Invocation | `NOT FOUND` | No approved live MCP Tool Invocation Evidence | Agent tool ecosystem could appear more complete than it is | Create a separately approved live MCP Evidence Sprint with explicit Tool, permission, Credential, safe result, and cost boundary | P1 |
+| GAP-002 | Package artifact export | `IMPLEMENTED` | ZIP installer archive, UI download, storage upload, and Installer integration remain out of scope | Users may still confuse deterministic JSON artifact readiness with installable package readiness | Keep deterministic artifact export as Evidence; if needed, define a separate ZIP/installer export Sprint later | P2 |
+| GAP-003 | Marketplace publish readiness | `NOT FOUND` | No listing, trust, evidence freshness, or publish policy implementation | Premature Marketplace claims could mislead users | Defer to MARKETPLACE-AGENT-001; maintain NOT SUPPORTED in live evidence reports | P1 |
+| GAP-004 | Runtime Compiler | `PLANNED` | No compiler from Agent Definition/Profile to executable runtime artifact | Agent contract readiness may be mistaken for runtime readiness | Define Runtime Compiler Sprint only after live evidence boundary is approved | P2 |
+| GAP-005 | Documentation state mismatch | `PARTIAL` | `.buildflow/STATUS.md` Latest Known Commit is `be12055`, actual HEAD observed in memory is `de62266` | Operational status may confuse Sprint transitions | Update Latest Known Commit during next approved status transition | P2 |
+| GAP-006 | Architecture status table drift | `PARTIAL` | Architecture table still labels Agent Generator/MCP/Tool Resolver as planned in places despite recent implementation | Documentation can under-report implemented contracts | Update architecture status in a separate documentation consistency Sprint | P3 |
+
+## 10. Risks
+
+- QA-only evidence may be misread as live production readiness.
+- Existing live provider Evidence is for the representative `ai-inquiry-v1`
+  path, not every possible Agent.
+- MCP contracts exist, but actual MCP Invocation is not implemented.
+- Package/Profile readiness and deterministic JSON artifact export are not the
+  same as ZIP packaging, installability, or Marketplace publishing.
+- Credential and Vault checks remain prohibited unless separately approved.
+- Cost-incurring actions remain prohibited unless separately approved.
+
+## 11. PM Decisions Required
+
+1. Confirm whether `LIVE-EVIDENCE-AGENT-001` should remain QA-only.
+2. Decide whether the Sprint ID should remain `LIVE-EVIDENCE-AGENT-001` or
+   align to Roadmap naming `AGENT-EVIDENCE-001`.
+3. Decide whether `CONDITIONALLY_READY` is acceptable as the current Package
+   Readiness judgement.
+4. Choose whether the next implementation work should address `GAP-001`
+   MCP live invocation or a separate ZIP/Installer export scope.
+5. Decide whether `.buildflow/STATUS.md` Latest Known Commit should be updated
+   in the next status transition.
+
+## 12. Recommended Next Task
+
+Recommended next single task:
+
+```text
+Define the evidence boundary for GAP-001 actual MCP Tool Invocation.
+```
+
+Alternative:
+
+```text
+If PM wants package transport work first, define a separate ZIP/Installer export
+Sprint. Do not treat the deterministic JSON artifact as an installable package.
+```
