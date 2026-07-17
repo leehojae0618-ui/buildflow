@@ -220,6 +220,111 @@ Commit / Push / Deploy:
 - Push: not performed
 - Deploy: not performed
 
+## 2026-07-17 — PACKAGE-APPROVAL-GATE-001 Pure Approval Gate
+
+Created:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-APPROVAL-GATE.md`
+
+Modified implementation files:
+
+- `src/features/agents/package-approval-gate.ts`
+- `src/features/agents/package-approval-gate.test.ts`
+- `src/features/agents/index.ts`
+
+Modified documentation and memory files:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/QA-SCOPE.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Reviewed existing implementation references:
+
+- `src/features/agents/package-evidence-report.ts`
+- `src/features/agents/package-verification-pipeline.ts`
+- `src/features/agents/package-evidence-bundle.ts`
+- `src/features/agents/package-profile.ts`
+- `src/features/agents/validation-gate.ts`
+- `src/features/execution/types.ts`
+- `src/features/execution/policy.test.ts`
+- `src/features/provisioning/executor.ts`
+- `src/features/provisioning/commands.ts`
+
+Implemented behavior:
+
+- reference-only Approval Request contract
+- reference-only Approval Decision contract
+- Approval Scope model
+- Actor / Approver model
+- Gate Status and Gate Result contracts
+- Evidence Report checksum binding
+- authorization expression
+- stale, supersede, and revoke policy
+- deterministic id and integrity checksum rules
+- timestamp and expiration boundary
+- secret-safe reason and comment boundary
+- multi-scope request support
+- per-scope decision resolution
+- partial approval
+- fixed scope ordering
+- USER-only approval
+- source consistency and stale detection
+- supersede and revoke handling
+- `APPROVED_WITH_LIMITATIONS` as maximum v1 success state
+- `AUTHORIZED_WITH_LIMITATIONS` as maximum v1 authorization state
+- Package Readiness remains `CONDITIONALLY_READY`
+- input non-mutation
+- internal error sanitization
+
+Added tests:
+
+- `src/features/agents/package-approval-gate.test.ts`
+- 86 tests covering request builder, decision builder, gate evaluator,
+  deterministic ids/checksums, multi-scope requests, partial approval,
+  unsupported scopes, source stale policy, USER-only approval, supersede,
+  revoke, secret safety, full payload exclusion, non-mutation, and internal
+  error sanitization.
+
+Runtime / MCP / Provider / Marketplace changes:
+
+- Runtime changes: none
+- MCP Tool Invocation: none
+- Provider execution: none
+- Marketplace implementation: none
+- Deployment: none
+- Vault or Credential access: none
+- DB/API/UI changes: none
+- Persistence changes: none
+- Real approval capture: none
+
+Validation so far:
+
+- Target package approval gate test: PASS — 86 tests
+- Typecheck: PASS
+
+Final QA remediation added:
+
+- discriminated union BuildResult
+- source stale single-field tests for report id, report checksum, package id,
+  package version, package artifact checksum, verification checksum, bundle
+  checksum, and pipeline checksum
+- expiration, supersede, and revoke secret-safety checks
+- unknown revoke invalidation
+- duplicate revoke normalization
+- explicit expiration edge tests
+- gate priority conflict tests
+- duplicate decision policy tests
+- full payload sentinel exclusion tests
+- additional input non-mutation tests
+- Evidence Report `VALID` future status rejection
+
+Commit / Push / Deploy:
+
+- Commit: not performed
+- Push: not performed
+- Deploy: not performed
+
 ## 2026-07-17 — PACKAGE-VERIFICATION-PIPELINE-001 Pure Pipeline
 
 Modified implementation files:

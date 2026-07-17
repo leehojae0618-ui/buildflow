@@ -368,6 +368,94 @@ No Runtime, MCP Invocation, Provider execution, Vault access, DB, API, UI,
 Marketplace, Approval handling, ZIP/Installer, or deployment behavior was
 implemented by this task.
 
+## Package Approval Gate
+
+Status:
+
+```text
+IMPLEMENTED
+PM REVIEW REQUIRED
+PURE APPROVAL GATE ONLY
+```
+
+Design document:
+
+```text
+docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-APPROVAL-GATE.md
+```
+
+The implemented pure Approval Gate defines an approval boundary for Package
+Evidence Reports:
+
+- reference-only Approval Request contract
+- reference-only Approval Decision contract
+- Approval Scope model
+- Actor / Approver reference model
+- Gate Status model
+- Gate Result contract
+- authorization expression
+- Evidence Report source checksum binding
+- stale, supersede, and revoke policy
+- deterministic request/decision/gate id and checksum policy
+- timestamp and expiration boundary
+- secret-safe reason and comment boundary
+- multi-scope requests
+- scope-level decisions
+- partial approval
+- USER-only approval
+- secret-safe failure output
+
+Implementation files:
+
+```text
+src/features/agents/package-approval-gate.ts
+src/features/agents/package-approval-gate.test.ts
+src/features/agents/index.ts
+```
+
+Target Approval Gate test:
+
+```text
+npx vitest run src/features/agents/package-approval-gate.test.ts
+PASS — 86 tests
+```
+
+Final QA remediation addressed:
+
+- discriminated union BuildResult for request and decision builders
+- 8 single-source stale checks
+- expanded secret scan targets for expiration, supersede, and revoke inputs
+- unknown revoke invalidation
+- duplicate revoke normalization
+- explicit expiration edge policy
+- gate priority conflict checks
+- duplicate decision policy
+- full payload sentinel exclusion
+- additional input non-mutation coverage
+- Evidence Report `VALID` future status rejection
+
+Out of scope for this design task:
+
+- persistence
+- API/UI
+- authorization enforcement
+- real approval capture
+- Runtime execution
+- MCP Tool Invocation
+- Provider execution
+- Vault or Credential access
+- deployment
+- Marketplace
+
+Current Package Readiness remains:
+
+```text
+CONDITIONALLY_READY
+```
+
+Approval design does not upgrade package readiness or imply runtime,
+deployment, provider, MCP, installation, or Marketplace success.
+
 ## Major Gaps
 
 - `GAP-001` / P1: Actual MCP Tool Invocation Evidence is not found.
@@ -385,6 +473,9 @@ implemented by this task.
 - `GAP-002E` / P2: Package Evidence Report is implemented; persistence,
   API/UI/PDF presentation, Approval Gate integration, and Quality Score
   calculation remain out of scope.
+- `GAP-002F` / P2: Package Approval Gate pure evaluator is implemented;
+  persistence, API/UI, authorization enforcement, real approval capture, and
+  approval record integration remain out of scope.
 - `GAP-003` / P1: Marketplace publish readiness Evidence is not found.
 - `GAP-004` / P2: Runtime Compiler is planned but not implemented.
 - `GAP-005` / P2: `.buildflow/STATUS.md` Latest Known Commit mismatch.

@@ -10,3 +10,4 @@ export * from "./package-verification";
 export * from "./package-evidence-bundle";
 export * from "./package-verification-pipeline";
 export * from "./package-evidence-report";
+export * from "./package-approval-gate";

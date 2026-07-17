@@ -7,7 +7,7 @@ CURRENT TASK COMPLETED
 Completed output:
 
 ```text
-docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-EVIDENCE-REPORT.md
+docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-APPROVAL-GATE.md
 ```
 
 Current Package Readiness judgement:
@@ -33,6 +33,9 @@ Resolved / reduced gap:
 - GAP-002E: Package Evidence Report pure builder is implemented. Persistence,
   API/UI/PDF presentation, Approval Gate integration, and Quality Score
   calculation remain out of scope.
+- GAP-002F: Package Approval Gate pure evaluator is implemented. Persistence,
+  API/UI, authorization enforcement, real approval capture, and approval record
+  integration remain out of scope.
 
 ## Completed Task
 
@@ -226,6 +229,81 @@ Current valid report status:
 VALID_WITH_LIMITATIONS
 ```
 
+## Completed Task
+
+```text
+PACKAGE-APPROVAL-GATE-001
+```
+
+Status:
+
+```text
+IMPLEMENTED
+PM REVIEW REQUIRED
+PURE APPROVAL GATE ONLY
+```
+
+Completed:
+
+- Package Approval Gate boundary
+- reference-only Approval Request contract
+- reference-only Approval Decision contract
+- Approval Scope model
+- Actor / Approver reference model
+- Gate Status model
+- Gate Result contract
+- Evidence Report checksum binding
+- authorization expression
+- stale, supersede, and revoke policy
+- deterministic request/decision/gate id and checksum rules
+- timestamp and expiration boundary
+- secret-safe reason and comment boundary
+- open PM decisions
+- recommended v1 policy
+- pure Approval Request builder
+- pure Approval Decision builder
+- pure Gate evaluator
+- 86 unit tests
+- Final QA remediation coverage for BuildResult union, source stale, revoke,
+  supersede, expiration, gate priority, duplicate decision policy, full payload
+  exclusion, and non-mutation edge cases
+
+Design output:
+
+```text
+docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-APPROVAL-GATE.md
+```
+
+Code implementation:
+
+```text
+IMPLEMENTED
+```
+
+Implemented output:
+
+```text
+src/features/agents/package-approval-gate.ts
+src/features/agents/package-approval-gate.test.ts
+```
+
+Current approval gate implementation status:
+
+```text
+APPROVED_WITH_LIMITATIONS capable
+```
+
+The implementation does not implement persistence, API/UI, authorization
+enforcement, real approval capture, Runtime execution, MCP Invocation, Provider
+execution, deployment, Marketplace behavior, Vault access, or Credential access.
+
+Current target test:
+
+```text
+npx vitest run src/features/agents/package-approval-gate.test.ts
+PASS — 86 tests
+```
+
 ## Next Single Task Candidate
 
 Do not start another follow-up without PM confirmation.
@@ -233,21 +311,28 @@ Do not start another follow-up without PM confirmation.
 Recommended:
 
 ```text
-PACKAGE-EVIDENCE-REPORT-001 Final QA + Checkpoint Commit
-Review the Evidence Report implementation diff, run the full quality gate, and
+PACKAGE-APPROVAL-GATE-001 Final QA + Checkpoint Commit
+Review the Approval Gate implementation diff, run the full quality gate, and
 create a checkpoint commit only if all gates pass.
 ```
 
 Suggested minimal file scope:
 
 ```text
-To be decided after PM review.
+src/features/agents/package-approval-gate.ts
+src/features/agents/package-approval-gate.test.ts
+src/features/agents/index.ts
+docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-APPROVAL-GATE.md
+docs/sprints/LIVE-EVIDENCE-AGENT-001/QA-SCOPE.md
+memory/05_current_sprint.md
+memory/06_change_log.md
+memory/07_next_task.md
 ```
 
-This must remain evidence-contract work unless PM explicitly approves
-implementation. It must not invoke an MCP Tool, read Vault, use live
-Credentials, perform Provider execution, write DB records, publish Marketplace
-listings, or deploy.
+This must remain pure evidence/approval-contract work unless PM explicitly
+approves implementation. It must not invoke an MCP Tool, read Vault, use live
+Credentials, perform Provider execution, write DB records, capture real
+approval decisions, publish Marketplace listings, or deploy.
 
 Alternative PM direction:
 
