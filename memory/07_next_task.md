@@ -7,7 +7,7 @@ CURRENT TASK COMPLETED
 Completed output:
 
 ```text
-docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-VERIFICATION-PIPELINE.md
+docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-EVIDENCE-REPORT.md
 ```
 
 Current Package Readiness judgement:
@@ -30,6 +30,9 @@ Resolved / reduced gap:
 - GAP-002C: Package Evidence Bundle reference-only pure builder is
   implemented.
 - GAP-002D: Package Verification Pipeline pure composition is implemented.
+- GAP-002E: Package Evidence Report pure builder is implemented. Persistence,
+  API/UI/PDF presentation, Approval Gate integration, and Quality Score
+  calculation remain out of scope.
 
 ## Completed Task
 
@@ -173,6 +176,56 @@ COMPLETED_WITH_LIMITATIONS
 
 `COMPLETED` is intentionally not returned by the first implementation.
 
+## Completed Task
+
+```text
+PACKAGE-EVIDENCE-REPORT-001
+```
+
+Status:
+
+```text
+IMPLEMENTED
+PM REVIEW REQUIRED
+PURE REPORT BUILDER ONLY
+```
+
+Completed:
+
+- Evidence Report summary-first boundary
+- reference-based source model
+- report status model
+- status separation from pipeline status, package readiness, approval,
+  deployability, and Marketplace readiness
+- Package Readiness relationship
+- evidence summary categories
+- approval relationship without executing approval
+- deterministic report id and report integrity checksum
+- secret safety requirements
+- human-readable summary boundary
+- status non-upgrade checks
+- deployability and Marketplace non-inference
+
+Implemented output:
+
+```text
+src/features/agents/package-evidence-report.ts
+src/features/agents/package-evidence-report.test.ts
+docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-EVIDENCE-REPORT.md
+```
+
+Code implementation:
+
+```text
+IMPLEMENTED
+```
+
+Current valid report status:
+
+```text
+VALID_WITH_LIMITATIONS
+```
+
 ## Next Single Task Candidate
 
 Do not start another follow-up without PM confirmation.
@@ -180,10 +233,9 @@ Do not start another follow-up without PM confirmation.
 Recommended:
 
 ```text
-PACKAGE-EVIDENCE-REPORT-001
-Define how package verification pipeline results are stored or presented as an
-evidence report without adding Runtime, MCP Invocation, Provider execution,
-Marketplace, deployment, DB, API, or UI behavior.
+PACKAGE-EVIDENCE-REPORT-001 Final QA + Checkpoint Commit
+Review the Evidence Report implementation diff, run the full quality gate, and
+create a checkpoint commit only if all gates pass.
 ```
 
 Suggested minimal file scope:

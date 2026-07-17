@@ -9,3 +9,4 @@ export * from "./package-export";
 export * from "./package-verification";
 export * from "./package-evidence-bundle";
 export * from "./package-verification-pipeline";
+export * from "./package-evidence-report";

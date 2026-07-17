@@ -98,6 +98,7 @@ evidence-backed QA boundary for:
 | Package Verification Evidence | `src/features/agents/package-verification.ts`, `src/features/agents/package-verification.test.ts` | `IMPLEMENTED` | Pure verifier validates deterministic artifact format, integrity, contract, secret safety, evidence references, limitations, and report integrity without Runtime, MCP, Provider, Vault, DB, UI, or Marketplace execution. |
 | Package Evidence Bundle | `src/features/agents/package-evidence-bundle.ts`, `src/features/agents/package-evidence-bundle.test.ts` | `IMPLEMENTED` | Reference-only deterministic bundle builder connects package artifact and verification report by checksum/reference, normalizes evidence references, and preserves limitations without embedding payloads or executing Runtime/MCP/Provider/Marketplace paths. |
 | Package Verification Pipeline | `src/features/agents/package-verification-pipeline.ts`, `src/features/agents/package-verification-pipeline.test.ts` | `IMPLEMENTED` | Pure pipeline composes Package Export, Package Verification, and Package Evidence Bundle into a deterministic structured result. It returns `COMPLETED_WITH_LIMITATIONS` for the current valid structural path and does not execute Runtime/MCP/Provider/Marketplace paths. |
+| Package Evidence Report | `src/features/agents/package-evidence-report.ts`, `src/features/agents/package-evidence-report.test.ts` | `IMPLEMENTED` | Pure reference-first report builder summarizes package artifact, verification report, evidence bundle, and verification pipeline output without embedding full payloads or executing Runtime/MCP/Provider/Marketplace paths. Persistence, API, UI, renderer, and Approval handling remain out of scope. |
 | Marketplace publish Evidence | none found | `NOT FOUND` | Marketplace remains future/out of scope. |
 
 ## 6. Evidence Checklist
@@ -357,6 +358,12 @@ Reason:
 - Pipeline composition, stage status, consistency, deterministic summary,
   upstream failure short-circuiting, secret safety, and evidence reference
   normalization tests exist.
+- Package Evidence Report builder exists.
+- Evidence Report status, readiness, evidence summary, approval, deployability,
+  Marketplace readiness, deterministic id/checksum, human-readable boundary,
+  secret safety, non-mutation, and status non-upgrade tests exist.
+- Evidence Report persistence, API/UI presentation, renderer evidence, Approval
+  handling, and Quality Score calculation are not implemented.
 - Representative AI inquiry provider path has prior live Evidence.
 - Actual MCP Invocation Evidence is not found.
 - Marketplace publish Evidence is not found.
@@ -379,6 +386,7 @@ deployable, or Marketplace-publishable.
 | GAP-002B | Package verification report | `IMPLEMENTED` | Standalone Evidence Bundle artifact, persisted verification report, and Approval Gate integration remain out of scope | Users may confuse `VERIFIED_WITH_LIMITATIONS` with installable or runtime verified package status | Keep pure verifier as structural Evidence; define Evidence Bundle or persistence separately | P2 |
 | GAP-002C | Package Evidence Bundle | `IMPLEMENTED` | Persistence, API/UI presentation, Approval Gate integration, and live execution evidence remain out of scope | Users may confuse reference-only bundle validity with live runtime or Marketplace readiness | Keep bundle reference-only; do not upgrade limitations without live evidence | P2 |
 | GAP-002D | Package Verification Pipeline | `IMPLEMENTED` | Persistence, API/UI presentation, Approval Gate integration, Quality Score calculation, and live evidence ingestion remain out of scope | Users may confuse `COMPLETED_WITH_LIMITATIONS` with production readiness | Keep pipeline result structural-only; define evidence report persistence or presentation separately if PM approves | P2 |
+| GAP-002E | Package Evidence Report | `IMPLEMENTED` | Persistence, API/UI/PDF presentation, Approval Gate integration, and Quality Score calculation remain out of scope | Users may confuse report validity with live runtime or deployment readiness | Keep report summary-first and reference-first; define persistence/presentation separately if PM approves | P2 |
 | GAP-003 | Marketplace publish readiness | `NOT FOUND` | No listing, trust, evidence freshness, or publish policy implementation | Premature Marketplace claims could mislead users | Defer to MARKETPLACE-AGENT-001; maintain NOT SUPPORTED in live evidence reports | P1 |
 | GAP-004 | Runtime Compiler | `PLANNED` | No compiler from Agent Definition/Profile to executable runtime artifact | Agent contract readiness may be mistaken for runtime readiness | Define Runtime Compiler Sprint only after live evidence boundary is approved | P2 |
 | GAP-005 | Documentation state mismatch | `PARTIAL` | `.buildflow/STATUS.md` Latest Known Commit is `be12055`, actual HEAD observed in memory is `de62266` | Operational status may confuse Sprint transitions | Update Latest Known Commit during next approved status transition | P2 |
@@ -403,8 +411,8 @@ deployable, or Marketplace-publishable.
 3. Decide whether `CONDITIONALLY_READY` is acceptable as the current Package
    Readiness judgement.
 4. Choose whether the next implementation work should address
-   `PACKAGE-EVIDENCE-REPORT-001`, `GAP-001` MCP live invocation, or a separate
-   ZIP/Installer export scope.
+   `PACKAGE-EVIDENCE-REPORT-001` implementation, `GAP-001` MCP live invocation,
+   or a separate ZIP/Installer export scope.
 5. Decide whether `.buildflow/STATUS.md` Latest Known Commit should be updated
    in the next status transition.
 

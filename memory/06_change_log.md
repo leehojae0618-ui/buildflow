@@ -97,6 +97,129 @@ Commit / Push / Deploy:
 - Push: not performed
 - Deploy: not performed
 
+## 2026-07-17 — PACKAGE-EVIDENCE-REPORT-001 Design
+
+Created:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-EVIDENCE-REPORT.md`
+
+Modified documentation and memory files:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/QA-SCOPE.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Reviewed existing implementation references:
+
+- `src/features/agents/package-export.ts`
+- `src/features/agents/package-verification.ts`
+- `src/features/agents/package-evidence-bundle.ts`
+- `src/features/agents/package-verification-pipeline.ts`
+- `src/features/agents/types.ts`
+- `src/features/agents/index.ts`
+
+Design scope covered:
+
+- Evidence Report summary-first boundary
+- reference-based source model
+- report status model
+- status separation from pipeline, readiness, approval, deployability, and
+  Marketplace readiness
+- Package Readiness relationship
+- evidence summary model
+- approval relationship
+- deterministic report id and report integrity checksum proposal
+- secret safety requirements
+- human-readable summary boundary
+- open PM decisions
+
+Code and test changes:
+
+- None. Design-only task.
+
+Runtime / MCP / Provider / Marketplace changes:
+
+- Runtime changes: none
+- MCP Tool Invocation: none
+- Provider execution: none
+- Marketplace implementation: none
+- Deployment: none
+- Vault or Credential access: none
+- DB/API/UI changes: none
+
+Commit / Push / Deploy:
+
+- Commit: not performed
+- Push: not performed
+- Deploy: not performed
+
+## 2026-07-17 — PACKAGE-EVIDENCE-REPORT-001 Pure Builder
+
+Modified implementation files:
+
+- `src/features/agents/package-evidence-report.ts`
+- `src/features/agents/package-evidence-report.test.ts`
+- `src/features/agents/index.ts`
+
+Modified documentation and memory files:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-EVIDENCE-REPORT.md`
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/QA-SCOPE.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Implemented report behavior:
+
+- consumes existing Package Export artifact, Package Verification report,
+  Package Evidence Bundle result, and Package Verification Pipeline result
+- stays reference-first and summary-first
+- computes deterministic report id
+- computes report integrity checksum from deterministic core
+- returns `VALID_WITH_LIMITATIONS` for current valid structural evidence scope
+- returns `INCOMPLETE` for missing required source references or incomplete
+  upstream evidence
+- returns `INVALID` for source integrity, contract, status, readiness,
+  approval, or secret safety conflicts
+- keeps Package Readiness as `CONDITIONALLY_READY`
+- keeps Runtime, deployment, Marketplace, and approval readiness separate
+- keeps human-readable summary outside deterministic core
+- does not infer deployability, publishability, runtime success, or approval
+  completion
+
+Added tests:
+
+- `src/features/agents/package-evidence-report.test.ts`
+- 40 tests covering valid report, non-`VALID` behavior, deterministic id/core/
+  checksum, metadata and human-readable boundary, source conflicts, upstream
+  failed/incomplete statuses, missing references, readiness separation,
+  approval handling, raw secret safety, credential references, deterministic
+  evidence ordering, duplicate normalization, input non-mutation, payload
+  exclusion, status non-upgrade, deployability/Marketplace non-inference, and
+  sanitized internal errors.
+
+Runtime / MCP / Provider / Marketplace changes:
+
+- Runtime changes: none
+- MCP Tool Invocation: none
+- Provider execution: none
+- Marketplace implementation: none
+- Deployment: none
+- Vault or Credential access: none
+- DB/API/UI changes: none
+
+Validation so far:
+
+- Target package evidence report test: PASS — 40 tests
+- Typecheck: PASS
+
+Commit / Push / Deploy:
+
+- Commit: not performed
+- Push: not performed
+- Deploy: not performed
+
 ## 2026-07-17 — PACKAGE-VERIFICATION-PIPELINE-001 Pure Pipeline
 
 Modified implementation files:

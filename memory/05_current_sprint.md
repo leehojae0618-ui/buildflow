@@ -314,6 +314,60 @@ Reason: structural package evidence can now be exported, verified, bundled, and
 composed through a pure pipeline, but live Runtime/MCP/Provider/Install/
 Marketplace evidence remains absent.
 
+## Package Evidence Report
+
+Status:
+
+```text
+IMPLEMENTED
+PM REVIEW REQUIRED
+PURE REPORT BUILDER ONLY
+```
+
+Design and implementation document:
+
+```text
+docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-EVIDENCE-REPORT.md
+```
+
+Package Evidence Report code is now implemented as a pure reference-first
+summary builder:
+
+```text
+src/features/agents/package-evidence-report.ts
+src/features/agents/package-evidence-report.test.ts
+```
+
+Implemented behavior:
+
+- summary-first report boundary
+- reference-based source model
+- report status model: `INVALID`, `INCOMPLETE`, `VALID_WITH_LIMITATIONS`,
+  `VALID`
+- status separation between report status, pipeline status, package readiness,
+  approval, deployability, and Marketplace readiness
+- Package Readiness relationship with `CONDITIONALLY_READY`
+- evidence summary categories
+- approval relationship without executing approval
+- deterministic report id and report integrity checksum proposal
+- secret safety requirements
+- human-readable summary boundary
+- `VALID_WITH_LIMITATIONS` for the current valid structural evidence scope
+- no `VALID` return in the first implementation
+- no deployability or Marketplace readiness inference
+- input non-mutation and full upstream payload exclusion
+
+Target report test:
+
+```text
+npx vitest run src/features/agents/package-evidence-report.test.ts
+PASS — 40 tests
+```
+
+No Runtime, MCP Invocation, Provider execution, Vault access, DB, API, UI,
+Marketplace, Approval handling, ZIP/Installer, or deployment behavior was
+implemented by this task.
+
 ## Major Gaps
 
 - `GAP-001` / P1: Actual MCP Tool Invocation Evidence is not found.
@@ -328,6 +382,9 @@ Marketplace evidence remains absent.
 - `GAP-002D` / P2: Package Verification Pipeline is implemented; persistence,
   API/UI presentation, Approval Gate integration, Quality Score calculation,
   and live evidence ingestion remain out of scope.
+- `GAP-002E` / P2: Package Evidence Report is implemented; persistence,
+  API/UI/PDF presentation, Approval Gate integration, and Quality Score
+  calculation remain out of scope.
 - `GAP-003` / P1: Marketplace publish readiness Evidence is not found.
 - `GAP-004` / P2: Runtime Compiler is planned but not implemented.
 - `GAP-005` / P2: `.buildflow/STATUS.md` Latest Known Commit mismatch.
