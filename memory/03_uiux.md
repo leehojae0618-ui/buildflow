@@ -134,6 +134,37 @@ Cost UX rules:
 - Show confidence as `HIGH`, `MEDIUM`, or `LOW` based on available inputs.
 - Highlight cost-incurring actions and approval requests clearly.
 
+## Runtime State UX
+
+Runtime and MCP state enums must not be shown directly to non-technical users.
+
+Examples:
+
+- `WAITING_FOR_CONNECTION`: "Gmail 연결이 필요합니다."
+- `WAITING_FOR_CREDENTIAL`: "OpenAI API Key가 만료되었거나 연결되지 않았습니다."
+- `WAITING_FOR_APPROVAL`: "이메일 발송 전에 승인이 필요합니다."
+- `RUNNING`: "문의 내용을 분석하고 있습니다."
+- `PARTIAL_SUCCESS`: "답변 초안은 생성됐지만 이메일 발송은 완료되지 않았습니다."
+- `EXPIRED`: "승인 또는 실행 요청의 유효시간이 지났습니다."
+
+Approval cards for external effects should show:
+
+- action summary
+- service name
+- safe account display
+- read/write/delete classification
+- target reference
+- affected item count
+- expected external effect
+- estimated cost and simulation frequency
+- approval expiration
+- one-time or reusable scope
+- cancellation possibility
+- limitations
+
+Cancellation and partial success should never erase completed evidence. The UI
+must explain what completed, what stopped, and what the user can do next.
+
 Approval surfaces should explain:
 
 - What the AI will do

@@ -97,6 +97,54 @@ Commit / Push / Deploy:
 - Push: not performed
 - Deploy: not performed
 
+## 2026-07-17 — RUNTIME-MCP-BOUNDARY-001 Decision Lock
+
+Created documentation:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md`
+
+Updated memory and QA:
+
+- `memory/01_product.md`
+- `memory/02_architecture.md`
+- `memory/03_uiux.md`
+- `memory/04_engineering.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/QA-SCOPE.md`
+
+Boundary decisions:
+
+- RuntimeExecutionRequest and RuntimeExecution identities are separate.
+- Full execution retry creates a new RuntimeExecutionId.
+- Resume keeps RuntimeExecutionId unless execution is terminal.
+- Step retry creates a new RuntimeStepAttemptId under the same RuntimeStepId.
+- Runtime states and Step states are separate.
+- Runtime Preflight is non-mutating.
+- Provider Invocation and MCP Invocation are separate contracts.
+- MCP execution binds to Tool Definition Snapshot checksum.
+- Tool Definition changes require new snapshot and reapproval.
+- Connection and Credential states are separate.
+- Runtime uses Credential Reference only.
+- Approval has Package, Runtime Execution, and Step Action layers.
+- Retry, cancellation, idempotency, partial success, and compensation policies
+  are documented.
+- Estimated cost, actual usage, provider-reported cost, and actual billed cost
+  remain separate.
+
+Implementation changes:
+
+- Application code changes: none.
+- Test changes: none.
+- Runtime/MCP/Provider/Credential/OAuth/Cost implementation: none.
+
+Commit / Push / Deploy:
+
+- Commit: not performed
+- Push: not performed
+- Deploy: not performed
+
 Final QA:
 
 - Verdict: `APPROVED`

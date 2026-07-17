@@ -682,3 +682,53 @@ Next task remains:
 ```text
 Checkpoint commit after explicit user approval
 ```
+
+## Runtime / MCP Boundary Decision Lock
+
+Current task:
+
+```text
+RUNTIME-MCP-BOUNDARY-001
+```
+
+Status:
+
+```text
+DESIGN_LOCK_APPROVED_WITH_OPEN_DECISIONS
+IMPLEMENTATION NOT STARTED
+NO COMMIT
+```
+
+Created design document:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md`
+
+Locked boundaries:
+
+- RuntimeExecutionRequest and RuntimeExecution are distinct.
+- Runtime Step and Step Attempt are distinct.
+- Provider Invocation and MCP Invocation are separate.
+- Connection and Credential are separate states.
+- Runtime does not access raw Credential material.
+- Runtime Step Evidence is required.
+- Provider success, MCP success, external effect success, and Step success are
+  separate.
+- Estimated cost, actual usage, and actual billed cost remain separate.
+
+Package Readiness remains:
+
+```text
+CONDITIONALLY_READY
+```
+
+Implementation still not started:
+
+- Runtime Execution Start
+- Runtime Step Contract code
+- Provider Invocation code
+- MCP Invocation code
+- Connection/Credential storage
+- OAuth
+- Cost Simulation Engine
+- Deployment
+- Marketplace

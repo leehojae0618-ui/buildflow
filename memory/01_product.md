@@ -127,6 +127,32 @@ Cost policy:
 - Cost confidence should be `HIGH`, `MEDIUM`, or `LOW`, not invented
   percentages.
 - Estimated cost, actual usage, and actual billed cost are separate concepts.
+
+## Runtime User Experience Alignment
+
+Agent execution must feel like BuildFlow is managing work on the user's behalf,
+not exposing a raw workflow runner.
+
+User-facing runtime states should translate technical states into clear
+guidance:
+
+- `WAITING_FOR_CONNECTION`: explain which service connection is needed and show
+  the safest connection path.
+- `WAITING_FOR_CREDENTIAL`: explain which Credential Reference is missing or
+  expired without exposing secret values.
+- `WAITING_FOR_APPROVAL`: explain the action, service, expected effect, cost,
+  and approval scope.
+- `RUNNING`: describe the work being performed in natural language.
+- `PARTIAL_SUCCESS`: show which work completed and which work did not.
+- `CANCELLED`: explain what stopped and what evidence remains.
+
+External-effect approval cards should show action summary, service name,
+account safe display, read/write/delete classification, target reference,
+affected item count, estimated cost, simulation usage frequency, approval
+expiration, one-time/reusable scope, cancellation possibility, and limitations.
+
+Connection help should prioritize OAuth, then guided API Key entry, then Managed
+Connection or admin-provided connection.
 - Marketplace: `FUTURE`
 - Actual MCP Invocation: not implemented
 - Runtime Compiler: not implemented

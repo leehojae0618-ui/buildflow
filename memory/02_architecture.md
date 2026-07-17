@@ -170,6 +170,48 @@ Agent structure analysis
 Cost Simulation is separate from Runtime Evidence. Estimated cost is not
 execution evidence and must not change Runtime status by itself.
 
+## Runtime / Step / Invocation Boundary
+
+Decision lock source:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md`
+
+Identity hierarchy:
+
+```text
+RuntimeExecutionRequestId
+→ RuntimeExecutionId
+→ RuntimeStepId
+→ RuntimeStepAttemptId
+→ ProviderInvocationId / McpInvocationId
+→ ProviderInvocationAttemptId / McpInvocationAttemptId
+```
+
+RuntimeExecutionId is not the same as RuntimeExecutionRequestId. A request may
+produce multiple executions through retry or manual rerun. Resume keeps the
+same RuntimeExecutionId unless the execution is terminal.
+
+Runtime and Step states are separate. Runtime terminal states include
+`CANCELLED`, `PARTIAL_SUCCESS`, `SUCCEEDED`, `FAILED`, and `EXPIRED`. Step
+terminal states include `SUCCEEDED`, `FAILED`, `SKIPPED`, `CANCELLED`, and
+`TIMED_OUT`.
+
+Runtime Preflight is a non-mutating boundary before Runtime Start. It checks
+request integrity, approval validity, package/evidence binding, connection and
+credential references, capability availability, Provider/MCP readiness,
+snapshot consistency, cancellation state, and idempotency conflicts.
+
+Provider Invocation and MCP Invocation are separate:
+
+- Provider Invocation handles model calls, usage facts, latency, normalized
+  provider status, and safe result references.
+- MCP Invocation handles external tool calls, tool snapshot binding, external
+  effect status, idempotency, and safe result references.
+
+Connection, Credential, and Approval are separate. Connection status does not
+imply Credential status. Approval does not imply Connection or Credential
+readiness.
+
 ## Provider Adapter vs MCP Boundary
 
 Provider Adapters provision infrastructure:

@@ -698,3 +698,44 @@ Runtime Step / Provider / MCP / Credential Boundary Design
 This candidate should decide Runtime Start, Runtime Step, Provider Invocation,
 MCP Invocation, Credential Reference, Approval Revalidation, retry,
 cancellation, idempotency, Connection status, and expected-cost display timing.
+
+## 17. Runtime / MCP Boundary Decision Lock Completion
+
+Completed design task:
+
+```text
+RUNTIME-MCP-BOUNDARY-001
+```
+
+Completion state:
+
+```text
+DESIGN_LOCK_APPROVED_WITH_OPEN_DECISIONS
+IMPLEMENTATION NOT STARTED
+NO COMMIT
+```
+
+Created document:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md`
+
+Confirmed boundaries:
+
+- Runtime Execution Request and Runtime Execution are separate.
+- Runtime Step and Step Attempt are separate.
+- Provider and MCP Invocation are separate.
+- Connection and Credential are separate.
+- Runtime uses Credential References only.
+- Approval revalidation is required before start/retry/resume where relevant.
+- Cancellation and retry append evidence, not mutate prior evidence.
+- Cost Simulation binding is designed, but engine implementation is not started.
+
+Next single task recommendation:
+
+```text
+RUNTIME-EXECUTION-START-001
+Runtime Preflight / Start Contract
+```
+
+Do not start implementation until this design lock and the current checkpoint
+sequence receive explicit approval.

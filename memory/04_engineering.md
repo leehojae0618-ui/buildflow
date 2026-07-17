@@ -119,6 +119,32 @@ Cost rules:
   Runtime status.
 - Cost Simulation Engine is not implemented unless explicitly approved.
 
+## Runtime Boundary Decision Lock
+
+Decision lock source:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md`
+
+Engineering rules:
+
+- RuntimeExecutionRequestId and RuntimeExecutionId are distinct.
+- Full execution retry creates a new RuntimeExecutionId.
+- Step retry creates a new RuntimeStepAttemptId under the same RuntimeStepId.
+- Provider Invocation and MCP Invocation use separate contracts.
+- Runtime never handles raw Credential material.
+- Secure Credential Resolution happens behind a secure executor boundary.
+- MCP execution must bind to Tool Definition Snapshot checksum.
+- Tool Definition mismatch requires reapproval.
+- Non-idempotent or unknown-idempotency Tool calls are not automatically
+  retried.
+- Cancellation appends evidence and never rewrites previous evidence.
+- Provider success, MCP protocol success, external effect success, and Runtime
+  Step success are separate facts.
+- Adapter implementations must normalize errors and keep raw payloads out of
+  Runtime core and Evidence.
+- Future runtime concurrency requires lock/lease concepts; idempotency alone is
+  not enough.
+
 ## Change Control
 
 - Do not implement outside the active approved Sprint.

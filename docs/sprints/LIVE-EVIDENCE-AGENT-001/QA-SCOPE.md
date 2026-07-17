@@ -107,16 +107,29 @@ evidence-backed QA boundary for:
 | Runtime Step Evidence | none found | `NOT_STARTED` | Runtime step evidence contract implementation has not started. |
 | Runtime Execution Result | none found | `NOT_STARTED` | Runtime result evidence contract implementation has not started. |
 | Runtime Evidence Bundle / Report | none found | `NOT_STARTED` | Runtime bundle/report implementation has not started. |
+| Runtime / MCP Boundary Design | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `COMPLETE` | Runtime, Step, Provider, MCP, Connection, Credential, Approval, Retry, Cancellation, Idempotency, Evidence, and Cost Simulation boundaries are decision-locked for future implementation. |
+| Runtime Preflight | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `NOT_STARTED` | Preflight boundary is defined, but contract/code implementation has not started. |
+| Runtime Step Contract | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DESIGN_DEFINED` | Step contract candidate is documented; code implementation has not started. |
+| Runtime Step Attempt | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DESIGN_DEFINED` | Step attempt contract candidate is documented; code implementation has not started. |
 | Provider Invocation | none found | `NOT_STARTED` | Provider invocation evidence is not implemented in the Runtime Evidence path. |
+| Provider Invocation Contract | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DESIGN_DEFINED` | Provider invocation boundary is documented; implementation has not started. |
 | MCP Server Registration | `src/features/mcp/types.ts`, `src/features/mcp/validator.ts` | `CONTRACT_IMPLEMENTED_RUNTIME_NOT_STARTED` | MCP contracts exist, but registration runtime and persistence are not implemented. |
 | MCP Tool Discovery | none found | `NOT_STARTED` | Live discovery is not implemented. |
-| MCP Tool Snapshot | `src/features/mcp/types.ts` | `CONTRACT_IMPLEMENTED_RUNTIME_NOT_STARTED` | Tool definition snapshot contract exists; runtime snapshot capture is not implemented. |
+| MCP Tool Snapshot | `src/features/mcp/types.ts`, `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DESIGN_DEFINED` | Tool definition snapshot boundary is documented; runtime snapshot capture is not implemented. |
+| MCP Invocation Contract | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DESIGN_DEFINED` | MCP invocation boundary is documented; implementation has not started. |
 | MCP Invocation | none found | `NOT_STARTED` | Actual MCP Tool Invocation remains out of scope. |
-| Connection & Credential Design | `memory/02_architecture.md`, `memory/03_uiux.md`, `memory/04_engineering.md` | `DEFINED` | Connection & Credential Layer is documented as a required architecture boundary. |
+| Connection & Credential Design | `memory/02_architecture.md`, `memory/03_uiux.md`, `memory/04_engineering.md`, `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DEFINED` | Connection & Credential Layer is documented as a required architecture boundary. |
+| Connection Contract | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DESIGN_DEFINED` | Connection status and contract candidate are documented; implementation has not started. |
+| Credential Reference Contract | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DESIGN_DEFINED` | Credential reference boundary is documented; storage implementation has not started. |
 | Credential Storage | none found | `NOT_STARTED` | Credential storage implementation is not part of this QA scope. |
 | OAuth Connection | none found | `NOT_STARTED` | OAuth connection implementation is not part of this QA scope. |
+| Approval Revalidation | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DESIGN_DEFINED` | Revalidation points are documented; implementation has not started. |
+| Retry Policy | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DESIGN_DEFINED` | Retry identity and safety policy are documented; implementation has not started. |
+| Cancellation Policy | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DESIGN_DEFINED` | Cancellation evidence and state policy are documented; implementation has not started. |
+| Idempotency Policy | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DESIGN_DEFINED` | Idempotency classification is documented; implementation has not started. |
 | API Key Guide | `memory/03_uiux.md` | `DESIGN_DEFINED` | API Key guide policy is documented; implementation is not started. |
 | Cost Simulation Policy | `memory/01_product.md`, `memory/02_architecture.md`, `memory/03_uiux.md`, `memory/04_engineering.md` | `DESIGN_DEFINED` | Cost simulation policy and required usage-frequency language are documented. |
+| Cost Simulation Binding | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DESIGN_DEFINED` | Runtime/cost binding points are documented; engine implementation has not started. |
 | Cost Simulation Engine | none found | `NOT_STARTED` | Cost Simulation Engine implementation is future work. |
 | Actual Billing Integration | none found | `NOT_STARTED` | Actual billing integration is not implemented. |
 | Marketplace publish Evidence | none found | `NOT FOUND` | Marketplace remains future/out of scope. |
