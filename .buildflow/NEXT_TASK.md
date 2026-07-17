@@ -77,3 +77,22 @@ candidate name uses `LIVE-EVIDENCE-AGENT-001` to emphasize evidence-first QA.
 Do not start implementation or live QA from this placeholder. The candidate must
 be reviewed and either approved as a live evidence Sprint or renamed/aligned with
 the Roadmap's `AGENT-EVIDENCE-001` before activation.
+
+## Draft Task Document
+
+Draft scope has been prepared in:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/TASK.md`
+
+The draft is not approval. It exists to support PM/CTO review of the live action
+boundary, Credential boundary, cost boundary, and Evidence requirements.
+
+## Approval Questions Before Activation
+
+1. Will LIVE-EVIDENCE-AGENT-001 allow actual live execution and deployment, or
+   only checklist-based QA against existing Evidence?
+2. Which representative Agent Project is in scope?
+3. Which Provider Credentials may be used, and are they test-only?
+4. What exact external resource actions are approved?
+5. Is any cost-incurring action approved?
+6. Is MCP Tool Invocation included, or explicitly deferred?
