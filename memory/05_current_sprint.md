@@ -252,6 +252,68 @@ npx vitest run src/features/agents/package-evidence-bundle.test.ts
 PASS — 20 tests
 ```
 
+## Package Verification Pipeline
+
+Status:
+
+```text
+IMPLEMENTED
+PM REVIEW REQUIRED
+PURE PIPELINE ONLY
+```
+
+Design and implementation document:
+
+```text
+docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-VERIFICATION-PIPELINE.md
+```
+
+Package Verification Pipeline code is now implemented as a pure composition
+layer:
+
+```text
+src/features/agents/package-verification-pipeline.ts
+src/features/agents/package-verification-pipeline.test.ts
+```
+
+Implemented behavior:
+
+- reuses `exportAgentPackageArtifact`
+- reuses `verifyAgentPackageArtifact`
+- reuses `buildPackageEvidenceBundle`
+- separates `EXPORT`, `VERIFICATION`, and `EVIDENCE_BUNDLE` stages
+- returns structured stage results with `executed`, `success`, failures,
+  warnings, limitations, checksum, and reference fields
+- returns `COMPLETED_WITH_LIMITATIONS` for the current valid structural path
+- returns `FAILED` for export, verification, bundle, checksum, package id,
+  package version, secret safety, or internal pipeline failures
+- returns `INCOMPLETE` for unverified verification, incomplete bundle, missing
+  references, or missing required evidence
+- does not return `COMPLETED` in the first implementation
+- produces a deterministic summary that excludes timestamps, random values,
+  hostnames, process ids, absolute paths, and environment values
+- preserves Runtime, MCP Invocation, Provider execution, install/deploy, and
+  Marketplace limitations
+- does not invoke Runtime, MCP Tools, Providers, Vault, DB, UI, Marketplace, or
+  deployment behavior
+
+Target pipeline test:
+
+```text
+npx vitest run src/features/agents/package-verification-pipeline.test.ts
+PASS — 24 tests
+```
+
+Current Package Readiness remains:
+
+```text
+CONDITIONALLY_READY
+```
+
+Reason: structural package evidence can now be exported, verified, bundled, and
+composed through a pure pipeline, but live Runtime/MCP/Provider/Install/
+Marketplace evidence remains absent.
+
 ## Major Gaps
 
 - `GAP-001` / P1: Actual MCP Tool Invocation Evidence is not found.
@@ -261,9 +323,11 @@ PASS — 20 tests
   standalone Evidence Bundle artifact, persisted verification report, and
   Approval Gate integration remain out of scope.
 - `GAP-002C` / P2: Package Evidence Bundle design exists; pure bundle builder,
-  reference-only pure bundle builder is implemented; persistence, pipeline
-  composition, API/UI presentation, and Approval Gate integration remain out of
-  scope.
+  reference-only pure bundle builder is implemented; persistence, API/UI
+  presentation, and Approval Gate integration remain out of scope.
+- `GAP-002D` / P2: Package Verification Pipeline is implemented; persistence,
+  API/UI presentation, Approval Gate integration, Quality Score calculation,
+  and live evidence ingestion remain out of scope.
 - `GAP-003` / P1: Marketplace publish readiness Evidence is not found.
 - `GAP-004` / P2: Runtime Compiler is planned but not implemented.
 - `GAP-005` / P2: `.buildflow/STATUS.md` Latest Known Commit mismatch.

@@ -97,6 +97,73 @@ Commit / Push / Deploy:
 - Push: not performed
 - Deploy: not performed
 
+## 2026-07-17 — PACKAGE-VERIFICATION-PIPELINE-001 Pure Pipeline
+
+Modified implementation files:
+
+- `src/features/agents/package-verification-pipeline.ts`
+- `src/features/agents/package-verification-pipeline.test.ts`
+- `src/features/agents/index.ts`
+
+Modified documentation and memory files:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-VERIFICATION-PIPELINE.md`
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/QA-SCOPE.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Implemented pipeline behavior:
+
+- composes Package Export, Package Verification, and Package Evidence Bundle
+  as one pure deterministic pipeline
+- reuses `exportAgentPackageArtifact`, `verifyAgentPackageArtifact`, and
+  `buildPackageEvidenceBundle`
+- separates `EXPORT`, `VERIFICATION`, and `EVIDENCE_BUNDLE` stages
+- returns `COMPLETED_WITH_LIMITATIONS` for the current valid structural path
+- returns `FAILED` for export, verification, bundle, checksum, package id,
+  package version, secret safety, or internal pipeline failures
+- returns `INCOMPLETE` for unverified verification, incomplete bundle, missing
+  references, or missing required evidence
+- does not return `COMPLETED` in the first implementation
+- produces deterministic pipeline summary
+- keeps approval reference separate from successful completion
+- preserves Runtime, MCP Invocation, Provider execution, install/deploy, and
+  Marketplace limitations
+- does not mutate input
+
+Added tests:
+
+- `src/features/agents/package-verification-pipeline.test.ts`
+- 24 tests covering valid pipeline, deterministic export/report/bundle/summary,
+  metadata determinism, export failure, invalid/unverified verification,
+  invalid/incomplete bundle, checksum conflicts, package id/version conflicts,
+  non-`COMPLETED` behavior, Runtime/MCP/Provider limitations, missing approval,
+  raw secret safety, credential references, input non-mutation, stage execution
+  state, upstream failure short-circuiting, and evidence reference
+  normalization.
+
+Runtime / MCP / Provider / Marketplace changes:
+
+- Runtime changes: none
+- MCP Tool Invocation: none
+- Provider execution: none
+- Marketplace implementation: none
+- Deployment: none
+- Vault or Credential access: none
+- DB/API/UI changes: none
+
+Validation so far:
+
+- Target package verification pipeline test: PASS — 24 tests
+- Clean typecheck before build: PASS
+
+Commit / Push / Deploy:
+
+- Commit: not performed
+- Push: not performed
+- Deploy: not performed
+
 ## 2026-07-17 — GAP-002 Agent Package Artifact Export Evidence
 
 Modified implementation files:

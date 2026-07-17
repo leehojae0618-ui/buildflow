@@ -7,7 +7,7 @@ CURRENT TASK COMPLETED
 Completed output:
 
 ```text
-docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-EVIDENCE-BUNDLE.md
+docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-VERIFICATION-PIPELINE.md
 ```
 
 Current Package Readiness judgement:
@@ -26,6 +26,10 @@ Resolved / reduced gap:
 - GAP-002: Deterministic JSON Agent Package artifact export Evidence is now
   implemented. ZIP/Installer export remains out of scope and should be treated
   as a separate future transport/package task if PM prioritizes it.
+- GAP-002B: Package Verification pure verifier is implemented.
+- GAP-002C: Package Evidence Bundle reference-only pure builder is
+  implemented.
+- GAP-002D: Package Verification Pipeline pure composition is implemented.
 
 ## Completed Task
 
@@ -120,6 +124,55 @@ VALID_WITH_LIMITATIONS
 
 `VALID` is intentionally not returned by the first implementation.
 
+## Completed Task
+
+```text
+PACKAGE-VERIFICATION-PIPELINE-001
+```
+
+Status:
+
+```text
+IMPLEMENTED
+PM REVIEW REQUIRED
+PURE PIPELINE ONLY
+```
+
+Completed:
+
+- Package Export → Package Verification → Package Evidence Bundle composition
+- `EXPORT`, `VERIFICATION`, `EVIDENCE_BUNDLE` stage summaries
+- pipeline status model: `FAILED`, `INCOMPLETE`,
+  `COMPLETED_WITH_LIMITATIONS`, `COMPLETED`
+- deterministic pipeline summary
+- stage consistency checks for package id, package version, artifact checksum,
+  verification report checksum, and bundle checksum
+- safe structured failures
+- upstream failure short-circuiting
+- evidence reference normalization policy documentation
+- secret-safe failure reporting
+
+Code implementation:
+
+```text
+IMPLEMENTED
+```
+
+Implemented output:
+
+```text
+src/features/agents/package-verification-pipeline.ts
+src/features/agents/package-verification-pipeline.test.ts
+```
+
+Current valid pipeline status:
+
+```text
+COMPLETED_WITH_LIMITATIONS
+```
+
+`COMPLETED` is intentionally not returned by the first implementation.
+
 ## Next Single Task Candidate
 
 Do not start another follow-up without PM confirmation.
@@ -127,21 +180,31 @@ Do not start another follow-up without PM confirmation.
 Recommended:
 
 ```text
-PACKAGE-VERIFICATION-PIPELINE-001
-Compose export → verification → evidence bundle as one pure pipeline.
+PACKAGE-EVIDENCE-REPORT-001
+Define how package verification pipeline results are stored or presented as an
+evidence report without adding Runtime, MCP Invocation, Provider execution,
+Marketplace, deployment, DB, API, or UI behavior.
 ```
 
 Suggested minimal file scope:
 
 ```text
 To be decided after PM review.
-src/features/agents/index.ts
 ```
 
 This must remain evidence-contract work unless PM explicitly approves
 implementation. It must not invoke an MCP Tool, read Vault, use live
 Credentials, perform Provider execution, write DB records, publish Marketplace
 listings, or deploy.
+
+Alternative PM direction:
+
+```text
+GAP-001 MCP Tool Invocation Evidence boundary
+```
+
+This alternative requires explicit approval because it may touch live
+Credentials, external systems, cost, and provider permissions.
 
 ---
 
