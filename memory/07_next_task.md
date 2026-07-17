@@ -27,7 +27,7 @@ Resolved / reduced gap:
   implemented. ZIP/Installer export remains out of scope and should be treated
   as a separate future transport/package task if PM prioritizes it.
 
-## Completed Design Task
+## Completed Task
 
 ```text
 PACKAGE-VERIFICATION-001
@@ -36,9 +36,9 @@ PACKAGE-VERIFICATION-001
 Status:
 
 ```text
-DRAFT
-NOT APPROVED
-DESIGN ONLY
+IMPLEMENTED
+PM REVIEW REQUIRED
+PURE VERIFIER ONLY
 ```
 
 Completed:
@@ -56,8 +56,23 @@ Completed:
 Code implementation:
 
 ```text
-NOT STARTED
+IMPLEMENTED
 ```
+
+Implemented output:
+
+```text
+src/features/agents/package-verification.ts
+src/features/agents/package-verification.test.ts
+```
+
+Current valid artifact verification status:
+
+```text
+VERIFIED_WITH_LIMITATIONS
+```
+
+`VERIFIED` is intentionally not returned by the first implementation.
 
 ## Next Single Task Candidate
 
@@ -66,21 +81,20 @@ Do not start another follow-up without PM confirmation.
 Recommended:
 
 ```text
-PACKAGE-VERIFICATION-001
-Implement pure Package Verification contracts and verifier function.
+PACKAGE-EVIDENCE-BUNDLE-001
+Define or implement the smallest deterministic Evidence Bundle contract.
 ```
 
 Suggested minimal file scope:
 
 ```text
-src/features/agents/package-verification.ts
-src/features/agents/package-verification.test.ts
-src/features/agents/index.ts
+To be decided after PM review.
 ```
 
-This must remain a pure verification implementation. It must not invoke an MCP
-Tool, read Vault, use live Credentials, perform Provider execution, write DB
-records, publish Marketplace listings, or deploy.
+This must remain evidence-contract work unless PM explicitly approves
+implementation. It must not invoke an MCP Tool, read Vault, use live
+Credentials, perform Provider execution, write DB records, publish Marketplace
+listings, or deploy.
 
 ---
 

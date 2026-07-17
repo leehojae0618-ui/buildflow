@@ -202,3 +202,63 @@ Commit / Push / Deploy:
 - Commit: not performed
 - Push: not performed
 - Deploy: not performed
+
+## 2026-07-17 — PACKAGE-VERIFICATION-001 Pure Verifier
+
+Modified implementation files:
+
+- `src/features/agents/package-verification.ts`
+- `src/features/agents/package-verification.test.ts`
+- `src/features/agents/index.ts`
+
+Modified documentation and memory files:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-VERIFICATION.md`
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/QA-SCOPE.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Implemented verifier behavior:
+
+- consumes existing `AgentPackageExportArtifact`
+- validates artifact format version and content type
+- recomputes checksum and byte length
+- parses deterministic JSON payload
+- validates package/profile and readiness contract shape
+- rejects not-ready artifact readiness metadata
+- rejects raw secret-like values and credential value fields
+- evaluates required evidence references
+- returns `VERIFIED_WITH_LIMITATIONS` for current valid artifacts
+- keeps approval handling separate with `approvalStatus: PENDING`
+- generates deterministic verification core and report integrity checksum
+
+Added tests:
+
+- `src/features/agents/package-verification.test.ts`
+- 18 tests covering valid artifact, deterministic core, report checksum,
+  integrity failures, unsupported versions, malformed JSON, contract failures,
+  not-ready readiness, secret safety, credential references, missing evidence,
+  limitations, approval status, non-VERIFIED behavior, input non-mutation, and
+  secret-safe failure messages.
+
+Runtime / MCP / Provider / Marketplace changes:
+
+- Runtime changes: none
+- MCP Tool Invocation: none
+- Provider execution: none
+- Marketplace implementation: none
+- Deployment: none
+- Vault or Credential access: none
+- DB/API/UI changes: none
+
+Validation:
+
+- Target package verification test: PASS — 18 tests
+- Typecheck: PASS
+
+Commit / Push / Deploy:
+
+- Commit: not performed
+- Push: not performed
+- Deploy: not performed

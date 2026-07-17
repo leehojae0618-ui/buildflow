@@ -3,18 +3,24 @@
 ## 1. Status
 
 ```text
-DRAFT
-NOT APPROVED
-DESIGN ONLY
+IMPLEMENTED
+PM REVIEW REQUIRED
+PURE VERIFIER ONLY
 ```
 
-This document designs how BuildFlow should verify an exported Agent Package
-artifact independently from the creator that produced it.
+This document defines how BuildFlow verifies an exported Agent Package artifact
+independently from the creator that produced it.
 
-It does not approve implementation and does not authorize runtime execution,
-MCP Tool Invocation, Provider execution, deployment, Marketplace publishing,
-Vault access, Credential access, database changes, API changes, UI changes, or
-ZIP installer creation.
+The first pure verifier implementation exists at:
+
+```text
+src/features/agents/package-verification.ts
+src/features/agents/package-verification.test.ts
+```
+
+It does not authorize runtime execution, MCP Tool Invocation, Provider
+execution, deployment, Marketplace publishing, Vault access, Credential access,
+database changes, API changes, UI changes, or ZIP installer creation.
 
 ## 2. Objective
 
@@ -34,6 +40,8 @@ The following implementation evidence was checked in the current repository:
 |---|---|---|
 | Agent Package export artifact | `src/features/agents/package-export.ts` | `IMPLEMENTED` |
 | Agent Package export tests | `src/features/agents/package-export.test.ts` | `IMPLEMENTED` |
+| Package Verification pure verifier | `src/features/agents/package-verification.ts` | `IMPLEMENTED` |
+| Package Verification tests | `src/features/agents/package-verification.test.ts` | `IMPLEMENTED` |
 | Agent Package/Profile contract | `src/features/agents/package-profile.ts` | `IMPLEMENTED` |
 | Agent Definition validator | `src/features/agents/validator.ts` | `IMPLEMENTED` |
 | Agent Validation Gate | `src/features/agents/validation-gate.ts` | `IMPLEMENTED` |
@@ -61,6 +69,14 @@ CONDITIONALLY_READY
 Reason: package/profile export evidence exists, but runtime execution, MCP Tool
 Invocation, ZIP installer export, installability, and Marketplace publishing
 evidence are not implemented or approved.
+
+The current normal successful verifier status is:
+
+```text
+VERIFIED_WITH_LIMITATIONS
+```
+
+`VERIFIED` is intentionally not returned by the first implementation.
 
 ## 4. Verification Boundary
 
@@ -364,7 +380,7 @@ claim.
 
 ## 15. Recommended Implementation Task
 
-Recommended next single implementation task after PM approval:
+Implemented first task:
 
 ```text
 PACKAGE-VERIFICATION-001
@@ -379,7 +395,7 @@ src/features/agents/package-verification.test.ts
 src/features/agents/index.ts
 ```
 
-Suggested first implementation boundaries:
+Implemented boundaries:
 
 - parse `AgentPackageExportArtifact`
 - verify supported artifact format
@@ -390,4 +406,19 @@ Suggested first implementation boundaries:
 - produce a secret-safe Verification Report
 - do not call Runtime, MCP, Providers, Vault, Marketplace, DB, API, or UI
 
-Do not start implementation until PM approves the scope.
+Still not implemented:
+
+- Evidence Bundle generation as a standalone artifact
+- Runtime execution verification
+- actual MCP Tool Invocation verification
+- Provider execution verification
+- ZIP/Installer export verification
+- Marketplace publish verification
+- Quality Score formula
+
+Recommended next single task:
+
+```text
+PACKAGE-EVIDENCE-BUNDLE-001
+Define or implement the smallest deterministic Evidence Bundle contract.
+```

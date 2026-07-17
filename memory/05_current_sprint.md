@@ -126,12 +126,12 @@ Reason:
 
 ## Package Verification Design
 
-Status:
+Design status:
 
 ```text
-DRAFT
-NOT APPROVED
-DESIGN ONLY
+IMPLEMENTED
+PM REVIEW REQUIRED
+PURE VERIFIER ONLY
 ```
 
 Design document:
@@ -154,7 +154,33 @@ Package artifacts:
 - Quality Score input candidates
 - Approval Gate relationship
 
-No Package Verification code has been implemented yet.
+Package Verification code is now implemented as a pure verifier:
+
+```text
+src/features/agents/package-verification.ts
+src/features/agents/package-verification.test.ts
+```
+
+Implemented behavior:
+
+- consumes existing `AgentPackageExportArtifact`
+- validates artifact format version, content type, checksum, and byte length
+- parses deterministic JSON payload
+- validates package/profile and readiness contract shape
+- rejects not-ready readiness metadata
+- rejects raw secret-like values and credential value fields
+- evaluates required evidence references
+- produces a structured Verification Report
+- returns `VERIFIED_WITH_LIMITATIONS` for the current valid artifact
+- keeps `approvalStatus` as `PENDING`
+- does not return `VERIFIED` in the first implementation
+
+Target verifier test:
+
+```text
+npx vitest run src/features/agents/package-verification.test.ts
+PASS — 18 tests
+```
 
 Current Package Readiness remains:
 
@@ -162,13 +188,16 @@ Current Package Readiness remains:
 CONDITIONALLY_READY
 ```
 
-Implementation requires PM approval before starting.
+Further implementation still requires PM approval before starting.
 
 ## Major Gaps
 
 - `GAP-001` / P1: Actual MCP Tool Invocation Evidence is not found.
 - `GAP-002` / P2: Deterministic Agent Package JSON artifact export is
   implemented; ZIP/Installer export remains out of scope.
+- `GAP-002B` / P2: Package Verification pure verifier is implemented;
+  standalone Evidence Bundle artifact, persisted verification report, and
+  Approval Gate integration remain out of scope.
 - `GAP-003` / P1: Marketplace publish readiness Evidence is not found.
 - `GAP-004` / P2: Runtime Compiler is planned but not implemented.
 - `GAP-005` / P2: `.buildflow/STATUS.md` Latest Known Commit mismatch.

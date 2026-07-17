@@ -95,6 +95,7 @@ evidence-backed QA boundary for:
 | Existing live provider Evidence | `docs/sprints/LIVE-EVIDENCE-002/REPORT.md` | `IMPLEMENTED` for representative `ai-inquiry-v1` provider path | Confirms GitHub, Supabase, Vercel, OpenAI, health check, functional AI inquiry, verification persistence, idempotency, and ownership for TEST A. |
 | MCP live invocation Evidence | none found | `NOT FOUND` | Current contract files and reports explicitly do not execute MCP Tools. |
 | Package artifact export Evidence | `src/features/agents/package-export.ts`, `src/features/agents/package-export.test.ts` | `IMPLEMENTED` | Deterministic JSON artifact export exists for ready Agent Package/Profile data; ZIP, installer package, UI download, and Marketplace publishing remain out of scope. |
+| Package Verification Evidence | `src/features/agents/package-verification.ts`, `src/features/agents/package-verification.test.ts` | `IMPLEMENTED` | Pure verifier validates deterministic artifact format, integrity, contract, secret safety, evidence references, limitations, and report integrity without Runtime, MCP, Provider, Vault, DB, UI, or Marketplace execution. |
 | Marketplace publish Evidence | none found | `NOT FOUND` | Marketplace remains future/out of scope. |
 
 ## 6. Evidence Checklist
@@ -215,6 +216,32 @@ Current Evidence:
 - `src/features/agents/package-export.ts`
 - `src/features/agents/package-export.test.ts`
 
+### Agent Package Verification
+
+Required Evidence:
+
+- Verifier consumes the existing `AgentPackageExportArtifact` contract.
+- Verifier recomputes checksum and byte length from payload.
+- Verifier rejects unsupported artifact format versions.
+- Verifier rejects malformed JSON.
+- Verifier validates package/profile and readiness shape.
+- Verifier rejects not-ready artifact readiness metadata.
+- Verifier rejects raw secret-like values and raw credential value fields.
+- Verifier preserves credential-reference-only packages.
+- Verifier evaluates required evidence references.
+- Verifier returns `VERIFIED_WITH_LIMITATIONS` for the current valid package
+  artifact, not `VERIFIED`.
+- Verifier includes Runtime, MCP Invocation, Provider execution, installation,
+  deployment, and Marketplace limitations.
+- Verifier keeps approval status separate from verification status and defaults
+  approval to `PENDING`.
+
+Current Evidence:
+
+- `src/features/agents/package-verification.ts`
+- `src/features/agents/package-verification.test.ts`
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-VERIFICATION.md`
+
 ### Existing Live Provider Evidence
 
 Required Evidence:
@@ -293,14 +320,19 @@ Reason:
 - Deterministic Agent Package artifact export exists.
 - Export validation, secret-free enforcement, determinism, invalid input
   rejection, and non-mutation tests exist.
+- Package Verification pure verifier exists.
+- Verification report, deterministic core, report integrity checksum,
+  secret-safety result, approval state, failure classification, and limitation
+  tests exist.
 - Representative AI inquiry provider path has prior live Evidence.
 - Actual MCP Invocation Evidence is not found.
 - Marketplace publish Evidence is not found.
 
 Therefore BuildFlow can evaluate a secret-free Agent Package/Profile candidate,
-and can produce a deterministic JSON artifact for a ready profile. It must not
-claim that the Agent Package is live-executable through MCP, ZIP-exported,
-installable as an Agent extension, or Marketplace-publishable.
+can produce a deterministic JSON artifact for a ready profile, and can verify
+that artifact structurally as `VERIFIED_WITH_LIMITATIONS`. It must not claim
+that the Agent Package is live-executable through MCP, ZIP-exported, installable
+as an Agent extension, or Marketplace-publishable.
 
 ## 9. Gap Analysis
 
@@ -308,6 +340,7 @@ installable as an Agent extension, or Marketplace-publishable.
 |---|---|---|---|---|---|---|
 | GAP-001 | MCP Tool Invocation | `NOT FOUND` | No approved live MCP Tool Invocation Evidence | Agent tool ecosystem could appear more complete than it is | Create a separately approved live MCP Evidence Sprint with explicit Tool, permission, Credential, safe result, and cost boundary | P1 |
 | GAP-002 | Package artifact export | `IMPLEMENTED` | ZIP installer archive, UI download, storage upload, and Installer integration remain out of scope | Users may still confuse deterministic JSON artifact readiness with installable package readiness | Keep deterministic artifact export as Evidence; if needed, define a separate ZIP/installer export Sprint later | P2 |
+| GAP-002B | Package verification report | `IMPLEMENTED` | Standalone Evidence Bundle artifact, persisted verification report, and Approval Gate integration remain out of scope | Users may confuse `VERIFIED_WITH_LIMITATIONS` with installable or runtime verified package status | Keep pure verifier as structural Evidence; define Evidence Bundle or persistence separately | P2 |
 | GAP-003 | Marketplace publish readiness | `NOT FOUND` | No listing, trust, evidence freshness, or publish policy implementation | Premature Marketplace claims could mislead users | Defer to MARKETPLACE-AGENT-001; maintain NOT SUPPORTED in live evidence reports | P1 |
 | GAP-004 | Runtime Compiler | `PLANNED` | No compiler from Agent Definition/Profile to executable runtime artifact | Agent contract readiness may be mistaken for runtime readiness | Define Runtime Compiler Sprint only after live evidence boundary is approved | P2 |
 | GAP-005 | Documentation state mismatch | `PARTIAL` | `.buildflow/STATUS.md` Latest Known Commit is `be12055`, actual HEAD observed in memory is `de62266` | Operational status may confuse Sprint transitions | Update Latest Known Commit during next approved status transition | P2 |
@@ -332,7 +365,8 @@ installable as an Agent extension, or Marketplace-publishable.
 3. Decide whether `CONDITIONALLY_READY` is acceptable as the current Package
    Readiness judgement.
 4. Choose whether the next implementation work should address `GAP-001`
-   MCP live invocation or a separate ZIP/Installer export scope.
+   MCP live invocation, `PACKAGE-EVIDENCE-BUNDLE-001`, or a separate
+   ZIP/Installer export scope.
 5. Decide whether `.buildflow/STATUS.md` Latest Known Commit should be updated
    in the next status transition.
 
@@ -341,12 +375,15 @@ installable as an Agent extension, or Marketplace-publishable.
 Recommended next single task:
 
 ```text
-Define the evidence boundary for GAP-001 actual MCP Tool Invocation.
+PACKAGE-EVIDENCE-BUNDLE-001
+Define or implement the smallest deterministic Evidence Bundle contract.
 ```
 
 Alternative:
 
 ```text
-If PM wants package transport work first, define a separate ZIP/Installer export
-Sprint. Do not treat the deterministic JSON artifact as an installable package.
+If PM wants live execution evidence first, define the evidence boundary for
+GAP-001 actual MCP Tool Invocation. If PM wants package transport work first,
+define a separate ZIP/Installer export Sprint. Do not treat the deterministic
+JSON artifact as an installable package.
 ```
