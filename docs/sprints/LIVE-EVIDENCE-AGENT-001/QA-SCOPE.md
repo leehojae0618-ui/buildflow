@@ -100,6 +100,25 @@ evidence-backed QA boundary for:
 | Package Verification Pipeline | `src/features/agents/package-verification-pipeline.ts`, `src/features/agents/package-verification-pipeline.test.ts` | `IMPLEMENTED` | Pure pipeline composes Package Export, Package Verification, and Package Evidence Bundle into a deterministic structured result. It returns `COMPLETED_WITH_LIMITATIONS` for the current valid structural path and does not execute Runtime/MCP/Provider/Marketplace paths. |
 | Package Evidence Report | `src/features/agents/package-evidence-report.ts`, `src/features/agents/package-evidence-report.test.ts` | `IMPLEMENTED` | Pure reference-first report builder summarizes package artifact, verification report, evidence bundle, and verification pipeline output without embedding full payloads or executing Runtime/MCP/Provider/Marketplace paths. Persistence, API, UI, renderer, and Approval handling remain out of scope. |
 | Package Approval Gate | `src/features/agents/package-approval-gate.ts`, `src/features/agents/package-approval-gate.test.ts`, `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-APPROVAL-GATE.md` | `IMPLEMENTED` | Pure approval request, per-scope decision, and gate evaluator contract bound to Package Evidence Report sources. Persistence, API, UI, auth enforcement, Runtime/MCP/Provider/Deploy/Marketplace execution, and real approval capture remain out of scope. |
+| Package Runtime Evidence Design | `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-RUNTIME-EVIDENCE.md` | `DESIGN_COMPLETE` | Six-layer Runtime Evidence contract for request, start evidence, step evidence, result, bundle, and report. |
+| Runtime Execution Request | `src/features/agents/runtime-execution-request.ts`, `src/features/agents/runtime-execution-request.test.ts` | `IMPLEMENTED` | Pure Runtime Execution Request builder creates deterministic, reference-first request objects from Approval Gate results. It validates package/evidence/approval binding, `RUNTIME_EXECUTION` scope, execution mode, references, artifacts, capabilities, expiration policy, duplicate normalization, secret safety, and input non-mutation. Runtime Start, Step, Result, Bundle, Report, MCP Invocation, Provider execution, deployment, persistence, and Marketplace remain out of scope. |
+| Runtime Execution Request Final QA | `src/features/agents/runtime-execution-request.test.ts`, full quality gate | `COMPLETE` | Final QA passed with remediation. Runtime Execution Request is ready for checkpoint commit after user approval. |
+| Runtime Start Evidence | none found | `NOT_STARTED` | Runtime start evidence contract implementation has not started. |
+| Runtime Step Evidence | none found | `NOT_STARTED` | Runtime step evidence contract implementation has not started. |
+| Runtime Execution Result | none found | `NOT_STARTED` | Runtime result evidence contract implementation has not started. |
+| Runtime Evidence Bundle / Report | none found | `NOT_STARTED` | Runtime bundle/report implementation has not started. |
+| Provider Invocation | none found | `NOT_STARTED` | Provider invocation evidence is not implemented in the Runtime Evidence path. |
+| MCP Server Registration | `src/features/mcp/types.ts`, `src/features/mcp/validator.ts` | `CONTRACT_IMPLEMENTED_RUNTIME_NOT_STARTED` | MCP contracts exist, but registration runtime and persistence are not implemented. |
+| MCP Tool Discovery | none found | `NOT_STARTED` | Live discovery is not implemented. |
+| MCP Tool Snapshot | `src/features/mcp/types.ts` | `CONTRACT_IMPLEMENTED_RUNTIME_NOT_STARTED` | Tool definition snapshot contract exists; runtime snapshot capture is not implemented. |
+| MCP Invocation | none found | `NOT_STARTED` | Actual MCP Tool Invocation remains out of scope. |
+| Connection & Credential Design | `memory/02_architecture.md`, `memory/03_uiux.md`, `memory/04_engineering.md` | `DEFINED` | Connection & Credential Layer is documented as a required architecture boundary. |
+| Credential Storage | none found | `NOT_STARTED` | Credential storage implementation is not part of this QA scope. |
+| OAuth Connection | none found | `NOT_STARTED` | OAuth connection implementation is not part of this QA scope. |
+| API Key Guide | `memory/03_uiux.md` | `DESIGN_DEFINED` | API Key guide policy is documented; implementation is not started. |
+| Cost Simulation Policy | `memory/01_product.md`, `memory/02_architecture.md`, `memory/03_uiux.md`, `memory/04_engineering.md` | `DESIGN_DEFINED` | Cost simulation policy and required usage-frequency language are documented. |
+| Cost Simulation Engine | none found | `NOT_STARTED` | Cost Simulation Engine implementation is future work. |
+| Actual Billing Integration | none found | `NOT_STARTED` | Actual billing integration is not implemented. |
 | Marketplace publish Evidence | none found | `NOT FOUND` | Marketplace remains future/out of scope. |
 
 ## 6. Evidence Checklist
@@ -370,6 +389,12 @@ Reason:
   stale/supersede/revoke, deterministic id/checksum, and authorization
   expression. Persistence, UI/API, authorization enforcement, and real approval
   capture remain out of scope.
+- Package Runtime Evidence is documented as a reference-first, deterministic
+  evidence boundary.
+- Runtime Execution Request is implemented as the first pure Runtime Evidence
+  contract layer. It produces a deterministic request object only and does not
+  start Runtime execution.
+- Runtime Start, Step, Result, Bundle, and Report are not implemented.
 - Representative AI inquiry provider path has prior live Evidence.
 - Actual MCP Invocation Evidence is not found.
 - Marketplace publish Evidence is not found.
@@ -394,6 +419,7 @@ deployable, or Marketplace-publishable.
 | GAP-002D | Package Verification Pipeline | `IMPLEMENTED` | Persistence, API/UI presentation, Approval Gate integration, Quality Score calculation, and live evidence ingestion remain out of scope | Users may confuse `COMPLETED_WITH_LIMITATIONS` with production readiness | Keep pipeline result structural-only; define evidence report persistence or presentation separately if PM approves | P2 |
 | GAP-002E | Package Evidence Report | `IMPLEMENTED` | Persistence, API/UI/PDF presentation, Approval Gate integration, and Quality Score calculation remain out of scope | Users may confuse report validity with live runtime or deployment readiness | Keep report summary-first and reference-first; define persistence/presentation separately if PM approves | P2 |
 | GAP-002F | Package Approval Gate | `IMPLEMENTED` | Persistence, API/UI, authorization enforcement, real approval capture, and approval record integration remain out of scope | Users may confuse Approval Gate structural authorization with executed runtime/deployment authorization | Keep Approval Gate pure and reference-only; define persistence/UI/API/authorization enforcement separately if PM approves | P2 |
+| GAP-002G | Runtime Execution Request | `IMPLEMENTED` | Final QA and checkpoint commit remain pending; Runtime Start/Step/Result/Bundle/Report are not implemented | Users may confuse a valid execution request with actual Runtime execution evidence | Run PACKAGE-RUNTIME-EVIDENCE-002 Final QA before commit; keep later Runtime Evidence layers separate | P2 |
 | GAP-003 | Marketplace publish readiness | `NOT FOUND` | No listing, trust, evidence freshness, or publish policy implementation | Premature Marketplace claims could mislead users | Defer to MARKETPLACE-AGENT-001; maintain NOT SUPPORTED in live evidence reports | P1 |
 | GAP-004 | Runtime Compiler | `PLANNED` | No compiler from Agent Definition/Profile to executable runtime artifact | Agent contract readiness may be mistaken for runtime readiness | Define Runtime Compiler Sprint only after live evidence boundary is approved | P2 |
 | GAP-005 | Documentation state mismatch | `PARTIAL` | `.buildflow/STATUS.md` Latest Known Commit is `be12055`, actual HEAD observed in memory is `de62266` | Operational status may confuse Sprint transitions | Update Latest Known Commit during next approved status transition | P2 |
@@ -429,9 +455,9 @@ Recommended next single task:
 
 ```text
 PACKAGE-EVIDENCE-REPORT-001
-Define how pipeline results are stored or presented as an evidence report
-without adding Runtime, MCP Invocation, Provider execution, Marketplace, or UI
-behavior.
+PACKAGE-RUNTIME-EVIDENCE-001 PM Review and Decision Lock
+Review and lock the design-only Runtime Evidence contract before any pure
+implementation begins.
 ```
 
 Alternative:

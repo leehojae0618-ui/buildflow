@@ -499,3 +499,186 @@ Live action blockers until explicitly approved:
 - `.buildflow/STATUS.md` says `Latest Known Commit: be12055`.
 - Actual Git HEAD is `de62266`.
 - This is a status bookkeeping mismatch, not a code conflict.
+
+## Package Runtime Evidence Design
+
+Current task:
+
+```text
+PACKAGE-RUNTIME-EVIDENCE-001
+```
+
+Status:
+
+```text
+DESIGN COMPLETE
+IMPLEMENTATION NOT STARTED
+NO COMMIT
+```
+
+Created design document:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-RUNTIME-EVIDENCE.md`
+
+Design summary:
+
+- Defines a reference-first, deterministic, secret-safe Runtime Evidence
+  boundary.
+- Selects a six-layer v1 contract:
+  - Runtime Execution Request
+  - Runtime Execution Start Evidence
+  - Runtime Step Evidence
+  - Runtime Execution Result
+  - Runtime Evidence Bundle
+  - Runtime Evidence Report
+- Requires explicit Approval Gate binding with `RUNTIME_EXECUTION` scope.
+- Keeps Runtime Evidence separate from Package Readiness, deployment,
+  Marketplace, Provider execution, and MCP Invocation.
+
+Current Package Readiness remains:
+
+```text
+CONDITIONALLY_READY
+```
+
+Runtime implementation status:
+
+- Runtime implementation: not started
+- MCP Tool Invocation: not started
+- Provider execution: not started
+- deployment: not started
+- Marketplace: not started
+- Vault/Credential access: none
+
+Next decision required:
+
+- PM Review and Decision Lock for Runtime Evidence contract defaults before any
+  implementation begins.
+
+## Runtime Execution Request Implementation
+
+Current task:
+
+```text
+PACKAGE-RUNTIME-EVIDENCE-002
+```
+
+Status:
+
+```text
+IMPLEMENTATION COMPLETE
+FINAL QA APPROVED
+NO COMMIT
+```
+
+Implemented files:
+
+- `src/features/agents/runtime-execution-request.ts`
+- `src/features/agents/runtime-execution-request.test.ts`
+- `src/features/agents/index.ts`
+
+Implemented behavior:
+
+- builds deterministic Runtime Execution Request objects;
+- validates Approval Gate binding;
+- requires `RUNTIME_EXECUTION` scope;
+- validates package and evidence binding against Approval Gate source references;
+- supports `STANDARD` and `DRY_RUN` execution modes;
+- validates execution profile, optional runtime policy, actor, artifact,
+  capability, and expiration references;
+- deduplicates scopes, artifacts, capabilities, and limitations;
+- rejects secret-like values without returning request id or checksum;
+- keeps failure results payload-free;
+- preserves input non-mutation.
+
+Still not started:
+
+- Runtime Execution Start Evidence
+- Runtime Step Evidence
+- Runtime Execution Result
+- Runtime Evidence Bundle
+- Runtime Evidence Report
+- actual Runtime execution
+- MCP Tool Invocation
+- Provider execution
+- deployment
+- Marketplace
+- Vault or Credential access
+
+Current Package Readiness remains:
+
+```text
+CONDITIONALLY_READY
+```
+
+Next required step:
+
+```text
+Checkpoint commit after explicit user approval
+```
+
+Final QA result:
+
+```text
+APPROVED
+READY FOR COMMIT APPROVAL
+```
+
+Runtime Execution Request remains a request contract only. It does not mean
+Runtime execution, MCP Invocation, Provider execution, deployment, connection
+readiness, or Marketplace readiness.
+
+## Product / Runtime / MCP / Connection / Cost Alignment
+
+Current alignment task:
+
+```text
+BUILDFLOW-PRODUCT-ALIGNMENT-001
+```
+
+Status:
+
+```text
+DESIGN ALIGNMENT COMPLETE
+IMPLEMENTATION NOT STARTED
+NO COMMIT
+```
+
+Alignment decisions recorded:
+
+- BuildFlow remains an AI Agent Builder / AI Agent Factory.
+- MCP is an official external action and tool execution axis, separate from
+  model Providers.
+- Provider is responsible for model inference/generation; MCP is responsible
+  for external tools and actions.
+- Connection & Credential Layer is now a documented architecture boundary.
+- OAuth is preferred over manual API Key entry when available.
+- API Key flows require service-specific Connection Guides, not a bare input.
+- Credential raw values remain outside Package, Evidence, Runtime, logs, UI,
+  and tests.
+- Cost Simulation Engine is a long-term architecture component, not implemented.
+- Every estimated cost must show usage frequency assumptions and simulation
+  language.
+
+Package Readiness remains:
+
+```text
+CONDITIONALLY_READY
+```
+
+Still not implemented:
+
+- Provider invocation runtime
+- MCP invocation runtime
+- Credential storage implementation
+- OAuth connection implementation
+- API Key guide UI
+- Cost Simulation Engine
+- Deployment
+- Marketplace
+
+Next task remains:
+
+```text
+Checkpoint commit after explicit user approval
+```

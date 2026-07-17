@@ -97,6 +97,200 @@ Commit / Push / Deploy:
 - Push: not performed
 - Deploy: not performed
 
+Final QA:
+
+- Verdict: `APPROVED`
+- Remediation performed inside Runtime Execution Request scope:
+  - expanded secret key coverage for connection/session/database fields
+  - added strict ISO instant validation and impossible date rejection
+  - added artifact metadata conflict rejection for same id/checksum duplicates
+  - added missing binding, identity sensitivity, and date boundary tests
+- Target Runtime Execution Request tests: PASS — 27 tests
+- Full regression: PASS
+- Package Readiness remains `CONDITIONALLY_READY`
+
+Remaining limitations:
+
+- Runtime Execution Start Evidence not implemented
+- Runtime Step Evidence not implemented
+- Runtime Execution Result not implemented
+- Runtime Evidence Bundle/Report not implemented
+- Provider/MCP execution not implemented
+- Credential/Connection runtime not implemented
+- Cost Simulation Engine not implemented
+
+## 2026-07-17 — BUILDFLOW-PRODUCT-ALIGNMENT-001
+
+Updated memory and QA documentation:
+
+- `memory/01_product.md`
+- `memory/02_architecture.md`
+- `memory/03_uiux.md`
+- `memory/04_engineering.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/QA-SCOPE.md`
+
+Decisions recorded:
+
+- BuildFlow product direction is AI Agent Builder / AI Agent Factory.
+- Block Library, Blueprint Library, Agent Generator, Validator, Publisher, and
+  future Learning Engine are the product structure.
+- Safe Runtime evidence structure must not be simplified for faster demos.
+- Runtime Step Evidence is required for user-understandable execution history.
+- Provider and MCP are separate layers.
+- MCP is the official external action/tool axis.
+- MCP future structure includes registration, discovery, definition snapshot,
+  validation, invocation request/start/result, evidence, and report.
+- Connection & Credential Layer is a formal architecture boundary.
+- OAuth is preferred when available.
+- API Key flows require service-specific Connection Guides.
+- Credential values are never stored in Package, Evidence, Runtime payloads,
+  logs, UI, or tests.
+- BYOK and Managed Connection are separate product modes.
+- Cost Simulation Engine is a long-term direction and not implemented.
+- Estimated costs must include simulation language and usage frequency.
+- Estimated cost and actual billing are separate.
+- Cost confidence uses `HIGH`, `MEDIUM`, or `LOW`, not unsupported percentages.
+
+Implementation changes:
+
+- Application code changes for this alignment task: none.
+- Test changes for this alignment task: none.
+- Runtime Start implementation: none.
+- Runtime Step implementation: none.
+- Provider/MCP invocation implementation: none.
+- Credential storage or OAuth implementation: none.
+- Cost Calculator implementation: none.
+
+Commit / Push / Deploy:
+
+- Commit: not performed
+- Push: not performed
+- Deploy: not performed
+
+## 2026-07-17 — PACKAGE-RUNTIME-EVIDENCE-002 Runtime Execution Request
+
+Modified implementation files:
+
+- `src/features/agents/runtime-execution-request.ts`
+- `src/features/agents/runtime-execution-request.test.ts`
+- `src/features/agents/index.ts`
+
+Modified documentation and memory files:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-RUNTIME-EVIDENCE.md`
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/QA-SCOPE.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Implemented Runtime Execution Request behavior:
+
+- provider-independent deterministic request contract
+- `buildRuntimeExecutionRequest` pure builder
+- `buildflow.runtime-execution-request.v1` format version
+- Approval Gate binding validation
+- `RUNTIME_EXECUTION` scope validation
+- package/evidence binding validation
+- `STANDARD` and `DRY_RUN` execution modes
+- execution profile and runtime policy references
+- USER/SERVICE/SYSTEM requester references
+- input artifact reference normalization and conflict detection
+- capability reference normalization and conflict detection
+- `REFERENCE_ONLY` and `EXPLICIT_TIME` expiration policies
+- deterministic request id and integrity checksum
+- secret-safety rejection
+- payload exclusion
+- input non-mutation
+- sanitized internal error result
+
+Not implemented:
+
+- Runtime Execution Start Evidence
+- Runtime Step Evidence
+- Runtime Execution Result
+- Runtime Evidence Bundle
+- Runtime Evidence Report
+- actual Runtime execution
+- MCP Tool Invocation
+- Provider execution
+- deployment
+- persistence
+- Marketplace
+- Vault or Credential access
+
+Package Readiness:
+
+- remains `CONDITIONALLY_READY`
+
+Commit / Push / Deploy:
+
+- Commit: not performed
+- Push: not performed
+- Deploy: not performed
+
+## 2026-07-17 — PACKAGE-RUNTIME-EVIDENCE-001 Design
+
+Created documentation:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-RUNTIME-EVIDENCE.md`
+
+Updated documentation and memory:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/QA-SCOPE.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Design decisions recorded:
+
+- Runtime Evidence is reference-first and deterministic.
+- Runtime Evidence is secret-safe and does not duplicate raw payloads.
+- v1 uses six contract layers:
+  - Runtime Execution Request
+  - Runtime Execution Start Evidence
+  - Runtime Step Evidence
+  - Runtime Execution Result
+  - Runtime Evidence Bundle
+  - Runtime Evidence Report
+- `RUNTIME_EXECUTION` scope is required; `PACKAGE_ACCEPTANCE` alone is not
+  enough.
+- Runtime Evidence Report v1 should use `VALID_WITH_LIMITATIONS` for successful
+  structural evidence and reserve `VALID`.
+- Package Readiness remains `CONDITIONALLY_READY`.
+
+Open PM decisions recorded:
+
+- six-layer contract confirmation
+- Bundle/Report split
+- `startedAt` and `completedAt` identity rules
+- stale/revoke during execution policy
+- retry approval revalidation
+- Runtime Evidence Report `VALID` reservation
+
+Runtime / MCP / Provider / Marketplace changes:
+
+- Runtime implementation: none
+- MCP Tool Invocation: none
+- Provider execution: none
+- Marketplace implementation: none
+- Deployment: none
+- Vault or Credential access: none
+- DB/API/UI changes: none
+
+Code and test changes:
+
+- Application code changes: none
+- Test code changes: none
+
+Commit / Push / Deploy:
+
+- Commit: not performed
+- Push: not performed
+- Deploy: not performed
+
 ## 2026-07-17 — PACKAGE-EVIDENCE-REPORT-001 Design
 
 Created:

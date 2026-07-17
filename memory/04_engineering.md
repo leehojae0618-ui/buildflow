@@ -67,6 +67,58 @@ git diff --check
 - MCP Registry registration does not grant execution permission.
 - Actual MCP Tool Invocation is not implemented and must not be assumed.
 
+## Runtime / MCP / Credential / Cost Engineering Rules
+
+Runtime and evidence contracts must remain:
+
+- deterministic;
+- reference-first;
+- secret-safe;
+- immutable once recorded;
+- checksum-bound;
+- source-bound;
+- idempotent where applicable;
+- explicit about retry and cancellation evidence.
+
+Do not duplicate full payloads in evidence or runtime contracts. Use references
+and checksums instead.
+
+Provider and MCP rules:
+
+- Provider invocation and MCP invocation are separate contracts.
+- Provider evidence must not imply MCP success.
+- MCP invocation success must not imply overall Agent success.
+- MCP Tool Definition Snapshots must include checksum, risk, read/write state,
+  external state mutation state, required Capability, and approval requirement.
+- MCP raw request/response bodies, Provider raw request/response bodies, raw
+  logs, stack traces, headers, cookies, tokens, and Credential values must not
+  be stored in evidence.
+
+Credential rules:
+
+- OAuth tokens and API Keys are excluded from Evidence, Runtime payloads,
+  Package artifacts, logs, tests, and UI state.
+- Runtime receives Credential References only.
+- Connection tests must prefer non-mutating checks.
+- Connection status must not become `CONNECTED` until a safe validation succeeds.
+
+Runtime step rules:
+
+- Runtime Step Evidence records user-understandable work steps.
+- Do not store private chain-of-thought.
+- Retry attempts require new execution or invocation identifiers.
+- Approval should be revalidated per execution attempt where policy requires.
+- Revocation/cancellation requires explicit evidence; do not infer results.
+
+Cost rules:
+
+- Estimated cost and actual billed cost are separate.
+- Cost calculation basis must include usage frequency assumptions.
+- Store price table date/source reference or version when available.
+- Missing cost data must be reported to the user; it must not silently change
+  Runtime status.
+- Cost Simulation Engine is not implemented unless explicitly approved.
+
 ## Change Control
 
 - Do not implement outside the active approved Sprint.

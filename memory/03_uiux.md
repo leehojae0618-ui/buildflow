@@ -79,6 +79,61 @@ Implementation compliance is not fully audited in this memory migration.
 
 Approval must be visible and outcome-focused.
 
+## Alignment — Connections, Permissions, Cost
+
+BuildFlow UX must help non-developers connect services safely. It must not show
+only a raw API Key input as the default experience.
+
+Connection priority:
+
+1. OAuth or service permission approval
+2. API Key or Token manual entry with service-specific guide
+3. Managed Connection provided by BuildFlow or an organization admin
+
+When OAuth is available, the preferred flow is:
+
+```text
+Connect button
+→ service login
+→ requested permission review
+→ approval
+→ return to BuildFlow
+→ safe connection test
+→ connected state
+```
+
+API Key UX must include:
+
+- why the key is needed;
+- where it will be used;
+- official issuance page;
+- exact menu names and steps;
+- one-time visibility warning;
+- minimum required permission;
+- cost or billing warning;
+- connection test;
+- rotation and disconnect guidance;
+- common errors and recovery steps.
+
+Connection and permission UX rules:
+
+- Explain why each connection is needed.
+- Distinguish read, write, modify, delete, and admin permissions visually.
+- Request minimum permission at the moment it becomes necessary.
+- Show safe connection test results before marking a connection as connected.
+- Never show raw Credential values after connection.
+- Use safe display hints only, such as masked references.
+
+Cost UX rules:
+
+- Show expected cost before Agent execution and before deployment.
+- Always show usage frequency assumptions.
+- Required meaning: "시뮬레이션상의 계산 금액입니다" with daily/monthly run counts.
+- Prefer ranges and scenarios over one exact number.
+- Distinguish simulated estimate from actual billing.
+- Show confidence as `HIGH`, `MEDIUM`, or `LOW` based on available inputs.
+- Highlight cost-incurring actions and approval requests clearly.
+
 Approval surfaces should explain:
 
 - What the AI will do

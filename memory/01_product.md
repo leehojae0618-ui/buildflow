@@ -78,6 +78,55 @@ Confirmed from `.buildflow`, `docs/project/ROADMAP.md`,
 - Block Generator: on hold
 - Blueprint Generator: on hold
 - Learning Engine: `FUTURE`
+
+## Product Alignment — Agent Factory, Connection, Cost
+
+BuildFlow is an AI Agent Builder / AI Agent Factory. It should not be described
+as a generic WebApp Builder, workflow editor, or chat-only assistant.
+
+The intended product loop is:
+
+```text
+Natural-language goal
+→ clarification only when needed
+→ Block and Blueprint selection
+→ Agent generation
+→ validation
+→ user approval
+→ safe external connection
+→ controlled runtime execution
+→ evidence and cost explanation
+```
+
+Core product structure:
+
+- **Block Library**: verified functional parts for Agents, including purpose,
+  input, output, Provider/MCP usage, required Connection, required Capability,
+  read/write behavior, external state change, approval need, and usage data for
+  cost simulation.
+- **Blueprint Library**: reusable work designs composed from Blocks.
+- **Agent Generator**: combines user goals, clarification answers, Blocks, and
+  Blueprints into an Agent candidate.
+- **Validator**: checks missing information, risk, approval, Credential
+  readiness, Capability coverage, and cost calculation inputs.
+- **Publisher**: moves validated/approved Agents toward private execution,
+  organization sharing, deployment, or Marketplace publication.
+- **Learning Engine**: future system that learns from execution outcomes,
+  edits, approval rejection, and failure patterns. It is not active scope.
+
+BuildFlow must explain results before internals. Users are not prompt engineers
+or workflow designers; they are people delegating work to an AI development
+team.
+
+Cost policy:
+
+- BuildFlow must show estimated cost as simulation, not guaranteed billing.
+- Every estimated cost must include usage frequency assumptions.
+- Required wording meaning: "시뮬레이션상의 계산 금액입니다" with daily/monthly
+  run assumptions.
+- Cost confidence should be `HIGH`, `MEDIUM`, or `LOW`, not invented
+  percentages.
+- Estimated cost, actual usage, and actual billed cost are separate concepts.
 - Marketplace: `FUTURE`
 - Actual MCP Invocation: not implemented
 - Runtime Compiler: not implemented

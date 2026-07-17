@@ -78,6 +78,98 @@ Capability
 - Package/Profile describes a secret-free BPS-compatible portable Agent
   candidate.
 
+## Alignment — Runtime, MCP, Connection, Cost
+
+Safe execution architecture is a product requirement, not an optional add-on.
+BuildFlow should preserve this evidence chain:
+
+```text
+Package
+→ Evidence Report
+→ Approval Gate
+→ Runtime Execution Request
+→ Runtime Execution Start Evidence
+→ Runtime Step Evidence
+→ Runtime Execution Result
+→ Runtime Evidence Bundle
+→ Runtime Evidence Report
+```
+
+The following statuses must remain separate and must not automatically upgrade
+one another:
+
+- Package Readiness
+- Approval Status
+- Runtime Execution Status
+- Runtime Evidence Report Status
+- Connection Status
+- Credential Status
+- Provider Invocation Status
+- MCP Invocation Status
+- Deployment Status
+- Marketplace Status
+
+Provider and MCP are separate architecture layers:
+
+- **Provider** performs model inference or generation such as text generation,
+  classification, summarization, structured output, image, or audio work.
+- **MCP** is the official external action and tool access axis for Agents, such
+  as Gmail, Slack, Drive, GitHub, databases, internal tools, and external SaaS.
+
+MCP long-term architecture:
+
+```text
+MCP Server Registration
+→ MCP Tool Discovery
+→ MCP Tool Definition Snapshot
+→ MCP Tool Validation
+→ MCP Invocation Request
+→ MCP Invocation Start
+→ MCP Invocation Result
+→ MCP Invocation Evidence
+→ MCP Evidence Report
+```
+
+Runtime Step Evidence is required for real execution traceability. It records
+user-understandable work steps, not private chain-of-thought. Step types may
+include `INTERNAL`, `PROVIDER`, `MCP`, `APPROVAL`, `TRANSFORMATION`, and
+`VALIDATION`.
+
+Connection & Credential Layer is now a formal architecture layer:
+
+```text
+Connection method decision
+→ OAuth or permission approval
+→ API Key guide when needed
+→ secure Credential storage
+→ safe connection test
+→ Capability availability
+→ Credential Reference to Runtime
+→ rotation / expiration / disconnect management
+```
+
+Credential values must not appear in Package, Evidence, Runtime requests,
+Runtime steps, Provider evidence, MCP evidence, logs, or UI display data.
+Runtime layers use references such as `credentialReferenceId`, `connectionId`,
+`providerId`, `accountReference`, `grantedScopeSummary`, and `connectionStatus`.
+
+Cost Simulation Engine is a long-term architecture component:
+
+```text
+Agent structure analysis
+→ Block usage
+→ Provider call estimate
+→ MCP call estimate
+→ external API/storage/infrastructure usage
+→ frequency simulation
+→ price table reference
+→ estimated range and confidence
+→ user-facing calculation basis
+```
+
+Cost Simulation is separate from Runtime Evidence. Estimated cost is not
+execution evidence and must not change Runtime status by itself.
+
 ## Provider Adapter vs MCP Boundary
 
 Provider Adapters provision infrastructure:
