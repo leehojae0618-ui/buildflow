@@ -1,5 +1,15 @@
 # Current Sprint Memory
 
+## 2026-07-21 — Runtime Result Implementation Approval
+
+- Implementation Approval: APPROVED.
+- Implementation Scope: LOCKED to `runtime-execution-result.ts`, its test file,
+  and `src/features/agents/index.ts` only.
+- Canonical serializer behavior and SHA-256 lowercase-hex digest policy are
+  locked in the approval document.
+- Runtime Implementation Authority remains NONE; no code or test work starts
+  from this approval alone.
+
 ## 2026-07-21 — Runtime Result Implementation Planning Activated
 
 - Planning ID: `RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001`.

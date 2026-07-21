@@ -6,17 +6,18 @@ NONE
 
 ## Reason
 
-`RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001` is the only active planning task.
-No implementation task is approved or queued while Implementation Approval and
-Runtime Implementation Authority remain `NONE`.
+`RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001` remains the active approval task.
+Implementation Scope is locked, but no code task is active until a separate
+Runtime Implementation Authority grant.
 
 ## Active Planning Boundary
 
 - Contract baseline: `00eb274`
 - Closeout checkpoint: `21889b1`
 - Documentation consistency checkpoint: `2dab5be`
-- Planning Status: ACTIVE / PLANNING / NOT APPROVED
-- Implementation Approval: NONE
+- Implementation planning checkpoint: `00bfe7a`
+- Implementation Approval: APPROVED
+- Implementation Scope: LOCKED
 - Runtime Implementation Authority: NONE
 
 ## Prohibited Work

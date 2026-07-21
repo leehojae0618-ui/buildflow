@@ -3,9 +3,11 @@
 ## 1. Status and Objective
 
 ```text
-PLANNING STATUS: ACTIVE / PLANNING / NOT APPROVED
+PLANNING STATUS: ACTIVE / IMPLEMENTATION APPROVED / SCOPE LOCKED
 PLANNING BASELINE: 00eb274 / 21889b1 / 2dab5be
-IMPLEMENTATION APPROVAL: NONE
+IMPLEMENTATION PLANNING CHECKPOINT: 00bfe7a
+IMPLEMENTATION APPROVAL: APPROVED
+IMPLEMENTATION SCOPE: LOCKED
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ```
 
@@ -45,9 +47,9 @@ retrieval require a separately approved data-boundary task.
 
 ## 4. Serializer and Digest Strategy
 
-The approved contract fixes deterministic constraints but deliberately defers a
-concrete serializer and digest algorithm. A later Implementation Approval Review
-must decide the exact algorithm before code is authorized.
+The approved contract fixes deterministic constraints. This approval locks the
+canonical serializer and digest policy in `APPROVAL.md` without changing the
+contract's Result fields, reference matrix, or status semantics.
 
 Proposed decision inputs:
 
@@ -62,7 +64,9 @@ Proposed decision inputs:
   tests and no generated clocks or random values.
 
 `stableSerializeAgentPackage` and its SHA-256 usage are implementation
-precedents only. They do not decide the Runtime Result wire format or digest.
+precedents only. The approved Result implementation may reuse it only after an
+independent comparison verifies every locked policy rule; otherwise it must use
+a minimal local pure utility within the approved file scope.
 
 ## 5. Result Construction, Aggregation, and Error Handling
 
@@ -119,9 +123,8 @@ Live integration, persistence, and external invocation tests are deferred.
 
 ## 8. Implementation Sequence and Checkpoints
 
-1. Obtain a separate Implementation Approval that locks the concrete serializer
-   and digest decision or explicitly limits the first task to a decision-only
-   preparatory slice.
+1. Obtain a separate Runtime Implementation Authority grant before modifying
+   any approved production or test file.
 2. Add the Result type and pure input boundary.
 3. Add canonicalization/digest helpers with focused deterministic tests.
 4. Add matrix and correlation validation.
@@ -139,7 +142,8 @@ affected approved decision through change control.
 
 ### Risks and unresolved decisions
 
-- Exact canonical serializer, digest algorithm, and hash encoding are deferred.
+- Concrete serializer implementation choice is deferred; its behavior and
+  SHA-256/lowercase-hex digest policy are locked in `APPROVAL.md`.
 - Detailed Step/Attempt aggregation and retry/parallel rollups are deferred.
 - Provider/MCP normalized schemas and Runtime Evidence Bundle/Report adapters
   are deferred.
@@ -148,10 +152,10 @@ affected approved decision through change control.
 
 ### Approval criteria for a later implementation task
 
-- PM/CTO explicitly approve a bounded pure implementation scope.
-- Serializer/digest policy is locked without altering approved Result semantics.
-- File list is restricted to the Result module, tests, and export surface unless
-  separately approved.
+- A separate Runtime Implementation Authority grant is issued.
+- The locked serializer/digest policy is implemented without altering approved
+  Result semantics.
+- File list remains restricted to the Result module, tests, and export surface.
 - No persistence, Runtime execution, Provider/MCP Invocation, or secret access
   is introduced.
 - Definition of Done includes targeted tests, full quality gates, secret scan,

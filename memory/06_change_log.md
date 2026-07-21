@@ -1,5 +1,12 @@
 # Change Log Memory
 
+## 2026-07-21 — RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001 Approval
+
+- Created `APPROVAL.md` with a three-file implementation scope lock.
+- Locked canonical serializer behavior and SHA-256 lowercase-hex digest policy.
+- Implementation Approval: APPROVED; Runtime Implementation Authority: NONE.
+- No code or test changes. Commit / Push / Merge / Deploy: not performed.
+
 ## 2026-07-21 — RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001 Activation
 
 Created planning documents:

@@ -3,11 +3,13 @@
 ## 1. Status
 
 ```text
-TASK STATUS: ACTIVE / PLANNING / NOT APPROVED
+TASK STATUS: ACTIVE / IMPLEMENTATION APPROVED / SCOPE LOCKED
 CONTRACT BASELINE: 00eb274
 CLOSEOUT CHECKPOINT: 21889b1
 DOCUMENTATION CONSISTENCY CHECKPOINT: 2dab5be
-IMPLEMENTATION APPROVAL: NONE
+IMPLEMENTATION PLANNING CHECKPOINT: 00bfe7a
+IMPLEMENTATION APPROVAL: APPROVED
+IMPLEMENTATION SCOPE: LOCKED
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ```
 
@@ -50,14 +52,15 @@ items.
   Scheduler, Worker, or retry/resume execution semantics.
 - Database persistence, retrieval, migrations, API, UI, deployment, Marketplace,
   Vault, live Credentials, or external calls.
-- Contract modification, implementation approval, or Runtime implementation
-  authority.
+- Contract modification or Runtime Implementation Authority.
 
 ## 6. Deliverables
 
 - This task document.
 - `PLAN.md` covering implementation strategy, file/module impact map, test
   strategy, decisions/deferred items, risk register, and approval checklist.
+- `APPROVAL.md` locking the implementation file scope and serializer/digest
+  policies without granting Runtime Implementation Authority.
 - Operational and memory status updates reflecting planning-only activation.
 
 ## 7. Exit Criteria
@@ -67,5 +70,5 @@ items.
 - Serializer/digest, aggregation, Provider/MCP mapping, Evidence integration,
   and persistence choices are classified as proposed or deferred, not silently
   implemented.
-- A separate Implementation Approval Review can assess a bounded code task.
-- Implementation Approval and Runtime Implementation Authority remain `NONE`.
+- The Implementation Approval records an exact file scope and policy lock.
+- Runtime Implementation Authority remains `NONE` until a separate grant.
