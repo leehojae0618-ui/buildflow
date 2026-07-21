@@ -3,7 +3,7 @@
 ## 1. Status
 
 ```text
-PLANNING STATUS: ACTIVE / IMPLEMENTATION APPROVED / SCOPE LOCKED
+PLANNING STATUS: ACTIVE / IMPLEMENTATION AUTHORIZED / SCOPE LOCKED
 PROJECT LIFECYCLE: ACTIVE
 CONTRACT BASELINE: RUNTIME-STEP-CONTRACT-001
 CONTRACT CHECKPOINT: 730bde8
@@ -11,7 +11,9 @@ CONTRACT AMENDMENT: INDEPENDENT RE-REVIEW PASS (`ca54d12`)
 PREVIOUS SPRINT CLOSEOUT: 3873534
 IMPLEMENTATION APPROVAL: APPROVED
 IMPLEMENTATION SCOPE: LOCKED
-RUNTIME IMPLEMENTATION AUTHORITY: NONE
+IMPLEMENTATION APPROVAL CHECKPOINT: e743068
+RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
+RUNTIME IMPLEMENTATION STATUS: AUTHORIZED / NOT STARTED
 ```
 
 ## 2. Objective
@@ -36,8 +38,8 @@ their current identities and references only.
 Limited reopening resolved the Attempt field matrix with independent re-review
 PASS. The planning Sprint remains active; Planning Consistency Review is PASS
 with P0/P1/P2 `0/0/0` and no rewrite required. Implementation Approval is
-APPROVED with a locked three-file scope; Runtime Implementation Authority
-remains NONE.
+APPROVED with a locked three-file scope; Runtime Implementation Authority is
+GRANTED and implementation remains AUTHORIZED / NOT STARTED.
 
 ## 4. Planning Scope
 
@@ -62,8 +64,9 @@ remains NONE.
 - `TASK.md` — planning status, baseline, and boundary.
 - `PLAN.md` — exact candidate file table, implementation sequence, validation
   strategy, deferred decisions, and stop conditions.
-- `APPROVAL.md` — approved exact file scope without Runtime Implementation
-  Authority.
+- `APPROVAL.md` — approved exact file scope and its Authority handoff.
+- `AUTHORITY.md` — granted authority for the locked scope with deferred-policy
+  stop conditions.
 - Operational and memory state updates activating this planning Sprint only.
 
 ## 7. Planning Exit Criteria
@@ -74,4 +77,4 @@ remains NONE.
 - Contract-required decisions that remain unresolved are marked for separate
   Implementation Approval rather than invented.
 - Implementation Approval is APPROVED and the exact file scope is LOCKED.
-- Runtime Implementation Authority remains NONE.
+- Runtime Implementation Authority is GRANTED; implementation has not started.

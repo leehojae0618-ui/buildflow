@@ -7,13 +7,13 @@ APPROVAL ID: RUNTIME-STEP-IMPLEMENTATION-APPROVAL-001
 PLANNING ID: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 IMPLEMENTATION APPROVAL: APPROVED
 IMPLEMENTATION SCOPE: LOCKED
-RUNTIME IMPLEMENTATION AUTHORITY: NONE
+RUNTIME IMPLEMENTATION AUTHORITY: GRANTED BY `AUTHORITY.md`
 APPROVAL CHECKPOINT: PENDING COMMIT
 ```
 
-This approval authorizes progression to a separate Runtime Implementation
-Authority decision. It does not authorize production code, test changes, or
-Runtime execution.
+This approval locked scope before the separate `AUTHORITY.md` record granted
+Runtime Implementation Authority. It does not authorize Runtime execution or
+scope expansion.
 
 ## 2. Approved Implementation Scope
 
@@ -47,8 +47,9 @@ implementation task without separate approval:
 - checksum algorithm; and
 - checksum encoding.
 
-The future Authority decision must explicitly address these deferred decisions
-before code that serializes or computes an integrity checksum is authorized.
+The separate Authority record preserves these deferred decisions as stop
+conditions before code serializes a deterministic core or computes an integrity
+checksum.
 
 ## 5. Excluded Scope
 
@@ -61,7 +62,7 @@ before code that serializes or computes an integrity checksum is authorized.
 
 ## 6. Authority Boundary
 
-Implementation Approval and Scope Lock do not grant Runtime Implementation
-Authority. Production code and tests remain prohibited until a separate
-authority record grants that authority and locks the deferred serializer and
-checksum decisions.
+Implementation Approval and Scope Lock did not themselves grant Runtime
+Implementation Authority; the separate `AUTHORITY.md` record grants it for the
+locked three paths. Serializer and checksum policies remain deferred stop
+conditions.

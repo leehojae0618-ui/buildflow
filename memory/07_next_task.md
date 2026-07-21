@@ -5,7 +5,7 @@
 ```text
 CURRENT TASK: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 PROJECT STATE: ACTIVE
-PLANNING STATUS: ACTIVE / IMPLEMENTATION APPROVED / SCOPE LOCKED
+PLANNING STATUS: ACTIVE / IMPLEMENTATION AUTHORIZED / SCOPE LOCKED
 RUNTIME STEP CONTRACT CHECKPOINT: 730bde8
 RUNTIME STEP CONTRACT: AMENDED / INDEPENDENT RE-REVIEW PASS (`ca54d12`)
 RUNTIME STEP CONTRACT REOPENED: LIMITED — ATTEMPT FIELD MATRIX ONLY
@@ -13,14 +13,18 @@ PREVIOUS SPRINT CLOSEOUT: 3873534
 RUNTIME EXECUTION RESULT: COMPLETE / VALIDATED (871824e)
 IMPLEMENTATION APPROVAL: APPROVED
 IMPLEMENTATION SCOPE: LOCKED
-RUNTIME IMPLEMENTATION AUTHORITY: NONE
+IMPLEMENTATION APPROVAL CHECKPOINT: e743068
+RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
+RUNTIME IMPLEMENTATION STATUS: AUTHORIZED / NOT STARTED
 ```
 
-The active task has an approved locked three-file implementation scope. The
-Runtime Step contract amendment and Planning Consistency Review both pass with
-P0/P1/P2 `0/0/0`. Production code and tests remain prohibited until a separate
-Runtime Implementation Authority grant. Runtime execution, Provider/MCP
-Invocation, persistence, Push, Merge, and Deploy remain prohibited.
+The active task has an approved locked three-file implementation scope and
+granted Runtime Implementation Authority. The Runtime Step contract amendment
+and Planning Consistency Review both pass with P0/P1/P2 `0/0/0`. Production
+implementation is AUTHORIZED / NOT STARTED. Serializer/canonicalization and
+checksum policy remain stop conditions pending a separate approval amendment.
+Runtime execution, Provider/MCP Invocation, persistence, Push, Merge, and
+Deploy remain prohibited.
 
 ## Historical Closeout State — 2026-07-21
 

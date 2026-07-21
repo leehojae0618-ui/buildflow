@@ -8,15 +8,17 @@ RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 
 ACTIVE
 
-## Approval Status
+## Authority Status
 
 ```text
-ACTIVE / IMPLEMENTATION APPROVED / SCOPE LOCKED
+ACTIVE / IMPLEMENTATION AUTHORIZED / SCOPE LOCKED
 RUNTIME STEP CONTRACT: AMENDED / INDEPENDENT RE-REVIEW PASS
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
 IMPLEMENTATION APPROVAL: APPROVED
 IMPLEMENTATION SCOPE: LOCKED
-RUNTIME IMPLEMENTATION AUTHORITY: NONE
+IMPLEMENTATION APPROVAL CHECKPOINT: e743068
+RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
+RUNTIME IMPLEMENTATION STATUS: AUTHORIZED / NOT STARTED
 ```
 
 ## Approved Contract Baseline
@@ -31,13 +33,14 @@ RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ## Authorization Boundary
 
 - Implementation Approval is APPROVED; the exact three-file scope is LOCKED.
-- Runtime Implementation Authority remains NONE.
-- Authorized work remains approval documentation and a future separate
-  authority decision only.
+- Runtime Implementation Authority is GRANTED for the locked three paths.
+- Production implementation is AUTHORIZED / NOT STARTED.
 
 ## Prohibited Work
 
-- Production code or test changes until a separate Authority grant.
+- Any code or test path outside the locked three paths.
+- Serializer, canonicalization, checksum algorithm, or encoding implementation
+  until separately approved.
 - Provider/MCP Invocation, Runtime execution, orchestration, scheduling,
   persistence, DB/API/UI, deployment, Marketplace, Push, Merge, or Deploy.
 - Any Implementation Approval or Runtime Implementation Authority grant.
@@ -47,6 +50,7 @@ RUNTIME IMPLEMENTATION AUTHORITY: NONE
 - `docs/sprints/RUNTIME-STEP-IMPLEMENTATION-PLANNING-001/TASK.md`
 - `docs/sprints/RUNTIME-STEP-IMPLEMENTATION-PLANNING-001/PLAN.md`
 - `docs/sprints/RUNTIME-STEP-IMPLEMENTATION-PLANNING-001/APPROVAL.md`
+- `docs/sprints/RUNTIME-STEP-IMPLEMENTATION-PLANNING-001/AUTHORITY.md`
 - `docs/sprints/RUNTIME-STEP-CONTRACT-001/CONTRACT.md`
 - `docs/sprints/RUNTIME-STEP-CONTRACT-001/STATE_MACHINE.md`
 - `docs/sprints/RUNTIME-STEP-CONTRACT-001/VALIDATION.md`

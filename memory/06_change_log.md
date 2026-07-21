@@ -1,5 +1,14 @@
 # Change Log Memory
 
+## 2026-07-22 — Runtime Step Runtime Implementation Authority
+
+- Created `RUNTIME-STEP-RUNTIME-IMPLEMENTATION-AUTHORITY-001` for the exact
+  locked three-file Runtime Step scope.
+- Runtime Implementation Authority: GRANTED; implementation remains
+  AUTHORIZED / NOT STARTED. Serializer/canonicalization and checksum policy
+  remain explicit stop conditions pending a separate approval amendment.
+- No code, tests, dependencies, Push, Merge, or Deploy changes.
+
 ## 2026-07-22 — Runtime Step Implementation Approval
 
 - Created `RUNTIME-STEP-IMPLEMENTATION-APPROVAL-001` with an exact locked

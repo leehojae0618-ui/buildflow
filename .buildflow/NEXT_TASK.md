@@ -7,5 +7,5 @@ NONE
 ## Reason
 
 `RUNTIME-STEP-IMPLEMENTATION-PLANNING-001` is the sole active Sprint.
-Its Implementation Scope is locked, but production work remains prohibited
-until a separate Runtime Implementation Authority grant.
+Its Runtime Implementation Authority is granted for the exact locked
+three-path scope; no work outside that scope is authorized.

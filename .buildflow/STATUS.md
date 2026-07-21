@@ -2,7 +2,7 @@
 
 - Workflow Status: ACTIVE
 - Current Sprint: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
-- Planning Status: ACTIVE / IMPLEMENTATION APPROVED / SCOPE LOCKED
+- Planning Status: ACTIVE / IMPLEMENTATION AUTHORIZED / SCOPE LOCKED
 - Runtime Step Contract: AMENDED / INDEPENDENT RE-REVIEW PASS
 - Previous Runtime Step Contract Checkpoint: `730bde8`
 - Contract Amendment Checkpoint: `ca54d12`
@@ -12,9 +12,11 @@
 - RuntimeExecutionResult: COMPLETE / VALIDATED (`871824e`)
 - Implementation Approval: APPROVED
 - Implementation Scope: LOCKED
-- Runtime Implementation Authority: NONE
-- Authorized Work: approval documentation and separate Authority decision only.
-- Prohibited Work: production code/tests until Authority grant; Runtime execution; Provider/MCP
+- Implementation Approval Checkpoint: `e743068`
+- Runtime Implementation Authority: GRANTED
+- Runtime Implementation Status: AUTHORIZED / NOT STARTED
+- Authorized Work: locked three-path pure Step implementation only.
+- Prohibited Work: serializer/checksum policy implementation until separately approved; Runtime execution; Provider/MCP
   Invocation; orchestration; scheduling; persistence; DB/API/UI; deployment;
   Marketplace; Push; Merge; Deploy.
 - Next Candidate: NONE while the active planning Sprint is in progress.

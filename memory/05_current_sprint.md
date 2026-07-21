@@ -1,5 +1,14 @@
 # Current Sprint Memory
 
+## 2026-07-22 — Runtime Step Runtime Implementation Authority
+
+- Granted `RUNTIME-STEP-RUNTIME-IMPLEMENTATION-AUTHORITY-001` for the locked
+  three-file Runtime Step implementation scope.
+- Implementation Approval: APPROVED; Runtime Implementation Authority: GRANTED;
+  implementation status: AUTHORIZED / NOT STARTED.
+- Serializer/canonicalization and checksum policy remain deferred stop
+  conditions; no code or tests changed. Push / Merge / Deploy: not performed.
+
 ## 2026-07-22 — Runtime Step Implementation Approval
 
 - Approved `RUNTIME-STEP-IMPLEMENTATION-APPROVAL-001` for the exact locked
