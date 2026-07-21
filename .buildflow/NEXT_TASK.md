@@ -18,12 +18,15 @@ RUNTIME-RESULT-CONTRACT-001
 - Scope Status: FROZEN
 - Scope Decision: APPROVED
 - Scope Freeze Checkpoint: `4f418d8`
-- Contract Status: NOT STARTED
-- Contract Decision: PENDING
+- Contract Status: APPROVED
+- Contract QA: PASS WITH P2 / PM-CTO CONTRACT REVIEW COMPLETE
+- PM Decision: APPROVE WITH P2 NOTE
+- CTO Decision: APPROVE WITH P2 NOTE
+- Contract Decision: APPROVED
 - Implementation Approval: NONE
 - Runtime Implementation Authority: NONE
-- Authorized work is limited to RuntimeExecutionResult contract documentation,
-  contract-draft preparation, and contract validation planning.
+- Authorized work is limited to reviewed RuntimeExecutionResult contract
+  documentation and checkpoint-commit preparation.
 
 ## Previous Sprint
 

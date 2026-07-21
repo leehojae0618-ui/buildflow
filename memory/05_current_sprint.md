@@ -22,8 +22,8 @@ Scope baseline:
 - PM Scope Decision: APPROVE
 - CTO Scope Decision: APPROVE
 - Scope Decision: APPROVED
-- Contract Status: NOT STARTED
-- Contract Decision: PENDING
+- Contract Status: APPROVED.
+- Contract Decision: APPROVED.
 - Implementation Approval: NONE
 - Runtime Implementation Authority: NONE
 - Push / Merge / Deploy: NOT PERFORMED
@@ -66,7 +66,7 @@ Open Questions Review:
   retry aggregation, Provider/MCP normalized schemas, Bundle/Report assembly,
   and safe metadata schema remain Deferred.
 - P0/P1/P2: 0/0/0.
-- Contract Status remains NOT STARTED; Contract Decision remains PENDING.
+- Contract Status is DRAFT; Contract Decision remains PENDING.
 
 Prohibited work:
 
@@ -81,6 +81,52 @@ Next required work:
 - Write the RuntimeExecutionResult contract draft within the locked Open
   Questions decisions and frozen scope.
 - Do not write code or tests without later explicit approval.
+
+Contract Draft:
+
+- Complete as documentation-only draft.
+- Created `CONTRACT.md`, `STATE_MACHINE.md`, `VALIDATION.md`,
+  `QA_CHECKLIST.md`, and `REVIEW.md`.
+- Updated `TASK.md` status to `CONTRACT STATUS: DRAFT`.
+- Contract QA correction is complete; independent Re-review is required.
+- PM Decision and CTO Decision remain PENDING.
+- Contract Decision remains PENDING.
+- Implementation Approval remains NONE.
+- Runtime Implementation Authority remains NONE.
+- No code or test changes were made.
+
+Next required work:
+
+- Request separate checkpoint-commit approval for the reviewed contract
+  documents. Do not start code or tests without later explicit implementation
+  approval.
+
+Contract QA correction:
+
+- Complete; independent Re-review is complete.
+- QA-001 correction: universal deterministic-core fields are separated from
+  status-conditional references; the frozen matrix remains unchanged.
+- QA-002 correction: all repeated reference arrays now have explicit semantic
+  ordering or locale-independent canonical ordering with duplicate rejection.
+- QA-003 correction: current operational status is DRAFT; historical
+  `NOT STARTED` snapshots are retained only as prior-stage records.
+- Re-review: PASS WITH P2; P0/P1/P2: 0/0/1.
+- PM/CTO Contract Review: APPROVE WITH P2 NOTE.
+- Contract Decision: APPROVED. Implementation Approval and Runtime
+  Implementation Authority remain NONE.
+- Scope Freeze, the Step contract, code, tests, and implementation authority
+  remain unchanged; implementation approval remains NONE.
+
+Next required work:
+
+- Request checkpoint-commit approval. Do not start code or tests without later
+  explicit implementation approval.
+
+Re-review finding:
+
+- RR-001 / P2: `STATE_MACHINE.md` and `VALIDATION.md` retain an older
+  `CONTRACT QA: PENDING` status snapshot. This has no contract-semantic impact
+  and may be accepted or requested for later status-only alignment by PM/CTO.
 
 ## 2026-07-21 — Architecture Review Closeout
 
@@ -263,7 +309,7 @@ Current state:
 - Scope Status: FROZEN.
 - Scope Decision: APPROVED.
 - Scope Freeze Checkpoint: `4f418d8`.
-- Contract Status: NOT STARTED.
+- Contract Status: DRAFT.
 - Contract Decision: PENDING.
 - Implementation Approval: NONE.
 - Runtime Implementation Authority: NONE.

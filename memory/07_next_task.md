@@ -30,8 +30,13 @@ NONE
 
 ```text
 SCOPE DECISION: APPROVED
-CONTRACT STATUS: NOT STARTED
-CONTRACT DECISION: PENDING
+CONTRACT STATUS: APPROVED
+CONTRACT QA: PASS WITH P2
+CONTRACT RE-REVIEW: COMPLETE
+P0/P1/P2: 0/0/1
+PM DECISION: APPROVE WITH P2 NOTE
+CTO DECISION: APPROVE WITH P2 NOTE
+CONTRACT DECISION: APPROVED
 OPEN QUESTIONS REVIEW: COMPLETE
 IMPLEMENTATION APPROVAL: NONE
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
@@ -55,9 +60,9 @@ RUNTIME IMPLEMENTATION AUTHORITY: NONE
 
 ## Required Next Gate
 
-Write the RuntimeExecutionResult Contract Draft within the frozen scope and
-locked Open Questions decisions. Do not start code or test implementation until
-a separate explicit implementation approval.
+Request checkpoint-commit approval for the reviewed RuntimeExecutionResult
+contract documents. Do not start implementation without separate explicit
+approval.
 
 Scope source:
 
@@ -72,6 +77,46 @@ Locked pre-draft decisions:
   schemas, Bundle/Report assembly, and safe metadata schema remain Deferred.
 - Scope expansion, raw payloads/secrets, generated clocks, unknown fields, and
   Step/Attempt contract redefinition are rejected.
+
+Contract Draft output:
+
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/CONTRACT.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/STATE_MACHINE.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/VALIDATION.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/QA_CHECKLIST.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/REVIEW.md`
+
+Draft state:
+
+```text
+CONTRACT STATUS: APPROVED
+CONTRACT QA: PASS WITH P2
+CONTRACT RE-REVIEW: COMPLETE
+P0/P1/P2: 0/0/1
+PM DECISION: APPROVE WITH P2 NOTE
+CTO DECISION: APPROVE WITH P2 NOTE
+CONTRACT DECISION: APPROVED
+IMPLEMENTATION APPROVAL: NONE
+RUNTIME IMPLEMENTATION AUTHORITY: NONE
+```
+
+Next single task:
+
+```text
+RUNTIME-RESULT-CONTRACT-001 Contract Checkpoint Commit Approval
+```
+
+Review record:
+
+- QA-001: PASS — conditional references and the locked matrix are aligned.
+- QA-002: PASS — repeated reference ordering and duplicate rejection are
+  defined without fixing a serializer or digest.
+- QA-003: PASS — current operational status is DRAFT and the active Sprint is
+  unchanged.
+- RR-001 / P2: two derived-document status blocks retain an older QA snapshot;
+  it has no contract-semantic impact.
+- PM and CTO approved the contract with the P2 note. Implementation Approval
+  and Runtime Implementation Authority remain NONE.
 
 ## Previous Sprint Transition
 

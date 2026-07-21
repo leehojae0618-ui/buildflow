@@ -1,5 +1,152 @@
 # Change Log Memory
 
+## 2026-07-21 — RUNTIME-RESULT-CONTRACT-001 PM/CTO Contract Review
+
+Review decision:
+
+- PM Decision: APPROVE WITH P2 NOTE.
+- CTO Decision: APPROVE WITH P2 NOTE.
+- Contract Status / Decision: APPROVED.
+- RR-001 remains a non-blocking documentation-status note.
+- Implementation Approval: NONE.
+- Runtime Implementation Authority: NONE.
+
+Confirmed boundaries:
+
+- The reviewed contract remains documentation-only and scope-frozen.
+- Runtime Step terminal-reference ownership, Provider/MCP delegation, Evidence
+  separation, deterministic identity, and secret-free validation remain intact.
+
+Code and test changes:
+
+- None.
+
+Commit / Push / Merge / Deploy:
+
+- Not performed.
+
+## 2026-07-21 — RUNTIME-RESULT-CONTRACT-001 Contract Re-review
+
+Updated review records and operational tracking after independent Re-review.
+
+Re-review result:
+
+- PASS WITH P2.
+- P0/P1/P2: 0/0/1.
+- QA-001 and QA-002 corrections are verified: the matrix is identical to
+  `DECISIONS.md`, conditional fields are separated, and repeated reference
+  ordering is deterministic without fixing a serializer or digest.
+- QA-003 is verified in current operational tracking.
+- RR-001 / P2: `STATE_MACHINE.md` and `VALIDATION.md` retain a historical
+  `CONTRACT QA: PENDING` status snapshot; no contract semantics are affected.
+- PM/CTO Contract Review may proceed. Contract Decision and implementation
+  authority remain PENDING/NONE.
+
+Code and test changes:
+
+- None.
+
+Commit / Push / Merge / Deploy:
+
+- Not performed.
+
+## 2026-07-21 — RUNTIME-RESULT-CONTRACT-001 Contract QA Correction
+
+Updated:
+
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/CONTRACT.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/VALIDATION.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/QA_CHECKLIST.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/REVIEW.md`
+- operational and memory status documents
+
+Correction result:
+
+- QA-001 correction separates universal deterministic-core fields from
+  status-conditional references without changing the locked reference matrix.
+- QA-002 correction defines repeated-reference ordering and duplicate rejection
+  without selecting an exact serializer or digest algorithm.
+- QA-003 correction aligns current operational status to DRAFT while preserving
+  historical checkpoint records.
+- Contract QA is `CORRECTION COMPLETE / RE-REVIEW REQUIRED`; PM/CTO review
+  remains blocked.
+
+Code and test changes:
+
+- None.
+
+Commit / Push / Merge / Deploy:
+
+- Not performed.
+
+## 2026-07-21 — RUNTIME-RESULT-CONTRACT-001 Contract QA
+
+Updated QA records:
+
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/TASK.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/QA_CHECKLIST.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/REVIEW.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+QA result:
+
+- Contract QA: FAIL.
+- P0/P1/P2: 0/2/1.
+- QA-001: unconditional Result field requirements conflict with the locked
+  status/reference matrix.
+- QA-002: canonical ordering is undefined for non-Step reference collections.
+- QA-003: current operational status wording retains a stale pre-draft
+  `CONTRACT STATUS: NOT STARTED` entry.
+- PM/CTO Contract Review is blocked pending P1 correction and independent
+  Contract Re-review.
+
+Code and test changes:
+
+- None.
+
+Commit / Push / Merge / Deploy:
+
+- Not performed.
+
+## 2026-07-21 — RUNTIME-RESULT-CONTRACT-001 Contract Draft
+
+Created contract draft documents:
+
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/CONTRACT.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/STATE_MACHINE.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/VALIDATION.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/QA_CHECKLIST.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/REVIEW.md`
+
+Updated:
+
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/TASK.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Draft result:
+
+- `RuntimeExecutionResult` is the only Result artifact defined.
+- Result statuses are limited to `SUCCEEDED`,
+  `SUCCEEDED_WITH_LIMITATIONS`, `FAILED`, `CANCELLED`, `TIMED_OUT`, `BLOCKED`,
+  and `INVALID`.
+- status-specific reference matrix follows `DECISIONS.md`.
+- `completedAt` is caller-supplied and part of deterministic identity input.
+- Result and Evidence remain separate; Provider/MCP detailed schemas remain
+  delegated.
+- Validation remains pure and input-bound.
+
+Code and test changes:
+
+- None.
+
+Commit / Push / Merge / Deploy:
+
+- Not performed.
+
 ## 2026-07-21 — RUNTIME-RESULT-CONTRACT-001 Open Questions Review
 
 Updated:

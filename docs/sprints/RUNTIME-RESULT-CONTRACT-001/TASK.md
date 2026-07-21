@@ -282,3 +282,34 @@ RUNTIME IMPLEMENTATION AUTHORITY: NONE
 The review locks only decisions required before the `RuntimeExecutionResult`
 Contract Draft. It does not create `CONTRACT.md`, start implementation, or
 change the approved Step terminal-reference matrix.
+
+## 17. Contract Draft Status
+
+```text
+CONTRACT DRAFT: COMPLETE
+CONTRACT STATUS: APPROVED
+CONTRACT QA: CORRECTION COMPLETE / RE-REVIEW REQUIRED
+PRIOR QA P0/P1/P2: 0/2/1
+PM REVIEW: APPROVE WITH P2 NOTE
+CTO REVIEW: APPROVE WITH P2 NOTE
+CONTRACT DECISION: APPROVED
+IMPLEMENTATION APPROVAL: NONE
+RUNTIME IMPLEMENTATION AUTHORITY: NONE
+```
+
+Contract draft documents:
+
+- `CONTRACT.md`
+- `STATE_MACHINE.md`
+- `VALIDATION.md`
+- `QA_CHECKLIST.md`
+- `REVIEW.md`
+
+The draft remains documentation-only. It does not change the frozen scope, does
+not modify `DECISIONS.md`, does not change the Runtime Step contract, and does
+not authorize Runtime implementation, Provider/MCP Invocation, code, tests,
+Commit, Push, Merge, or Deploy.
+
+Contract QA correction and independent re-review are complete. PM/CTO approved
+the contract with the non-blocking RR-001 P2 note. This contract approval does
+not authorize implementation.

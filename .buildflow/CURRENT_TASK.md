@@ -29,7 +29,11 @@ FROZEN
 - PM Scope Decision: APPROVE
 - CTO Scope Decision: APPROVE
 - Scope Decision: APPROVED
-- Contract Decision: PENDING
+- Contract Status: APPROVED
+- Contract QA: PASS WITH P2 / PM-CTO CONTRACT REVIEW COMPLETE
+- PM Decision: APPROVE WITH P2 NOTE
+- CTO Decision: APPROVE WITH P2 NOTE
+- Contract Decision: APPROVED
 - Implementation Approval: NONE
 - Runtime Implementation Authority: NONE
 
@@ -71,6 +75,6 @@ FROZEN
 
 ## Next Required Work
 
-Prepare the RuntimeExecutionResult contract draft within the frozen scope.
-Do not start code implementation without a later explicit implementation
-approval.
+Request separate checkpoint-commit approval for the reviewed contract documents.
+Do not start code implementation or write tests without later explicit
+implementation approval.
