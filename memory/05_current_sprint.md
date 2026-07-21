@@ -1,5 +1,15 @@
 # Current Sprint Memory
 
+## 2026-07-22 — Runtime Step Implementation Approval
+
+- Approved `RUNTIME-STEP-IMPLEMENTATION-APPROVAL-001` for the exact locked
+  three-file Step implementation scope.
+- Implementation Approval: APPROVED; Runtime Implementation Authority: NONE.
+- Serializer/canonicalization policy and checksum algorithm/encoding remain
+  deferred to a separate Authority decision.
+- Production code, tests, Provider/MCP execution, persistence, and deployment
+  remain prohibited. Push / Merge / Deploy: not performed.
+
 ## 2026-07-22 — Runtime Step Attempt Field Matrix Resolution
 
 - Authorized a limited reopening of `RUNTIME-STEP-CONTRACT-001` solely for the

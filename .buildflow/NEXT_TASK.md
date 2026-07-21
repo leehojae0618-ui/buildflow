@@ -6,6 +6,6 @@ NONE
 
 ## Reason
 
-`RUNTIME-STEP-IMPLEMENTATION-PLANNING-001` is the sole active planning Sprint.
-Its next work remains planning-only until a separate approval identifies a
-future candidate and grants no implementation authority.
+`RUNTIME-STEP-IMPLEMENTATION-PLANNING-001` is the sole active Sprint.
+Its Implementation Scope is locked, but production work remains prohibited
+until a separate Runtime Implementation Authority grant.

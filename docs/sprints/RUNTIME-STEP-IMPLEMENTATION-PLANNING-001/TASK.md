@@ -3,13 +3,14 @@
 ## 1. Status
 
 ```text
-PLANNING STATUS: ACTIVE / PLANNING / NOT APPROVED
+PLANNING STATUS: ACTIVE / IMPLEMENTATION APPROVED / SCOPE LOCKED
 PROJECT LIFECYCLE: ACTIVE
 CONTRACT BASELINE: RUNTIME-STEP-CONTRACT-001
 CONTRACT CHECKPOINT: 730bde8
 CONTRACT AMENDMENT: INDEPENDENT RE-REVIEW PASS (`ca54d12`)
 PREVIOUS SPRINT CLOSEOUT: 3873534
-IMPLEMENTATION APPROVAL: NONE
+IMPLEMENTATION APPROVAL: APPROVED
+IMPLEMENTATION SCOPE: LOCKED
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ```
 
@@ -34,8 +35,9 @@ their current identities and references only.
 
 Limited reopening resolved the Attempt field matrix with independent re-review
 PASS. The planning Sprint remains active; Planning Consistency Review is PASS
-with P0/P1/P2 `0/0/0` and no rewrite required. Implementation Approval and
-Runtime Implementation Authority remain NONE.
+with P0/P1/P2 `0/0/0` and no rewrite required. Implementation Approval is
+APPROVED with a locked three-file scope; Runtime Implementation Authority
+remains NONE.
 
 ## 4. Planning Scope
 
@@ -60,6 +62,8 @@ Runtime Implementation Authority remain NONE.
 - `TASK.md` — planning status, baseline, and boundary.
 - `PLAN.md` — exact candidate file table, implementation sequence, validation
   strategy, deferred decisions, and stop conditions.
+- `APPROVAL.md` — approved exact file scope without Runtime Implementation
+  Authority.
 - Operational and memory state updates activating this planning Sprint only.
 
 ## 7. Planning Exit Criteria
@@ -69,4 +73,5 @@ Runtime Implementation Authority remain NONE.
 - No new dependency is required.
 - Contract-required decisions that remain unresolved are marked for separate
   Implementation Approval rather than invented.
-- Implementation Approval and Runtime Implementation Authority remain NONE.
+- Implementation Approval is APPROVED and the exact file scope is LOCKED.
+- Runtime Implementation Authority remains NONE.

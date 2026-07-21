@@ -4,11 +4,12 @@
 
 ```text
 PLANNING ID: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
-PLANNING STATUS: ACTIVE / PLANNING / NOT APPROVED
+PLANNING STATUS: ACTIVE / IMPLEMENTATION APPROVED / SCOPE LOCKED
 CONTRACT CHECKPOINT: 730bde8
 CONTRACT AMENDMENT: INDEPENDENT RE-REVIEW PASS (`ca54d12`)
 PREVIOUS SPRINT CLOSEOUT: 3873534
-IMPLEMENTATION APPROVAL: NONE
+IMPLEMENTATION APPROVAL: APPROVED
+IMPLEMENTATION SCOPE: LOCKED
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ```
 
@@ -21,8 +22,8 @@ MCP server, database, filesystem, or network.
 
 The prior approved contract has a limited Attempt field-matrix amendment with
 independent re-review PASS. Planning Consistency Review is PASS with P0/P1/P2
-`0/0/0` and requires no rewrite. No implementation approval or Runtime
-Implementation Authority is granted by this planning record.
+`0/0/0` and requires no rewrite. Implementation Approval is APPROVED with a
+locked three-file scope; Runtime Implementation Authority remains NONE.
 
 ## 3. Exact Proposed File Scope
 
@@ -150,5 +151,6 @@ Request an Implementation Approval Amendment and stop before code changes if:
 6. a Provider/MCP, persistence, orchestration, or retry-execution concern is
    needed to make the slice pass.
 
-Implementation Approval must separately lock the exact three paths, serializer
-and digest policy, test authority, and any remaining reference-schema details.
+The separate Authority decision must preserve the locked three paths, explicitly
+resolve the deferred serializer and digest policy, confirm test authority, and
+address any remaining reference-schema details before code changes begin.

@@ -8,13 +8,14 @@ RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 
 ACTIVE
 
-## Planning Status
+## Approval Status
 
 ```text
-ACTIVE / PLANNING / NOT APPROVED
+ACTIVE / IMPLEMENTATION APPROVED / SCOPE LOCKED
 RUNTIME STEP CONTRACT: AMENDED / INDEPENDENT RE-REVIEW PASS
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
-IMPLEMENTATION APPROVAL: NONE
+IMPLEMENTATION APPROVAL: APPROVED
+IMPLEMENTATION SCOPE: LOCKED
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ```
 
@@ -27,16 +28,16 @@ RUNTIME IMPLEMENTATION AUTHORITY: NONE
 - The approved Step contract is not rewritten by this planning task except for
   the separately authorized limited Attempt field-matrix amendment.
 
-## Authorized Work
+## Authorization Boundary
 
-- Documentation-only Runtime Step implementation planning.
-- Exact file scope, validation strategy, deferred decisions, and future
-  approval requirements.
-- Limited Attempt field-matrix documentation resolution only.
+- Implementation Approval is APPROVED; the exact three-file scope is LOCKED.
+- Runtime Implementation Authority remains NONE.
+- Authorized work remains approval documentation and a future separate
+  authority decision only.
 
 ## Prohibited Work
 
-- Production code or test changes.
+- Production code or test changes until a separate Authority grant.
 - Provider/MCP Invocation, Runtime execution, orchestration, scheduling,
   persistence, DB/API/UI, deployment, Marketplace, Push, Merge, or Deploy.
 - Any Implementation Approval or Runtime Implementation Authority grant.
@@ -45,6 +46,7 @@ RUNTIME IMPLEMENTATION AUTHORITY: NONE
 
 - `docs/sprints/RUNTIME-STEP-IMPLEMENTATION-PLANNING-001/TASK.md`
 - `docs/sprints/RUNTIME-STEP-IMPLEMENTATION-PLANNING-001/PLAN.md`
+- `docs/sprints/RUNTIME-STEP-IMPLEMENTATION-PLANNING-001/APPROVAL.md`
 - `docs/sprints/RUNTIME-STEP-CONTRACT-001/CONTRACT.md`
 - `docs/sprints/RUNTIME-STEP-CONTRACT-001/STATE_MACHINE.md`
 - `docs/sprints/RUNTIME-STEP-CONTRACT-001/VALIDATION.md`

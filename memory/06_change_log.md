@@ -1,5 +1,14 @@
 # Change Log Memory
 
+## 2026-07-22 — Runtime Step Implementation Approval
+
+- Created `RUNTIME-STEP-IMPLEMENTATION-APPROVAL-001` with an exact locked
+  three-file implementation scope.
+- Implementation Approval: APPROVED; Runtime Implementation Authority: NONE.
+- Serializer/canonicalization and checksum policy decisions remain deferred to
+  a separate Authority decision. No code, tests, dependencies, Push, Merge, or
+  Deploy changes.
+
 ## 2026-07-22 — Runtime Step Attempt Field Matrix Resolution
 
 - Amended only the Runtime Step Attempt status-conditioned field semantics to
