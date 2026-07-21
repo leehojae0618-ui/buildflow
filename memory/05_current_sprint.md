@@ -1,5 +1,17 @@
 # Current Sprint Memory
 
+## 2026-07-22 — Runtime Step Implementation Planning Activation
+
+- Activated `RUNTIME-STEP-IMPLEMENTATION-PLANNING-001` as the sole active
+  planning Sprint.
+- Baseline: Runtime Step Contract APPROVED at `730bde8`; Result Sprint closeout
+  at `3873534`; RuntimeExecutionResult COMPLETE / VALIDATED at `871824e`.
+- Planning scope is a pure, deterministic, reference-first Step and Attempt
+  implementation plan only; production code and tests remain prohibited.
+- Implementation Approval: NONE. Runtime Implementation Authority: NONE.
+- Provider/MCP Invocation, Runtime execution, orchestration, scheduling,
+  persistence, DB/API/UI, deployment, Push, Merge, and Deploy remain excluded.
+
 ## 2026-07-22 — Runtime Result Implementation Sprint Closeout
 
 - `RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001` is CLOSED.

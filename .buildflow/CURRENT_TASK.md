@@ -2,66 +2,45 @@
 
 ## Task ID
 
-NONE
+RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 
 ## Project State
 
-BETWEEN_SPRINTS
+ACTIVE
 
-## Last Closed Sprint
-
-`RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001`
+## Planning Status
 
 ```text
-SPRINT STATUS: CLOSED
-IMPLEMENTATION: COMPLETE
-VALIDATION: COMPLETE
-INDEPENDENT REVIEW: PASS
-SCOPE LOCK: SATISFIED
-CONTRACT CONFORMANCE: VERIFIED
-COMPLETION CHECKPOINT: 871824e
+ACTIVE / PLANNING / NOT APPROVED
+IMPLEMENTATION APPROVAL: NONE
+RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ```
 
 ## Approved Contract Baseline
 
-- Runtime Result Contract: `00eb274`
-- Formal Sprint Closeout: `21889b1`
-- Documentation Consistency: `2dab5be`
-- Implementation Planning: `00bfe7a`
-- Implementation Approval: `55a5168`
-- Initial Implementation: `bcde0e7`
-- Issue Resolution: `de97132`
-- Independent Re-Review: PASS (`P0: 0`, `P1: 0`, `P2: 0`)
-- Project Gate Review: PASS WITH NOTE (`P0: 0`, `P1: 0`)
+- Runtime Step Contract: APPROVED (`730bde8`).
+- Previous Result implementation Sprint closeout: `3873534`.
+- RuntimeExecutionResult: COMPLETE / VALIDATED (`871824e`).
+- The approved Step contract is immutable and is not reopened by this planning
+  task.
 
-## Historical Authorization Boundary
+## Authorized Work
 
-- Implementation Approval: APPROVED
-- Implementation Scope: LOCKED
-- Runtime Implementation Authority: GRANTED for the completed Result slice only
-- Runtime Implementation Status: COMPLETE / VALIDATED
-- Contract Conformance: VERIFIED
-- Authorized paths: `runtime-execution-result.ts`,
-  `runtime-execution-result.test.ts`, and `index.ts` only.
-- All other code, Runtime execution, Provider/MCP Invocation, persistence,
-  DB/API/UI, Push, Merge, and Deploy remain prohibited.
+- Documentation-only Runtime Step implementation planning.
+- Exact file scope, validation strategy, deferred decisions, and future
+  approval requirements.
 
-## Closeout Record
+## Prohibited Work
 
-- Implementation: COMPLETE
-- Validation: COMPLETE
-- Independent Review: PASS
-- Scope Lock: SATISFIED
-- The Result implementation Sprint is formally closed by this checkpoint.
-- No Sprint is active.
-- The next candidate is `RUNTIME-STEP-IMPLEMENTATION-PLANNING-001` in
-  `DRAFT / NOT ACTIVE / NOT APPROVED` status.
-- The next candidate has no Implementation Approval and no Runtime
-  Implementation Authority.
+- Production code or test changes.
+- Provider/MCP Invocation, Runtime execution, orchestration, scheduling,
+  persistence, DB/API/UI, deployment, Marketplace, Push, Merge, or Deploy.
+- Any Implementation Approval or Runtime Implementation Authority grant.
 
-## Historical Scope Source
+## Scope Source
 
-- `docs/sprints/RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001/TASK.md`
-- `docs/sprints/RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001/PLAN.md`
-- `docs/sprints/RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001/APPROVAL.md`
-- `docs/sprints/RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001/AUTHORITY.md`
+- `docs/sprints/RUNTIME-STEP-IMPLEMENTATION-PLANNING-001/TASK.md`
+- `docs/sprints/RUNTIME-STEP-IMPLEMENTATION-PLANNING-001/PLAN.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/CONTRACT.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/STATE_MACHINE.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/VALIDATION.md`

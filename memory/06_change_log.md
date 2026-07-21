@@ -1,5 +1,17 @@
 # Change Log Memory
 
+## 2026-07-22 — Runtime Step Implementation Planning Activation
+
+- Created the documentation-only planning baseline for
+  `RUNTIME-STEP-IMPLEMENTATION-PLANNING-001`.
+- Planning reuses the approved Step Contract checkpoint `730bde8` without
+  reopening it and records the prior Result Sprint closeout `3873534`.
+- Proposed a three-path future implementation slice: Step module, Step tests,
+  and the public export only; serializer/digest specifics require later
+  Implementation Approval.
+- Code and test changes: none. Implementation Approval and Runtime
+  Implementation Authority: NONE. Push / Merge / Deploy: not performed.
+
 ## 2026-07-22 — Runtime Result Implementation Sprint Closeout
 
 - Closed `RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001` after the completed,
