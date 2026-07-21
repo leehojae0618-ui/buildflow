@@ -7,7 +7,7 @@ PLANNING STATUS: ACTIVE / PLANNING / NOT APPROVED
 PROJECT LIFECYCLE: ACTIVE
 CONTRACT BASELINE: RUNTIME-STEP-CONTRACT-001
 CONTRACT CHECKPOINT: 730bde8
-CONTRACT AMENDMENT: PENDING INDEPENDENT RE-REVIEW
+CONTRACT AMENDMENT: INDEPENDENT RE-REVIEW PASS (`ca54d12`)
 PREVIOUS SPRINT CLOSEOUT: 3873534
 IMPLEMENTATION APPROVAL: NONE
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
@@ -32,10 +32,10 @@ The approved Step contract is immutable for this planning task. Existing
 Request, Preflight, Execution Start, and Result contracts are consumed through
 their current identities and references only.
 
-Limited reopening is authorized only to resolve the Attempt field matrix. The
-planning Sprint remains active; Implementation Approval and Runtime
-Implementation Authority remain NONE until amendment re-review and planning
-consistency review pass.
+Limited reopening resolved the Attempt field matrix with independent re-review
+PASS. The planning Sprint remains active; Planning Consistency Review is PASS
+WITH NOTE with no rewrite required. Implementation Approval and Runtime
+Implementation Authority remain NONE.
 
 ## 4. Planning Scope
 

@@ -7,8 +7,8 @@
 - The amendment defines status-conditioned start/completion, failure, retry,
   cancellation, Evidence, predecessor, and checksum rules without adding
   Attempt statuses or execution behavior.
-- Contract status: AMENDED / PENDING INDEPENDENT RE-REVIEW; previous checkpoint
-  `730bde8` remains preserved.
+- Contract status: AMENDED / INDEPENDENT RE-REVIEW PASS; previous checkpoint
+  `730bde8` and amendment checkpoint `ca54d12` remain preserved.
 - Current planning Sprint remains the sole ACTIVE Sprint. Implementation
   Approval and Runtime Implementation Authority remain NONE.
 - `EXECUTION-TARGET-ARCHITECTURE-PLANNING-001` remains an inactive future

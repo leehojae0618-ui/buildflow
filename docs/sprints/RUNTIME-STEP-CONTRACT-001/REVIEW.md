@@ -4,11 +4,11 @@
 
 ```text
 TASK: RUNTIME-STEP-CONTRACT-001
-CONTRACT REVIEW: PENDING INDEPENDENT RE-REVIEW
+CONTRACT REVIEW: INDEPENDENT RE-REVIEW PASS
 LIMITED REOPENING: AUTHORIZED — ATTEMPT FIELD MATRIX ONLY
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
-PM / CTO AMENDMENT DECISION: PENDING RE-REVIEW
-CONTRACT DECISION: AMENDED / PENDING INDEPENDENT RE-REVIEW
+PM / CTO AMENDMENT DECISION: HISTORICAL APPROVE; AMENDMENT RE-REVIEW PASS
+CONTRACT DECISION: AMENDED / INDEPENDENT RE-REVIEW PASS
 CHECKPOINT STATUS: RECORDED BY THIS GIT AMENDMENT COMMIT
 IMPLEMENTATION APPROVAL: NONE
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
@@ -46,7 +46,7 @@ Step behavior remains locked.
    unchanged?
 10. Does the contract avoid implementation authority?
 
-## 4. Amendment Re-review Required
+## 4. Amendment Re-review Result
 
 The prior Implementation Approval Review found P1: Attempt fields
 `completedAtReference`, `failure`, and `retryDecision` were listed as required
@@ -54,9 +54,10 @@ for every Attempt despite undefined or incompatible non-terminal and successful
 status semantics.
 
 The amendment defines the authoritative matrix in `CONTRACT.md` section 9.1.
-Independent re-review must verify the matrix, field shapes, retry identity,
-timeout/cancellation reference rules, and checksum boundary before this
-contract returns to an approved state.
+Independent re-review verified the matrix, field shapes, retry identity,
+timeout/cancellation reference rules, and checksum boundary. The result is
+PASS with P0/P1/P2 `0/0/0`; this status record does not grant implementation
+approval or Runtime Implementation Authority.
 
 ## 5. Historical Draft Decision
 

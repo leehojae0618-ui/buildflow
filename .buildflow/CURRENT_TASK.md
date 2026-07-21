@@ -12,7 +12,7 @@ ACTIVE
 
 ```text
 ACTIVE / PLANNING / NOT APPROVED
-RUNTIME STEP CONTRACT: AMENDED / PENDING INDEPENDENT RE-REVIEW
+RUNTIME STEP CONTRACT: AMENDED / INDEPENDENT RE-REVIEW PASS
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
 IMPLEMENTATION APPROVAL: NONE
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
@@ -20,8 +20,8 @@ RUNTIME IMPLEMENTATION AUTHORITY: NONE
 
 ## Approved Contract Baseline
 
-- Runtime Step Contract: AMENDED / PENDING INDEPENDENT RE-REVIEW; previous
-  checkpoint `730bde8`.
+- Runtime Step Contract: AMENDED / INDEPENDENT RE-REVIEW PASS; previous
+  checkpoint `730bde8`; amendment checkpoint `ca54d12`.
 - Previous Result implementation Sprint closeout: `3873534`.
 - RuntimeExecutionResult: COMPLETE / VALIDATED (`871824e`).
 - The approved Step contract is not rewritten by this planning task except for

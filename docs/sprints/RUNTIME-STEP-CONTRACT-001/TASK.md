@@ -16,7 +16,7 @@ Queue, Scheduler, Parallel Runtime, persistence, API, UI, deployment, or
 Marketplace work.
 
 This Scope Freeze record remains historical. The current contract has a limited
-Attempt field-matrix amendment pending independent re-review in `CONTRACT.md`;
+Attempt field-matrix amendment with independent re-review PASS in `CONTRACT.md`;
 that amendment does not reopen or change this frozen Sprint scope.
 
 Scope Freeze approval locks the boundary for a future contract-only sprint. A

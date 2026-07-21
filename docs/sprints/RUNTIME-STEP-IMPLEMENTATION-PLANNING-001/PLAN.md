@@ -6,7 +6,7 @@
 PLANNING ID: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 PLANNING STATUS: ACTIVE / PLANNING / NOT APPROVED
 CONTRACT CHECKPOINT: 730bde8
-CONTRACT AMENDMENT: PENDING INDEPENDENT RE-REVIEW
+CONTRACT AMENDMENT: INDEPENDENT RE-REVIEW PASS (`ca54d12`)
 PREVIOUS SPRINT CLOSEOUT: 3873534
 IMPLEMENTATION APPROVAL: NONE
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
@@ -19,9 +19,10 @@ Step Attempt records. The slice must construct and validate deterministic,
 reference-only records; it must not execute a Step or interact with a Provider,
 MCP server, database, filesystem, or network.
 
-The prior approved contract has a limited Attempt field-matrix amendment in
-review. No implementation approval may be prepared until independent
-re-review confirms its status-conditioned rules.
+The prior approved contract has a limited Attempt field-matrix amendment with
+independent re-review PASS. Planning Consistency Review is PASS WITH NOTE and
+requires no rewrite. No implementation approval or Runtime Implementation
+Authority is granted by this planning record.
 
 ## 3. Exact Proposed File Scope
 

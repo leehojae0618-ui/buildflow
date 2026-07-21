@@ -4,12 +4,12 @@
 
 ```text
 TASK: RUNTIME-STEP-CONTRACT-001
-STATUS: AMENDED / PENDING INDEPENDENT RE-REVIEW
-QA STATUS: AMENDMENT QA PENDING
+STATUS: AMENDED / INDEPENDENT RE-REVIEW PASS
+QA STATUS: AMENDMENT QA PASS
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
-CONTRACT REVIEW: PENDING INDEPENDENT RE-REVIEW
-PM / CTO AMENDMENT DECISION: PENDING RE-REVIEW
-CONTRACT DECISION: AMENDED / PENDING INDEPENDENT RE-REVIEW
+CONTRACT REVIEW: INDEPENDENT RE-REVIEW PASS
+PM / CTO AMENDMENT DECISION: HISTORICAL APPROVE; AMENDMENT RE-REVIEW PASS
+CONTRACT DECISION: AMENDED / INDEPENDENT RE-REVIEW PASS
 CHECKPOINT STATUS: RECORDED BY THIS GIT AMENDMENT COMMIT
 IMPLEMENTATION APPROVAL: NONE
 ```
@@ -72,20 +72,20 @@ amendment-specific QA gate and must pass before independent re-review.
 
 ## 6.1 Attempt Field Matrix QA
 
-- [ ] Every approved Attempt status has one explicit field-matrix row.
-- [ ] `READY` and `RUNNING` forbid completion, failure, and retry-decision
+- [x] Every approved Attempt status has one explicit field-matrix row.
+- [x] `READY` and `RUNNING` forbid completion, failure, and retry-decision
   fields.
-- [ ] Terminal Attempts require `completedAtReference` with same-attempt
+- [x] Terminal Attempts require `completedAtReference` with same-attempt
   identity bindings.
-- [ ] `FAILED` requires a safe failure and a retry decision.
-- [ ] `CANCELLED` uses Evidence or `cancellationReference`, never failure.
-- [ ] `TIMEOUT` uses an `ATTEMPT_TIMEOUT` completion reference when Evidence is
+- [x] `FAILED` requires a safe failure and a retry decision.
+- [x] `CANCELLED` uses Evidence or `cancellationReference`, never failure.
+- [x] `TIMEOUT` uses an `ATTEMPT_TIMEOUT` completion reference when Evidence is
   absent and requires a retry decision.
-- [ ] Initial and retry Attempt predecessor bindings are mutually exclusive and
+- [x] Initial and retry Attempt predecessor bindings are mutually exclusive and
   complete.
-- [ ] `integrityChecksum` is required for all Attempt records, excludes itself
+- [x] `integrityChecksum` is required for all Attempt records, excludes itself
   and volatile metadata, and includes present semantic fields.
-- [ ] Serializer/digest algorithm, byte encoding, and validation-return policy
+- [x] Serializer/digest algorithm, byte encoding, and validation-return policy
   remain deferred to Implementation Approval.
 
 ## 7. Approval QA

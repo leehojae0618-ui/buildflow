@@ -6,8 +6,8 @@
   resolve the blocking P1 from Implementation Approval Review.
 - Defined the approved existing Attempt statuses' start/completion, failure,
   retry-decision, cancellation, Evidence, predecessor, and checksum rules.
-- Runtime Step Contract is pending independent amendment re-review; previous
-  checkpoint `730bde8` is retained.
+- Amendment checkpoint `ca54d12` subsequently passed independent re-review;
+  previous checkpoint `730bde8` is retained.
 - Code, tests, dependencies, execution behavior, and implementation authority
   remain unchanged. Push / Merge / Deploy: not performed.
 
