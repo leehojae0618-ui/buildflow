@@ -1,5 +1,35 @@
 # Change Log Memory
 
+## 2026-07-21 — RUNTIME-STEP-CONTRACT-001 Activated
+
+Updated operational tracking:
+
+- `.buildflow/CURRENT_TASK.md`
+- `.buildflow/STATUS.md`
+- `.buildflow/NEXT_TASK.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Activation result:
+
+- Current Task: `RUNTIME-STEP-CONTRACT-001`.
+- Project State: `ACTIVE_SPRINT`.
+- Task Status: `ACTIVE`.
+- Scope Status: `SCOPE FROZEN`.
+- Scope Freeze Checkpoint: `b6fac24`.
+- Runtime Implementation Authority: `NONE`.
+- Authorized work is limited to Runtime Step contract documentation and contract
+  validation planning.
+
+Code and test changes:
+
+- None.
+
+Push / Merge / Deploy:
+
+- Not performed.
+
 ## 2026-07-21 — RUNTIME-STEP-CONTRACT-001 Scope Freeze Review Draft
 
 Created:

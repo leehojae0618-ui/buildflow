@@ -1,51 +1,43 @@
 # Current Sprint Memory
 
-## 2026-07-21 — Architecture Review Closeout
+## 2026-07-21 — Runtime Step Contract Sprint Activated
 
 Current task:
-
-```text
-NONE
-```
-
-Status:
-
-```text
-BETWEEN_SPRINTS
-ARCHITECTURE-AI-RUNTIME-REVIEW-001 CLOSED
-```
-
-Closeout result:
-
-- Architecture Review: COMPLETE
-- Final Document Review: PASS
-- Architecture Review Checkpoint: `b2802de`
-- Decision Lock Checkpoint: `38c589b`
-- Decision Recommendation: `KEEP CURRENT`
-- Decision Lock: APPROVED
-- Existing Runtime Contracts: KEEP
-- Runtime Implementation Authority: NONE
-- Push / Merge / Deploy: NOT PERFORMED
-
-Next candidate:
 
 ```text
 RUNTIME-STEP-CONTRACT-001
 ```
 
-Candidate status:
+Status:
 
 ```text
-APPROVED
-NOT ACTIVE
+ACTIVE_SPRINT
+ACTIVE
 SCOPE FROZEN
 ```
 
-Activation requirement:
+Scope baseline:
 
-- Scope Freeze checkpoint commit and separate activation approval are required
-  before activation.
-- Runtime Step contract work is not authorized by this closeout.
+- Scope Freeze Checkpoint: `b6fac24`
+- PM Decision: APPROVE
+- CTO Decision: APPROVE
+- Runtime Implementation Authority: NONE
+- Push / Merge / Deploy: NOT PERFORMED
+
+Authorized work:
+
+- Runtime Step contract document writing.
+- Runtime Step Attempt contract document writing.
+- Contract validation planning.
+- Review/report documentation for the contract-only sprint.
+
+Prohibited work:
+
+- Runtime execution implementation.
+- Provider Invocation implementation.
+- MCP Invocation or Gateway Runtime implementation.
+- Queue, Scheduler, Worker, Lease, or Lock implementation.
+- DB, API, UI, deployment, or Marketplace work.
 
 Scope review draft:
 
@@ -57,6 +49,24 @@ Scope Freeze decision:
 - CTO Decision: `APPROVE`.
 - Scope Freeze Decision: `APPROVED`.
 - Runtime Implementation Authority: `NONE`.
+
+## 2026-07-21 — Architecture Review Closeout
+
+Completed task:
+
+```text
+ARCHITECTURE-AI-RUNTIME-REVIEW-001
+```
+
+Closeout result:
+
+- Architecture Review: COMPLETE
+- Final Document Review: PASS
+- Architecture Review Checkpoint: `b2802de`
+- Decision Lock Checkpoint: `38c589b`
+- Decision Recommendation: `KEEP CURRENT`.
+- Decision Lock: APPROVED.
+- Existing Runtime Contracts: KEEP.
 
 ## 2026-07-21 — Long-term AI Runtime Architecture Review
 

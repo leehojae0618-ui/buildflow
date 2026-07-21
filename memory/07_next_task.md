@@ -3,63 +3,49 @@
 ## Current Active Task
 
 ```text
-NONE
+RUNTIME-STEP-CONTRACT-001
 ```
 
 Status:
 
 ```text
-BETWEEN_SPRINTS
-```
-
-Last completed task:
-
-```text
-ARCHITECTURE-AI-RUNTIME-REVIEW-001
-```
-
-## Closeout Result
-
-```text
-Architecture Review Checkpoint: b2802de
-Decision Recommendation: KEEP CURRENT
-Decision Lock Checkpoint: 38c589b
-Decision Lock: APPROVED
-Runtime Implementation Authority: NONE
-```
-
-## Next Candidate
-
-```text
-RUNTIME-STEP-CONTRACT-001
-```
-
-Candidate status:
-
-```text
-APPROVED
-NOT ACTIVE
+ACTIVE_SPRINT
+ACTIVE
 SCOPE FROZEN
 ```
 
-## Required Next Gate
-
-Scope Freeze checkpoint commit and separate activation approval are required
-before `RUNTIME-STEP-CONTRACT-001` can move to `.buildflow/CURRENT_TASK.md`.
-
-Scope review draft:
+Scope Freeze checkpoint:
 
 ```text
-docs/sprints/RUNTIME-STEP-CONTRACT-001/TASK.md
+b6fac24
 ```
 
-No implementation task may start until PM/CTO explicitly approves activation of
-the next task.
+Runtime Implementation Authority:
 
-Potential future scope remains contract-only until reviewed. It must not be
-inferred as approval for Runtime execution, Runtime Planner, Runtime Compiler,
-LLM Budget Router, Provider execution, MCP Invocation, persistence, API/UI,
-deployment, or Marketplace work.
+```text
+NONE
+```
+
+## Authorized Work
+
+- Runtime Step contract documentation.
+- Runtime Step Attempt contract documentation.
+- Contract validation planning.
+- Review/report documentation for the contract-only sprint.
+
+## Prohibited Work
+
+- Runtime execution implementation.
+- Provider Invocation implementation.
+- MCP Invocation or Gateway Runtime implementation.
+- Queue, Scheduler, Worker, Lease, or Lock implementation.
+- Runtime Planner or Runtime Compiler implementation.
+- DB, API, UI, deployment, or Marketplace work.
+
+## Required Next Gate
+
+Write the Runtime Step / Attempt contract documentation within the frozen scope.
+Do not start code implementation until explicit implementation approval.
 
 ## Preserved Baseline
 

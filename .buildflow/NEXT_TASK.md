@@ -1,49 +1,31 @@
 # Next Task
 
-## Candidate
+## Status
+
+NONE
+
+## Reason
+
+`RUNTIME-STEP-CONTRACT-001` is now the active Sprint. No additional next task is
+approved or queued during this active Sprint.
+
+## Active Sprint
 
 RUNTIME-STEP-CONTRACT-001
 
-## Status
+## Active Sprint Boundary
 
-```text
-APPROVED
-NOT ACTIVE
-SCOPE FROZEN
-```
+- Scope Status: SCOPE FROZEN
+- Scope Freeze Checkpoint: `b6fac24`
+- Runtime Implementation Authority: NONE
+- Authorized work is limited to Runtime Step contract documentation and contract
+  validation planning.
 
-## Required Pre-Activation Gate
+## Prohibited Work
 
-Scope Freeze is approved. A checkpoint commit and separate activation approval
-are required before this candidate can move to `.buildflow/CURRENT_TASK.md`.
-
-Scope review draft:
-
-- `docs/sprints/RUNTIME-STEP-CONTRACT-001/TASK.md`
-
-## Context
-
-`ARCHITECTURE-AI-RUNTIME-REVIEW-001` is closed. The approved long-term AI
-Runtime Decision Lock is recorded in:
-
-- Architecture Review Checkpoint: `b2802de`
-- Decision Lock Checkpoint: `38c589b`
-- Decision Recommendation: `KEEP CURRENT`
-- Decision Lock: APPROVED
-
-## Candidate Boundary
-
-The next task candidate should be reviewed as a contract-only Runtime Step scope
-before approval. This candidate is not approval for:
-
-- Runtime execution implementation;
-- Provider Invocation implementation;
-- MCP Invocation or Gateway Runtime implementation;
-- Runtime Planner or Runtime Compiler implementation;
-- Budget Router implementation;
-- DB, API, UI, deployment, or Marketplace work.
-
-## Next Action
-
-PM/CTO should approve a separate activation checkpoint before any
-`RUNTIME-STEP-CONTRACT-001` work begins.
+- Runtime execution implementation
+- Provider Invocation implementation
+- MCP Invocation or Gateway Runtime implementation
+- Queue, Scheduler, Worker, Lease, or Lock implementation
+- DB, API, UI, deployment, or Marketplace work
+- Push, Merge, or Deploy

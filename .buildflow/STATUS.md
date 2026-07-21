@@ -1,8 +1,8 @@
 # BuildFlow Status
 
-- Workflow Status: BETWEEN_SPRINTS
-- Current Sprint: NONE
-- Current Task: NONE
+- Workflow Status: ACTIVE_SPRINT
+- Current Sprint: RUNTIME-STEP-CONTRACT-001
+- Current Task: Runtime Step Contract
 - Last Completed Task: ARCHITECTURE-AI-RUNTIME-REVIEW-001
 - Architecture Review: COMPLETE
 - Final Document Review: PASS
@@ -12,9 +12,13 @@
 - Decision Lock Checkpoint: `38c589b`
 - Existing Runtime Contracts: KEEP
 - Runtime Implementation Authority: NONE
-- Latest Known Commit: `38c589b`
+- Latest Known Commit: `b6fac24`
 - Push / Merge / Deploy: NOT PERFORMED
-- Next Candidate: RUNTIME-STEP-CONTRACT-001
-- Next Candidate Status: APPROVED / NOT ACTIVE / SCOPE FROZEN
-- Activation Requirement: Scope Freeze checkpoint commit and separate PM/CTO activation approval
+- Scope Freeze Checkpoint: `b6fac24`
+- Task Status: ACTIVE
+- Scope Status: SCOPE FROZEN
+- Runtime Implementation Authority: NONE
+- Authorized Work: Runtime Step contract document writing and contract validation planning only
+- Prohibited Work: Runtime execution, Provider/MCP Invocation, Queue/Scheduler/Worker, DB/API/UI, deployment, Marketplace, Push, Merge, Deploy
+- Next Candidate: NONE
 - Product Focus: AI Agent automatic build, deployment, verification, and BPS Package sharing. General Web App and Platform expansion is on hold.
