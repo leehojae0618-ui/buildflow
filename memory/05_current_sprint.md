@@ -56,6 +56,18 @@ Result scope boundary:
 - No Runtime Result type, interface, validator, test, or implementation has
   been created.
 
+Open Questions Review:
+
+- Complete; no Scope Freeze change.
+- Result correlation, status semantics, reference matrix, deterministic
+  boundary, Evidence boundary, and pure validation boundary are locked in
+  `docs/sprints/RUNTIME-RESULT-CONTRACT-001/DECISIONS.md`.
+- Exact hash implementation, detailed Step/Attempt aggregation, parallel and
+  retry aggregation, Provider/MCP normalized schemas, Bundle/Report assembly,
+  and safe metadata schema remain Deferred.
+- P0/P1/P2: 0/0/0.
+- Contract Status remains NOT STARTED; Contract Decision remains PENDING.
+
 Prohibited work:
 
 - Runtime execution implementation.
@@ -66,7 +78,8 @@ Prohibited work:
 
 Next required work:
 
-- Prepare the RuntimeExecutionResult contract draft within the frozen scope.
+- Write the RuntimeExecutionResult contract draft within the locked Open
+  Questions decisions and frozen scope.
 - Do not write code or tests without later explicit approval.
 
 ## 2026-07-21 — Architecture Review Closeout

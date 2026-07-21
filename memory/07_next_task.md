@@ -32,6 +32,7 @@ NONE
 SCOPE DECISION: APPROVED
 CONTRACT STATUS: NOT STARTED
 CONTRACT DECISION: PENDING
+OPEN QUESTIONS REVIEW: COMPLETE
 IMPLEMENTATION APPROVAL: NONE
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ```
@@ -54,12 +55,23 @@ RUNTIME IMPLEMENTATION AUTHORITY: NONE
 
 ## Required Next Gate
 
-Prepare the RuntimeExecutionResult Contract Draft within the frozen scope. Do
-not start code implementation until a separate explicit implementation approval.
+Write the RuntimeExecutionResult Contract Draft within the frozen scope and
+locked Open Questions decisions. Do not start code or test implementation until
+a separate explicit implementation approval.
 
 Scope source:
 
 - `docs/sprints/RUNTIME-RESULT-CONTRACT-001/TASK.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/DECISIONS.md`
+
+Locked pre-draft decisions:
+
+- Result correlation, status semantics, status/reference matrix, deterministic
+  serialization boundary, Evidence boundary, and pure validation boundary.
+- Exact hash implementation, detailed aggregation, Provider/MCP normalized
+  schemas, Bundle/Report assembly, and safe metadata schema remain Deferred.
+- Scope expansion, raw payloads/secrets, generated clocks, unknown fields, and
+  Step/Attempt contract redefinition are rejected.
 
 ## Previous Sprint Transition
 

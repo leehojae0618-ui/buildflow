@@ -151,20 +151,20 @@ The future contract Sprint may define:
 
 ## 9. Open Questions
 
-No remaining Open Question changes the frozen scope. Contract-body questions are
-intentionally deferred and must not expand the scope:
+The Open Questions Review is complete. Its decisions are recorded in
+`DECISIONS.md` and do not change this frozen scope.
 
-1. Must an Execution Result exist only after all reachable Steps are terminal,
-   or may an explicit blocked/cancelled result be created earlier by a future
-   execution contract?
-2. Which terminal Step/Attempt references are required in a Result summary, and
-   how are duplicate references canonicalized?
-3. How should `SKIPPED` Step reason references contribute to an execution-wide
-   outcome without redefining the Step terminal-reference matrix?
-4. Does a future Execution Result need to distinguish a blocked result caused by
-   approval, connection, Credential, policy, or dependency, or reference the
-   upstream blocking reasons unchanged?
-5. Which safe metadata fields, if any, remain outside the deterministic core?
+- `LOCK`: Result correlation and identity inputs, status meanings, reference
+  matrix, deterministic serialization boundary, Evidence boundary, and pure
+  validation boundary.
+- `DEFER`: exact hash algorithm, detailed Step/Attempt aggregation, parallel
+  and retry aggregation, Provider/MCP normalized schemas, Evidence Bundle and
+  Report assembly, and safe metadata field selection.
+- `REJECT`: raw Provider/MCP payloads, secret-bearing values, generated clocks,
+  free-form unknown fields, and Result redefinition of Step/Attempt contracts.
+
+Remaining contract-body detail must stay within the locked decisions and must
+not expand the Scope Freeze.
 
 ## 10. Dependency Matrix
 
@@ -264,3 +264,21 @@ authorize Commit, Push, Merge, or Deploy.
 9. This design-only contract scope does not change the earlier Runtime/MCP
    implementation order. Invocation implementation remains a future
    dependency.
+
+## 16. Open Questions Review Outcome
+
+```text
+OPEN QUESTIONS REVIEW: COMPLETE
+SCOPE CHANGE: NONE
+P0: 0
+P1: 0
+P2: 0
+CONTRACT STATUS: NOT STARTED
+CONTRACT DECISION: PENDING
+IMPLEMENTATION APPROVAL: NONE
+RUNTIME IMPLEMENTATION AUTHORITY: NONE
+```
+
+The review locks only decisions required before the `RuntimeExecutionResult`
+Contract Draft. It does not create `CONTRACT.md`, start implementation, or
+change the approved Step terminal-reference matrix.

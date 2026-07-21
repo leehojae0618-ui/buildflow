@@ -1,5 +1,40 @@
 # Change Log Memory
 
+## 2026-07-21 — RUNTIME-RESULT-CONTRACT-001 Open Questions Review
+
+Updated:
+
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/TASK.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/DECISIONS.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Review result:
+
+- LOCK: Result correlation/identity inputs, status semantics, status/reference
+  matrix, aggregation boundary, deterministic serialization boundary, Evidence
+  boundary, and pure validation boundary.
+- DEFER: exact hash implementation, detailed Step/Attempt aggregation,
+  parallel/retry aggregation, Provider/MCP normalized schemas, Bundle/Report
+  assembly, and safe metadata schema.
+- REJECT: Scope expansion, raw payloads or secrets, generated clocks, unknown
+  fields, and Step/Attempt contract redefinition.
+- P0/P1/P2: 0/0/0.
+- Scope Change: NONE.
+- Contract Status: NOT STARTED.
+- Contract Decision: PENDING.
+- Implementation Approval: NONE.
+- Runtime Implementation Authority: NONE.
+
+Code and test changes:
+
+- None.
+
+Commit / Push / Merge / Deploy:
+
+- Not performed.
+
 ## 2026-07-21 — RUNTIME-RESULT-CONTRACT-001 Sprint Activation
 
 Updated operational tracking:
