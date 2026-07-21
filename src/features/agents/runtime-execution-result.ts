@@ -54,7 +54,7 @@ export type RuntimeExecutionResult = {
   attemptSummaryReference?: RuntimeExecutionResultReference;
   evidenceReferences?: RuntimeExecutionResultReference[];
   limitationCode?: string;
-  limitationReference?: RuntimeExecutionResultReference;
+  limitationReferences?: RuntimeExecutionResultReference[];
   outputReference?: RuntimeExecutionResultReference;
   errorReference?: RuntimeExecutionResultReference;
   blockingReference?: RuntimeExecutionResultReference;
@@ -90,7 +90,7 @@ export type BuildRuntimeExecutionResultInput = {
   attemptSummaryReference?: RuntimeExecutionResultReference;
   evidenceReferences?: RuntimeExecutionResultReference[];
   limitationCode?: string;
-  limitationReference?: RuntimeExecutionResultReference;
+  limitationReferences?: RuntimeExecutionResultReference[];
   outputReference?: RuntimeExecutionResultReference;
   errorReference?: RuntimeExecutionResultReference;
   blockingReference?: RuntimeExecutionResultReference;
@@ -205,6 +205,16 @@ function referencesHaveDuplicates(references: RuntimeExecutionResultReference[])
   return false;
 }
 
+function isDenseArray(value: unknown): value is unknown[] {
+  if (!Array.isArray(value)) return false;
+  for (let index = 0; index < value.length; index += 1) {
+    if (!Object.prototype.hasOwnProperty.call(value, index) || value[index] === undefined) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function hasForbiddenValue(value: unknown, ancestors = new WeakSet<object>()): boolean {
   if (typeof value === "string") {
     return secretValuePatterns.some((pattern) => pattern.test(value));
@@ -254,6 +264,15 @@ function isValidReference(reference: unknown): reference is RuntimeExecutionResu
   return reference.referenceType === undefined || isNonEmptyString(reference.referenceType);
 }
 
+function isValidReferenceCollection(value: unknown): value is RuntimeExecutionResultReference[] {
+  return (
+    isDenseArray(value) &&
+    value.every(isValidReference) &&
+    !referencesHaveDuplicates(value) &&
+    referencesAreCanonical(value)
+  );
+}
+
 function canonicalValue(value: unknown, ancestors = new WeakSet<object>()): unknown {
   if (value === null || typeof value === "string" || typeof value === "boolean") {
     return value;
@@ -280,7 +299,16 @@ function canonicalValue(value: unknown, ancestors = new WeakSet<object>()): unkn
   }
   ancestors.add(value);
   try {
-    if (Array.isArray(value)) return value.map((item) => canonicalValue(item, ancestors));
+    if (Array.isArray(value)) {
+      const items: unknown[] = [];
+      for (let index = 0; index < value.length; index += 1) {
+        if (!Object.prototype.hasOwnProperty.call(value, index) || value[index] === undefined) {
+          throw new RuntimeExecutionResultCanonicalizationError("Sparse or undefined array value.");
+        }
+        items.push(canonicalValue(value[index], ancestors));
+      }
+      return items;
+    }
     if (!isPlainObject(value)) {
       throw new RuntimeExecutionResultCanonicalizationError("Non-plain object.");
     }
@@ -325,7 +353,7 @@ function statusReferenceFailures(
     | "attemptSummaryReference"
     | "evidenceReferences"
     | "limitationCode"
-    | "limitationReference"
+    | "limitationReferences"
     | "outputReference"
     | "errorReference"
     | "blockingReference"
@@ -338,7 +366,7 @@ function statusReferenceFailures(
     "attemptSummaryReference",
     "evidenceReferences",
     "limitationCode",
-    "limitationReference",
+    "limitationReferences",
     "outputReference",
     "errorReference",
     "blockingReference",
@@ -386,7 +414,10 @@ function statusReferenceFailures(
     case "SUCCEEDED_WITH_LIMITATIONS":
       requireReference("stepSummaryReference");
       requireEvidence();
-      if (!isNonEmptyString(result.limitationCode) && !isValidReference(result.limitationReference)) {
+      if (
+        !isNonEmptyString(result.limitationCode) &&
+        (!result.limitationReferences || result.limitationReferences.length === 0)
+      ) {
         failures.push(failure("RESULT_STATUS_REFERENCE_INVALID", "limitationCode"));
       }
       forbidAllExcept([
@@ -394,7 +425,7 @@ function statusReferenceFailures(
         "attemptSummaryReference",
         "evidenceReferences",
         "limitationCode",
-        "limitationReference",
+        "limitationReferences",
         "outputReference",
       ]);
       break;
@@ -435,6 +466,7 @@ function statusReferenceFailures(
       forbidAllExcept([
         "stepSummaryReference",
         "attemptSummaryReference",
+        "outputReference",
         "blockingReference",
         "validationReference",
       ]);
@@ -444,6 +476,7 @@ function statusReferenceFailures(
       forbidAllExcept([
         "stepSummaryReference",
         "attemptSummaryReference",
+        "outputReference",
         "errorReference",
         "validationReference",
       ]);
@@ -457,7 +490,6 @@ function validateReferences(result: RuntimeExecutionResult) {
   const references: Array<[string, RuntimeExecutionResultReference | undefined]> = [
     ["stepSummaryReference", result.stepSummaryReference],
     ["attemptSummaryReference", result.attemptSummaryReference],
-    ["limitationReference", result.limitationReference],
     ["outputReference", result.outputReference],
     ["errorReference", result.errorReference],
     ["blockingReference", result.blockingReference],
@@ -470,13 +502,14 @@ function validateReferences(result: RuntimeExecutionResult) {
       failures.push(failure("RESULT_REFERENCE_INVALID", target));
     }
   }
-  if (result.evidenceReferences) {
-    if (
-      result.evidenceReferences.some((reference) => !isValidReference(reference)) ||
-      referencesHaveDuplicates(result.evidenceReferences) ||
-      !referencesAreCanonical(result.evidenceReferences)
-    ) {
+  if (result.evidenceReferences !== undefined) {
+    if (!isValidReferenceCollection(result.evidenceReferences)) {
       failures.push(failure("RESULT_REFERENCE_INVALID", "evidenceReferences"));
+    }
+  }
+  if (result.limitationReferences !== undefined) {
+    if (!isValidReferenceCollection(result.limitationReferences)) {
+      failures.push(failure("RESULT_REFERENCE_INVALID", "limitationReferences"));
     }
   }
   return failures;
@@ -495,7 +528,7 @@ const resultKeys = new Set<keyof RuntimeExecutionResult>([
   "attemptSummaryReference",
   "evidenceReferences",
   "limitationCode",
-  "limitationReference",
+  "limitationReferences",
   "outputReference",
   "errorReference",
   "blockingReference",
@@ -631,6 +664,18 @@ export function buildRuntimeExecutionResult(
     if (input.limitationCode && !limitationCodePattern.test(input.limitationCode)) {
       failures.push(failure("RESULT_STATUS_REFERENCE_INVALID", "limitationCode"));
     }
+    if (
+      input.evidenceReferences !== undefined &&
+      !isValidReferenceCollection(input.evidenceReferences)
+    ) {
+      failures.push(failure("RESULT_REFERENCE_INVALID", "evidenceReferences"));
+    }
+    if (
+      input.limitationReferences !== undefined &&
+      !isValidReferenceCollection(input.limitationReferences)
+    ) {
+      failures.push(failure("RESULT_REFERENCE_INVALID", "limitationReferences"));
+    }
     if (failures.length > 0) return { status: "INVALID", failures };
 
     const core = resultDeterministicCore({
@@ -658,8 +703,8 @@ export function buildRuntimeExecutionResult(
         : {}),
       ...(input.evidenceReferences ? { evidenceReferences: cloneReferences(input.evidenceReferences) } : {}),
       ...(input.limitationCode ? { limitationCode: input.limitationCode } : {}),
-      ...(input.limitationReference
-        ? { limitationReference: cloneReference(input.limitationReference) }
+      ...(input.limitationReferences
+        ? { limitationReferences: cloneReferences(input.limitationReferences) }
         : {}),
       ...(input.outputReference ? { outputReference: cloneReference(input.outputReference) } : {}),
       ...(input.errorReference ? { errorReference: cloneReference(input.errorReference) } : {}),
