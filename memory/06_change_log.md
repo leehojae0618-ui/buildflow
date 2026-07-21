@@ -1,5 +1,13 @@
 # Change Log Memory
 
+## 2026-07-22 — Runtime Step Runtime Implementation
+
+- Implemented the authorized pure Runtime Step module, its isolated tests, and
+  public export in checkpoint `13a2c26`.
+- Implementation scope remained limited to the locked three paths. Production
+  implementation is IMPLEMENTED; independent implementation review is PENDING.
+- Push / Merge / Deploy: not performed.
+
 ## 2026-07-22 — Runtime Step Runtime Implementation Authority
 
 - Created `RUNTIME-STEP-RUNTIME-IMPLEMENTATION-AUTHORITY-001` for the exact
