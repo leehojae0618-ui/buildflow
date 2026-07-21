@@ -3,7 +3,7 @@
 ## 1. Status
 
 ```text
-TASK STATUS: ACTIVE / IMPLEMENTATION COMPLETE / SCOPE SATISFIED
+TASK STATUS: CLOSED / IMPLEMENTATION COMPLETE / SCOPE SATISFIED
 CONTRACT BASELINE: 00eb274
 CLOSEOUT CHECKPOINT: 21889b1
 DOCUMENTATION CONSISTENCY CHECKPOINT: 2dab5be
@@ -17,6 +17,8 @@ ISSUE RESOLUTION CHECKPOINT: de97132
 INDEPENDENT RE-REVIEW: PASS (P0/P1/P2: 0/0/0)
 RUNTIME IMPLEMENTATION STATUS: COMPLETE / VALIDATED
 CONTRACT CONFORMANCE: VERIFIED
+COMPLETION CHECKPOINT: 871824e
+CLOSEOUT: COMPLETE
 ```
 
 ## 2. Purpose
@@ -25,6 +27,9 @@ Record the approved implementation plan and completed pure
 `RuntimeExecutionResult` implementation. The completed slice remains limited to
 the locked module, its tests, and its public export; no Runtime execution or
 external integration is included.
+
+This Sprint is closed. Its completed authorization and implementation records
+are historical and do not authorize new Result work.
 
 ## 3. Approved Contract Baseline
 
@@ -83,3 +88,6 @@ items.
 - The Implementation Approval records an exact file scope and policy lock.
 - The completed implementation remains within the three-path lock and passes
   independent re-review with P0/P1/P2 equal to `0/0/0`.
+- The Sprint closeout leaves no active Sprint and identifies
+  `RUNTIME-STEP-IMPLEMENTATION-PLANNING-001` only as a draft, inactive,
+  unapproved candidate.

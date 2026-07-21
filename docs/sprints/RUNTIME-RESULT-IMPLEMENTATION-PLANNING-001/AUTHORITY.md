@@ -11,10 +11,14 @@ AUTHORITY CHECKPOINT: 0afff3f
 INITIAL IMPLEMENTATION CHECKPOINT: bcde0e7
 ISSUE RESOLUTION CHECKPOINT: de97132
 INDEPENDENT RE-REVIEW: PASS (P0/P1/P2: 0/0/0)
+CLOSEOUT: COMPLETE
+AUTHORITY STATUS: HISTORICAL / EXPIRED FOR NEW WORK
 ```
 
 This authority record granted permission for the completed implementation. It
 does not authorize any additional code or test changes beyond the locked scope.
+The Result implementation Sprint is closed, so this authority cannot be used
+for new work or transferred to the next candidate.
 
 ## 2. Authorized Paths
 

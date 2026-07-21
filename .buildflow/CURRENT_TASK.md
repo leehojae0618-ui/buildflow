@@ -2,19 +2,25 @@
 
 ## Task ID
 
-RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001
-
-## Title
-
-Runtime Result Implementation Planning
+NONE
 
 ## Project State
 
-ACTIVE_SPRINT
+BETWEEN_SPRINTS
 
-## Implementation Status
+## Last Closed Sprint
 
-ACTIVE / IMPLEMENTATION COMPLETE / SCOPE SATISFIED
+`RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001`
+
+```text
+SPRINT STATUS: CLOSED
+IMPLEMENTATION: COMPLETE
+VALIDATION: COMPLETE
+INDEPENDENT REVIEW: PASS
+SCOPE LOCK: SATISFIED
+CONTRACT CONFORMANCE: VERIFIED
+COMPLETION CHECKPOINT: 871824e
+```
 
 ## Approved Contract Baseline
 
@@ -28,11 +34,11 @@ ACTIVE / IMPLEMENTATION COMPLETE / SCOPE SATISFIED
 - Independent Re-Review: PASS (`P0: 0`, `P1: 0`, `P2: 0`)
 - Project Gate Review: PASS WITH NOTE (`P0: 0`, `P1: 0`)
 
-## Authorization Boundary
+## Historical Authorization Boundary
 
 - Implementation Approval: APPROVED
 - Implementation Scope: LOCKED
-- Runtime Implementation Authority: GRANTED
+- Runtime Implementation Authority: GRANTED for the completed Result slice only
 - Runtime Implementation Status: COMPLETE / VALIDATED
 - Contract Conformance: VERIFIED
 - Authorized paths: `runtime-execution-result.ts`,
@@ -40,15 +46,20 @@ ACTIVE / IMPLEMENTATION COMPLETE / SCOPE SATISFIED
 - All other code, Runtime execution, Provider/MCP Invocation, persistence,
   DB/API/UI, Push, Merge, and Deploy remain prohibited.
 
-## Completion Record
+## Closeout Record
 
 - Implementation: COMPLETE
 - Validation: COMPLETE
 - Independent Review: PASS
 - Scope Lock: SATISFIED
-- Formal completion is recorded by this documentation checkpoint commit.
+- The Result implementation Sprint is formally closed by this checkpoint.
+- No Sprint is active.
+- The next candidate is `RUNTIME-STEP-IMPLEMENTATION-PLANNING-001` in
+  `DRAFT / NOT ACTIVE / NOT APPROVED` status.
+- The next candidate has no Implementation Approval and no Runtime
+  Implementation Authority.
 
-## Scope Source
+## Historical Scope Source
 
 - `docs/sprints/RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001/TASK.md`
 - `docs/sprints/RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001/PLAN.md`

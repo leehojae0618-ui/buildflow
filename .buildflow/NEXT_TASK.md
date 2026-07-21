@@ -1,32 +1,25 @@
 # Next Task
 
+## Candidate
+
+`RUNTIME-STEP-IMPLEMENTATION-PLANNING-001`
+
 ## Status
 
-NONE
+```text
+DRAFT / NOT ACTIVE / NOT APPROVED
+IMPLEMENTATION APPROVAL: NONE
+RUNTIME IMPLEMENTATION AUTHORITY: NONE
+```
 
-## Reason
+## Prerequisite Baseline
 
-`RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001` remains the active authority task.
-The approved pure implementation slice is complete and independently verified.
-No follow-up implementation work is authorized by this record.
+- RuntimeExecutionResult implementation: COMPLETE (`871824e`).
+- Runtime Step Contract: APPROVED (`730bde8`).
+- The Runtime Step Contract is not reopened by this candidate.
 
-## Active Planning Boundary
+## Candidate Boundary
 
-- Contract baseline: `00eb274`
-- Closeout checkpoint: `21889b1`
-- Documentation consistency checkpoint: `2dab5be`
-- Implementation planning checkpoint: `00bfe7a`
-- Implementation approval checkpoint: `55a5168`
-- Initial implementation checkpoint: `bcde0e7`
-- Issue resolution checkpoint: `de97132`
-- Implementation Approval: APPROVED
-- Implementation Scope: LOCKED
-- Runtime Implementation Authority: GRANTED
-- Runtime Implementation Status: COMPLETE / VALIDATED
-- Independent Re-Review: PASS (`P0: 0`, `P1: 0`, `P2: 0`)
-
-## Prohibited Work
-
-- Any path other than the three locked Result implementation paths.
-- Runtime execution, Provider/MCP, persistence, DB/API/UI, deployment,
-  Marketplace, Push, Merge, or Deploy.
+- Planning only after separate activation approval.
+- No production code, tests, Runtime execution, Provider/MCP Invocation,
+  persistence, DB/API/UI, deployment, Marketplace, Push, Merge, or Deploy.
