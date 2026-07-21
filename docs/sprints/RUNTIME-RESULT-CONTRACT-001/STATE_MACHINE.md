@@ -6,10 +6,12 @@
 TASK: RUNTIME-RESULT-CONTRACT-001
 CONTRACT DRAFT: COMPLETE
 ARTIFACT LIFECYCLE: DRAFT
-CONTRACT QA: PENDING
-PM REVIEW: PENDING
-CTO REVIEW: PENDING
-CONTRACT DECISION: PENDING
+CONTRACT QA: PASS WITH NOTE (P0/P1: 0/0)
+PM REVIEW: APPROVE WITH P2 NOTE
+CTO REVIEW: APPROVE WITH P2 NOTE
+CONTRACT DECISION: APPROVED
+PROJECT GATE REVIEW: PASS WITH NOTE
+SPRINT CLOSEOUT CHECKPOINT: 21889b1
 IMPLEMENTATION APPROVAL: NONE
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ```
@@ -17,6 +19,9 @@ RUNTIME IMPLEMENTATION AUTHORITY: NONE
 This document depends on `CONTRACT.md`. It describes the Result artifact
 lifecycle only. It does not define Runtime execution states, Runtime Step
 states, Runtime Step Attempt states, Provider states, or MCP states.
+
+Any QA wording retained elsewhere in the Sprint records is historical only and
+does not supersede this approved current-status block.
 
 ## 2. Result Status Values
 
