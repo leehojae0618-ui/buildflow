@@ -1,5 +1,36 @@
 # Change Log Memory
 
+## 2026-07-21 — RUNTIME-STEP-CONTRACT-001 Scope Freeze Review Draft
+
+Created:
+
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/TASK.md`
+
+Updated tracking:
+
+- `.buildflow/NEXT_TASK.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Scope status:
+
+- `RUNTIME-STEP-CONTRACT-001` is `APPROVED / NOT ACTIVE / SCOPE FROZEN`.
+- Current Task remains `NONE`.
+- Project State remains `BETWEEN_SPRINTS`.
+- Runtime Implementation Authority remains `NONE`.
+- PM Decision: `APPROVE`.
+- CTO Decision: `APPROVE`.
+- Activation still requires a checkpoint commit and separate approval.
+
+Code and test changes:
+
+- None.
+
+Push / Merge / Deploy:
+
+- Not performed.
+
 ## 2026-07-21 — ARCHITECTURE-AI-RUNTIME-REVIEW-001 Closed
 
 Updated operational tracking:

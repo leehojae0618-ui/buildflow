@@ -35,14 +35,15 @@ RUNTIME-STEP-CONTRACT-001
 ## Next Candidate Status
 
 ```text
-NOT APPROVED
+APPROVED
 NOT ACTIVE
-NOT SCOPE FROZEN
+SCOPE FROZEN
 ```
 
 ## Activation Requirement
 
-`RUNTIME-STEP-CONTRACT-001` requires a separate Scope Freeze review and explicit
-PM/CTO approval before activation. No Runtime Step contract, Runtime execution,
-Provider Invocation, MCP Invocation, Runtime Planner, Runtime Compiler, Budget
-Router, API, UI, deployment, or Marketplace work is authorized by this closeout.
+`RUNTIME-STEP-CONTRACT-001` requires a Scope Freeze checkpoint commit and
+separate PM/CTO activation approval before activation. No Runtime Step contract,
+Runtime execution, Provider Invocation, MCP Invocation, Runtime Planner, Runtime
+Compiler, Budget Router, API, UI, deployment, or Marketplace work is authorized
+by this closeout.

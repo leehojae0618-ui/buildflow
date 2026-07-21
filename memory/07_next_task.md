@@ -37,18 +37,24 @@ RUNTIME-STEP-CONTRACT-001
 Candidate status:
 
 ```text
-NOT APPROVED
+APPROVED
 NOT ACTIVE
-NOT SCOPE FROZEN
+SCOPE FROZEN
 ```
 
 ## Required Next Gate
 
-Scope Freeze review is required before `RUNTIME-STEP-CONTRACT-001` can move to
-`.buildflow/CURRENT_TASK.md`.
+Scope Freeze checkpoint commit and separate activation approval are required
+before `RUNTIME-STEP-CONTRACT-001` can move to `.buildflow/CURRENT_TASK.md`.
 
-No implementation task may start until PM/CTO explicitly approves and
-scope-freezes the next task.
+Scope review draft:
+
+```text
+docs/sprints/RUNTIME-STEP-CONTRACT-001/TASK.md
+```
+
+No implementation task may start until PM/CTO explicitly approves activation of
+the next task.
 
 Potential future scope remains contract-only until reviewed. It must not be
 inferred as approval for Runtime execution, Runtime Planner, Runtime Compiler,

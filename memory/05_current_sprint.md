@@ -36,15 +36,27 @@ RUNTIME-STEP-CONTRACT-001
 Candidate status:
 
 ```text
-NOT APPROVED
+APPROVED
 NOT ACTIVE
-NOT SCOPE FROZEN
+SCOPE FROZEN
 ```
 
 Activation requirement:
 
-- Scope Freeze review is required before activation.
+- Scope Freeze checkpoint commit and separate activation approval are required
+  before activation.
 - Runtime Step contract work is not authorized by this closeout.
+
+Scope review draft:
+
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/TASK.md`
+
+Scope Freeze decision:
+
+- PM Decision: `APPROVE`.
+- CTO Decision: `APPROVE`.
+- Scope Freeze Decision: `APPROVED`.
+- Runtime Implementation Authority: `NONE`.
 
 ## 2026-07-21 — Long-term AI Runtime Architecture Review
 

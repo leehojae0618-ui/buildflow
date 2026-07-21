@@ -7,15 +7,19 @@ RUNTIME-STEP-CONTRACT-001
 ## Status
 
 ```text
-NOT APPROVED
+APPROVED
 NOT ACTIVE
-NOT SCOPE FROZEN
+SCOPE FROZEN
 ```
 
 ## Required Pre-Activation Gate
 
-Scope Freeze review is required before this candidate can move to
-`.buildflow/CURRENT_TASK.md`.
+Scope Freeze is approved. A checkpoint commit and separate activation approval
+are required before this candidate can move to `.buildflow/CURRENT_TASK.md`.
+
+Scope review draft:
+
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/TASK.md`
 
 ## Context
 
@@ -41,5 +45,5 @@ before approval. This candidate is not approval for:
 
 ## Next Action
 
-PM/CTO should review and scope-freeze `RUNTIME-STEP-CONTRACT-001` before any
-work begins.
+PM/CTO should approve a separate activation checkpoint before any
+`RUNTIME-STEP-CONTRACT-001` work begins.

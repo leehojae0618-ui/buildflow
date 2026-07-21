@@ -15,6 +15,6 @@
 - Latest Known Commit: `38c589b`
 - Push / Merge / Deploy: NOT PERFORMED
 - Next Candidate: RUNTIME-STEP-CONTRACT-001
-- Next Candidate Status: NOT APPROVED / NOT ACTIVE / NOT SCOPE FROZEN
-- Activation Requirement: Scope Freeze review and explicit PM/CTO approval
+- Next Candidate Status: APPROVED / NOT ACTIVE / SCOPE FROZEN
+- Activation Requirement: Scope Freeze checkpoint commit and separate PM/CTO activation approval
 - Product Focus: AI Agent automatic build, deployment, verification, and BPS Package sharing. General Web App and Platform expansion is on hold.
