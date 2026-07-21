@@ -4,17 +4,15 @@
 
 ```text
 TASK: RUNTIME-STEP-CONTRACT-001
-STATUS: AMENDED / INDEPENDENT RE-REVIEW PASS
+STATUS: AMENDED / INITIAL-RETRY DISCRIMINATOR / PENDING INDEPENDENT RE-REVIEW
 SCOPE STATUS: SCOPE FROZEN
-LIMITED REOPENING: AUTHORIZED — ATTEMPT FIELD MATRIX ONLY
+LIMITED REOPENING: AUTHORIZED — ATTEMPT NUMBER AND PREDECESSOR RULES ONLY
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
-CONTRACT REVIEW: INDEPENDENT RE-REVIEW PASS
-PM DECISION: HISTORICAL APPROVE; AMENDMENT RE-REVIEW PASS
-CTO DECISION: HISTORICAL APPROVE; AMENDMENT RE-REVIEW PASS
-CONTRACT DECISION: AMENDED / INDEPENDENT RE-REVIEW PASS
-CHECKPOINT STATUS: RECORDED BY THIS GIT AMENDMENT COMMIT
-IMPLEMENTATION APPROVAL: NONE
-RUNTIME IMPLEMENTATION AUTHORITY: NONE
+CONTRACT REVIEW: INDEPENDENT RE-REVIEW REQUIRED
+PM / CTO DECISION: PENDING AMENDMENT RE-REVIEW
+CONTRACT DECISION: AMENDED / PENDING INDEPENDENT RE-REVIEW
+IMPLEMENTATION APPROVAL: SUSPENDED PENDING CONTRACT RE-REVIEW
+RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING CONTRACT RE-REVIEW
 ```
 
 This document is the canonical Runtime Step contract draft. `STATE_MACHINE.md`
@@ -221,6 +219,10 @@ Status-conditioned fields:
 The following matrix is normative for every approved Attempt status. It does
 not add an Attempt status or authorize execution.
 
+`attemptNumber` is the authoritative initial-versus-retry discriminator. It
+must be a positive integer. Zero, negative, fractional, `NaN`, and non-integer
+values are invalid.
+
 | Attempt status | `startedAtReference` | `completedAtReference` | `failure` | `retryDecision` | `cancellationReference` | `evidenceReferences` | `integrityChecksum` |
 |---|---|---|---|---|---|---|---|
 | `READY` | FORBIDDEN | FORBIDDEN | FORBIDDEN | FORBIDDEN | FORBIDDEN | OPTIONAL (may be empty) | REQUIRED |
@@ -235,10 +237,19 @@ entered `RUNNING`; it is forbidden for the approved `READY → CANCELLED`
 transition. `cancellationReference` is required for `CANCELLED` when the
 Attempt has no Evidence reference.
 
-`previousRuntimeStepAttemptId` is REQUIRED only for an Attempt created as a
-Step retry and FORBIDDEN for an initial Attempt. A retry retains the same
-`runtimeExecutionId` and `runtimeStepId` and creates a new
-`runtimeStepAttemptId`.
+An Attempt with `attemptNumber === 1` is the initial Attempt and MUST NOT
+contain `previousRuntimeStepAttemptId`. An Attempt with `attemptNumber > 1` is
+a retry Attempt and MUST contain `previousRuntimeStepAttemptId`. That
+predecessor must be a non-empty Attempt identifier, differ from the current
+`runtimeStepAttemptId`, and bind to an Attempt in the same
+`runtimeExecutionId` and `runtimeStepId`.
+
+When a prior and current Attempt are supplied together for relationship
+validation, the current Attempt MUST use
+`attemptNumber === previous.attemptNumber + 1`, retain the same execution and
+Step identifiers, use a new Attempt identifier, and name the supplied prior
+Attempt through `previousRuntimeStepAttemptId`. This is record validation only;
+it does not create, schedule, or execute a retry.
 
 ### 9.2 `completedAtReference` Semantics
 
@@ -301,7 +312,8 @@ or create a retry.
 - It must reference the applicable explicit or default retry policy.
 - `RETRY_ALLOWED` permits a later new Attempt only. The later Attempt must use
   the same `runtimeExecutionId` and `runtimeStepId`, a new
-  `runtimeStepAttemptId`, and its `previousRuntimeStepAttemptId` binding.
+  `runtimeStepAttemptId`, its `previousRuntimeStepAttemptId` binding, and an
+  `attemptNumber` exactly one greater than its supplied immediate predecessor.
 - `RETRY_DENIED` and `RETRY_EXHAUSTED` do not authorize a new Attempt.
 
 Its required shape is:

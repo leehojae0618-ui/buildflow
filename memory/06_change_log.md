@@ -1,5 +1,14 @@
 # Change Log Memory
 
+## 2026-07-22 — Runtime Step Initial/Retry Discriminator Contract Resolution
+
+- Amended only the Runtime Step Attempt ordinal and predecessor validation
+  contract: `attemptNumber` is positive and 1-based; `1` is initial and higher
+  values are retries with an immediate predecessor binding.
+- Historical Implementation Approval and Authority are suspended pending
+  independent contract re-review. Implementation checkpoint `13a2c26` remains
+  preserved and unchanged. Push / Merge / Deploy: not performed.
+
 ## 2026-07-22 — Runtime Step Runtime Implementation
 
 - Implemented the authorized pure Runtime Step module, its isolated tests, and

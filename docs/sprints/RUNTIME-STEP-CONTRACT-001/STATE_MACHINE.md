@@ -4,14 +4,13 @@
 
 ```text
 TASK: RUNTIME-STEP-CONTRACT-001
-STATUS: AMENDED / INDEPENDENT RE-REVIEW PASS
-LIMITED REOPENING: ATTEMPT FIELD MATRIX ONLY
+STATUS: AMENDED / INITIAL-RETRY DISCRIMINATOR / PENDING INDEPENDENT RE-REVIEW
+LIMITED REOPENING: ATTEMPT NUMBER AND PREDECESSOR RULES ONLY
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
-CONTRACT REVIEW: INDEPENDENT RE-REVIEW PASS
-PM / CTO AMENDMENT DECISION: HISTORICAL APPROVE; AMENDMENT RE-REVIEW PASS
-CONTRACT DECISION: AMENDED / INDEPENDENT RE-REVIEW PASS
-CHECKPOINT STATUS: RECORDED BY THIS GIT AMENDMENT COMMIT
-IMPLEMENTATION APPROVAL: NONE
+CONTRACT REVIEW: INDEPENDENT RE-REVIEW REQUIRED
+PM / CTO AMENDMENT DECISION: PENDING INDEPENDENT RE-REVIEW
+CONTRACT DECISION: AMENDED / PENDING INDEPENDENT RE-REVIEW
+IMPLEMENTATION APPROVAL: SUSPENDED PENDING CONTRACT RE-REVIEW
 ```
 
 This document depends on `CONTRACT.md`. It must not define status names or
@@ -153,6 +152,12 @@ This state machine applies it as follows:
 The field matrix records Attempt state only. It neither evaluates a retry
 policy nor performs a retry or cancellation.
 
+`attemptNumber` is 1-based: `1` is the initial Attempt and forbids a
+predecessor; values greater than `1` are retry Attempts and require one. When
+two records are supplied for relationship validation, the current Attempt must
+name the supplied prior Attempt and increment `attemptNumber` by exactly one.
+This validates an immediate predecessor relationship only.
+
 ## 6. Blocking Reasons
 
 Blocking reasons do not replace status.
@@ -170,6 +175,7 @@ policy no longer allows more attempts.
 ```text
 Attempt TIMEOUT + retry allowed
 → new RuntimeStepAttemptId
+→ attemptNumber increases by one with an immediate predecessor binding
 → Step may continue
 
 Attempt TIMEOUT + retry denied or exhausted

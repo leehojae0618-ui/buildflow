@@ -4,14 +4,13 @@
 
 ```text
 TASK: RUNTIME-STEP-CONTRACT-001
-CONTRACT REVIEW: INDEPENDENT RE-REVIEW PASS
-LIMITED REOPENING: AUTHORIZED — ATTEMPT FIELD MATRIX ONLY
+CONTRACT REVIEW: INDEPENDENT RE-REVIEW REQUIRED
+LIMITED REOPENING: AUTHORIZED — ATTEMPT NUMBER AND PREDECESSOR RULES ONLY
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
-PM / CTO AMENDMENT DECISION: HISTORICAL APPROVE; AMENDMENT RE-REVIEW PASS
-CONTRACT DECISION: AMENDED / INDEPENDENT RE-REVIEW PASS
-CHECKPOINT STATUS: RECORDED BY THIS GIT AMENDMENT COMMIT
-IMPLEMENTATION APPROVAL: NONE
-RUNTIME IMPLEMENTATION AUTHORITY: NONE
+PM / CTO AMENDMENT DECISION: PENDING INDEPENDENT RE-REVIEW
+CONTRACT DECISION: AMENDED / PENDING INDEPENDENT RE-REVIEW
+IMPLEMENTATION APPROVAL: SUSPENDED PENDING CONTRACT RE-REVIEW
+RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING CONTRACT RE-REVIEW
 ```
 
 ## 2. Review Scope
@@ -58,6 +57,21 @@ Independent re-review verified the matrix, field shapes, retry identity,
 timeout/cancellation reference rules, and checksum boundary. The result is
 PASS with P0/P1/P2 `0/0/0`; this status record does not grant implementation
 approval or Runtime Implementation Authority.
+
+## 4.1 Initial/Retry Discriminator Resolution
+
+Independent implementation review found P1: the prior contract did not define
+a record-local discriminator for initial versus retry Attempts. The limited
+reopening now makes `attemptNumber` authoritative: `1` is initial and forbids
+`previousRuntimeStepAttemptId`; values greater than `1` are retries and require
+it. A supplied prior/current pair must retain execution and Step identity, use
+a new Attempt id, and increment the Attempt number by exactly one.
+
+This amendment is record-validation only. It does not authorize retry
+execution, persistence lookup, Provider/MCP work, or a new Runtime capability.
+Independent contract re-review is REQUIRED. The historical approval and
+authority records remain preserved, while their current operative state is
+suspended pending that re-review.
 
 ## 5. Historical Draft Decision
 

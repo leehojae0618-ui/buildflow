@@ -2,23 +2,23 @@
 
 - Workflow Status: ACTIVE
 - Current Sprint: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
-- Planning Status: ACTIVE / IMPLEMENTATION AUTHORIZED / SCOPE LOCKED
-- Current Sprint Work: IMPLEMENTATION COMPLETE / INDEPENDENT REVIEW PENDING
-- Runtime Step Contract: AMENDED / INDEPENDENT RE-REVIEW PASS
+- Planning Status: ACTIVE / CONTRACT RE-REVIEW REQUIRED / IMPLEMENTATION SUSPENDED
+- Current Sprint Work: IMPLEMENTATION REVIEW FAILED / CONTRACT RESOLUTION IN PROGRESS
+- Runtime Step Contract: AMENDED / INITIAL-RETRY DISCRIMINATOR / RE-REVIEW REQUIRED
 - Previous Runtime Step Contract Checkpoint: `730bde8`
 - Contract Amendment Checkpoint: `ca54d12`
-- Contract Amendment Scope: Attempt status-to-field matrix only
-- Runtime Step Contract Reopened: YES — limited Attempt field matrix only
+- Contract Amendment Scope: attemptNumber and predecessor validation only
+- Runtime Step Contract Reopened: YES — limited initial/retry discriminator
 - Previous Result Implementation Sprint Closeout: `3873534`
 - RuntimeExecutionResult: COMPLETE / VALIDATED (`871824e`)
-- Implementation Approval: APPROVED
+- Implementation Approval: SUSPENDED PENDING CONTRACT RE-REVIEW
 - Implementation Scope: LOCKED
 - Implementation Approval Checkpoint: `e743068`
-- Runtime Implementation Authority: GRANTED
-- Runtime Implementation Status: IMPLEMENTED / INDEPENDENT REVIEW PENDING
+- Runtime Implementation Authority: SUSPENDED PENDING CONTRACT RE-REVIEW
+- Runtime Implementation Status: IMPLEMENTED / REVIEW FAILED / CHANGES PROHIBITED
 - Runtime Step Implementation Checkpoint: `13a2c26`
-- Runtime Step Implementation Review: PENDING
-- Authorized Work: locked three-path pure Step implementation only.
+- Runtime Step Implementation Review: FAIL — P1 predecessor discriminator
+- Authorized Work: limited contract resolution and re-review documentation only.
 - Prohibited Work: serializer/checksum policy implementation until separately approved; Runtime execution; Provider/MCP
   Invocation; orchestration; scheduling; persistence; DB/API/UI; deployment;
   Marketplace; Push; Merge; Deploy.

@@ -5,27 +5,28 @@
 ```text
 CURRENT TASK: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 PROJECT STATE: ACTIVE
-PLANNING STATUS: ACTIVE / IMPLEMENTATION AUTHORIZED / SCOPE LOCKED
-CURRENT SPRINT WORK: IMPLEMENTATION COMPLETE / INDEPENDENT REVIEW PENDING
+PLANNING STATUS: ACTIVE / CONTRACT RE-REVIEW REQUIRED / IMPLEMENTATION SUSPENDED
+CURRENT SPRINT WORK: IMPLEMENTATION REVIEW FAILED / CONTRACT RESOLUTION IN PROGRESS
 RUNTIME STEP CONTRACT CHECKPOINT: 730bde8
-RUNTIME STEP CONTRACT: AMENDED / INDEPENDENT RE-REVIEW PASS (`ca54d12`)
-RUNTIME STEP CONTRACT REOPENED: LIMITED — ATTEMPT FIELD MATRIX ONLY
+RUNTIME STEP CONTRACT: AMENDED / INITIAL-RETRY DISCRIMINATOR / RE-REVIEW REQUIRED
+RUNTIME STEP CONTRACT REOPENED: LIMITED — ATTEMPT NUMBER AND PREDECESSOR ONLY
 PREVIOUS SPRINT CLOSEOUT: 3873534
 RUNTIME EXECUTION RESULT: COMPLETE / VALIDATED (871824e)
-IMPLEMENTATION APPROVAL: APPROVED
+IMPLEMENTATION APPROVAL: SUSPENDED PENDING CONTRACT RE-REVIEW
 IMPLEMENTATION SCOPE: LOCKED
 IMPLEMENTATION APPROVAL CHECKPOINT: e743068
-RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
-RUNTIME IMPLEMENTATION STATUS: IMPLEMENTED / INDEPENDENT REVIEW PENDING
+RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING CONTRACT RE-REVIEW
+RUNTIME IMPLEMENTATION STATUS: IMPLEMENTED / REVIEW FAILED / CHANGES PROHIBITED
 RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
 ```
 
-The active task has an approved locked three-file implementation scope and
-granted Runtime Implementation Authority. The Runtime Step contract amendment
-and Planning Consistency Review both pass with P0/P1/P2 `0/0/0`. Production
-implementation is IMPLEMENTED and awaits independent implementation review.
-Serializer/canonicalization and checksum policy remain stop conditions pending
-a separate approval amendment.
+The active task retains its historical locked three-file implementation scope.
+Independent implementation review found P1 predecessor-validation ambiguity;
+the limited initial/retry discriminator amendment requires independent contract
+re-review. Implementation Approval and Runtime Implementation Authority are
+suspended, and production changes are prohibited. Serializer/canonicalization
+and checksum policy remain stop conditions pending a separate approval
+amendment.
 Runtime execution, Provider/MCP Invocation, persistence, Push, Merge, and
 Deploy remain prohibited.
 

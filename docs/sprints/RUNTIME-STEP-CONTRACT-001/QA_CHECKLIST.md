@@ -4,14 +4,13 @@
 
 ```text
 TASK: RUNTIME-STEP-CONTRACT-001
-STATUS: AMENDED / INDEPENDENT RE-REVIEW PASS
-QA STATUS: AMENDMENT QA PASS
+STATUS: AMENDED / INITIAL-RETRY DISCRIMINATOR / PENDING INDEPENDENT RE-REVIEW
+QA STATUS: AMENDMENT QA AND INDEPENDENT RE-REVIEW REQUIRED
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
-CONTRACT REVIEW: INDEPENDENT RE-REVIEW PASS
-PM / CTO AMENDMENT DECISION: HISTORICAL APPROVE; AMENDMENT RE-REVIEW PASS
-CONTRACT DECISION: AMENDED / INDEPENDENT RE-REVIEW PASS
-CHECKPOINT STATUS: RECORDED BY THIS GIT AMENDMENT COMMIT
-IMPLEMENTATION APPROVAL: NONE
+CONTRACT REVIEW: INDEPENDENT RE-REVIEW REQUIRED
+PM / CTO AMENDMENT DECISION: PENDING INDEPENDENT RE-REVIEW
+CONTRACT DECISION: AMENDED / PENDING INDEPENDENT RE-REVIEW
+IMPLEMENTATION APPROVAL: SUSPENDED PENDING CONTRACT RE-REVIEW
 ```
 
 ## 2. Scope QA
@@ -81,8 +80,10 @@ amendment-specific QA gate and must pass before independent re-review.
 - [x] `CANCELLED` uses Evidence or `cancellationReference`, never failure.
 - [x] `TIMEOUT` uses an `ATTEMPT_TIMEOUT` completion reference when Evidence is
   absent and requires a retry decision.
-- [x] Initial and retry Attempt predecessor bindings are mutually exclusive and
-  complete.
+- [x] `attemptNumber` is a positive, 1-based initial/retry discriminator.
+- [x] Initial Attempts forbid a predecessor; retry Attempts require a distinct
+  predecessor and an immediate ordinal increment when both records are
+  supplied.
 - [x] `integrityChecksum` is required for all Attempt records, excludes itself
   and volatile metadata, and includes present semantic fields.
 - [x] Serializer/digest algorithm, byte encoding, and validation-return policy

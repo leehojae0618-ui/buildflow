@@ -4,14 +4,13 @@
 
 ```text
 TASK: RUNTIME-STEP-CONTRACT-001
-STATUS: AMENDED / INDEPENDENT RE-REVIEW PASS
-LIMITED REOPENING: ATTEMPT FIELD MATRIX ONLY
+STATUS: AMENDED / INITIAL-RETRY DISCRIMINATOR / PENDING INDEPENDENT RE-REVIEW
+LIMITED REOPENING: ATTEMPT NUMBER AND PREDECESSOR RULES ONLY
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
-CONTRACT REVIEW: INDEPENDENT RE-REVIEW PASS
-PM / CTO AMENDMENT DECISION: HISTORICAL APPROVE; AMENDMENT RE-REVIEW PASS
-CONTRACT DECISION: AMENDED / INDEPENDENT RE-REVIEW PASS
-CHECKPOINT STATUS: RECORDED BY THIS GIT AMENDMENT COMMIT
-IMPLEMENTATION APPROVAL: NONE
+CONTRACT REVIEW: INDEPENDENT RE-REVIEW REQUIRED
+PM / CTO AMENDMENT DECISION: PENDING INDEPENDENT RE-REVIEW
+CONTRACT DECISION: AMENDED / PENDING INDEPENDENT RE-REVIEW
+IMPLEMENTATION APPROVAL: SUSPENDED PENDING CONTRACT RE-REVIEW
 ```
 
 Validation rules in this document reference fields defined in `CONTRACT.md`.
@@ -63,6 +62,9 @@ Runtime Step Attempt must always require:
 - `limitationCodes`
 - `integrityChecksum`
 
+`attemptNumber` must be a positive integer. `attemptNumber === 1` identifies
+the initial Attempt; `attemptNumber > 1` identifies a retry Attempt.
+
 `startedAtReference`, `completedAtReference`, `failure`, `retryDecision`,
 `cancellationReference`, `previousRuntimeStepAttemptId`, and non-empty
 Evidence requirements must be validated by the authoritative Attempt
@@ -99,8 +101,14 @@ Validation must reject:
 - a `TIMEOUT` Attempt whose `completedAtReference` is not typed
   `ATTEMPT_TIMEOUT` when Evidence is absent;
 - a `FAILED` or `TIMEOUT` Attempt without one allowed `retryDecision` value;
-- an initial Attempt with `previousRuntimeStepAttemptId` or a retry Attempt
-  without it.
+- an initial Attempt (`attemptNumber === 1`) with
+  `previousRuntimeStepAttemptId`;
+- a retry Attempt (`attemptNumber > 1`) without
+  `previousRuntimeStepAttemptId`;
+- a malformed or self-referencing `previousRuntimeStepAttemptId`; or
+- supplied prior/current Attempt records whose execution id, Step id,
+  predecessor binding, Attempt id, or immediate `attemptNumber` increment do
+  not match.
 
 `WAITING` is valid only for Step status. Approval waiting must be represented by
 `APPROVAL_REQUIRED` blocking reason and approval reference.
@@ -147,6 +155,8 @@ Validation must enforce:
   reference.
 - Step `TIMEOUT` requires Evidence reference or timeout reference.
 - retry must create a new `runtimeStepAttemptId`, not mutate a prior Attempt.
+- a retry relationship validates only explicitly supplied Attempt records; it
+  must not query persistence or execute a retry.
 - `retryDecision` records only `RETRY_ALLOWED`, `RETRY_DENIED`, or
   `RETRY_EXHAUSTED`; it must not execute or schedule a retry.
 

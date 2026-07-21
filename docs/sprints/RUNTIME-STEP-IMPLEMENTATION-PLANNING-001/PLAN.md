@@ -4,16 +4,16 @@
 
 ```text
 PLANNING ID: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
-PLANNING STATUS: ACTIVE / IMPLEMENTATION AUTHORIZED / SCOPE LOCKED
-CURRENT SPRINT WORK: IMPLEMENTATION COMPLETE / INDEPENDENT REVIEW PENDING
+PLANNING STATUS: ACTIVE / CONTRACT RE-REVIEW REQUIRED / IMPLEMENTATION SUSPENDED
+CURRENT SPRINT WORK: IMPLEMENTATION REVIEW FAILED / CONTRACT RESOLUTION IN PROGRESS
 CONTRACT CHECKPOINT: 730bde8
 CONTRACT AMENDMENT: INDEPENDENT RE-REVIEW PASS (`ca54d12`)
 PREVIOUS SPRINT CLOSEOUT: 3873534
-IMPLEMENTATION APPROVAL: APPROVED
+IMPLEMENTATION APPROVAL: SUSPENDED PENDING CONTRACT RE-REVIEW
 IMPLEMENTATION SCOPE: LOCKED
 IMPLEMENTATION APPROVAL CHECKPOINT: e743068
-RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
-RUNTIME IMPLEMENTATION STATUS: IMPLEMENTED / INDEPENDENT REVIEW PENDING
+RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING CONTRACT RE-REVIEW
+RUNTIME IMPLEMENTATION STATUS: IMPLEMENTED / REVIEW FAILED / CHANGES PROHIBITED
 RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
 ```
 
@@ -26,9 +26,11 @@ MCP server, database, filesystem, or network.
 
 The prior approved contract has a limited Attempt field-matrix amendment with
 independent re-review PASS. Planning Consistency Review is PASS with P0/P1/P2
-`0/0/0` and requires no rewrite. Implementation Approval is APPROVED with a
-locked three-file scope. The authorized implementation completed at `13a2c26`;
-independent implementation review is PENDING.
+`0/0/0` and requires no rewrite. Independent implementation review found a
+blocking predecessor-validation P1; Planning Consistency Review, Implementation
+Approval, and Runtime Implementation Authority are suspended pending limited
+contract re-review. The implemented three-file slice at `13a2c26` must not
+change until authority is regranted.
 
 ## 3. Exact Proposed File Scope
 

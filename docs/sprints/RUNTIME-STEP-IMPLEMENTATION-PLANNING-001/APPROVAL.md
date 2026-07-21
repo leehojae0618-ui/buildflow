@@ -7,13 +7,18 @@ APPROVAL ID: RUNTIME-STEP-IMPLEMENTATION-APPROVAL-001
 PLANNING ID: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 IMPLEMENTATION APPROVAL: APPROVED
 IMPLEMENTATION SCOPE: LOCKED
-RUNTIME IMPLEMENTATION AUTHORITY: GRANTED BY `AUTHORITY.md`
-APPROVAL CHECKPOINT: PENDING COMMIT
+RUNTIME IMPLEMENTATION AUTHORITY: HISTORICALLY GRANTED BY `AUTHORITY.md`
+CURRENT OPERATIVE IMPLEMENTATION APPROVAL: SUSPENDED PENDING CONTRACT RE-REVIEW
+APPROVAL CHECKPOINT: e743068
 ```
 
 This approval locked scope before the separate `AUTHORITY.md` record granted
 Runtime Implementation Authority. It does not authorize Runtime execution or
 scope expansion.
+
+The historical approval remains recorded. Its operative effect is suspended
+while the limited initial/retry discriminator contract amendment receives
+independent re-review.
 
 ## 2. Approved Implementation Scope
 

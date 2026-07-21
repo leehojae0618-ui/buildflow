@@ -11,22 +11,23 @@ ACTIVE
 ## Authority Status
 
 ```text
-ACTIVE / IMPLEMENTATION AUTHORIZED / SCOPE LOCKED
-CURRENT SPRINT WORK: IMPLEMENTATION COMPLETE / INDEPENDENT REVIEW PENDING
-RUNTIME STEP CONTRACT: AMENDED / INDEPENDENT RE-REVIEW PASS
+ACTIVE / CONTRACT RE-REVIEW REQUIRED / IMPLEMENTATION SUSPENDED
+CURRENT SPRINT WORK: IMPLEMENTATION REVIEW FAILED / CONTRACT RESOLUTION IN PROGRESS
+RUNTIME STEP CONTRACT: AMENDED / INITIAL-RETRY DISCRIMINATOR / RE-REVIEW REQUIRED
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
-IMPLEMENTATION APPROVAL: APPROVED
+IMPLEMENTATION APPROVAL: SUSPENDED PENDING CONTRACT RE-REVIEW
 IMPLEMENTATION SCOPE: LOCKED
 IMPLEMENTATION APPROVAL CHECKPOINT: e743068
-RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
-RUNTIME IMPLEMENTATION STATUS: IMPLEMENTED / INDEPENDENT REVIEW PENDING
+RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING CONTRACT RE-REVIEW
+RUNTIME IMPLEMENTATION STATUS: IMPLEMENTED / REVIEW FAILED / CHANGES PROHIBITED
 RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
 ```
 
 ## Approved Contract Baseline
 
-- Runtime Step Contract: AMENDED / INDEPENDENT RE-REVIEW PASS; previous
-  checkpoint `730bde8`; amendment checkpoint `ca54d12`.
+- Runtime Step Contract: initial/retry discriminator amendment pending
+  independent re-review; prior checkpoint `730bde8`; field-matrix amendment
+  checkpoint `ca54d12`.
 - Previous Result implementation Sprint closeout: `3873534`.
 - RuntimeExecutionResult: COMPLETE / VALIDATED (`871824e`).
 - The approved Step contract is not rewritten by this planning task except for
@@ -34,10 +35,10 @@ RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
 
 ## Authorization Boundary
 
-- Implementation Approval is APPROVED; the exact three-file scope is LOCKED.
-- Runtime Implementation Authority is GRANTED for the locked three paths.
-- Production implementation is IMPLEMENTED at checkpoint `13a2c26`; independent
-  implementation review is PENDING.
+- Historical Implementation Approval and Authority remain recorded for the
+  locked three-file scope but are suspended pending contract re-review.
+- Production implementation is IMPLEMENTED at checkpoint `13a2c26`; its
+  independent review FAILED with blocking P1, so changes are prohibited.
 
 ## Prohibited Work
 
