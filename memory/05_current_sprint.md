@@ -31,6 +31,42 @@ Authorized work:
 - Contract validation planning.
 - Review/report documentation for the contract-only sprint.
 
+Draft documents created:
+
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/CONTRACT.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/STATE_MACHINE.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/VALIDATION.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/QA_CHECKLIST.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/REVIEW.md`
+
+Contract decision status:
+
+- Contract Review: APPROVED
+- Contract QA: PASS
+- Re-review: PASS
+- Previous P1 Findings: RESOLVED
+- PM Decision: APPROVE
+- CTO Decision: APPROVE
+- Contract Decision: APPROVED
+- Checkpoint Status: READY
+- Decision Recommendation: KEEP CURRENT
+- Implementation Approval: NONE
+- Runtime Implementation Authority: NONE
+
+Contract QA remediation:
+
+- P1: `CANCELLED` terminal reference rule aligned across contract documents.
+- P1: `TIMEOUT` terminal reference rule aligned across contract documents.
+- Terminal reference matrix now uses Evidence reference for `SUCCESS` and
+  `FAILED`, Evidence or cancellation reference for `CANCELLED`, Evidence or
+  timeout reference for `TIMEOUT`, and reason reference for `SKIPPED`.
+- Re-review confirmed no remaining P0/P1/P2 issues in the current contract
+  document set.
+- `CONTRACT.md` is the authoritative current contract. `TASK.md` remains the
+  Scope Freeze approval record and does not override the current terminal
+  reference matrix.
+- PM/CTO approved the contract without granting implementation authority.
+
 Prohibited work:
 
 - Runtime execution implementation.

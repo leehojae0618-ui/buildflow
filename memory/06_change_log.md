@@ -1,5 +1,160 @@
 # Change Log Memory
 
+## 2026-07-21 — RUNTIME-STEP-CONTRACT-001 PM/CTO Contract Decision
+
+Reviewed contract documents:
+
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/CONTRACT.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/STATE_MACHINE.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/VALIDATION.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/QA_CHECKLIST.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/REVIEW.md`
+
+Decision result:
+
+- Contract QA: PASS.
+- Re-review: PASS.
+- PM Decision: APPROVE.
+- CTO Decision: APPROVE.
+- Contract Decision: APPROVED.
+- P0: 0.
+- P1: 0.
+- P2: 0.
+- Decision Recommendation: KEEP CURRENT.
+- Checkpoint Status: READY.
+- Implementation Approval: NONE.
+- Runtime Implementation Authority: NONE.
+
+Confirmed boundaries:
+
+- The contract remains documentation-only and inside the frozen Sprint scope.
+- Step and Attempt identities and state models remain separate.
+- Provider and MCP references remain mutually exclusive and reference-only.
+- Approval waiting remains a blocking reason, not a Step status.
+- Existing Runtime Request, Preflight, and Execution Start contracts remain
+  unchanged.
+
+Code and test changes:
+
+- None.
+
+Push / Merge / Deploy:
+
+- Not performed.
+
+## 2026-07-21 — RUNTIME-STEP-CONTRACT-001 Contract Draft
+
+Created contract documents:
+
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/CONTRACT.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/STATE_MACHINE.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/VALIDATION.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/QA_CHECKLIST.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/REVIEW.md`
+
+Updated memory:
+
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Draft result:
+
+- Runtime Step and Runtime Step Attempt are separate.
+- Step and Attempt statuses are separate enums.
+- `WAITING` is limited to external condition or dependency waiting.
+- Approval waiting is represented by blocking reason plus approval reference.
+- Attempt `TIMEOUT` and Step `TIMEOUT` are distinct.
+- Provider and MCP invocation boundaries are mutually exclusive per Step.
+- Terminal Evidence requirements are defined.
+- Existing Runtime Request, Preflight, and Execution Start contracts remain
+  unchanged.
+
+Code and test changes:
+
+- None.
+
+Push / Merge / Deploy:
+
+- Not performed.
+
+## 2026-07-21 — RUNTIME-STEP-CONTRACT-001 Contract QA P1 Remediation
+
+Updated contract documents:
+
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/CONTRACT.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/VALIDATION.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/REVIEW.md`
+
+Updated memory:
+
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+
+Remediation:
+
+- P1: aligned `CANCELLED` terminal reference rule to Evidence reference or
+  cancellation reference.
+- P1: aligned `TIMEOUT` terminal reference rule to Evidence reference or timeout
+  reference.
+- PM Decision and CTO Decision remain pending.
+- Implementation Approval remains `NONE`.
+
+Code and test changes:
+
+- None.
+
+Push / Merge / Deploy:
+
+- Not performed.
+
+## 2026-07-21 — RUNTIME-STEP-CONTRACT-001 Contract Re-review
+
+Reviewed documents:
+
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/TASK.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/CONTRACT.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/STATE_MACHINE.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/VALIDATION.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/QA_CHECKLIST.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/REVIEW.md`
+
+Updated files:
+
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/REVIEW.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Re-review result:
+
+- Contract QA: PASS
+- Re-review: PASS
+- P0: 0
+- P1: 0
+- P2: 0
+- Previous P1 findings: resolved
+- Decision Recommendation: KEEP CURRENT
+- PM Decision: PENDING
+- CTO Decision: PENDING
+- Implementation Approval: NONE
+- Runtime Implementation Authority: NONE
+
+Confirmed boundaries:
+
+- `CONTRACT.md` is the authoritative current Runtime Step contract.
+- `TASK.md` remains the Scope Freeze approval record and does not override the
+  current terminal reference matrix.
+- Existing Runtime Request, Runtime Preflight, and Runtime Execution Start
+  contracts are unchanged.
+- Architecture Decision Lock remains compatible.
+- No code, test, Runtime implementation, Provider/MCP invocation, DB/API/UI,
+  deployment, or Marketplace changes were made.
+
+Push / Merge / Deploy:
+
+- Not performed.
+
 ## 2026-07-21 — RUNTIME-STEP-CONTRACT-001 Activated
 
 Updated operational tracking:

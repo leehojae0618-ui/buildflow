@@ -44,8 +44,42 @@ NONE
 
 ## Required Next Gate
 
-Write the Runtime Step / Attempt contract documentation within the frozen scope.
-Do not start code implementation until explicit implementation approval.
+Create the approved Runtime Step Contract checkpoint only after explicit commit
+approval. Do not start code implementation until a separate implementation
+approval.
+
+Draft documents:
+
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/CONTRACT.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/STATE_MACHINE.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/VALIDATION.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/QA_CHECKLIST.md`
+- `docs/sprints/RUNTIME-STEP-CONTRACT-001/REVIEW.md`
+
+Next gate:
+
+```text
+RUNTIME STEP CONTRACT CHECKPOINT
+```
+
+Current decision state:
+
+```text
+CONTRACT QA: PASS
+RE-REVIEW: PASS
+PREVIOUS P1 FINDINGS: RESOLVED
+DECISION RECOMMENDATION: KEEP CURRENT
+CONTRACT REVIEW: APPROVED
+PM DECISION: APPROVE
+CTO DECISION: APPROVE
+CONTRACT DECISION: APPROVED
+CHECKPOINT STATUS: READY
+IMPLEMENTATION APPROVAL: NONE
+RUNTIME IMPLEMENTATION AUTHORITY: NONE
+```
+
+The Contract checkpoint requires separate commit approval. Contract approval
+does not grant Runtime implementation authority.
 
 ## Preserved Baseline
 
