@@ -1,5 +1,63 @@
 # Current Sprint Memory
 
+## 2026-07-21 — Long-term AI Runtime Architecture Review
+
+Current task:
+
+```text
+ARCHITECTURE-AI-RUNTIME-REVIEW-001
+```
+
+Status:
+
+```text
+ACTIVE
+RESEARCH / DRAFT
+ARCHITECTURE REVIEW ONLY
+DRAFT COMPLETE
+DECISION LOCK PENDING
+```
+
+Review output:
+
+- `docs/architecture/LONGTERM_AI_RUNTIME.md`
+
+Current findings:
+
+- Decision recommendation: `KEEP CURRENT`.
+- No material conflict was found with Runtime Execution Request, Preflight,
+  Execution Start, Runtime/MCP boundary, Approval, Package, or Evidence
+  contracts.
+- `src/features/planner/` is an implemented Build Planner, not a Runtime
+  Planner.
+- Runtime Planner, Runtime Compiler, LLM Budget Router, local-model routing,
+  and provider-blackout routing are future components, not current
+  implementations.
+- LLM Optional means the Runtime control plane is LLM-independent; it does not
+  remove model-backed Agent steps.
+- No current contract rewrite is required before Runtime Step contract design.
+
+Restrictions maintained:
+
+- no code or test changes;
+- no Runtime Step implementation;
+- no existing Runtime Contract changes;
+- no Provider execution or MCP Invocation;
+- no DB/API/UI/deployment/Marketplace changes;
+- no Commit, Push, Merge, or Deploy.
+
+Current Package Readiness remains:
+
+```text
+CONDITIONALLY_READY
+```
+
+Next required gate:
+
+```text
+PM/CTO REVIEW AND DECISION LOCK
+```
+
 ## 2026-07-17 — Runtime Preflight / Start Contract Implementation
 
 Current task:

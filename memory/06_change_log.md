@@ -1,5 +1,38 @@
 # Change Log Memory
 
+## 2026-07-21 — ARCHITECTURE-AI-RUNTIME-REVIEW-001 Activated
+
+Created:
+
+- `docs/architecture/LONGTERM_AI_RUNTIME.md`
+
+Updated operational tracking:
+
+- `.buildflow/CURRENT_TASK.md`
+- `.buildflow/STATUS.md`
+- `.buildflow/NEXT_TASK.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Review result:
+
+- recommendation: `KEEP CURRENT`;
+- no material conflict with current Runtime contracts;
+- current `src/features/planner/` identified as Build Planner, not Runtime
+  Planner;
+- LLM Optional defined as Runtime control-plane independence, not LLM removal;
+- immediate design constraints separated from future Planner, Compiler, Budget
+  Router, local-model, and provider-blackout implementation.
+
+Code and test changes:
+
+- None.
+
+Commit / Push / Merge / Deploy:
+
+- Not performed.
+
 ## 2026-07-17 — RUNTIME-EXECUTION-START-001 Contract Implementation
 
 Added Runtime Preflight and Runtime Execution Start pure contract code:

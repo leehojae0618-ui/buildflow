@@ -2,72 +2,64 @@
 
 ## Task ID
 
-NONE
+ARCHITECTURE-AI-RUNTIME-REVIEW-001
 
 ## Title
 
-Between Sprints
+Long-term AI Runtime Architecture Review
 
 ## Status
 
-BETWEEN_SPRINTS
+ACTIVE / RESEARCH / DRAFT / ARCHITECTURE REVIEW ONLY
 
 ## Goal
 
-No active implementation Sprint is currently open.
-
-`RUNTIME-EXECUTION-START-001` is closed after implementation, final QA, and
-checkpoint commit `6f3ed7d`.
+Review BuildFlow's long-term AI Runtime principles against the current
+architecture and Runtime contracts, assess impact and conflicts, and produce a
+non-binding recommendation for PM/CTO Decision Lock.
 
 ## Scope
 
-- Preserve the completed `RUNTIME-EXECUTION-START-001` implementation and
-  documentation.
-- Keep the repository in a BETWEEN_SPRINTS state until the next task is
-  explicitly approved.
-- Use `.buildflow/NEXT_TASK.md` for the next candidate only.
+- Document LLM Optional, Runtime First, Rule Before LLM, Provider Independence,
+  Compile Once Execute Many, LLM Budget Router, Planner/Compiler separation,
+  Execution Plan-centered Runtime, local-model/provider-blackout readiness, and
+  AI/Budget Policy principles.
+- Compare those principles with the existing Runtime Execution Request,
+  Preflight, Execution Start, Runtime/MCP boundary, Package, Evidence, Approval,
+  MCP, and Provider contracts.
+- Assess architecture impact by component.
+- Distinguish current implementation from long-term candidates.
+- Recommend `KEEP CURRENT` or `REVISE BEFORE IMPLEMENTATION`.
 
 ## Excluded
 
-- Implementation work
-- Code changes
+- Code or test changes
 - Runtime Step implementation
-- Architecture Review activation
-- DB migration
+- Runtime Compiler or Runtime Planner implementation
+- LLM Budget Router implementation
+- Existing Runtime Contract changes
 - Provider execution
-- MCP Tool Invocation
-- Gateway Runtime execution
-- Deployment
-- Marketplace implementation
-- UI implementation
-- Automatic Commit
-- Push
+- MCP Tool Invocation or Gateway Runtime execution
+- DB, API, UI, deployment, or Marketplace changes
+- Automatic Commit, Push, Merge, or Deploy
+- Activation of another Sprint
 
 ## Current Stage
 
-- RUNTIME-EXECUTION-START-001 implementation: COMPLETE
-- Final QA: PASS
-- Checkpoint commit: COMPLETE (`6f3ed7d`)
-- Push / Merge / Deploy: NOT PERFORMED
-- Current active Sprint: NONE
-- Current workflow state: BETWEEN_SPRINTS
-- Next candidate: ARCHITECTURE-AI-RUNTIME-REVIEW-001
-- Next candidate status: DRAFT / NOT ACTIVE
-- Next required step: PM/CTO approval before activating the Architecture Review
+- Architecture Gate: ACTIVE
+- Review document: DRAFT COMPLETE
+- Review gate: PM/CTO REVIEW PENDING
+- Implementation authorization: NONE
+- Decision Lock: PENDING PM/CTO REVIEW
+- Current Package Readiness: CONDITIONALLY_READY
 
-## Product Direction Note
+## Required Output
 
-BuildFlow's current product direction remains AI Agent automatic build,
-deployment, verification, and BPS Package sharing. Runtime execution work must
-remain contract-first and evidence-first unless a later Sprint explicitly
-approves actual execution, Provider actions, MCP Invocation, persistence, or
-deployment.
+`docs/architecture/LONGTERM_AI_RUNTIME.md`
 
-## Preserved Work
+## Preserved Baseline
 
-`CAPABILITY-002`, `LIVE-EVIDENCE-001/002`, `STABILIZE-READY-001`,
-`AGENT-FOUNDATION-001`, `MCP-FOUNDATION-001`, `AGENT-GENERATOR-001`,
-`AGENT-VALIDATION-001`, `AGENT-PACKAGE-001`, `PROJECT-REVIEW-001`,
-`PRODUCT-REVIEW-003.5`, `HARDEN-003`, `MCP-STRATEGY-001`, and
-`RUNTIME-EXECUTION-START-001`의 완료 문서와 커밋 이력을 삭제하거나
-덮어쓰지 않는다.
+- Last completed task: `RUNTIME-EXECUTION-START-001`
+- Implementation checkpoint: `6f3ed7d`
+- Operational closeout checkpoint: `7ab214c`
+- Runtime Request, Preflight, and Execution Start contracts remain unchanged.

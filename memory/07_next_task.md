@@ -1,111 +1,84 @@
 # Next Task
 
-## Status
-
-CURRENT TASK CLOSED — BETWEEN SPRINTS
-
-Last completed task:
-
-```text
-RUNTIME-EXECUTION-START-001
-Runtime Preflight / Start Contract
-```
-
-Checkpoint commit:
-
-```text
-6f3ed7d feat: add deterministic runtime execution start
-```
-
-Closed status:
-
-```text
-Implementation: COMPLETE
-Final QA: PASS
-Checkpoint Commit: COMPLETE
-Push / Merge / Deploy: NOT PERFORMED
-Architecture Review: NOT STARTED
-```
-
-Current workflow state:
-
-```text
-BETWEEN_SPRINTS
-```
-
-Next candidate:
+## Current Active Task
 
 ```text
 ARCHITECTURE-AI-RUNTIME-REVIEW-001
-Long-Term AI Runtime Architecture Review
+Long-term AI Runtime Architecture Review
 ```
 
-Next candidate status:
+Status:
 
 ```text
-DRAFT
+ACTIVE
+RESEARCH / DRAFT
+ARCHITECTURE REVIEW ONLY
+NOT AN IMPLEMENTATION SPECIFICATION
+```
+
+Output:
+
+```text
+docs/architecture/LONGTERM_AI_RUNTIME.md
+```
+
+## Review Result
+
+```text
+Decision Recommendation: KEEP CURRENT
+Decision Lock: PENDING PM/CTO REVIEW
+```
+
+Evidence-based findings:
+
+- current Runtime Execution Request, Preflight, and Execution Start contracts
+  are compatible with Runtime First, Rule Before LLM, Provider Independence,
+  and Compile Once Execute Many;
+- current `src/features/planner/` implements build planning only;
+- Runtime Planner and Runtime Compiler are not implemented;
+- LLM Optional means the Runtime core does not depend on an LLM for lifecycle,
+  policy, approval, routing safety, or Evidence;
+- no blocking contract revision is required before Runtime Step contract
+  design.
+
+## Required Next Gate
+
+PM/CTO must review the Architecture Impact Assessment, risks, immediate design
+constraints, deferred components, and `KEEP CURRENT` recommendation.
+
+No implementation task may start until PM/CTO explicitly:
+
+1. approves or rejects the recommendation;
+2. issues a Decision Lock;
+3. closes `ARCHITECTURE-AI-RUNTIME-REVIEW-001`; and
+4. approves and scope-freezes a next task.
+
+## Candidate After Decision Lock
+
+```text
+RUNTIME-STEP-CONTRACT-001
+```
+
+Candidate status:
+
+```text
 NOT APPROVED
 NOT ACTIVE
 NOT SCOPE FROZEN
 ```
 
-Candidate purpose:
+Potential scope remains contract-only. It must not be inferred as approval for
+Runtime execution, Runtime Planner, Runtime Compiler, LLM Budget Router,
+Provider execution, MCP Invocation, persistence, API/UI, deployment, or
+Marketplace work.
 
-- Review long-term AI Runtime principles against current BuildFlow contracts.
-- Assess impact across Requirement, Capability, Blueprint, Planner, Runtime
-  Compiler, Runtime, Validator, Evidence, Package, MCP, and Provider
-  boundaries.
-- Identify conflicts and risks before Runtime Step / Attempt work continues.
-- Produce a decision recommendation: `KEEP CURRENT` or
-  `REVISE BEFORE IMPLEMENTATION`.
+## Preserved Baseline
 
-Candidate constraints:
-
-- Documentation-only until explicitly approved.
-- Does not override existing architecture.
-- Does not authorize code changes or Runtime Step implementation.
-- Requires PM/CTO review and Decision Lock before any implementation impact.
-
-Previously completed implementation:
-
-- Runtime Preflight readiness snapshot builder;
-- Runtime Execution Start builder;
-- deterministic ids and integrity checksums;
-- approval, connection, credential, capability, provider, MCP, runtime policy,
-  cancellation, and idempotency readiness validation;
-- request/preflight binding validation;
-- strict timestamp validation from caller-provided values only;
-- secret-safe failure output;
-- duplicate snapshot conflict rejection;
-- input non-mutation tests.
-
-Still not implemented:
-
-- Runtime engine execution;
-- Runtime Step / Attempt contract;
-- Runtime Execution Result;
-- Runtime Evidence Bundle / Report;
-- Provider execution;
-- MCP Tool Invocation;
-- Vault or Credential access;
-- DB/API/UI/queue/scheduler/lease behavior;
-- deployment;
-- Marketplace.
-
-Current Package Readiness judgement:
-
-```text
-CONDITIONALLY_READY
-```
-
-Recommended next single task:
-
-```text
-ARCHITECTURE-AI-RUNTIME-REVIEW-001 approval and activation, or defer it and
-return to RUNTIME-STEP-CONTRACT-001 by explicit PM/CTO decision.
-```
-
-No next task may start until PM/CTO approval is explicit.
+- Last completed task: `RUNTIME-EXECUTION-START-001`
+- Implementation checkpoint: `6f3ed7d`
+- Operational closeout checkpoint: `7ab214c`
+- Package Readiness: `CONDITIONALLY_READY`
+- Push / Merge / Deploy after closeout: NOT PERFORMED
 
 ---
 
