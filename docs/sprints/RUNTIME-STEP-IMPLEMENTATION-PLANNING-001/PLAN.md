@@ -20,9 +20,9 @@ reference-only records; it must not execute a Step or interact with a Provider,
 MCP server, database, filesystem, or network.
 
 The prior approved contract has a limited Attempt field-matrix amendment with
-independent re-review PASS. Planning Consistency Review is PASS WITH NOTE and
-requires no rewrite. No implementation approval or Runtime Implementation
-Authority is granted by this planning record.
+independent re-review PASS. Planning Consistency Review is PASS with P0/P1/P2
+`0/0/0` and requires no rewrite. No implementation approval or Runtime
+Implementation Authority is granted by this planning record.
 
 ## 3. Exact Proposed File Scope
 

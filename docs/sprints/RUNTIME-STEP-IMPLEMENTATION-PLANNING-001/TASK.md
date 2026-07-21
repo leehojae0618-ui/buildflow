@@ -34,8 +34,8 @@ their current identities and references only.
 
 Limited reopening resolved the Attempt field matrix with independent re-review
 PASS. The planning Sprint remains active; Planning Consistency Review is PASS
-WITH NOTE with no rewrite required. Implementation Approval and Runtime
-Implementation Authority remain NONE.
+with P0/P1/P2 `0/0/0` and no rewrite required. Implementation Approval and
+Runtime Implementation Authority remain NONE.
 
 ## 4. Planning Scope
 

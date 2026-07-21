@@ -17,9 +17,9 @@ RUNTIME IMPLEMENTATION AUTHORITY: NONE
 
 The active task is planning-only. The Runtime Step contract has a limited
 Attempt field-matrix amendment with independent re-review PASS. Planning
-Consistency Review is PASS WITH NOTE with no rewrite required. No code or tests
-are authorized. Runtime execution, Provider/MCP Invocation, persistence, Push,
-Merge, and Deploy remain prohibited.
+Consistency Review is PASS with P0/P1/P2 `0/0/0` and no rewrite required. No
+code or tests are authorized. Runtime execution, Provider/MCP Invocation,
+persistence, Push, Merge, and Deploy remain prohibited.
 
 ## Historical Closeout State — 2026-07-21
 
