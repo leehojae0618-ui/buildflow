@@ -6,12 +6,15 @@
 IMPLEMENTATION APPROVAL: APPROVED
 IMPLEMENTATION SCOPE: LOCKED
 RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
-RUNTIME IMPLEMENTATION STATUS: AUTHORIZED / NOT STARTED
-AUTHORITY CHECKPOINT: PENDING COMMIT
+RUNTIME IMPLEMENTATION STATUS: COMPLETE / VALIDATED
+AUTHORITY CHECKPOINT: 0afff3f
+INITIAL IMPLEMENTATION CHECKPOINT: bcde0e7
+ISSUE RESOLUTION CHECKPOINT: de97132
+INDEPENDENT RE-REVIEW: PASS (P0/P1/P2: 0/0/0)
 ```
 
-This authority is documentation-only. It records permission for the next task;
-it does not itself create code or tests.
+This authority record granted permission for the completed implementation. It
+does not authorize any additional code or test changes beyond the locked scope.
 
 ## 2. Authorized Paths
 
