@@ -26,8 +26,8 @@ RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
 ## Approved Contract Baseline
 
 - Runtime Step Contract: initial/retry discriminator amendment pending
-  independent re-review; prior checkpoint `730bde8`; field-matrix amendment
-  checkpoint `ca54d12`.
+  independent re-review; latest amendment checkpoint `59aa291`; prior contract
+  checkpoint `730bde8`; previous field-matrix amendment checkpoint `ca54d12`.
 - Previous Result implementation Sprint closeout: `3873534`.
 - RuntimeExecutionResult: COMPLETE / VALIDATED (`871824e`).
 - The approved Step contract is not rewritten by this planning task except for

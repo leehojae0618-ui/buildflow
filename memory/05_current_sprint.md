@@ -3,7 +3,8 @@
 ## 2026-07-22 — Runtime Step Initial/Retry Discriminator Contract Resolution
 
 - Reopened `RUNTIME-STEP-CONTRACT-001` only to define `attemptNumber` as the
-  positive, 1-based initial/retry discriminator and predecessor relationship.
+  positive, 1-based initial/retry discriminator and predecessor relationship
+  at amendment checkpoint `59aa291`.
 - Independent implementation review remains FAIL with P1 until code correction
   and re-review. Implementation Approval and Runtime Implementation Authority
   are suspended pending contract re-review; production changes are prohibited.

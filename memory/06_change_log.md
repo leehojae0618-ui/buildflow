@@ -4,7 +4,8 @@
 
 - Amended only the Runtime Step Attempt ordinal and predecessor validation
   contract: `attemptNumber` is positive and 1-based; `1` is initial and higher
-  values are retries with an immediate predecessor binding.
+  values are retries with an immediate predecessor binding. Amendment
+  checkpoint: `59aa291`.
 - Historical Implementation Approval and Authority are suspended pending
   independent contract re-review. Implementation checkpoint `13a2c26` remains
   preserved and unchanged. Push / Merge / Deploy: not performed.

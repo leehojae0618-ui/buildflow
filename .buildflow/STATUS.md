@@ -6,7 +6,8 @@
 - Current Sprint Work: IMPLEMENTATION REVIEW FAILED / CONTRACT RESOLUTION IN PROGRESS
 - Runtime Step Contract: AMENDED / INITIAL-RETRY DISCRIMINATOR / RE-REVIEW REQUIRED
 - Previous Runtime Step Contract Checkpoint: `730bde8`
-- Contract Amendment Checkpoint: `ca54d12`
+- Latest Contract Amendment Checkpoint: `59aa291`
+- Previous Field-Matrix Amendment Checkpoint: `ca54d12`
 - Contract Amendment Scope: attemptNumber and predecessor validation only
 - Runtime Step Contract Reopened: YES — limited initial/retry discriminator
 - Previous Result Implementation Sprint Closeout: `3873534`
