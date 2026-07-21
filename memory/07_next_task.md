@@ -3,56 +3,32 @@
 ## Current Active Task
 
 ```text
-ARCHITECTURE-AI-RUNTIME-REVIEW-001
-Long-term AI Runtime Architecture Review
+NONE
 ```
 
 Status:
 
 ```text
-ACTIVE
-RESEARCH / DRAFT
-ARCHITECTURE REVIEW ONLY
-NOT AN IMPLEMENTATION SPECIFICATION
+BETWEEN_SPRINTS
 ```
 
-Output:
+Last completed task:
 
 ```text
-docs/architecture/LONGTERM_AI_RUNTIME.md
+ARCHITECTURE-AI-RUNTIME-REVIEW-001
 ```
 
-## Review Result
+## Closeout Result
 
 ```text
+Architecture Review Checkpoint: b2802de
 Decision Recommendation: KEEP CURRENT
+Decision Lock Checkpoint: 38c589b
 Decision Lock: APPROVED
-Architecture Gate Closeout: PENDING
+Runtime Implementation Authority: NONE
 ```
 
-Evidence-based findings:
-
-- current Runtime Execution Request, Preflight, and Execution Start contracts
-  are compatible with Runtime First, Rule Before LLM, Provider Independence,
-  and Compile Once Execute Many;
-- current `src/features/planner/` implements build planning only;
-- Runtime Planner and Runtime Compiler are not implemented;
-- LLM Optional means the Runtime core does not depend on an LLM for lifecycle,
-  policy, approval, routing safety, or Evidence;
-- no blocking contract revision is required before Runtime Step contract
-  design.
-
-## Required Next Gate
-
-Architecture Gate closeout must record the approved Decision Lock and return the
-project to `BETWEEN_SPRINTS`.
-
-No implementation task may start until PM/CTO explicitly:
-
-1. closes `ARCHITECTURE-AI-RUNTIME-REVIEW-001`; and
-2. approves and scope-freezes a next task.
-
-## Candidate After Decision Lock
+## Next Candidate
 
 ```text
 RUNTIME-STEP-CONTRACT-001
@@ -66,10 +42,18 @@ NOT ACTIVE
 NOT SCOPE FROZEN
 ```
 
-Potential scope remains contract-only. It must not be inferred as approval for
-Runtime execution, Runtime Planner, Runtime Compiler, LLM Budget Router,
-Provider execution, MCP Invocation, persistence, API/UI, deployment, or
-Marketplace work.
+## Required Next Gate
+
+Scope Freeze review is required before `RUNTIME-STEP-CONTRACT-001` can move to
+`.buildflow/CURRENT_TASK.md`.
+
+No implementation task may start until PM/CTO explicitly approves and
+scope-freezes the next task.
+
+Potential future scope remains contract-only until reviewed. It must not be
+inferred as approval for Runtime execution, Runtime Planner, Runtime Compiler,
+LLM Budget Router, Provider execution, MCP Invocation, persistence, API/UI,
+deployment, or Marketplace work.
 
 ## Preserved Baseline
 

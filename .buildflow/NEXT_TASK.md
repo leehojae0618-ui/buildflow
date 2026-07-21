@@ -1,32 +1,45 @@
 # Next Task
 
+## Candidate
+
+RUNTIME-STEP-CONTRACT-001
+
 ## Status
 
-NO NEXT TASK — ARCHITECTURE GATE ACTIVE
+```text
+NOT APPROVED
+NOT ACTIVE
+NOT SCOPE FROZEN
+```
 
-## Active Task
+## Required Pre-Activation Gate
 
-ARCHITECTURE-AI-RUNTIME-REVIEW-001 has moved to `.buildflow/CURRENT_TASK.md`.
+Scope Freeze review is required before this candidate can move to
+`.buildflow/CURRENT_TASK.md`.
 
-## Activation State
+## Context
 
-ACTIVE / RESEARCH / DRAFT / ARCHITECTURE REVIEW ONLY
+`ARCHITECTURE-AI-RUNTIME-REVIEW-001` is closed. The approved long-term AI
+Runtime Decision Lock is recorded in:
 
-This activation authorizes documentation review only. It does not approve or
-scope-freeze implementation, modify existing Runtime contracts, or authorize
-Runtime Step work.
+- Architecture Review Checkpoint: `b2802de`
+- Decision Lock Checkpoint: `38c589b`
+- Decision Recommendation: `KEEP CURRENT`
+- Decision Lock: APPROVED
 
-## Next Task Policy
+## Candidate Boundary
 
-No implementation task or additional Sprint may be activated until:
+The next task candidate should be reviewed as a contract-only Runtime Step scope
+before approval. This candidate is not approval for:
 
-1. the Architecture Review draft is complete;
-2. PM/CTO reviews the impact and conflict assessment;
-3. a Decision Lock is explicitly approved; and
-4. the Architecture Gate is formally closed.
+- Runtime execution implementation;
+- Provider Invocation implementation;
+- MCP Invocation or Gateway Runtime implementation;
+- Runtime Planner or Runtime Compiler implementation;
+- Budget Router implementation;
+- DB, API, UI, deployment, or Marketplace work.
 
-Decision Lock is now approved. The Architecture Gate is still active until a
-separate closeout task formally records closure.
+## Next Action
 
-Potential follow-up work, including `RUNTIME-STEP-CONTRACT-001`, remains
-unapproved and inactive.
+PM/CTO should review and scope-freeze `RUNTIME-STEP-CONTRACT-001` before any
+work begins.

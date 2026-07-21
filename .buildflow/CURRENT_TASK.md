@@ -1,66 +1,48 @@
 # Current Task
 
-## Task ID
+## Status
+
+NONE
+
+## Project State
+
+BETWEEN_SPRINTS
+
+## Last Completed Task
 
 ARCHITECTURE-AI-RUNTIME-REVIEW-001
 
-## Title
+## Closeout Status
 
-Long-term AI Runtime Architecture Review
+CLOSED
 
-## Status
+## Closeout Summary
 
-ACTIVE / RESEARCH / DRAFT / ARCHITECTURE REVIEW ONLY
-
-## Goal
-
-Review BuildFlow's long-term AI Runtime principles against the current
-architecture and Runtime contracts, assess impact and conflicts, and record the
-approved PM/CTO Decision Lock without authorizing implementation.
-
-## Scope
-
-- Document LLM Optional, Runtime First, Rule Before LLM, Provider Independence,
-  Compile Once Execute Many, LLM Budget Router, Planner/Compiler separation,
-  Execution Plan-centered Runtime, local-model/provider-blackout readiness, and
-  AI/Budget Policy principles.
-- Compare those principles with the existing Runtime Execution Request,
-  Preflight, Execution Start, Runtime/MCP boundary, Package, Evidence, Approval,
-  MCP, and Provider contracts.
-- Assess architecture impact by component.
-- Distinguish current implementation from long-term candidates.
-- Recommend `KEEP CURRENT` or `REVISE BEFORE IMPLEMENTATION`.
-
-## Excluded
-
-- Code or test changes
-- Runtime Step implementation
-- Runtime Compiler or Runtime Planner implementation
-- LLM Budget Router implementation
-- Existing Runtime Contract changes
-- Provider execution
-- MCP Tool Invocation or Gateway Runtime execution
-- DB, API, UI, deployment, or Marketplace changes
-- Automatic Commit, Push, Merge, or Deploy
-- Activation of another Sprint
-
-## Current Stage
-
-- Architecture Gate: ACTIVE
-- Review document: DRAFT COMPLETE
-- Review gate: PM/CTO DECISION LOCK COMPLETE
-- Implementation authorization: NONE
+- Architecture Review: COMPLETE
+- Final Document Review: PASS
+- Architecture Review Checkpoint: `b2802de`
+- Decision Lock Checkpoint: `38c589b`
+- Decision Recommendation: `KEEP CURRENT`
 - Decision Lock: APPROVED
-- Gate closeout: PENDING
-- Current Package Readiness: CONDITIONALLY_READY
+- Existing Runtime Contracts: KEEP
+- Runtime Implementation Authority: NONE
+- Push / Merge / Deploy: NOT PERFORMED
 
-## Required Output
+## Next Candidate
 
-`docs/architecture/LONGTERM_AI_RUNTIME.md`
+RUNTIME-STEP-CONTRACT-001
 
-## Preserved Baseline
+## Next Candidate Status
 
-- Last completed task: `RUNTIME-EXECUTION-START-001`
-- Implementation checkpoint: `6f3ed7d`
-- Operational closeout checkpoint: `7ab214c`
-- Runtime Request, Preflight, and Execution Start contracts remain unchanged.
+```text
+NOT APPROVED
+NOT ACTIVE
+NOT SCOPE FROZEN
+```
+
+## Activation Requirement
+
+`RUNTIME-STEP-CONTRACT-001` requires a separate Scope Freeze review and explicit
+PM/CTO approval before activation. No Runtime Step contract, Runtime execution,
+Provider Invocation, MCP Invocation, Runtime Planner, Runtime Compiler, Budget
+Router, API, UI, deployment, or Marketplace work is authorized by this closeout.
