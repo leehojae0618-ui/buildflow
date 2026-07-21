@@ -1,25 +1,20 @@
 # BuildFlow Status
 
-- Workflow Status: ACTIVE_SPRINT
-- Current Sprint: RUNTIME-RESULT-CONTRACT-001
-- Current Task: Runtime Result Contract
-- Last Completed Task: ARCHITECTURE-AI-RUNTIME-REVIEW-001
-- Previous Sprint: RUNTIME-STEP-CONTRACT-001 — NOT ACTIVE / CONTRACT CHECKPOINT COMPLETE / NOT CLOSED
-- Runtime Step Contract Checkpoint: `730bde8`
-- Runtime Result Scope Freeze Checkpoint: `4f418d8`
-- Scope Decision: APPROVED
-- Scope Status: FROZEN
-- Task Status: ACTIVE
+- Workflow Status: BETWEEN_SPRINTS
+- Current Sprint: NONE
+- Current Task: NONE
+- Last Contract Sprint: RUNTIME-RESULT-CONTRACT-001 — closeout documentation
+  complete; formal closeout checkpoint pending commit approval
 - Contract Status: APPROVED
-- Contract QA: PASS WITH P2 / PM-CTO CONTRACT REVIEW COMPLETE
-- PM Decision: APPROVE WITH P2 NOTE
-- CTO Decision: APPROVE WITH P2 NOTE
-- Contract Decision: APPROVED
+- Contract Checkpoint: `00eb274`
+- Project Gate Review: PASS WITH NOTE (`P0: 0`, `P1: 0`)
+- Known P2 Notes: historical QA snapshots in Result derived documents; prior
+  stale Latest Known Commit observation recorded in the Closeout Report
+- Latest Known Commit: `00eb274`
 - Implementation Approval: NONE
 - Runtime Implementation Authority: NONE
-- Latest Known Commit: `4f418d8`
 - Push / Merge / Deploy: NOT PERFORMED
-- Authorized Work: reviewed contract documentation and checkpoint-commit preparation only
-- Prohibited Work: Runtime execution, Provider/MCP Invocation, Queue/Scheduler/Worker, DB/API/UI, deployment, Marketplace, Push, Merge, Deploy
-- Next Candidate: NONE
-- Product Focus: AI Agent automatic build, deployment, verification, and BPS Package sharing. General Web App and Platform expansion is on hold.
+- Next Candidate: RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001 — DRAFT / NOT
+  ACTIVE / NOT APPROVED
+- Product Focus: AI Agent automatic build, deployment, verification, and BPS
+  Package sharing. General Web App and Platform expansion is on hold.

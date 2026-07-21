@@ -1,6 +1,26 @@
 # Next Task
 
-## Current Active Task
+## Current Closeout State — 2026-07-21
+
+```text
+CURRENT TASK: NONE
+PROJECT STATE: BETWEEN_SPRINTS
+LAST CONTRACT SPRINT: RUNTIME-RESULT-CONTRACT-001
+CONTRACT CHECKPOINT: 00eb274
+PROJECT GATE REVIEW: PASS WITH NOTE
+P0/P1: 0/0
+SPRINT CLOSEOUT DOCUMENTATION: COMPLETE
+FORMAL CLOSEOUT CHECKPOINT: PENDING COMMIT APPROVAL
+IMPLEMENTATION APPROVAL: NONE
+RUNTIME IMPLEMENTATION AUTHORITY: NONE
+```
+
+The next candidate is `RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001` in
+`DRAFT / NOT ACTIVE / NOT APPROVED` status. It requires the formal closeout
+checkpoint and separate approval, and it does not grant implementation
+authority. The following sections are preserved historical task records.
+
+## Historical Active Task Record
 
 ```text
 RUNTIME-RESULT-CONTRACT-001

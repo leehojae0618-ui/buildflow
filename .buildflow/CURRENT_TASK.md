@@ -2,79 +2,33 @@
 
 ## Task ID
 
-RUNTIME-RESULT-CONTRACT-001
-
-## Title
-
-Runtime Result Contract
+NONE
 
 ## Project State
 
-ACTIVE_SPRINT
+BETWEEN_SPRINTS
 
-## Task Status
+## Last Contract Sprint
 
-ACTIVE
+`RUNTIME-RESULT-CONTRACT-001`
 
-## Scope Status
-
-FROZEN
-
-## Scope Freeze Checkpoint
-
-`4f418d8`
-
-## Approval
-
-- PM Scope Decision: APPROVE
-- CTO Scope Decision: APPROVE
-- Scope Decision: APPROVED
+- Sprint Closeout Documentation: COMPLETE
+- Formal Closeout Checkpoint: PENDING COMMIT APPROVAL
 - Contract Status: APPROVED
-- Contract QA: PASS WITH P2 / PM-CTO CONTRACT REVIEW COMPLETE
-- PM Decision: APPROVE WITH P2 NOTE
-- CTO Decision: APPROVE WITH P2 NOTE
-- Contract Decision: APPROVED
+- Contract Checkpoint: `00eb274`
+- Project Gate Review: PASS WITH NOTE (`P0: 0`, `P1: 0`)
+
+## Implementation Boundary
+
 - Implementation Approval: NONE
 - Runtime Implementation Authority: NONE
+- Runtime code, tests, Provider/MCP Invocation, and Runtime execution remain
+  prohibited.
 
-## Authorized Work
+## Next Candidate
 
-- RuntimeExecutionResult contract documentation.
-- Contract-draft preparation and Open Question review within the frozen scope.
-- Contract validation planning.
-- Review/report documentation for the contract-only sprint.
+`RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001`
 
-## Prohibited Work
-
-- Runtime execution implementation.
-- Provider Invocation implementation.
-- MCP Invocation or Gateway Runtime implementation.
-- Queue, Scheduler, Worker, Lease, or Lock implementation.
-- Parallel Runtime implementation.
-- Runtime Planner or Runtime Compiler implementation.
-- Budget Router implementation.
-- DB, API, UI, deployment, or Marketplace work.
-- Vault access or live Credential validation.
-- Push, Merge, or Deploy.
-
-## Scope Source
-
-- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/TASK.md`
-
-## Previous Sprint Transition
-
-`RUNTIME-STEP-CONTRACT-001` is not active and is not closed.
-
-- Lifecycle Status: CONTRACT CHECKPOINT COMPLETE
-- Contract Decision: APPROVED
-- Contract Checkpoint: `730bde8`
-- Implementation Approval: NONE
-- Runtime Implementation Authority: NONE
-- Sprint Closed: NO
-- Implementation Started: NO
-
-## Next Required Work
-
-Request separate checkpoint-commit approval for the reviewed contract documents.
-Do not start code implementation or write tests without later explicit
-implementation approval.
+- Status: DRAFT / NOT ACTIVE / NOT APPROVED
+- Activation prerequisite: formal closeout checkpoint and separate approval.
+- Candidate scope: implementation planning only; no implementation authority.

@@ -128,7 +128,8 @@ Runtime Evidence is responsible for:
 
 - binding a Runtime Execution Request to a Package artifact, Evidence Report,
   Approval Gate result, and granted execution scope;
-- recording immutable execution start evidence;
+- binding the immutable `RuntimeExecutionStart` record as execution-start
+  evidence;
 - recording immutable completed step evidence;
 - recording an execution result;
 - bundling Runtime evidence references without duplicating payloads;
@@ -149,7 +150,8 @@ Runtime Evidence is not responsible for:
 Runtime Evidence v1 uses six explicit layers:
 
 1. Runtime Execution Request
-2. Runtime Execution Start Evidence
+2. Runtime Execution Start (`RuntimeExecutionStart`, used as immutable start
+   evidence)
 3. Runtime Step Evidence
 4. Runtime Execution Result
 5. Runtime Evidence Bundle
@@ -205,33 +207,57 @@ Rules:
 - The request may include capability references, but must not include raw
   Provider inputs, raw prompts, raw logs, headers, tokens, or Credential values.
 
-## 8. Runtime Execution Start Evidence
+## 8. Runtime Execution Start (`RuntimeExecutionStart`)
 
-Required deterministic fields:
+### Artifact Boundary: Same Artifact
+
+`RuntimeExecutionStart` and the phrase "Runtime Execution Start Evidence" refer
+to the **same artifact**. `RuntimeExecutionStart` is the canonical artifact name;
+"start evidence" describes its immutable attestation role. v1 does not define a
+second `RuntimeExecutionStartEvidence` object, identifier, builder, or storage
+record.
+
+| Concern | Definition |
+|---|---|
+| Purpose | Record that one Runtime Execution passed the supplied Request and Preflight readiness checks and entered the initial `READY` state. It does not execute Steps or external actions. |
+| Lifecycle | Candidate input is validated; invalid input mints no artifact. A valid `RuntimeExecutionStart` is emitted as an immutable start record. |
+| Owner / producer | The `RUNTIME-EXECUTION-START-001` contract and `buildRuntimeExecutionStart`. |
+| Consumers | Runtime Step references its `runtimeExecutionStartId`; RuntimeExecutionResult references the immutable start artifact; future Bundle and Report consume it by reference only. |
+| Identity | `runtimeExecutionStartId` identifies the start record. `runtimeExecutionId` identifies the concrete execution instance and remains distinct. |
+| Relationship | One start record binds one Request reference, one Preflight Result reference, and one Runtime Execution. No duplicate start-evidence artifact is created. |
+
+Required deterministic fields are owned by the existing `RuntimeExecutionStart`
+contract:
 
 - `formatVersion`
+- `runtimeExecutionStartId`
 - `runtimeExecutionId`
-- `runtimeExecutionRequestId`
-- `executionAttempt`
-- `executorReference`
-- `runtimeEngineReference`
-- `runtimeVersionReference`
-- `environmentProfileReference`
+- `runtimeExecutionRequestReference`
+- `runtimePreflightResultReference`
+- `executionIntent`
+- `executionSequence`
+- optional `previousRuntimeExecutionReference`
+- `initiatedByActorReference`
 - `startedAt`
-- `authorizationBinding`
+- `initialRuntimeStatus`
+- `approvalBinding`
 - `packageBinding`
-- `inputBindings`
-- `capabilityBindings`
+- `evidenceBinding`
+- optional `runtimePolicyReference`
+- `limitationCodes`
 - `integrityChecksum`
 
 Rules:
 
 - `startedAt` is explicit and canonical.
-- `runtimeExecutionId` includes the request id, attempt reference,
-  executor/runtime references, and canonical `startedAt`.
-- Environment information is by reference only.
-- Environment variables, command arguments, process dumps, and raw runtime logs
-  are forbidden.
+- `runtimeExecutionId` is derived by the Runtime Execution Start contract from
+  the Request and Preflight identities, `startedAt`, `executionIntent`,
+  `executionSequence`, and optional previous-execution reference.
+- A full execution retry creates a new `RuntimeExecutionStart` and new
+  `runtimeExecutionId`; Step retries do not create another start artifact.
+- This artifact is reference-only for downstream consumers. It does not embed
+  environment variables, command arguments, process dumps, raw runtime logs,
+  Provider/MCP payloads, or Credential values.
 
 ## 9. Runtime Step Evidence
 
@@ -239,7 +265,8 @@ Required deterministic fields:
 
 - `formatVersion`
 - `runtimeExecutionId`
-- `stepId`
+- `runtimeStepId`
+- `runtimeStepAttemptId`
 - `stepSequence`
 - `stepType`
 - `stepNameReference`
@@ -273,7 +300,7 @@ INVALID
 v1 records immutable completed step evidence. A real-time event stream is a
 future extension. Parallel steps may use `parentStepReference` and
 `dependencyReferences`, but deterministic ordering still uses canonical
-`stepSequence`, `stepId`, and checksum sorting.
+`stepSequence`, `runtimeStepId`, and checksum sorting.
 
 ## 10. Runtime Execution Result
 
@@ -362,9 +389,12 @@ copy full approval payloads.
 
 ## 15. Retry and Attempt Policy
 
-- Each attempt receives its own `runtimeExecutionId`.
-- Attempts may share the same `runtimeExecutionRequestId`.
-- Each attempt revalidates Approval Gate binding before start.
+- A full execution retry receives a new `runtimeExecutionId` and may share the
+  same `runtimeExecutionRequestId` with the previous execution.
+- A Step retry retains the same `runtimeExecutionId` and `runtimeStepId`, and
+  receives a new `runtimeStepAttemptId`.
+- Each full-execution or Step retry revalidates Approval Gate binding before new
+  work begins.
 - Retry policy is recorded by reference and does not execute automatically in
   this design.
 
@@ -372,8 +402,10 @@ copy full approval payloads.
 
 - Runtime Execution Request identity is deterministic from canonical request
   fields.
-- Runtime execution attempt identity includes the attempt reference and
+- Runtime execution identity includes the full-execution retry reference and
   `startedAt`.
+- Runtime Step Attempt identity is distinct from Runtime Execution identity;
+  a Step retry must not create a new `runtimeExecutionId`.
 - Runtime result identity includes `completedAt`.
 - The same logical request with the same checksum is a duplicate.
 - The same execution or step id with a different checksum is a conflict.
@@ -534,11 +566,17 @@ Recommended canonical inputs:
   checksum, evidence report checksum, approval request id, approval gate
   checksum, granted scopes, requested execution mode, input artifact references,
   runtime policy reference, expiration policy.
-- `runtimeExecutionId`: request id, execution attempt, executor reference,
-  runtime engine reference, runtime version reference, environment profile
-  reference, startedAt.
-- `stepId`: runtime execution id, step sequence, step type, step name reference,
+- `runtimeExecutionId`: request id, preflight result id, `startedAt`,
+  `executionIntent`, `executionSequence`, and optional previous execution
+  reference, as owned by the Runtime Execution Start contract.
+- `runtimeExecutionStartId`: runtime execution id, Request reference, Preflight
+  Result reference, and `startedAt`, as owned by the Runtime Execution Start
+  contract.
+- `runtimeStepId`: runtime execution id, step sequence, step type, step name reference,
   input/output reference checksums, capability references.
+- `runtimeStepAttemptId`: runtime execution id, runtime step id, and an explicit
+  Step retry reference; its exact identifier algorithm follows the Runtime Step
+  Contract.
 - `runtimeExecutionResultId`: runtime execution id, result status, completedAt,
   step evidence checksums, failure/warning/limitation summaries.
 - `runtimeEvidenceBundleId`: request/start/step/result checksums plus package
@@ -605,7 +643,6 @@ package evidence contracts:
 Potential implementation tasks after PM approval:
 
 - `buildRuntimeExecutionRequest`
-- `buildRuntimeExecutionStartEvidence`
 - `buildRuntimeStepEvidence`
 - `buildRuntimeExecutionResult`
 - `buildRuntimeEvidenceBundle`
@@ -665,8 +702,8 @@ Recommended defaults:
 |---|---|---|---|---|---|
 | Contract layers | Use six layers | Collapse Bundle/Report or Start/Result | Six layers | Clear immutable boundaries and retry support | More files/types later |
 | Bundle and Report split | Split | Single report object | Split | Keeps deterministic evidence separate from presentation | Slight contract overhead |
-| Execution id time input | Include `startedAt` | Exclude `startedAt` | Include `startedAt` | Distinguishes attempts clearly | Requires explicit time input |
-| Retry approval check | Revalidate each attempt | Reuse original validation | Revalidate | Prevents stale authorization reuse | More blocking cases |
+| Execution id time input | Include `startedAt` | Exclude `startedAt` | Include `startedAt` | Distinguishes full execution instances clearly | Requires explicit time input |
+| Retry approval check | Revalidate each full-execution or Step retry | Reuse original validation | Revalidate | Prevents stale authorization reuse | More blocking cases |
 | Revoke during execution | Require cancellation evidence | Auto-fail/cancel | Require evidence | Avoids hidden runtime behavior | Needs later cancellation contract |
 | Partial success enum | Add `PARTIAL_SUCCESS` | Use limitations | Use limitations | Keeps status model smaller | Requires good limitation codes |
 | Parallel ordering | Parent/dependency refs | Event stream v1 | Parent/dependency refs | Minimal deterministic v1 | Less real-time detail |
@@ -740,7 +777,6 @@ Limitations included in valid v1 requests:
 
 Still not implemented:
 
-- Runtime Execution Start Evidence
 - Runtime Step Evidence
 - Runtime Execution Result
 - Runtime Evidence Bundle

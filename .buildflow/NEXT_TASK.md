@@ -1,46 +1,28 @@
 # Next Task
 
+## Candidate
+
+`RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001`
+
 ## Status
 
-NONE
+DRAFT / NOT APPROVED / NOT ACTIVE
 
-## Reason
+## Preconditions
 
-`RUNTIME-RESULT-CONTRACT-001` is the only active Sprint. No additional next
-task is approved or queued during this active Sprint.
+- `RUNTIME-RESULT-CONTRACT-001` formal closeout checkpoint is committed.
+- Separate PM/CTO approval opens implementation planning.
+- Implementation Approval and Runtime Implementation Authority remain NONE.
 
-## Active Sprint
+## Candidate Boundary
 
-RUNTIME-RESULT-CONTRACT-001
+- Define a minimal implementation plan for the approved RuntimeExecutionResult
+  contract.
+- Do not write code or tests, grant implementation authority, start Runtime
+  execution, or begin Provider/MCP Invocation work.
 
-## Active Sprint Boundary
+## Current Contract Baseline
 
-- Scope Status: FROZEN
-- Scope Decision: APPROVED
-- Scope Freeze Checkpoint: `4f418d8`
-- Contract Status: APPROVED
-- Contract QA: PASS WITH P2 / PM-CTO CONTRACT REVIEW COMPLETE
-- PM Decision: APPROVE WITH P2 NOTE
-- CTO Decision: APPROVE WITH P2 NOTE
-- Contract Decision: APPROVED
-- Implementation Approval: NONE
-- Runtime Implementation Authority: NONE
-- Authorized work is limited to reviewed RuntimeExecutionResult contract
-  documentation and checkpoint-commit preparation.
-
-## Previous Sprint
-
-`RUNTIME-STEP-CONTRACT-001` is `NOT ACTIVE / CONTRACT CHECKPOINT COMPLETE`.
-It is not closed and received no implementation approval.
-
-- Contract Checkpoint: `730bde8`
-- Runtime Implementation Authority: NONE
-
-## Prohibited Work
-
-- Runtime execution implementation.
-- Provider Invocation implementation.
-- MCP Invocation or Gateway Runtime implementation.
-- Queue, Scheduler, Worker, Lease, or Lock implementation.
-- DB, API, UI, deployment, or Marketplace work.
-- Push, Merge, or Deploy.
+- Runtime Result Contract Checkpoint: `00eb274`
+- Project Gate Review: PASS WITH NOTE (`P0: 0`, `P1: 0`)
+- Scope and contract changes require a separate approved task.
