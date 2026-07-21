@@ -1,28 +1,26 @@
 # Next Task
 
-## Candidate
-
-`RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001`
-
 ## Status
 
-DRAFT / NOT APPROVED / NOT ACTIVE
+NONE
 
-## Preconditions
+## Reason
 
-- `RUNTIME-RESULT-CONTRACT-001` formal closeout checkpoint is committed.
-- Separate PM/CTO approval opens implementation planning.
-- Implementation Approval and Runtime Implementation Authority remain NONE.
+`RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001` is the only active planning task.
+No implementation task is approved or queued while Implementation Approval and
+Runtime Implementation Authority remain `NONE`.
 
-## Candidate Boundary
+## Active Planning Boundary
 
-- Define a minimal implementation plan for the approved RuntimeExecutionResult
-  contract.
-- Do not write code or tests, grant implementation authority, start Runtime
-  execution, or begin Provider/MCP Invocation work.
+- Contract baseline: `00eb274`
+- Closeout checkpoint: `21889b1`
+- Documentation consistency checkpoint: `2dab5be`
+- Planning Status: ACTIVE / PLANNING / NOT APPROVED
+- Implementation Approval: NONE
+- Runtime Implementation Authority: NONE
 
-## Current Contract Baseline
+## Prohibited Work
 
-- Runtime Result Contract Checkpoint: `00eb274`
-- Project Gate Review: PASS WITH NOTE (`P0: 0`, `P1: 0`)
-- Scope and contract changes require a separate approved task.
+- Production code or test changes.
+- Serializer, digest, aggregation, Runtime, Provider/MCP, persistence, DB/API/UI,
+  deployment, Marketplace, Push, Merge, or Deploy.
