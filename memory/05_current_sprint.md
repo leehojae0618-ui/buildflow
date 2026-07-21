@@ -67,6 +67,23 @@ Contract QA remediation:
   reference matrix.
 - PM/CTO approved the contract without granting implementation authority.
 
+Non-active follow-up scope freeze:
+
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/TASK.md` records an approved,
+  frozen future scope for a Runtime Result contract.
+- The authoritative Runtime Step checkpoint is Git commit `730bde8`; under
+  operating method A, the existing pre-commit `CHECKPOINT STATUS: READY`
+  wording is retained rather than changed through a follow-up checkpoint.
+- Current Task remains `RUNTIME-STEP-CONTRACT-001`; the Result scope is not an
+  active Sprint, contract start, or implementation authorization.
+- No Runtime Result type, interface, validator, test, or implementation was
+  found in `src/features/agents/`.
+- Scope Decision: APPROVED. Scope Freeze checkpoint: PENDING COMMIT APPROVAL.
+- The first contract is `RuntimeExecutionResult` only; separate Step/Attempt
+  Result artifacts remain Deferred.
+- `completedAt` is a canonical deterministic Result identity input. Its exact
+  serialization algorithm remains deferred to the contract body.
+
 Prohibited work:
 
 - Runtime execution implementation.

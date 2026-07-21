@@ -81,6 +81,41 @@ RUNTIME IMPLEMENTATION AUTHORITY: NONE
 The Contract checkpoint requires separate commit approval. Contract approval
 does not grant Runtime implementation authority.
 
+## Non-active Scope Draft Candidate
+
+```text
+RUNTIME-RESULT-CONTRACT-001
+SCOPE STATUS: FROZEN
+PM SCOPE DECISION: APPROVE
+CTO SCOPE DECISION: APPROVE
+SCOPE DECISION: APPROVED
+SCOPE FREEZE CHECKPOINT: PENDING COMMIT APPROVAL
+CONTRACT STATUS: NOT STARTED
+SPRINT STATUS: NOT ACTIVE
+IMPLEMENTATION APPROVAL: NONE
+RUNTIME IMPLEMENTATION AUTHORITY: NONE
+```
+
+Draft document:
+
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/TASK.md`
+
+The first frozen scope defines `RuntimeExecutionResult` only. Separate Step and
+Attempt Result artifacts are Deferred. `completedAt` is a canonical
+caller-supplied Result identity input; its exact serialization remains a
+contract-body decision.
+
+This is a frozen future-scope record only. It does not activate a second Sprint,
+change `.buildflow/CURRENT_TASK.md`, or authorize Result contract writing or
+implementation. A separate Scope Freeze checkpoint commit and activation
+approval are required first.
+
+Operating method A applies to the Runtime Step Contract checkpoint:
+
+- official checkpoint: `730bde8 docs: define runtime step contract`;
+- the pre-commit `CHECKPOINT STATUS: READY` record above is retained;
+- no separate `RECORDED` status update or follow-up checkpoint is created.
+
 ## Preserved Baseline
 
 - Last completed task: `RUNTIME-EXECUTION-START-001`

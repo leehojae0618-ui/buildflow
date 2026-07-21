@@ -1,5 +1,84 @@
 # Change Log Memory
 
+## 2026-07-21 — RUNTIME-RESULT-CONTRACT-001 Scope Freeze
+
+Updated:
+
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/TASK.md`
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Scope decision:
+
+- PM Scope Decision: APPROVE.
+- CTO Scope Decision: APPROVE.
+- Scope Decision: APPROVED.
+- Scope Status: FROZEN.
+- Scope Freeze checkpoint: PENDING COMMIT APPROVAL.
+- Contract Status: NOT STARTED.
+- Sprint Status: NOT ACTIVE.
+- Implementation Approval: NONE.
+- Runtime Implementation Authority: NONE.
+
+Locked scope boundary:
+
+- The initial artifact is `RuntimeExecutionResult` only.
+- Separate Step/Attempt Result artifacts are Deferred.
+- Result references terminal Step/Attempt outcomes and does not redefine their
+  status enums or terminal-reference matrix.
+- Result status is limited to `SUCCEEDED`, `SUCCEEDED_WITH_LIMITATIONS`,
+  `FAILED`, `CANCELLED`, `TIMED_OUT`, `BLOCKED`, and `INVALID`.
+- `completedAt` is a canonical caller-supplied Result identity input; exact
+  hashing remains a future contract-body detail.
+- Provider/MCP detailed results, Evidence Bundle/Report, Event Log, Cost,
+  Usage, persistence, API/UI, and Runtime execution remain out of scope.
+
+Code and test changes:
+
+- None.
+
+Commit / Push / Merge / Deploy:
+
+- Not performed.
+
+## 2026-07-21 — RUNTIME-RESULT-CONTRACT-001 Scope Draft
+
+Created:
+
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/TASK.md`
+
+Scope-draft findings:
+
+- `730bde8 docs: define runtime step contract` is the official Runtime Step
+  Contract checkpoint under operating method A.
+- Existing Runtime Evidence design defines Runtime Execution Result as a future
+  layer between Runtime Step Evidence and Runtime Evidence Bundle.
+- No Runtime Result type, interface, validator, test, or implementation was
+  found in `src/features/agents/`.
+- Result is scoped as an outcome representation; Evidence remains the
+  reference-based attestation boundary.
+- Provider/MCP detailed results remain delegated to their future Invocation
+  contracts.
+- Result granularity, status-model direction, completed-at identity treatment,
+  and sequencing relative to earlier Invocation contracts remain PM/CTO open
+  questions.
+
+Operational status:
+
+- Current Task remains `RUNTIME-STEP-CONTRACT-001`.
+- `RUNTIME-RESULT-CONTRACT-001` is DRAFT only; it is not active, approved, or
+  scope frozen.
+- Runtime Implementation Authority remains `NONE`.
+
+Code and test changes:
+
+- None.
+
+Commit / Push / Merge / Deploy:
+
+- Not performed.
+
 ## 2026-07-21 — RUNTIME-STEP-CONTRACT-001 PM/CTO Contract Decision
 
 Reviewed contract documents:
