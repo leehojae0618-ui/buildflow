@@ -5,30 +5,30 @@
 ```text
 CURRENT TASK: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 PROJECT STATE: ACTIVE
-PLANNING STATUS: ACTIVE / CONTRACT RE-REVIEW REQUIRED / IMPLEMENTATION SUSPENDED
-CURRENT SPRINT WORK: IMPLEMENTATION REVIEW FAILED / CONTRACT RESOLUTION IN PROGRESS
+PLANNING STATUS: ACTIVE / IMPLEMENTATION APPROVAL REVALIDATION REQUIRED / AUTHORITY SUSPENDED
+CURRENT SPRINT WORK: CONTRACT REVALIDATION COMPLETE / IMPLEMENTATION APPROVAL REVALIDATION PENDING
 RUNTIME STEP CONTRACT CHECKPOINT: 730bde8
 LATEST RUNTIME STEP CONTRACT AMENDMENT CHECKPOINT: 59aa291
 PREVIOUS FIELD-MATRIX AMENDMENT CHECKPOINT: ca54d12
-RUNTIME STEP CONTRACT: AMENDED / INITIAL-RETRY DISCRIMINATOR / RE-REVIEW REQUIRED
+RUNTIME STEP CONTRACT: AMENDED / INITIAL-RETRY DISCRIMINATOR / REVALIDATION COMPLETE
 RUNTIME STEP CONTRACT REOPENED: LIMITED — ATTEMPT NUMBER AND PREDECESSOR ONLY
 PREVIOUS SPRINT CLOSEOUT: 3873534
 RUNTIME EXECUTION RESULT: COMPLETE / VALIDATED (871824e)
-IMPLEMENTATION APPROVAL: SUSPENDED PENDING CONTRACT RE-REVIEW
+IMPLEMENTATION APPROVAL: SUSPENDED PENDING REVALIDATION
 IMPLEMENTATION SCOPE: LOCKED
 IMPLEMENTATION APPROVAL CHECKPOINT: e743068
-RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING CONTRACT RE-REVIEW
+RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING REVALIDATION
 RUNTIME IMPLEMENTATION STATUS: IMPLEMENTED / REVIEW FAILED / CHANGES PROHIBITED
 RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
 ```
 
 The active task retains its historical locked three-file implementation scope.
-Independent implementation review found P1 predecessor-validation ambiguity;
-the limited initial/retry discriminator amendment requires independent contract
-re-review. Implementation Approval and Runtime Implementation Authority are
-suspended, and production changes are prohibited. Serializer/canonicalization
-and checksum policy remain stop conditions pending a separate approval
-amendment.
+Contract revalidation is complete: the independent re-review and planning
+compatibility passed with no rewrite required. Implementation Approval and
+Runtime Implementation Authority remain suspended pending Implementation
+Approval Revalidation, and production changes are prohibited.
+Serializer/canonicalization and checksum policy remain stop conditions pending
+a separate approval amendment.
 Runtime execution, Provider/MCP Invocation, persistence, Push, Merge, and
 Deploy remain prohibited.
 

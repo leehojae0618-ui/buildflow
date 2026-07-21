@@ -3,18 +3,18 @@
 ## 1. Status
 
 ```text
-PLANNING STATUS: ACTIVE / CONTRACT RE-REVIEW REQUIRED / IMPLEMENTATION SUSPENDED
-CURRENT SPRINT WORK: IMPLEMENTATION REVIEW FAILED / CONTRACT RESOLUTION IN PROGRESS
+PLANNING STATUS: ACTIVE / IMPLEMENTATION APPROVAL REVALIDATION REQUIRED / AUTHORITY SUSPENDED
+CURRENT SPRINT WORK: CONTRACT REVALIDATION COMPLETE / IMPLEMENTATION APPROVAL REVALIDATION PENDING
 PROJECT LIFECYCLE: ACTIVE
 CONTRACT BASELINE: RUNTIME-STEP-CONTRACT-001
 CONTRACT CHECKPOINT: 730bde8
 CURRENT CONTRACT AMENDMENT: INITIAL-RETRY DISCRIMINATOR (`59aa291`)
 PREVIOUS FIELD-MATRIX AMENDMENT: INDEPENDENT RE-REVIEW PASS (`ca54d12`)
 PREVIOUS SPRINT CLOSEOUT: 3873534
-IMPLEMENTATION APPROVAL: SUSPENDED PENDING CONTRACT RE-REVIEW
+IMPLEMENTATION APPROVAL: SUSPENDED PENDING REVALIDATION
 IMPLEMENTATION SCOPE: LOCKED
 IMPLEMENTATION APPROVAL CHECKPOINT: e743068
-RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING CONTRACT RE-REVIEW
+RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING REVALIDATION
 RUNTIME IMPLEMENTATION STATUS: IMPLEMENTED / REVIEW FAILED / CHANGES PROHIBITED
 RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
 ```
@@ -40,9 +40,10 @@ their current identities and references only.
 
 Limited reopening resolved the Attempt field matrix with independent re-review
 PASS. The planning Sprint remains active. Independent implementation review
-found a blocking predecessor-validation P1, so Planning Consistency Review,
-Implementation Approval, and Runtime Implementation Authority are suspended
-pending the limited contract re-review. The implemented three-file slice at
+found a blocking predecessor-validation P1. Contract revalidation is now
+complete with Planning Compatibility PASS and no rewrite required. Implementation
+Approval and Runtime Implementation Authority remain suspended pending
+Implementation Approval Revalidation. The implemented three-file slice at
 `13a2c26` must not change until authority is regranted.
 
 ## 4. Planning Scope

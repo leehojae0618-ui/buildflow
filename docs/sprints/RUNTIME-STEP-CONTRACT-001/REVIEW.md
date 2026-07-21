@@ -4,13 +4,15 @@
 
 ```text
 TASK: RUNTIME-STEP-CONTRACT-001
-CONTRACT REVIEW: INDEPENDENT RE-REVIEW REQUIRED
+CONTRACT REVIEW: INDEPENDENT RE-REVIEW PASS
 LIMITED REOPENING: AUTHORIZED — ATTEMPT NUMBER AND PREDECESSOR RULES ONLY
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
-PM / CTO AMENDMENT DECISION: PENDING INDEPENDENT RE-REVIEW
-CONTRACT DECISION: AMENDED / PENDING INDEPENDENT RE-REVIEW
-IMPLEMENTATION APPROVAL: SUSPENDED PENDING CONTRACT RE-REVIEW
-RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING CONTRACT RE-REVIEW
+CURRENT AMENDMENT CHECKPOINT: 59aa291
+PREVIOUS FIELD-MATRIX AMENDMENT CHECKPOINT: ca54d12
+CONTRACT REVALIDATION: COMPLETE
+CONTRACT DECISION: AMENDED / REVALIDATION COMPLETE
+IMPLEMENTATION APPROVAL: SUSPENDED PENDING REVALIDATION
+RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING REVALIDATION
 ```
 
 ## 2. Review Scope
@@ -69,9 +71,10 @@ a new Attempt id, and increment the Attempt number by exactly one.
 
 This amendment is record-validation only. It does not authorize retry
 execution, persistence lookup, Provider/MCP work, or a new Runtime capability.
-Independent contract re-review is REQUIRED. The historical approval and
-authority records remain preserved, while their current operative state is
-suspended pending that re-review.
+Independent contract re-review passed. Planning compatibility passed with no
+rewrite required after the resolved P2 checkpoint correction. The historical
+approval and authority records remain preserved while their current operative
+state is suspended pending Implementation Approval Revalidation.
 
 ## 5. Historical Draft Decision
 

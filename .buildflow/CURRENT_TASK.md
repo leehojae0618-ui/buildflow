@@ -11,23 +11,23 @@ ACTIVE
 ## Authority Status
 
 ```text
-ACTIVE / CONTRACT RE-REVIEW REQUIRED / IMPLEMENTATION SUSPENDED
-CURRENT SPRINT WORK: IMPLEMENTATION REVIEW FAILED / CONTRACT RESOLUTION IN PROGRESS
-RUNTIME STEP CONTRACT: AMENDED / INITIAL-RETRY DISCRIMINATOR / RE-REVIEW REQUIRED
+ACTIVE / IMPLEMENTATION APPROVAL REVALIDATION REQUIRED / AUTHORITY SUSPENDED
+CURRENT SPRINT WORK: CONTRACT REVALIDATION COMPLETE / IMPLEMENTATION APPROVAL REVALIDATION PENDING
+RUNTIME STEP CONTRACT: AMENDED / INITIAL-RETRY DISCRIMINATOR / REVALIDATION COMPLETE
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
-IMPLEMENTATION APPROVAL: SUSPENDED PENDING CONTRACT RE-REVIEW
+IMPLEMENTATION APPROVAL: SUSPENDED PENDING REVALIDATION
 IMPLEMENTATION SCOPE: LOCKED
 IMPLEMENTATION APPROVAL CHECKPOINT: e743068
-RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING CONTRACT RE-REVIEW
+RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING REVALIDATION
 RUNTIME IMPLEMENTATION STATUS: IMPLEMENTED / REVIEW FAILED / CHANGES PROHIBITED
 RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
 ```
 
 ## Approved Contract Baseline
 
-- Runtime Step Contract: initial/retry discriminator amendment pending
-  independent re-review; latest amendment checkpoint `59aa291`; prior contract
-  checkpoint `730bde8`; previous field-matrix amendment checkpoint `ca54d12`.
+- Runtime Step Contract: initial/retry discriminator revalidation complete at
+  `59aa291`; prior contract checkpoint `730bde8`; previous field-matrix
+  amendment checkpoint `ca54d12`.
 - Previous Result implementation Sprint closeout: `3873534`.
 - RuntimeExecutionResult: COMPLETE / VALIDATED (`871824e`).
 - The approved Step contract is not rewritten by this planning task except for
@@ -36,7 +36,7 @@ RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
 ## Authorization Boundary
 
 - Historical Implementation Approval and Authority remain recorded for the
-  locked three-file scope but are suspended pending contract re-review.
+  locked three-file scope but are suspended pending revalidation.
 - Production implementation is IMPLEMENTED at checkpoint `13a2c26`; its
   independent review FAILED with blocking P1, so changes are prohibited.
 

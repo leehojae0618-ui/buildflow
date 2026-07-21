@@ -8,7 +8,7 @@ PLANNING ID: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 IMPLEMENTATION APPROVAL: APPROVED
 IMPLEMENTATION SCOPE: LOCKED
 RUNTIME IMPLEMENTATION AUTHORITY: HISTORICALLY GRANTED BY `AUTHORITY.md`
-CURRENT OPERATIVE IMPLEMENTATION APPROVAL: SUSPENDED PENDING CONTRACT RE-REVIEW
+CURRENT OPERATIVE IMPLEMENTATION APPROVAL: SUSPENDED PENDING REVALIDATION
 CURRENT CONTRACT AMENDMENT CHECKPOINT: 59aa291
 APPROVAL CHECKPOINT: e743068
 ```
@@ -18,8 +18,8 @@ Runtime Implementation Authority. It does not authorize Runtime execution or
 scope expansion.
 
 The historical approval remains recorded. Its operative effect is suspended
-while the limited initial/retry discriminator contract amendment receives
-independent re-review.
+until Implementation Approval Revalidation completes after the limited
+initial/retry discriminator contract amendment.
 
 ## 2. Approved Implementation Scope
 

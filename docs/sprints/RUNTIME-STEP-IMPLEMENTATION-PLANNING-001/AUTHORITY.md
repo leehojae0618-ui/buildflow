@@ -5,9 +5,9 @@
 ```text
 AUTHORITY ID: RUNTIME-STEP-RUNTIME-IMPLEMENTATION-AUTHORITY-001
 PLANNING ID: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
-IMPLEMENTATION APPROVAL: HISTORICAL APPROVED / OPERATIVE SUSPENDED PENDING CONTRACT RE-REVIEW
+IMPLEMENTATION APPROVAL: HISTORICAL APPROVED / OPERATIVE SUSPENDED PENDING REVALIDATION
 IMPLEMENTATION SCOPE: LOCKED
-RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING CONTRACT RE-REVIEW
+RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING REVALIDATION
 RUNTIME IMPLEMENTATION STATUS: IMPLEMENTED / REVIEW FAILED / CHANGES PROHIBITED
 CURRENT CONTRACT AMENDMENT CHECKPOINT: 59aa291
 AUTHORITY CHECKPOINT: c67adbd
@@ -18,8 +18,8 @@ This authority grants implementation work only within the locked paths below.
 It does not authorize Runtime execution, external I/O, or scope expansion.
 
 The historical authority checkpoint remains preserved, but its operative effect
-is suspended until independent contract re-review, planning consistency review,
-Implementation Approval revalidation, and authority regrant are complete.
+is suspended until Implementation Approval Revalidation and authority regrant
+are complete.
 
 ## 2. Authorized Paths
 

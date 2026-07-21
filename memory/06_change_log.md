@@ -1,5 +1,13 @@
 # Change Log Memory
 
+## 2026-07-22 — Runtime Step Contract Revalidation Completion
+
+- Recorded Runtime Step initial/retry discriminator contract revalidation as
+  complete after independent re-review and planning compatibility PASS.
+- Governing amendment: `59aa291`; previous field-matrix amendment: `ca54d12`.
+  Implementation Approval and Runtime Implementation Authority remain
+  suspended pending revalidation. Push / Merge / Deploy: not performed.
+
 ## 2026-07-22 — Runtime Step Initial/Retry Discriminator Contract Resolution
 
 - Amended only the Runtime Step Attempt ordinal and predecessor validation
