@@ -3,12 +3,14 @@
 ## 1. Status and Objective
 
 ```text
-PLANNING STATUS: ACTIVE / IMPLEMENTATION APPROVED / SCOPE LOCKED
+PLANNING STATUS: ACTIVE / IMPLEMENTATION AUTHORIZED / SCOPE LOCKED
 PLANNING BASELINE: 00eb274 / 21889b1 / 2dab5be
 IMPLEMENTATION PLANNING CHECKPOINT: 00bfe7a
 IMPLEMENTATION APPROVAL: APPROVED
 IMPLEMENTATION SCOPE: LOCKED
-RUNTIME IMPLEMENTATION AUTHORITY: NONE
+IMPLEMENTATION APPROVAL CHECKPOINT: 55a5168
+RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
+RUNTIME IMPLEMENTATION STATUS: AUTHORIZED / NOT STARTED
 ```
 
 Plan a small, pure `RuntimeExecutionResult` implementation that creates and
@@ -123,8 +125,8 @@ Live integration, persistence, and external invocation tests are deferred.
 
 ## 8. Implementation Sequence and Checkpoints
 
-1. Obtain a separate Runtime Implementation Authority grant before modifying
-   any approved production or test file.
+1. Begin only the three locked paths after this Authority checkpoint is
+   committed.
 2. Add the Result type and pure input boundary.
 3. Add canonicalization/digest helpers with focused deterministic tests.
 4. Add matrix and correlation validation.
@@ -152,7 +154,7 @@ affected approved decision through change control.
 
 ### Approval criteria for a later implementation task
 
-- A separate Runtime Implementation Authority grant is issued.
+- Runtime Implementation Authority is granted only for the three locked paths.
 - The locked serializer/digest policy is implemented without altering approved
   Result semantics.
 - File list remains restricted to the Result module, tests, and export surface.

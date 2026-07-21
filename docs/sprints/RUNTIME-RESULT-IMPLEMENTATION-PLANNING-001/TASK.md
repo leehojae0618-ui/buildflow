@@ -3,14 +3,16 @@
 ## 1. Status
 
 ```text
-TASK STATUS: ACTIVE / IMPLEMENTATION APPROVED / SCOPE LOCKED
+TASK STATUS: ACTIVE / IMPLEMENTATION AUTHORIZED / SCOPE LOCKED
 CONTRACT BASELINE: 00eb274
 CLOSEOUT CHECKPOINT: 21889b1
 DOCUMENTATION CONSISTENCY CHECKPOINT: 2dab5be
 IMPLEMENTATION PLANNING CHECKPOINT: 00bfe7a
 IMPLEMENTATION APPROVAL: APPROVED
 IMPLEMENTATION SCOPE: LOCKED
-RUNTIME IMPLEMENTATION AUTHORITY: NONE
+IMPLEMENTATION APPROVAL CHECKPOINT: 55a5168
+RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
+RUNTIME IMPLEMENTATION STATUS: AUTHORIZED / NOT STARTED
 ```
 
 ## 2. Purpose
@@ -52,7 +54,8 @@ items.
   Scheduler, Worker, or retry/resume execution semantics.
 - Database persistence, retrieval, migrations, API, UI, deployment, Marketplace,
   Vault, live Credentials, or external calls.
-- Contract modification or Runtime Implementation Authority.
+- Contract modification, all unapproved paths, and all excluded Runtime
+  behaviors.
 
 ## 6. Deliverables
 
@@ -61,6 +64,8 @@ items.
   strategy, decisions/deferred items, risk register, and approval checklist.
 - `APPROVAL.md` locking the implementation file scope and serializer/digest
   policies without granting Runtime Implementation Authority.
+- `AUTHORITY.md` granting the locked three-path implementation scope with stop
+  conditions; implementation remains not started at this checkpoint.
 - Operational and memory status updates reflecting planning-only activation.
 
 ## 7. Exit Criteria
@@ -71,4 +76,5 @@ items.
   and persistence choices are classified as proposed or deferred, not silently
   implemented.
 - The Implementation Approval records an exact file scope and policy lock.
-- Runtime Implementation Authority remains `NONE` until a separate grant.
+- The authority record preserves the three-path lock and `AUTHORIZED / NOT
+  STARTED` implementation status.

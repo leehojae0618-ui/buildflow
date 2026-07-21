@@ -1,5 +1,13 @@
 # Current Sprint Memory
 
+## 2026-07-21 — Runtime Result Implementation Authority
+
+- Runtime Implementation Authority: GRANTED.
+- Runtime Implementation Status: AUTHORIZED / NOT STARTED.
+- Scope remains locked to the three approved Result implementation paths.
+- Stop conditions require an approval amendment before any additional path,
+  external I/O, dependency change, or Runtime contract change.
+
 ## 2026-07-21 — Runtime Result Implementation Approval
 
 - Implementation Approval: APPROVED.

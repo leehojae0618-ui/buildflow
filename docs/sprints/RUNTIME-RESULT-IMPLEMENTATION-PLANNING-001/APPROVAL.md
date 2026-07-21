@@ -10,9 +10,9 @@ RUNTIME IMPLEMENTATION AUTHORITY: NONE
 APPROVAL CHECKPOINT: PENDING COMMIT
 ```
 
-This approval authorizes a bounded future pure implementation slice only after
-a separate Runtime Implementation Authority grant. It does not start code,
-tests, Runtime execution, Provider/MCP Invocation, persistence, or deployment.
+This approval is implemented by the separate `AUTHORITY.md` record. It does not
+itself start code, tests, Runtime execution, Provider/MCP Invocation,
+persistence, or deployment.
 
 ## 2. Approved Implementation Slice
 

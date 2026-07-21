@@ -1,5 +1,11 @@
 # Change Log Memory
 
+## 2026-07-21 — RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001 Authority
+
+- Created `AUTHORITY.md` with the locked three-path implementation authority.
+- Runtime Implementation Authority: GRANTED; status: AUTHORIZED / NOT STARTED.
+- No code or test changes. Commit / Push / Merge / Deploy: not performed.
+
 ## 2026-07-21 — RUNTIME-RESULT-IMPLEMENTATION-PLANNING-001 Approval
 
 - Created `APPROVAL.md` with a three-file implementation scope lock.
