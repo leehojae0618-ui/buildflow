@@ -1,5 +1,73 @@
 # Current Sprint Memory
 
+## 2026-07-17 — Runtime Preflight / Start Contract Implementation
+
+Current task:
+
+```text
+RUNTIME-EXECUTION-START-001
+```
+
+Status:
+
+```text
+IMPLEMENTATION COMPLETE
+FINAL QA REQUIRED
+NO COMMIT
+```
+
+Implemented files:
+
+- `src/features/agents/runtime-execution-start.ts`
+- `src/features/agents/runtime-execution-start.test.ts`
+- `src/features/agents/index.ts`
+
+Implemented behavior:
+
+- pure `RuntimePreflightResult` builder;
+- pure `RuntimeExecutionStart` builder;
+- approval, connection, credential, capability, provider, MCP, runtime policy,
+  cancellation, and idempotency readiness snapshot checks;
+- deterministic preflight and start identifiers;
+- explicit `READY` start record without moving Runtime to `RUNNING`;
+- strict caller-provided ISO timestamp validation;
+- secret-like value rejection and sanitized failures;
+- request/preflight integrity binding checks;
+- duplicate snapshot conflict detection;
+- input non-mutation tests.
+
+Still not implemented:
+
+- Runtime execution engine;
+- Runtime Step / Attempt contract;
+- Runtime Execution Result;
+- Runtime Evidence Bundle / Report;
+- Provider execution;
+- MCP Tool Invocation;
+- Vault or Credential access;
+- DB/API/UI/queue/scheduler/lease behavior;
+- deployment;
+- Marketplace.
+
+Current Package Readiness remains:
+
+```text
+CONDITIONALLY_READY
+```
+
+Target test status:
+
+```text
+npx vitest run src/features/agents/runtime-execution-start.test.ts
+PASS — 17 tests
+```
+
+Next required step:
+
+```text
+Final QA and checkpoint review before any commit.
+```
+
 ## Current Repository State
 
 Checked state during memory creation:

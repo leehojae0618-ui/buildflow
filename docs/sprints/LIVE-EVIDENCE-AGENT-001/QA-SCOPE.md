@@ -103,12 +103,12 @@ evidence-backed QA boundary for:
 | Package Runtime Evidence Design | `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-RUNTIME-EVIDENCE.md` | `DESIGN_COMPLETE` | Six-layer Runtime Evidence contract for request, start evidence, step evidence, result, bundle, and report. |
 | Runtime Execution Request | `src/features/agents/runtime-execution-request.ts`, `src/features/agents/runtime-execution-request.test.ts` | `IMPLEMENTED` | Pure Runtime Execution Request builder creates deterministic, reference-first request objects from Approval Gate results. It validates package/evidence/approval binding, `RUNTIME_EXECUTION` scope, execution mode, references, artifacts, capabilities, expiration policy, duplicate normalization, secret safety, and input non-mutation. Runtime Start, Step, Result, Bundle, Report, MCP Invocation, Provider execution, deployment, persistence, and Marketplace remain out of scope. |
 | Runtime Execution Request Final QA | `src/features/agents/runtime-execution-request.test.ts`, full quality gate | `COMPLETE` | Final QA passed with remediation. Runtime Execution Request is ready for checkpoint commit after user approval. |
-| Runtime Start Evidence | none found | `NOT_STARTED` | Runtime start evidence contract implementation has not started. |
+| Runtime Start Evidence | `src/features/agents/runtime-execution-start.ts`, `src/features/agents/runtime-execution-start.test.ts` | `IMPLEMENTED` | Runtime Execution Start contract exists as a pure deterministic builder. It creates a `READY` start record only after a ready preflight result and does not execute Runtime work. |
 | Runtime Step Evidence | none found | `NOT_STARTED` | Runtime step evidence contract implementation has not started. |
 | Runtime Execution Result | none found | `NOT_STARTED` | Runtime result evidence contract implementation has not started. |
 | Runtime Evidence Bundle / Report | none found | `NOT_STARTED` | Runtime bundle/report implementation has not started. |
 | Runtime / MCP Boundary Design | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `COMPLETE` | Runtime, Step, Provider, MCP, Connection, Credential, Approval, Retry, Cancellation, Idempotency, Evidence, and Cost Simulation boundaries are decision-locked for future implementation. |
-| Runtime Preflight | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `NOT_STARTED` | Preflight boundary is defined, but contract/code implementation has not started. |
+| Runtime Preflight | `src/features/agents/runtime-execution-start.ts`, `src/features/agents/runtime-execution-start.test.ts`, `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `IMPLEMENTED` | Non-mutating Runtime Preflight contract exists. It evaluates approval, connection, credential, capability, provider, MCP, policy, cancellation, and idempotency readiness snapshots by reference only. |
 | Runtime Step Contract | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DESIGN_DEFINED` | Step contract candidate is documented; code implementation has not started. |
 | Runtime Step Attempt | `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md` | `DESIGN_DEFINED` | Step attempt contract candidate is documented; code implementation has not started. |
 | Provider Invocation | none found | `NOT_STARTED` | Provider invocation evidence is not implemented in the Runtime Evidence path. |
@@ -407,7 +407,14 @@ Reason:
 - Runtime Execution Request is implemented as the first pure Runtime Evidence
   contract layer. It produces a deterministic request object only and does not
   start Runtime execution.
-- Runtime Start, Step, Result, Bundle, and Report are not implemented.
+- Runtime Preflight is implemented as a non-mutating readiness snapshot
+  contract. It does not call Providers, MCP Tools, Vault, DB, API, queues, or
+  schedulers.
+- Runtime Execution Start is implemented as a pure start contract builder. It
+  creates a `READY` execution-start record only after `READY` preflight and does
+  not transition Runtime to `RUNNING`.
+- Runtime Step, Runtime Step Attempt, Runtime Execution Result, Runtime
+  Evidence Bundle, and Runtime Evidence Report are not implemented.
 - Representative AI inquiry provider path has prior live Evidence.
 - Actual MCP Invocation Evidence is not found.
 - Marketplace publish Evidence is not found.

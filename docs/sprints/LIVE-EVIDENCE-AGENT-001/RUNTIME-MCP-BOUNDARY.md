@@ -20,10 +20,14 @@ Package
 → Runtime Execution Request
 ```
 
+Partially implemented as pure contracts:
+
+- Runtime Preflight
+- Runtime Execution Start
+
 Not implemented:
 
-- Runtime Execution Start
-- Runtime Preflight
+- Runtime Execution Engine
 - Runtime Step
 - Runtime Step Attempt
 - Provider Invocation
@@ -683,13 +687,17 @@ RUNTIME-EXECUTION-START-001
 Runtime Preflight / Start Contract
 ```
 
+`RUNTIME-EXECUTION-START-001` is now implemented as a pure contract layer. The
+next implementation candidate should move to Runtime Step / Attempt contracts,
+not actual Provider/MCP execution.
+
 ## 22. QA Implications
 
 QA status updates:
 
 - Runtime/MCP Boundary Design: `COMPLETE`
-- Runtime Execution Start: `NOT_STARTED`
-- Runtime Preflight: `NOT_STARTED`
+- Runtime Execution Start: `IMPLEMENTED_CONTRACT_ONLY`
+- Runtime Preflight: `IMPLEMENTED_CONTRACT_ONLY`
 - Runtime Step Contract: `DESIGN_DEFINED`
 - Runtime Step Attempt: `DESIGN_DEFINED`
 - Provider Invocation Contract: `DESIGN_DEFINED`
@@ -715,4 +723,3 @@ Design Lock verdict:
 ```text
 DESIGN_LOCK_APPROVED_WITH_OPEN_DECISIONS
 ```
-

@@ -6,14 +6,16 @@
 Task ID: PACKAGE-RUNTIME-EVIDENCE-001
 Status: DRAFT
 Stage: DESIGN COMPLETE
-Implementation: NOT STARTED
+Implementation: PARTIAL CONTRACT IMPLEMENTED
 Commit: NOT PERFORMED
 Package Readiness: CONDITIONALLY_READY
 ```
 
-This document is a design-only contract proposal. It does not implement Runtime
-execution, MCP Invocation, Provider execution, deployment, persistence,
-Marketplace behavior, or UI.
+This document started as a design-only contract proposal. As of
+`RUNTIME-EXECUTION-START-001`, the Runtime Execution Request, Runtime
+Preflight, and Runtime Execution Start contracts have partial pure
+implementations. They do not implement Runtime execution, MCP Invocation,
+Provider execution, deployment, persistence, Marketplace behavior, or UI.
 
 ## 2. Objective
 
@@ -56,7 +58,10 @@ Current upstream package evidence layers:
 
 Current missing execution evidence:
 
-- no Runtime execution;
+- no Runtime Step Evidence;
+- no Runtime Execution Result;
+- no Runtime Evidence Bundle or Report;
+- no Runtime execution engine;
 - no MCP Tool Invocation;
 - no Provider execution;
 - no deployment;
@@ -65,6 +70,57 @@ Current missing execution evidence:
 
 Therefore Runtime Evidence v1 is designed as the next evidence boundary, not as
 proof that execution already occurred.
+
+## 3.1 Implemented Contract Layers
+
+Implemented pure contract layers:
+
+- `src/features/agents/runtime-execution-request.ts`
+- `src/features/agents/runtime-execution-start.ts`
+- `src/features/agents/runtime-execution-start.test.ts`
+
+`RuntimePreflightResult` is a non-mutating readiness snapshot result. It
+evaluates the references provided by the caller:
+
+- Approval status snapshot;
+- Connection readiness snapshots;
+- Credential readiness snapshots;
+- Capability readiness snapshots;
+- optional Provider readiness snapshots;
+- optional MCP Tool readiness snapshots;
+- optional Runtime policy snapshot;
+- cancellation snapshot;
+- idempotency snapshot.
+
+The preflight contract can return:
+
+```text
+READY
+WAITING_FOR_CONNECTION
+WAITING_FOR_CREDENTIAL
+WAITING_FOR_APPROVAL
+BLOCKED
+INVALID
+EXPIRED
+CANCELLED
+```
+
+`READY` means the provided references and snapshots satisfy the contract-level
+start conditions. It does not prove live Provider availability, live Credential
+validity, MCP Invocation success, external side effects, persistence, or
+deployment success.
+
+`RuntimeExecutionStart` creates a deterministic start record only when the
+Runtime Execution Request and Runtime Preflight Result are valid and the
+preflight status is `READY`. The initial Runtime status is intentionally:
+
+```text
+READY
+```
+
+It does not transition the Runtime to `RUNNING`, acquire a lease, enqueue a
+job, start a Step, call a Provider, invoke an MCP Tool, read Vault, write a
+database record, deploy, or publish to Marketplace.
 
 ## 4. Runtime Evidence Boundary
 

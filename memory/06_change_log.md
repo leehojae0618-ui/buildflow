@@ -1,5 +1,54 @@
 # Change Log Memory
 
+## 2026-07-17 — RUNTIME-EXECUTION-START-001 Contract Implementation
+
+Added Runtime Preflight and Runtime Execution Start pure contract code:
+
+- `src/features/agents/runtime-execution-start.ts`
+- `src/features/agents/runtime-execution-start.test.ts`
+- `src/features/agents/index.ts`
+
+Updated QA/runtime documentation:
+
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-RUNTIME-EVIDENCE.md`
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md`
+- `docs/sprints/LIVE-EVIDENCE-AGENT-001/QA-SCOPE.md`
+
+Updated memory:
+
+- `memory/05_current_sprint.md`
+- `memory/06_change_log.md`
+- `memory/07_next_task.md`
+
+Implemented behavior:
+
+- Runtime Preflight readiness snapshot contract;
+- Runtime Execution Start deterministic start contract;
+- request/preflight integrity binding checks;
+- approval, connection, credential, capability, provider, MCP, policy,
+  cancellation, and idempotency readiness checks;
+- strict caller-provided timestamp validation;
+- secret-like value rejection and sanitized failure output;
+- duplicate snapshot conflict detection;
+- input non-mutation coverage.
+
+Code changes do not implement:
+
+- Runtime engine execution;
+- Runtime Step / Attempt execution;
+- Provider execution;
+- MCP Tool Invocation;
+- Vault or Credential access;
+- DB/API/UI/queue/scheduler/lease behavior;
+- deployment;
+- Marketplace.
+
+Commit / Push / Deploy:
+
+- Commit: not performed
+- Push: not performed
+- Deploy: not performed
+
 ## 2026-07-17 — Memory System Created
 
 Created repository-local memory documents under:
