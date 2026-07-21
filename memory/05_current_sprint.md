@@ -15,7 +15,8 @@ ACTIVE
 RESEARCH / DRAFT
 ARCHITECTURE REVIEW ONLY
 DRAFT COMPLETE
-DECISION LOCK PENDING
+DECISION LOCK APPROVED
+CLOSEOUT PENDING
 ```
 
 Review output:
@@ -55,8 +56,17 @@ CONDITIONALLY_READY
 Next required gate:
 
 ```text
-PM/CTO REVIEW AND DECISION LOCK
+ARCHITECTURE GATE CLOSEOUT
 ```
+
+Decision Lock result:
+
+- PM Decision: `APPROVE`.
+- CTO Decision: `APPROVE`.
+- Existing Runtime Contracts: `KEEP`.
+- Runtime Step Contract: may proceed only after Architecture Gate closeout and
+  separate task approval.
+- Runtime Implementation: not approved.
 
 ## 2026-07-17 — Runtime Preflight / Start Contract Implementation
 

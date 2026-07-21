@@ -15,8 +15,8 @@ ACTIVE / RESEARCH / DRAFT / ARCHITECTURE REVIEW ONLY
 ## Goal
 
 Review BuildFlow's long-term AI Runtime principles against the current
-architecture and Runtime contracts, assess impact and conflicts, and produce a
-non-binding recommendation for PM/CTO Decision Lock.
+architecture and Runtime contracts, assess impact and conflicts, and record the
+approved PM/CTO Decision Lock without authorizing implementation.
 
 ## Scope
 
@@ -48,9 +48,10 @@ non-binding recommendation for PM/CTO Decision Lock.
 
 - Architecture Gate: ACTIVE
 - Review document: DRAFT COMPLETE
-- Review gate: PM/CTO REVIEW PENDING
+- Review gate: PM/CTO DECISION LOCK COMPLETE
 - Implementation authorization: NONE
-- Decision Lock: PENDING PM/CTO REVIEW
+- Decision Lock: APPROVED
+- Gate closeout: PENDING
 - Current Package Readiness: CONDITIONALLY_READY
 
 ## Required Output

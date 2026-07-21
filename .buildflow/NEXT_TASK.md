@@ -25,5 +25,8 @@ No implementation task or additional Sprint may be activated until:
 3. a Decision Lock is explicitly approved; and
 4. the Architecture Gate is formally closed.
 
+Decision Lock is now approved. The Architecture Gate is still active until a
+separate closeout task formally records closure.
+
 Potential follow-up work, including `RUNTIME-STEP-CONTRACT-001`, remains
 unapproved and inactive.

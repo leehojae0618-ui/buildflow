@@ -26,7 +26,8 @@ docs/architecture/LONGTERM_AI_RUNTIME.md
 
 ```text
 Decision Recommendation: KEEP CURRENT
-Decision Lock: PENDING PM/CTO REVIEW
+Decision Lock: APPROVED
+Architecture Gate Closeout: PENDING
 ```
 
 Evidence-based findings:
@@ -43,15 +44,13 @@ Evidence-based findings:
 
 ## Required Next Gate
 
-PM/CTO must review the Architecture Impact Assessment, risks, immediate design
-constraints, deferred components, and `KEEP CURRENT` recommendation.
+Architecture Gate closeout must record the approved Decision Lock and return the
+project to `BETWEEN_SPRINTS`.
 
 No implementation task may start until PM/CTO explicitly:
 
-1. approves or rejects the recommendation;
-2. issues a Decision Lock;
-3. closes `ARCHITECTURE-AI-RUNTIME-REVIEW-001`; and
-4. approves and scope-freezes a next task.
+1. closes `ARCHITECTURE-AI-RUNTIME-REVIEW-001`; and
+2. approves and scope-freezes a next task.
 
 ## Candidate After Decision Lock
 

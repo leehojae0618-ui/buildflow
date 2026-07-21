@@ -18,6 +18,10 @@ Updated operational tracking:
 Review result:
 
 - recommendation: `KEEP CURRENT`;
+- PM/CTO Decision Lock: `APPROVED`;
+- existing Runtime contracts: `KEEP`;
+- Runtime implementation: not approved;
+- next required action: Architecture Gate closeout;
 - no material conflict with current Runtime contracts;
 - current `src/features/planner/` identified as Build Planner, not Runtime
   Planner;

@@ -11,13 +11,17 @@
 Task: ARCHITECTURE-AI-RUNTIME-REVIEW-001
 Status: ACTIVE / RESEARCH / DRAFT
 Mode: ARCHITECTURE REVIEW ONLY
-Decision Lock: PENDING
+Decision Lock: APPROVED
 Implementation Authority: NONE
 ```
 
 This review evaluates direction. It does not revise the current Runtime
 contracts and is not a Runtime Step, Planner, Compiler, Provider, MCP, Budget,
 or deployment implementation specification.
+
+Decision Lock approval applies only to the long-term principles listed in this
+document. It does not close the Architecture Gate, activate Runtime Step work,
+or authorize implementation.
 
 ## 2. Objective
 
@@ -373,12 +377,11 @@ this task.
 - runtime execution engine, concurrency, queue, and lease behavior;
 - Provider and MCP Invocation implementations.
 
-Recommended next action after PM/CTO review:
+Recommended next action after Decision Lock:
 
-1. Decision Lock this review as guidance if accepted.
-2. Close the Architecture Gate.
-3. Scope `RUNTIME-STEP-CONTRACT-001` as a contract-only task.
-4. Do not begin Runtime Planner, Compiler, Budget Router, Provider, or MCP
+1. Close the Architecture Gate.
+2. Scope `RUNTIME-STEP-CONTRACT-001` as a contract-only task.
+3. Do not begin Runtime Planner, Compiler, Budget Router, Provider, or MCP
    runtime implementation under that task.
 
 ## 18. Decision Recommendation
@@ -397,5 +400,51 @@ Rationale:
   can be added behind the current boundaries;
 - no blocking revision is required before Runtime Step contract design.
 
-This recommendation is a review conclusion, not a Decision Lock. PM/CTO must
-approve or reject it before it changes BuildFlow's binding architecture rules.
+This recommendation was approved by PM/CTO Decision Lock. It now acts as binding
+architecture guidance, but it still does not authorize implementation or close
+this Architecture Gate by itself.
+
+## 19. Decision Lock Result
+
+```text
+PM Decision: APPROVE
+CTO Decision: APPROVE
+Decision Lock: APPROVED
+Existing Runtime Contracts: KEEP
+Runtime Step Contract: MAY PROCEED ONLY AFTER ARCHITECTURE GATE CLOSEOUT
+Runtime Implementation Authority: NONE
+```
+
+Approved locked principles:
+
+1. Runtime control plane remains deterministic.
+2. LLMs do not directly control Runtime lifecycle or state transitions.
+3. Rule and Policy validation runs before model or Tool execution.
+4. Runtime Step must be explicit and explainable.
+5. Provider Invocation Layer and Provider Adapter (Provisioning) remain
+   separate boundaries.
+6. MCP Gateway remains an independent Runtime Tool execution boundary.
+7. Credential handling remains reference-only in Runtime contracts.
+8. Plan, Request, Execution, Step, Attempt, and Invocation identities remain
+   separate.
+9. Current Runtime Request, Preflight, and Execution Start contracts remain
+   valid.
+10. LLM Optional means Runtime control-plane independence, not removal of
+    model-backed Agent capabilities.
+
+Deferred detailed design:
+
+- Runtime Planner internal algorithm;
+- Runtime Compiler schema and artifact format;
+- LLM Budget Router algorithm;
+- AI Policy and Budget Policy Engine implementation;
+- local model selection rules;
+- provider fallback and blackout order;
+- parallel execution strategy;
+- retry policy details;
+- actual Provider or MCP Invocation implementation;
+- Marketplace integration.
+
+Decision Lock does not approve implementation. The next allowed action is
+Architecture Gate closeout, followed by a separate approval and scope freeze for
+any `RUNTIME-STEP-CONTRACT-001` work.
