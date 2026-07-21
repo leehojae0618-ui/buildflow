@@ -2,35 +2,71 @@
 
 ## Status
 
-CURRENT TASK IMPLEMENTATION COMPLETE — FINAL QA REQUIRED
+CURRENT TASK CLOSED — BETWEEN SPRINTS
 
-Current task:
+Last completed task:
 
 ```text
 RUNTIME-EXECUTION-START-001
 Runtime Preflight / Start Contract
 ```
 
-Completed implementation output:
+Checkpoint commit:
 
 ```text
-src/features/agents/runtime-execution-start.ts
-src/features/agents/runtime-execution-start.test.ts
-src/features/agents/index.ts
+6f3ed7d feat: add deterministic runtime execution start
 ```
 
-Completed documentation/memory updates:
+Closed status:
 
 ```text
-docs/sprints/LIVE-EVIDENCE-AGENT-001/PACKAGE-RUNTIME-EVIDENCE.md
-docs/sprints/LIVE-EVIDENCE-AGENT-001/RUNTIME-MCP-BOUNDARY.md
-docs/sprints/LIVE-EVIDENCE-AGENT-001/QA-SCOPE.md
-memory/05_current_sprint.md
-memory/06_change_log.md
-memory/07_next_task.md
+Implementation: COMPLETE
+Final QA: PASS
+Checkpoint Commit: COMPLETE
+Push / Merge / Deploy: NOT PERFORMED
+Architecture Review: NOT STARTED
 ```
 
-Implemented:
+Current workflow state:
+
+```text
+BETWEEN_SPRINTS
+```
+
+Next candidate:
+
+```text
+ARCHITECTURE-AI-RUNTIME-REVIEW-001
+Long-Term AI Runtime Architecture Review
+```
+
+Next candidate status:
+
+```text
+DRAFT
+NOT APPROVED
+NOT ACTIVE
+NOT SCOPE FROZEN
+```
+
+Candidate purpose:
+
+- Review long-term AI Runtime principles against current BuildFlow contracts.
+- Assess impact across Requirement, Capability, Blueprint, Planner, Runtime
+  Compiler, Runtime, Validator, Evidence, Package, MCP, and Provider
+  boundaries.
+- Identify conflicts and risks before Runtime Step / Attempt work continues.
+- Produce a decision recommendation: `KEEP CURRENT` or
+  `REVISE BEFORE IMPLEMENTATION`.
+
+Candidate constraints:
+
+- Documentation-only until explicitly approved.
+- Does not override existing architecture.
+- Does not authorize code changes or Runtime Step implementation.
+- Requires PM/CTO review and Decision Lock before any implementation impact.
+
+Previously completed implementation:
 
 - Runtime Preflight readiness snapshot builder;
 - Runtime Execution Start builder;
@@ -43,7 +79,7 @@ Implemented:
 - duplicate snapshot conflict rejection;
 - input non-mutation tests.
 
-Not implemented:
+Still not implemented:
 
 - Runtime engine execution;
 - Runtime Step / Attempt contract;
@@ -62,22 +98,14 @@ Current Package Readiness judgement:
 CONDITIONALLY_READY
 ```
 
-Required before next implementation:
+Recommended next single task:
 
 ```text
-Run final QA, review diff, and request checkpoint commit approval.
+ARCHITECTURE-AI-RUNTIME-REVIEW-001 approval and activation, or defer it and
+return to RUNTIME-STEP-CONTRACT-001 by explicit PM/CTO decision.
 ```
 
-Recommended next single task after checkpoint:
-
-```text
-RUNTIME-STEP-CONTRACT-001
-Runtime Step / Attempt Contract
-```
-
-The next task must remain contract-only unless PM explicitly approves runtime
-execution, Provider execution, MCP Invocation, persistence, queueing,
-scheduling, deployment, or Marketplace work.
+No next task may start until PM/CTO approval is explicit.
 
 ---
 
