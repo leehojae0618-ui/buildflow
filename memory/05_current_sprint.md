@@ -1,11 +1,11 @@
 # Current Sprint Memory
 
-## 2026-07-21 — Runtime Step Contract Sprint Activated
+## 2026-07-21 — Runtime Result Contract Sprint Activated
 
 Current task:
 
 ```text
-RUNTIME-STEP-CONTRACT-001
+RUNTIME-RESULT-CONTRACT-001
 ```
 
 Status:
@@ -13,76 +13,48 @@ Status:
 ```text
 ACTIVE_SPRINT
 ACTIVE
-SCOPE FROZEN
+FROZEN
 ```
 
 Scope baseline:
 
-- Scope Freeze Checkpoint: `b6fac24`
-- PM Decision: APPROVE
-- CTO Decision: APPROVE
+- Scope Freeze Checkpoint: `4f418d8`
+- PM Scope Decision: APPROVE
+- CTO Scope Decision: APPROVE
+- Scope Decision: APPROVED
+- Contract Status: NOT STARTED
+- Contract Decision: PENDING
+- Implementation Approval: NONE
 - Runtime Implementation Authority: NONE
 - Push / Merge / Deploy: NOT PERFORMED
 
 Authorized work:
 
-- Runtime Step contract document writing.
-- Runtime Step Attempt contract document writing.
+- RuntimeExecutionResult contract documentation.
+- Contract-draft preparation and Open Question review within the frozen scope.
 - Contract validation planning.
 - Review/report documentation for the contract-only sprint.
 
-Draft documents created:
+Previous Sprint transition:
 
-- `docs/sprints/RUNTIME-STEP-CONTRACT-001/CONTRACT.md`
-- `docs/sprints/RUNTIME-STEP-CONTRACT-001/STATE_MACHINE.md`
-- `docs/sprints/RUNTIME-STEP-CONTRACT-001/VALIDATION.md`
-- `docs/sprints/RUNTIME-STEP-CONTRACT-001/QA_CHECKLIST.md`
-- `docs/sprints/RUNTIME-STEP-CONTRACT-001/REVIEW.md`
+- `RUNTIME-STEP-CONTRACT-001` is `NOT ACTIVE / CONTRACT CHECKPOINT COMPLETE`.
+- Step Contract Checkpoint: `730bde8`.
+- Contract Decision: APPROVED.
+- Sprint Closed: NO.
+- Implementation Started: NO.
+- Implementation Approval: NONE.
+- Runtime Implementation Authority: NONE.
+- Under operating method A, `730bde8` itself is the official Step checkpoint;
+  its historical pre-commit `CHECKPOINT STATUS: READY` wording is preserved.
 
-Contract decision status:
+Result scope boundary:
 
-- Contract Review: APPROVED
-- Contract QA: PASS
-- Re-review: PASS
-- Previous P1 Findings: RESOLVED
-- PM Decision: APPROVE
-- CTO Decision: APPROVE
-- Contract Decision: APPROVED
-- Checkpoint Status: READY
-- Decision Recommendation: KEEP CURRENT
-- Implementation Approval: NONE
-- Runtime Implementation Authority: NONE
-
-Contract QA remediation:
-
-- P1: `CANCELLED` terminal reference rule aligned across contract documents.
-- P1: `TIMEOUT` terminal reference rule aligned across contract documents.
-- Terminal reference matrix now uses Evidence reference for `SUCCESS` and
-  `FAILED`, Evidence or cancellation reference for `CANCELLED`, Evidence or
-  timeout reference for `TIMEOUT`, and reason reference for `SKIPPED`.
-- Re-review confirmed no remaining P0/P1/P2 issues in the current contract
-  document set.
-- `CONTRACT.md` is the authoritative current contract. `TASK.md` remains the
-  Scope Freeze approval record and does not override the current terminal
-  reference matrix.
-- PM/CTO approved the contract without granting implementation authority.
-
-Non-active follow-up scope freeze:
-
-- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/TASK.md` records an approved,
-  frozen future scope for a Runtime Result contract.
-- The authoritative Runtime Step checkpoint is Git commit `730bde8`; under
-  operating method A, the existing pre-commit `CHECKPOINT STATUS: READY`
-  wording is retained rather than changed through a follow-up checkpoint.
-- Current Task remains `RUNTIME-STEP-CONTRACT-001`; the Result scope is not an
-  active Sprint, contract start, or implementation authorization.
-- No Runtime Result type, interface, validator, test, or implementation was
-  found in `src/features/agents/`.
-- Scope Decision: APPROVED. Scope Freeze checkpoint: PENDING COMMIT APPROVAL.
-- The first contract is `RuntimeExecutionResult` only; separate Step/Attempt
+- The initial contract is `RuntimeExecutionResult` only; separate Step/Attempt
   Result artifacts remain Deferred.
 - `completedAt` is a canonical deterministic Result identity input. Its exact
   serialization algorithm remains deferred to the contract body.
+- No Runtime Result type, interface, validator, test, or implementation has
+  been created.
 
 Prohibited work:
 
@@ -92,16 +64,10 @@ Prohibited work:
 - Queue, Scheduler, Worker, Lease, or Lock implementation.
 - DB, API, UI, deployment, or Marketplace work.
 
-Scope review draft:
+Next required work:
 
-- `docs/sprints/RUNTIME-STEP-CONTRACT-001/TASK.md`
-
-Scope Freeze decision:
-
-- PM Decision: `APPROVE`.
-- CTO Decision: `APPROVE`.
-- Scope Freeze Decision: `APPROVED`.
-- Runtime Implementation Authority: `NONE`.
+- Prepare the RuntimeExecutionResult contract draft within the frozen scope.
+- Do not write code or tests without later explicit approval.
 
 ## 2026-07-21 — Architecture Review Closeout
 
@@ -268,80 +234,69 @@ Actual Git HEAD observed:
 
 ## Current Sprint
 
-No active implementation Sprint.
+```text
+RUNTIME-RESULT-CONTRACT-001
+```
 
 Current workflow state from `.buildflow`:
 
 ```text
-BETWEEN_SPRINTS
+ACTIVE_SPRINT
 ```
 
-## Last Completed Sprint
+Current state:
+
+- Sprint Status: ACTIVE.
+- Scope Status: FROZEN.
+- Scope Decision: APPROVED.
+- Scope Freeze Checkpoint: `4f418d8`.
+- Contract Status: NOT STARTED.
+- Contract Decision: PENDING.
+- Implementation Approval: NONE.
+- Runtime Implementation Authority: NONE.
+
+## Previous Sprint Transition
 
 ```text
-RUNTIME-EXECUTION-START-001
-```
-
-Status:
-
-- CLOSED
-- checkpoint commit `6f3ed7d`
-- final QA PASS
-- push not performed
-- deploy not performed
-- implemented Runtime Preflight / Start contract only
-
-## Next Candidate
-
-```text
-ARCHITECTURE-AI-RUNTIME-REVIEW-001
+RUNTIME-STEP-CONTRACT-001
 ```
 
 Status:
 
 ```text
-DRAFT
-NOT APPROVED
 NOT ACTIVE
-NOT SCOPE FROZEN
+CONTRACT CHECKPOINT COMPLETE
+NOT CLOSED
 ```
 
-Roadmap alignment:
-
-```text
-Runtime architecture gate before Runtime Step / Attempt work
-```
+- Contract Decision: APPROVED.
+- Contract Checkpoint: `730bde8`.
+- Implementation Approval: NONE.
+- Runtime Implementation Authority: NONE.
 
 ## Current Goal
 
-Architecture Review is queued as the next candidate only. It has not started.
-
-Current recommendation:
-
-```text
-PM/CTO approval required before activation
-```
+Prepare the RuntimeExecutionResult Contract Draft inside the frozen Result
+scope. This does not authorize code, test, Provider/MCP, Runtime, DB/API/UI,
+or deployment work.
 
 ## Approved Scope
 
-None yet for ARCHITECTURE-AI-RUNTIME-REVIEW-001.
+```text
+RuntimeExecutionResult only
+```
 
-## Draft Candidate Scope
-
-- Documentation-only long-term AI Runtime architecture review.
-- Compare long-term AI Runtime principles with current BuildFlow contracts.
-- Identify conflicts, risks, and architecture impact.
-- Produce a recommendation: `KEEP CURRENT` or `REVISE BEFORE IMPLEMENTATION`.
-- Do not implement Runtime Step, Runtime Compiler, Planner, Budget Router,
-  Provider actions, MCP Invocation, DB/API/UI, deployment, or Marketplace.
+- Separate Step and Attempt Result artifacts remain Deferred.
+- Result must not redefine Step/Attempt statuses or terminal-reference rules.
+- Result and Evidence remain separate reference-based responsibilities.
 
 ## Unresolved / Needs PM Decision
 
-1. Should ARCHITECTURE-AI-RUNTIME-REVIEW-001 be activated before
-   `RUNTIME-STEP-CONTRACT-001`?
-2. Should the review remain documentation-only until PM/CTO Decision Lock?
-3. Should the final decision recommendation be limited to `KEEP CURRENT` or
-   `REVISE BEFORE IMPLEMENTATION`?
+1. Must a RuntimeExecutionResult exist only after all reachable Steps are
+   terminal, or may a future execution contract create an earlier blocked or
+   cancelled Result?
+2. Which terminal Step/Attempt references are required in the Result summary?
+3. Which safe metadata fields, if any, remain outside the deterministic core?
 
 ## Current QA Finding
 

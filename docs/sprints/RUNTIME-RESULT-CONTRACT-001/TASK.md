@@ -7,9 +7,9 @@ Sprint. The candidate contract must describe a deterministic, reference-first
 representation of a Runtime outcome without implementing Runtime execution,
 Provider Invocation, MCP Invocation, persistence, or Evidence storage.
 
-This Scope Freeze locks the future contract boundary only. It does not activate
-`RUNTIME-RESULT-CONTRACT-001`, define the contract body, or grant
-implementation authority.
+This Scope Freeze locks the contract boundary. Sprint activation authorizes
+contract-document preparation only; it does not define the contract body or
+grant implementation authority.
 
 ## 2. Background
 
@@ -54,9 +54,10 @@ This draft is constrained by:
 - `docs/architecture/LONGTERM_AI_RUNTIME.md` for deterministic Runtime control
   and reference-only Credential principles.
 
-The existing `.buildflow/CURRENT_TASK.md` remains authoritative for the only
-active Sprint: `RUNTIME-STEP-CONTRACT-001`. This document is a non-active
-future-scope record and does not change that operational state.
+`.buildflow/CURRENT_TASK.md` is authoritative for the only active Sprint:
+`RUNTIME-RESULT-CONTRACT-001`. `RUNTIME-STEP-CONTRACT-001` is retained as
+`NOT ACTIVE / CONTRACT CHECKPOINT COMPLETE`; it is not closed and has no
+implementation approval.
 
 ## 4. Dependency Contracts
 
@@ -194,7 +195,7 @@ The frozen scope can leave its future contract Sprint only when:
 - `RuntimeExecutionResult` remains the only initial Result artifact;
 - `completedAt` remains an explicit canonical Result identity input;
 - a future contract Review and PM/CTO decision pass;
-- the Scope Freeze checkpoint is committed after separate commit approval.
+- the Scope Freeze checkpoint `4f418d8` remains the frozen-scope baseline.
 
 ## 12. PM Review Placeholder
 
@@ -219,7 +220,7 @@ Preflight, Execution Start, and Step contracts. `completedAt` is retained as a
 canonical identity input because it is caller-provided factual completion data,
 not generated clock state; its exact serialization remains deferred.
 
-## 14. Scope Decision Placeholder
+## 14. Sprint Activation Status
 
 ```text
 TASK: RUNTIME-RESULT-CONTRACT-001
@@ -227,15 +228,18 @@ SCOPE STATUS: FROZEN
 PM SCOPE DECISION: APPROVE
 CTO SCOPE DECISION: APPROVE
 SCOPE DECISION: APPROVED
-SCOPE FREEZE CHECKPOINT: PENDING COMMIT APPROVAL
+SCOPE FREEZE CHECKPOINT: 4f418d8
 CONTRACT STATUS: NOT STARTED
-SPRINT STATUS: NOT ACTIVE
+CONTRACT DECISION: PENDING
+PROJECT STATE: ACTIVE_SPRINT
+SPRINT STATUS: ACTIVE
 IMPLEMENTATION APPROVAL: NONE
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ```
 
-No Sprint activation, contract writing, test writing, Commit, Push, Merge, or
-Deploy is authorized by this Scope Freeze document.
+This activation records a documentation-only Sprint. It does not create a
+`CONTRACT.md`, begin test or code writing, grant implementation authority, or
+authorize Commit, Push, Merge, or Deploy.
 
 ## 15. Scope Freeze Decisions
 

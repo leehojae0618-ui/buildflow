@@ -3,7 +3,7 @@
 ## Current Active Task
 
 ```text
-RUNTIME-STEP-CONTRACT-001
+RUNTIME-RESULT-CONTRACT-001
 ```
 
 Status:
@@ -11,13 +11,13 @@ Status:
 ```text
 ACTIVE_SPRINT
 ACTIVE
-SCOPE FROZEN
+FROZEN
 ```
 
 Scope Freeze checkpoint:
 
 ```text
-b6fac24
+4f418d8
 ```
 
 Runtime Implementation Authority:
@@ -26,10 +26,20 @@ Runtime Implementation Authority:
 NONE
 ```
 
+## Current Decision State
+
+```text
+SCOPE DECISION: APPROVED
+CONTRACT STATUS: NOT STARTED
+CONTRACT DECISION: PENDING
+IMPLEMENTATION APPROVAL: NONE
+RUNTIME IMPLEMENTATION AUTHORITY: NONE
+```
+
 ## Authorized Work
 
-- Runtime Step contract documentation.
-- Runtime Step Attempt contract documentation.
+- RuntimeExecutionResult contract documentation.
+- Contract-draft preparation and Open Question review within the frozen scope.
 - Contract validation planning.
 - Review/report documentation for the contract-only sprint.
 
@@ -44,71 +54,26 @@ NONE
 
 ## Required Next Gate
 
-Create the approved Runtime Step Contract checkpoint only after explicit commit
-approval. Do not start code implementation until a separate implementation
-approval.
+Prepare the RuntimeExecutionResult Contract Draft within the frozen scope. Do
+not start code implementation until a separate explicit implementation approval.
 
-Draft documents:
-
-- `docs/sprints/RUNTIME-STEP-CONTRACT-001/CONTRACT.md`
-- `docs/sprints/RUNTIME-STEP-CONTRACT-001/STATE_MACHINE.md`
-- `docs/sprints/RUNTIME-STEP-CONTRACT-001/VALIDATION.md`
-- `docs/sprints/RUNTIME-STEP-CONTRACT-001/QA_CHECKLIST.md`
-- `docs/sprints/RUNTIME-STEP-CONTRACT-001/REVIEW.md`
-
-Next gate:
-
-```text
-RUNTIME STEP CONTRACT CHECKPOINT
-```
-
-Current decision state:
-
-```text
-CONTRACT QA: PASS
-RE-REVIEW: PASS
-PREVIOUS P1 FINDINGS: RESOLVED
-DECISION RECOMMENDATION: KEEP CURRENT
-CONTRACT REVIEW: APPROVED
-PM DECISION: APPROVE
-CTO DECISION: APPROVE
-CONTRACT DECISION: APPROVED
-CHECKPOINT STATUS: READY
-IMPLEMENTATION APPROVAL: NONE
-RUNTIME IMPLEMENTATION AUTHORITY: NONE
-```
-
-The Contract checkpoint requires separate commit approval. Contract approval
-does not grant Runtime implementation authority.
-
-## Non-active Scope Draft Candidate
-
-```text
-RUNTIME-RESULT-CONTRACT-001
-SCOPE STATUS: FROZEN
-PM SCOPE DECISION: APPROVE
-CTO SCOPE DECISION: APPROVE
-SCOPE DECISION: APPROVED
-SCOPE FREEZE CHECKPOINT: PENDING COMMIT APPROVAL
-CONTRACT STATUS: NOT STARTED
-SPRINT STATUS: NOT ACTIVE
-IMPLEMENTATION APPROVAL: NONE
-RUNTIME IMPLEMENTATION AUTHORITY: NONE
-```
-
-Draft document:
+Scope source:
 
 - `docs/sprints/RUNTIME-RESULT-CONTRACT-001/TASK.md`
 
-The first frozen scope defines `RuntimeExecutionResult` only. Separate Step and
-Attempt Result artifacts are Deferred. `completedAt` is a canonical
-caller-supplied Result identity input; its exact serialization remains a
-contract-body decision.
+## Previous Sprint Transition
 
-This is a frozen future-scope record only. It does not activate a second Sprint,
-change `.buildflow/CURRENT_TASK.md`, or authorize Result contract writing or
-implementation. A separate Scope Freeze checkpoint commit and activation
-approval are required first.
+```text
+RUNTIME-STEP-CONTRACT-001
+SPRINT STATUS: NOT ACTIVE
+LIFECYCLE STATUS: CONTRACT CHECKPOINT COMPLETE
+CONTRACT DECISION: APPROVED
+CONTRACT CHECKPOINT: 730bde8
+SPRINT CLOSED: NO
+IMPLEMENTATION STARTED: NO
+IMPLEMENTATION APPROVAL: NONE
+RUNTIME IMPLEMENTATION AUTHORITY: NONE
+```
 
 Operating method A applies to the Runtime Step Contract checkpoint:
 

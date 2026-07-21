@@ -2,11 +2,11 @@
 
 ## Task ID
 
-RUNTIME-STEP-CONTRACT-001
+RUNTIME-RESULT-CONTRACT-001
 
 ## Title
 
-Runtime Step Contract
+Runtime Result Contract
 
 ## Project State
 
@@ -18,44 +18,59 @@ ACTIVE
 
 ## Scope Status
 
-SCOPE FROZEN
+FROZEN
 
 ## Scope Freeze Checkpoint
 
-`b6fac24`
+`4f418d8`
 
 ## Approval
 
-- PM Decision: APPROVE
-- CTO Decision: APPROVE
+- PM Scope Decision: APPROVE
+- CTO Scope Decision: APPROVE
+- Scope Decision: APPROVED
+- Contract Decision: PENDING
+- Implementation Approval: NONE
 - Runtime Implementation Authority: NONE
 
 ## Authorized Work
 
-- Runtime Step contract document writing
-- Runtime Step Attempt contract document writing
-- Contract validation planning
-- Review/report documentation for the contract-only sprint
+- RuntimeExecutionResult contract documentation.
+- Contract-draft preparation and Open Question review within the frozen scope.
+- Contract validation planning.
+- Review/report documentation for the contract-only sprint.
 
 ## Prohibited Work
 
-- Runtime execution implementation
-- Provider Invocation implementation
-- MCP Invocation or Gateway Runtime implementation
-- Queue, Scheduler, Worker, Lease, or Lock implementation
-- Parallel Runtime implementation
-- Runtime Planner or Runtime Compiler implementation
-- Budget Router implementation
-- DB, API, UI, deployment, or Marketplace work
-- Vault access or live Credential validation
-- Push, Merge, or Deploy
+- Runtime execution implementation.
+- Provider Invocation implementation.
+- MCP Invocation or Gateway Runtime implementation.
+- Queue, Scheduler, Worker, Lease, or Lock implementation.
+- Parallel Runtime implementation.
+- Runtime Planner or Runtime Compiler implementation.
+- Budget Router implementation.
+- DB, API, UI, deployment, or Marketplace work.
+- Vault access or live Credential validation.
+- Push, Merge, or Deploy.
 
 ## Scope Source
 
-- `docs/sprints/RUNTIME-STEP-CONTRACT-001/TASK.md`
+- `docs/sprints/RUNTIME-RESULT-CONTRACT-001/TASK.md`
+
+## Previous Sprint Transition
+
+`RUNTIME-STEP-CONTRACT-001` is not active and is not closed.
+
+- Lifecycle Status: CONTRACT CHECKPOINT COMPLETE
+- Contract Decision: APPROVED
+- Contract Checkpoint: `730bde8`
+- Implementation Approval: NONE
+- Runtime Implementation Authority: NONE
+- Sprint Closed: NO
+- Implementation Started: NO
 
 ## Next Required Work
 
-Write the Runtime Step / Attempt contract documentation within the frozen scope.
-Do not start code implementation until a later explicit implementation
+Prepare the RuntimeExecutionResult contract draft within the frozen scope.
+Do not start code implementation without a later explicit implementation
 approval.
