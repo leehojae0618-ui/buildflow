@@ -4,11 +4,12 @@
 
 ```text
 TASK: RUNTIME-STEP-CONTRACT-001
-CONTRACT REVIEW: APPROVED
-PM DECISION: APPROVE
-CTO DECISION: APPROVE
-CONTRACT DECISION: APPROVED
-CHECKPOINT STATUS: READY
+CONTRACT REVIEW: PENDING INDEPENDENT RE-REVIEW
+LIMITED REOPENING: AUTHORIZED — ATTEMPT FIELD MATRIX ONLY
+PREVIOUS CONTRACT CHECKPOINT: 730bde8
+PM / CTO AMENDMENT DECISION: PENDING RE-REVIEW
+CONTRACT DECISION: AMENDED / PENDING INDEPENDENT RE-REVIEW
+CHECKPOINT STATUS: RECORDED BY THIS GIT AMENDMENT COMMIT
 IMPLEMENTATION APPROVAL: NONE
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ```
@@ -26,6 +27,11 @@ Review documents:
 Review must decide whether the Runtime Step contract is internally consistent
 and still inside the frozen scope.
 
+The limited reopening may change only Attempt status-conditioned semantics for
+`startedAtReference`, `completedAtReference`, `failure`, `retryDecision`,
+`cancellationReference`, and `integrityChecksum`. All other approved Runtime
+Step behavior remains locked.
+
 ## 3. Required PM/CTO Review Questions
 
 1. Does the contract remain documentation-only?
@@ -40,7 +46,19 @@ and still inside the frozen scope.
    unchanged?
 10. Does the contract avoid implementation authority?
 
-## 4. Current Draft Decision
+## 4. Amendment Re-review Required
+
+The prior Implementation Approval Review found P1: Attempt fields
+`completedAtReference`, `failure`, and `retryDecision` were listed as required
+for every Attempt despite undefined or incompatible non-terminal and successful
+status semantics.
+
+The amendment defines the authoritative matrix in `CONTRACT.md` section 9.1.
+Independent re-review must verify the matrix, field shapes, retry identity,
+timeout/cancellation reference rules, and checksum boundary before this
+contract returns to an approved state.
+
+## 5. Historical Draft Decision
 
 ```text
 CONTRACT QA: PASS
@@ -58,7 +76,7 @@ IMPLEMENTATION APPROVAL: NONE
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ```
 
-## 5. Contract QA Findings
+## 6. Historical Contract QA Findings
 
 P1 findings from first Contract QA:
 
@@ -80,7 +98,7 @@ Remediation standard:
 PM/CTO Decision was held until re-review passed. The approved decision is
 recorded in section 9.
 
-## 6. Contract Re-review Result
+## 7. Historical Contract Re-review Result
 
 Re-review result:
 
@@ -128,7 +146,7 @@ Compatibility findings:
 - Architecture Decision Lock remains compatible.
 - Runtime implementation authority remains `NONE`.
 
-## 7. Possible Decisions
+## 8. Possible Amendment Decisions
 
 ```text
 APPROVE CONTRACT
@@ -139,12 +157,13 @@ REJECT CONTRACT
 Approval of this contract does not approve Runtime implementation. A separate
 implementation authorization would be required later.
 
-## 8. Review Notes
+## 9. Historical Review Notes
 
-Contract QA remediation is complete. Re-review and PM/CTO Contract Review
-passed. Implementation approval remains `NONE`.
+The prior Contract QA remediation, re-review, and PM/CTO Contract Review passed
+before this limited amendment. The current amendment remains pending independent
+re-review. Implementation approval remains `NONE`.
 
-## 9. PM/CTO Contract Decision
+## 10. Historical PM/CTO Contract Decision
 
 ### PM Review
 

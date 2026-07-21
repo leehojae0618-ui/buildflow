@@ -12,23 +12,27 @@ ACTIVE
 
 ```text
 ACTIVE / PLANNING / NOT APPROVED
+RUNTIME STEP CONTRACT: AMENDED / PENDING INDEPENDENT RE-REVIEW
+PREVIOUS CONTRACT CHECKPOINT: 730bde8
 IMPLEMENTATION APPROVAL: NONE
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ```
 
 ## Approved Contract Baseline
 
-- Runtime Step Contract: APPROVED (`730bde8`).
+- Runtime Step Contract: AMENDED / PENDING INDEPENDENT RE-REVIEW; previous
+  checkpoint `730bde8`.
 - Previous Result implementation Sprint closeout: `3873534`.
 - RuntimeExecutionResult: COMPLETE / VALIDATED (`871824e`).
-- The approved Step contract is immutable and is not reopened by this planning
-  task.
+- The approved Step contract is not rewritten by this planning task except for
+  the separately authorized limited Attempt field-matrix amendment.
 
 ## Authorized Work
 
 - Documentation-only Runtime Step implementation planning.
 - Exact file scope, validation strategy, deferred decisions, and future
   approval requirements.
+- Limited Attempt field-matrix documentation resolution only.
 
 ## Prohibited Work
 

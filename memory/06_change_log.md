@@ -1,5 +1,16 @@
 # Change Log Memory
 
+## 2026-07-22 — Runtime Step Attempt Field Matrix Resolution
+
+- Amended only the Runtime Step Attempt status-conditioned field semantics to
+  resolve the blocking P1 from Implementation Approval Review.
+- Defined the approved existing Attempt statuses' start/completion, failure,
+  retry-decision, cancellation, Evidence, predecessor, and checksum rules.
+- Runtime Step Contract is pending independent amendment re-review; previous
+  checkpoint `730bde8` is retained.
+- Code, tests, dependencies, execution behavior, and implementation authority
+  remain unchanged. Push / Merge / Deploy: not performed.
+
 ## 2026-07-22 — Runtime Step Implementation Planning Activation
 
 - Created the documentation-only planning baseline for

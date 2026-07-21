@@ -4,13 +4,15 @@
 
 ```text
 TASK: RUNTIME-STEP-CONTRACT-001
-STATUS: APPROVED CONTRACT
+STATUS: AMENDED / PENDING INDEPENDENT RE-REVIEW
 SCOPE STATUS: SCOPE FROZEN
-CONTRACT REVIEW: APPROVED
-PM DECISION: APPROVE
-CTO DECISION: APPROVE
-CONTRACT DECISION: APPROVED
-CHECKPOINT STATUS: READY
+LIMITED REOPENING: AUTHORIZED — ATTEMPT FIELD MATRIX ONLY
+PREVIOUS CONTRACT CHECKPOINT: 730bde8
+CONTRACT REVIEW: PENDING INDEPENDENT RE-REVIEW
+PM DECISION: HISTORICAL APPROVE; AMENDMENT PENDING RE-REVIEW
+CTO DECISION: HISTORICAL APPROVE; AMENDMENT PENDING RE-REVIEW
+CONTRACT DECISION: AMENDED / PENDING INDEPENDENT RE-REVIEW
+CHECKPOINT STATUS: RECORDED BY THIS GIT AMENDMENT COMMIT
 IMPLEMENTATION APPROVAL: NONE
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ```
@@ -149,7 +151,7 @@ Rules:
 
 ## 8. Runtime Step Contract Fields
 
-Required fields:
+Always-required fields:
 
 - `formatVersion`
 - `runtimeExecutionId`
@@ -192,19 +194,19 @@ Required fields:
 - `runtimeStepAttemptId`
 - `attemptNumber`
 - `status`
-- `startedAtReference`
-- `completedAtReference`
 - `inputReferences`
 - `outputReferences`
 - `blockingReasons`
 - `evidenceReferences`
-- `failure`
-- `retryDecision`
 - `limitationCodes`
 - `integrityChecksum`
 
-Optional fields:
+Status-conditioned fields:
 
+- `startedAtReference`
+- `completedAtReference`
+- `failure`
+- `retryDecision`
 - `previousRuntimeStepAttemptId`
 - `providerInvocationAttemptReference`
 - `mcpInvocationAttemptReference`
@@ -213,6 +215,113 @@ Optional fields:
 - `cancellationReference`
 - `usageReference`
 - `metadata`
+
+### 9.1 Attempt Status-to-Field Matrix
+
+The following matrix is normative for every approved Attempt status. It does
+not add an Attempt status or authorize execution.
+
+| Attempt status | `startedAtReference` | `completedAtReference` | `failure` | `retryDecision` | `cancellationReference` | `evidenceReferences` | `integrityChecksum` |
+|---|---|---|---|---|---|---|---|
+| `READY` | FORBIDDEN | FORBIDDEN | FORBIDDEN | FORBIDDEN | FORBIDDEN | OPTIONAL (may be empty) | REQUIRED |
+| `RUNNING` | REQUIRED | FORBIDDEN | FORBIDDEN | FORBIDDEN | FORBIDDEN | OPTIONAL (may be empty) | REQUIRED |
+| `SUCCESS` | REQUIRED | REQUIRED | FORBIDDEN | FORBIDDEN | FORBIDDEN | REQUIRED (non-empty) | REQUIRED |
+| `FAILED` | REQUIRED | REQUIRED | REQUIRED | REQUIRED | FORBIDDEN | REQUIRED (non-empty) | REQUIRED |
+| `CANCELLED` | CONDITIONALLY REQUIRED | REQUIRED | FORBIDDEN | FORBIDDEN | CONDITIONALLY REQUIRED | REQUIRED when `cancellationReference` is absent; otherwise OPTIONAL | REQUIRED |
+| `TIMEOUT` | REQUIRED | REQUIRED | FORBIDDEN | REQUIRED | FORBIDDEN | OPTIONAL when `completedAtReference` is an `ATTEMPT_TIMEOUT` reference; otherwise REQUIRED (non-empty) | REQUIRED |
+
+`CANCELLED` requires `startedAtReference` only when the Attempt previously
+entered `RUNNING`; it is forbidden for the approved `READY → CANCELLED`
+transition. `cancellationReference` is required for `CANCELLED` when the
+Attempt has no Evidence reference.
+
+`previousRuntimeStepAttemptId` is REQUIRED only for an Attempt created as a
+Step retry and FORBIDDEN for an initial Attempt. A retry retains the same
+`runtimeExecutionId` and `runtimeStepId` and creates a new
+`runtimeStepAttemptId`.
+
+### 9.2 `completedAtReference` Semantics
+
+`completedAtReference` is a reference to the immutable completion record for
+the Attempt, not a generated timestamp and not an embedded external payload.
+
+- It is REQUIRED for all terminal Attempt statuses: `SUCCESS`, `FAILED`,
+  `CANCELLED`, and `TIMEOUT`.
+- It is FORBIDDEN for `READY` and `RUNNING`.
+- It must include a non-empty `referenceId`, a non-empty `referenceType`, and
+  a lowercase 64-character hexadecimal `integrityChecksum`.
+- Its binding must identify the same `runtimeExecutionId`, `runtimeStepId`,
+  and `runtimeStepAttemptId` as the Attempt; cross-execution, cross-Step, and
+  cross-Attempt bindings are invalid.
+- For `TIMEOUT`, `referenceType` must be `ATTEMPT_TIMEOUT`; this immutable
+  completion reference is the timeout reference permitted by the terminal
+  Evidence rule. No new top-level timeout-result field is introduced.
+
+Its required reference-first shape is:
+
+```text
+referenceId
+referenceType
+integrityChecksum
+runtimeExecutionId
+runtimeStepId
+runtimeStepAttemptId
+```
+
+### 9.3 `failure` Semantics
+
+`failure` is REQUIRED only for `FAILED` and FORBIDDEN for `READY`, `RUNNING`,
+`SUCCESS`, `CANCELLED`, and `TIMEOUT`.
+
+Its required safe, reference-first shape is:
+
+```text
+code
+target
+safeReference
+recoverable
+userActionable
+```
+
+`safeReference` identifies a sanitized immutable reference and must not embed
+raw Provider/MCP payloads, credentials, tokens, headers, stack traces, or
+private input. Retryable and non-retryable failures use the same shape;
+`retryDecision` records the policy result separately. Cancellation uses the
+existing `cancellationReference` boundary and never a failure payload.
+
+### 9.4 `retryDecision` Semantics
+
+`retryDecision` records a policy decision only; it does not perform, schedule,
+or create a retry.
+
+- It is REQUIRED for `FAILED` and `TIMEOUT`.
+- It is FORBIDDEN for `READY`, `RUNNING`, `SUCCESS`, and `CANCELLED`.
+- Its allowed decision values are `RETRY_ALLOWED`, `RETRY_DENIED`, and
+  `RETRY_EXHAUSTED`, reflecting the approved retry-policy language.
+- It must reference the applicable explicit or default retry policy.
+- `RETRY_ALLOWED` permits a later new Attempt only. The later Attempt must use
+  the same `runtimeExecutionId` and `runtimeStepId`, a new
+  `runtimeStepAttemptId`, and its `previousRuntimeStepAttemptId` binding.
+- `RETRY_DENIED` and `RETRY_EXHAUSTED` do not authorize a new Attempt.
+
+Its required shape is:
+
+```text
+decision
+retryPolicyReference
+```
+
+### 9.5 `integrityChecksum` Boundary
+
+`integrityChecksum` is REQUIRED for every Attempt status because every Attempt
+record is immutable once emitted. It includes all always-required fields and
+all present status-conditioned semantic fields, including reference bindings,
+status, and retry decision where applicable. It excludes itself and volatile
+`metadata`.
+
+Secret-bearing values are forbidden before checksum generation. Algorithm,
+canonicalization, byte encoding, and output encoding are not changed by this
+amendment and remain explicit Implementation Approval decisions.
 
 ## 10. Input Contract
 

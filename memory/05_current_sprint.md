@@ -1,5 +1,19 @@
 # Current Sprint Memory
 
+## 2026-07-22 — Runtime Step Attempt Field Matrix Resolution
+
+- Authorized a limited reopening of `RUNTIME-STEP-CONTRACT-001` solely for the
+  Attempt status-to-field ambiguity that blocked Implementation Approval.
+- The amendment defines status-conditioned start/completion, failure, retry,
+  cancellation, Evidence, predecessor, and checksum rules without adding
+  Attempt statuses or execution behavior.
+- Contract status: AMENDED / PENDING INDEPENDENT RE-REVIEW; previous checkpoint
+  `730bde8` remains preserved.
+- Current planning Sprint remains the sole ACTIVE Sprint. Implementation
+  Approval and Runtime Implementation Authority remain NONE.
+- `EXECUTION-TARGET-ARCHITECTURE-PLANNING-001` remains an inactive future
+  architecture candidate and is not part of this amendment.
+
 ## 2026-07-22 — Runtime Step Implementation Planning Activation
 
 - Activated `RUNTIME-STEP-IMPLEMENTATION-PLANNING-001` as the sole active

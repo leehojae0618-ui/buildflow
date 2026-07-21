@@ -4,17 +4,21 @@
 
 ```text
 TASK: RUNTIME-STEP-CONTRACT-001
-STATUS: APPROVED CONTRACT
-QA STATUS: PASS
-CONTRACT REVIEW: APPROVED
-PM DECISION: APPROVE
-CTO DECISION: APPROVE
-CONTRACT DECISION: APPROVED
-CHECKPOINT STATUS: READY
+STATUS: AMENDED / PENDING INDEPENDENT RE-REVIEW
+QA STATUS: AMENDMENT QA PENDING
+PREVIOUS CONTRACT CHECKPOINT: 730bde8
+CONTRACT REVIEW: PENDING INDEPENDENT RE-REVIEW
+PM / CTO AMENDMENT DECISION: PENDING RE-REVIEW
+CONTRACT DECISION: AMENDED / PENDING INDEPENDENT RE-REVIEW
+CHECKPOINT STATUS: RECORDED BY THIS GIT AMENDMENT COMMIT
 IMPLEMENTATION APPROVAL: NONE
 ```
 
 ## 2. Scope QA
+
+The checked items in sections 2 through 6 are historical QA results from before
+the limited Attempt field-matrix amendment. Section 6.1 is the current
+amendment-specific QA gate and must pass before independent re-review.
 
 - [x] Contract remains documentation-only.
 - [x] No code files changed.
@@ -65,6 +69,24 @@ IMPLEMENTATION APPROVAL: NONE
 - [x] `TIMEOUT` requires Evidence or timeout reference.
 - [x] `SKIPPED` may use deterministic reason reference.
 - [x] Evidence remains immutable and reference-first.
+
+## 6.1 Attempt Field Matrix QA
+
+- [ ] Every approved Attempt status has one explicit field-matrix row.
+- [ ] `READY` and `RUNNING` forbid completion, failure, and retry-decision
+  fields.
+- [ ] Terminal Attempts require `completedAtReference` with same-attempt
+  identity bindings.
+- [ ] `FAILED` requires a safe failure and a retry decision.
+- [ ] `CANCELLED` uses Evidence or `cancellationReference`, never failure.
+- [ ] `TIMEOUT` uses an `ATTEMPT_TIMEOUT` completion reference when Evidence is
+  absent and requires a retry decision.
+- [ ] Initial and retry Attempt predecessor bindings are mutually exclusive and
+  complete.
+- [ ] `integrityChecksum` is required for all Attempt records, excludes itself
+  and volatile metadata, and includes present semantic fields.
+- [ ] Serializer/digest algorithm, byte encoding, and validation-return policy
+  remain deferred to Implementation Approval.
 
 ## 7. Approval QA
 

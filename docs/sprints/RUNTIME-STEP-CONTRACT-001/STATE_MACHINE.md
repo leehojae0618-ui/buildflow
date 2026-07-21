@@ -4,12 +4,13 @@
 
 ```text
 TASK: RUNTIME-STEP-CONTRACT-001
-STATUS: APPROVED CONTRACT
-CONTRACT REVIEW: APPROVED
-PM DECISION: APPROVE
-CTO DECISION: APPROVE
-CONTRACT DECISION: APPROVED
-CHECKPOINT STATUS: READY
+STATUS: AMENDED / PENDING INDEPENDENT RE-REVIEW
+LIMITED REOPENING: ATTEMPT FIELD MATRIX ONLY
+PREVIOUS CONTRACT CHECKPOINT: 730bde8
+CONTRACT REVIEW: PENDING INDEPENDENT RE-REVIEW
+PM / CTO AMENDMENT DECISION: PENDING RE-REVIEW
+CONTRACT DECISION: AMENDED / PENDING INDEPENDENT RE-REVIEW
+CHECKPOINT STATUS: RECORDED BY THIS GIT AMENDMENT COMMIT
 IMPLEMENTATION APPROVAL: NONE
 ```
 
@@ -130,6 +131,27 @@ TIMEOUT
 ```
 
 Attempt terminal statuses must not be mutated. Retry creates a new Attempt.
+
+## 5.1 Attempt Field Matrix
+
+`CONTRACT.md` section 9.1 is the authoritative Attempt status-to-field matrix.
+This state machine applies it as follows:
+
+- `READY` forbids start/completion, failure, retry-decision, and cancellation
+  fields.
+- `RUNNING` requires `startedAtReference` and forbids terminal-only fields.
+- `SUCCESS` requires immutable start/completion and non-empty Evidence
+  references; failure, retry-decision, and cancellation fields are forbidden.
+- `FAILED` requires immutable start/completion, safe failure, retry decision,
+  and non-empty Evidence references.
+- `CANCELLED` requires immutable completion and either Evidence or a
+  cancellation reference. It requires a start reference only after
+  `RUNNING`; `READY → CANCELLED` forbids one.
+- `TIMEOUT` requires immutable start/completion and retry decision. Its
+  completion reference is the timeout reference when typed `ATTEMPT_TIMEOUT`.
+
+The field matrix records Attempt state only. It neither evaluates a retry
+policy nor performs a retry or cancellation.
 
 ## 6. Blocking Reasons
 

@@ -3,9 +3,10 @@
 - Workflow Status: ACTIVE
 - Current Sprint: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 - Planning Status: ACTIVE / PLANNING / NOT APPROVED
-- Runtime Step Contract: APPROVED
-- Runtime Step Contract Checkpoint: `730bde8`
-- Runtime Step Contract Reopened: NO
+- Runtime Step Contract: AMENDED / PENDING INDEPENDENT RE-REVIEW
+- Previous Runtime Step Contract Checkpoint: `730bde8`
+- Contract Amendment Scope: Attempt status-to-field matrix only
+- Runtime Step Contract Reopened: YES — limited Attempt field matrix only
 - Previous Result Implementation Sprint Closeout: `3873534`
 - RuntimeExecutionResult: COMPLETE / VALIDATED (`871824e`)
 - Implementation Approval: NONE

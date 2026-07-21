@@ -6,18 +6,19 @@
 CURRENT TASK: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 PROJECT STATE: ACTIVE
 PLANNING STATUS: ACTIVE / PLANNING / NOT APPROVED
-RUNTIME STEP CONTRACT: APPROVED
 RUNTIME STEP CONTRACT CHECKPOINT: 730bde8
-RUNTIME STEP CONTRACT REOPENED: NO
+RUNTIME STEP CONTRACT: AMENDED / PENDING INDEPENDENT RE-REVIEW
+RUNTIME STEP CONTRACT REOPENED: LIMITED — ATTEMPT FIELD MATRIX ONLY
 PREVIOUS SPRINT CLOSEOUT: 3873534
 RUNTIME EXECUTION RESULT: COMPLETE / VALIDATED (871824e)
 IMPLEMENTATION APPROVAL: NONE
 RUNTIME IMPLEMENTATION AUTHORITY: NONE
 ```
 
-The active task is planning-only. No code or tests are authorized. Runtime
-execution, Provider/MCP Invocation, persistence, Push, Merge, and Deploy remain
-prohibited.
+The active task is planning-only. The Runtime Step contract has a limited
+Attempt field-matrix amendment pending independent re-review. No code or tests
+are authorized. Runtime execution, Provider/MCP Invocation, persistence, Push,
+Merge, and Deploy remain prohibited.
 
 ## Historical Closeout State — 2026-07-21
 
