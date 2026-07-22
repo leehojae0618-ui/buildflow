@@ -438,6 +438,116 @@ describe("RuntimeExecutionStep", () => {
     }
   });
 
+  it.each([Infinity, -Infinity])("rejects non-finite Attempt number %s", (attemptNumber) => {
+    expect(validateRuntimeExecutionStepAttempt(validAttempt({ attemptNumber }))).toEqual(
+      expect.objectContaining({
+        valid: false,
+        failures: expect.arrayContaining([expect.objectContaining({ target: "attemptNumber" })]),
+      }),
+    );
+  });
+
+  it("rejects a whitespace-only retry predecessor", () => {
+    expect(
+      validateRuntimeExecutionStepAttempt(
+        validAttempt({
+          attemptNumber: 2,
+          runtimeStepAttemptId: "attempt-2",
+          previousRuntimeStepAttemptId: "   ",
+        }),
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        valid: false,
+        failures: expect.arrayContaining([
+          expect.objectContaining({ target: "previousRuntimeStepAttemptId" }),
+        ]),
+      }),
+    );
+  });
+
+  it("rejects reversed retry Attempt numbering after standalone validation", () => {
+    const previous = {
+      ...attemptForStatus("FAILED"),
+      attemptNumber: 3,
+      previousRuntimeStepAttemptId: "attempt-2",
+      retryDecision: {
+        decision: "RETRY_ALLOWED" as const,
+        retryPolicyReference: reference("retry-policy-1", "RETRY_POLICY"),
+      },
+    };
+    const current = validAttempt({
+      runtimeStepAttemptId: "attempt-2",
+      attemptNumber: 2,
+      previousRuntimeStepAttemptId: "attempt-1",
+    });
+
+    expect(validateRuntimeExecutionStepAttempt(previous)).toEqual({ valid: true, failures: [] });
+    expect(validateRuntimeExecutionStepAttempt(current)).toEqual({ valid: true, failures: [] });
+    expect(validateRuntimeExecutionStepAttemptRetry(previous, current)).toEqual(
+      expect.objectContaining({
+        valid: false,
+        failures: expect.arrayContaining([expect.objectContaining({ target: "attemptNumber" })]),
+      }),
+    );
+  });
+
+  it("rejects duplicate retry Attempt numbering after standalone validation", () => {
+    const previous = {
+      ...attemptForStatus("FAILED"),
+      attemptNumber: 2,
+      previousRuntimeStepAttemptId: "attempt-0",
+      retryDecision: {
+        decision: "RETRY_ALLOWED" as const,
+        retryPolicyReference: reference("retry-policy-1", "RETRY_POLICY"),
+      },
+    };
+    const current = validAttempt({
+      runtimeStepAttemptId: "attempt-2",
+      attemptNumber: 2,
+      previousRuntimeStepAttemptId: "attempt-1",
+    });
+
+    expect(validateRuntimeExecutionStepAttempt(previous)).toEqual({ valid: true, failures: [] });
+    expect(validateRuntimeExecutionStepAttempt(current)).toEqual({ valid: true, failures: [] });
+    expect(validateRuntimeExecutionStepAttemptRetry(previous, current)).toEqual(
+      expect.objectContaining({
+        valid: false,
+        failures: expect.arrayContaining([expect.objectContaining({ target: "attemptNumber" })]),
+      }),
+    );
+  });
+
+  it("rejects a retry pair with a structurally invalid previous Attempt", () => {
+    const previous = {
+      ...attemptForStatus("FAILED"),
+      attemptNumber: 2,
+      retryDecision: {
+        decision: "RETRY_ALLOWED" as const,
+        retryPolicyReference: reference("retry-policy-1", "RETRY_POLICY"),
+      },
+    };
+    const current = validAttempt({
+      runtimeStepAttemptId: "attempt-2",
+      attemptNumber: 3,
+      previousRuntimeStepAttemptId: "attempt-1",
+    });
+
+    expect(validateRuntimeExecutionStepAttempt(previous)).toEqual(
+      expect.objectContaining({
+        valid: false,
+        failures: expect.arrayContaining([
+          expect.objectContaining({ target: "previousRuntimeStepAttemptId" }),
+        ]),
+      }),
+    );
+    expect(validateRuntimeExecutionStepAttempt(current)).toEqual({ valid: true, failures: [] });
+    expect(validateRuntimeExecutionStepAttemptRetry(previous, current)).toEqual({
+      valid: false,
+      failures: [{ code: "STEP_RETRY_INVALID" }],
+    });
+  });
+
   it("applies only the approved state transitions", () => {
     expect(canTransitionRuntimeExecutionStep("READY", "RUNNING")).toBe(true);
     expect(canTransitionRuntimeExecutionStep("SUCCESS", "RUNNING")).toBe(false);
