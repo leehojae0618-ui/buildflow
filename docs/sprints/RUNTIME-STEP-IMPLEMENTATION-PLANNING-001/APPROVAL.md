@@ -10,7 +10,7 @@ IMPLEMENTATION SCOPE: LOCKED
 RUNTIME IMPLEMENTATION AUTHORITY: HISTORICALLY GRANTED BY `AUTHORITY.md`
 CURRENT OPERATIVE IMPLEMENTATION APPROVAL: REVALIDATED
 CURRENT OPERATIVE RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
-PRODUCTION CHANGES AUTHORIZED: YES — APPROVED THREE-FILE SCOPE ONLY
+PRODUCTION CHANGES AUTHORIZED: NO — IMPLEMENTATION COMPLETE; FURTHER CHANGES REQUIRE NEW AUTHORITY
 CURRENT CONTRACT AMENDMENT CHECKPOINT: 59aa291
 APPROVAL CHECKPOINT: e743068
 ```
@@ -22,8 +22,9 @@ authorize Runtime execution or scope expansion.
 The historical approval remains recorded. Its operative effect was revalidated
 by `RUNTIME-STEP-IMPLEMENTATION-APPROVAL-REVALIDATION-002` after the limited
 initial/retry discriminator contract amendment. That decision does not grant
-Runtime Implementation Authority. The separate regrant records that authority
-only for the approved initial/retry validation correction scope.
+Runtime Implementation Authority. The separate regrant recorded that authority
+only for the approved initial/retry validation correction scope; that scope is
+now complete and independently re-reviewed PASS at `6de9421`.
 
 ## 2. Approved Implementation Scope
 

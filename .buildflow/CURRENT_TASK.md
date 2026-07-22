@@ -11,17 +11,24 @@ ACTIVE
 ## Authority Status
 
 ```text
-ACTIVE / INITIAL-RETRY VALIDATION CORRECTION IMPLEMENTATION AUTHORIZED
-CURRENT SPRINT WORK: AUTHORITY GRANTED / CORRECTION IMPLEMENTATION PENDING
+ACTIVE / RUNTIME STEP IMPLEMENTATION COMPLETE / SPRINT CLOSEOUT PENDING
+CURRENT SPRINT WORK: IMPLEMENTATION COMPLETE / SPRINT CLOSEOUT PENDING
 RUNTIME STEP CONTRACT: AMENDED / INITIAL-RETRY DISCRIMINATOR / REVALIDATION COMPLETE
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
 IMPLEMENTATION APPROVAL: REVALIDATED
 IMPLEMENTATION SCOPE: LOCKED
 IMPLEMENTATION APPROVAL CHECKPOINT: e743068
 RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
-RUNTIME IMPLEMENTATION STATUS: IMPLEMENTED / REVIEW FAILED / CORRECTION AUTHORIZED
-PRODUCTION CHANGES AUTHORIZED: YES — APPROVED THREE-FILE SCOPE ONLY
-RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
+RUNTIME IMPLEMENTATION STATUS: COMPLETE / INDEPENDENTLY REVIEWED / PASS
+IMPLEMENTATION COMPLETION: COMPLETE
+INDEPENDENT IMPLEMENTATION REVIEW: PASS
+PRODUCTION CHANGES AUTHORIZED: NO — IMPLEMENTATION COMPLETE; FURTHER CHANGES REQUIRE NEW AUTHORITY
+HISTORICAL RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
+INITIAL/RETRY IMPLEMENTATION CHECKPOINT: 6764c03
+TEST COVERAGE ISSUE-RESOLUTION CHECKPOINT: 6de9421
+INDEPENDENT IMPLEMENTATION RE-REVIEW: RUNTIME-STEP-INDEPENDENT-IMPLEMENTATION-REREVIEW-001 / PASS
+REMAINING FINDINGS: P0 0 / P1 0 / P2 0
+NEXT REQUIRED STAGE: Runtime Step Implementation Sprint Closeout
 ```
 
 ## Approved Contract Baseline
@@ -40,12 +47,12 @@ RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
   scope; its operative state is REVALIDATED after review
   `RUNTIME-STEP-IMPLEMENTATION-APPROVAL-REVALIDATION-002`.
 - Historical Authority remains recorded; the current operative authority is
-  GRANTED only for the initial/retry validation correction in the locked
-  three-file scope.
-- Production implementation is IMPLEMENTED at checkpoint `13a2c26`; its
-  independent review FAILED because initial/retry predecessor validation
-  correction is pending; correction is now authorized only within the locked
-  three-file scope.
+  GRANTED, while further production changes are prohibited because the approved
+  initial/retry implementation is complete.
+- Production implementation is COMPLETE following checkpoints `6764c03` and
+  `6de9421`. Independent re-review
+  `RUNTIME-STEP-INDEPENDENT-IMPLEMENTATION-REREVIEW-001` passed with P0/P1/P2
+  `0/0/0`; Sprint Closeout is the next required stage.
 
 ## Prohibited Work
 
@@ -54,7 +61,7 @@ RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
   until separately approved.
 - Provider/MCP Invocation, Runtime execution, orchestration, scheduling,
   persistence, DB/API/UI, deployment, Marketplace, Push, Merge, or Deploy.
-- Any implementation beyond the initial/retry validation correction.
+- Any further production or test change without new authority.
 
 ## Scope Source
 
