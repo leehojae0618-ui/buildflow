@@ -2,8 +2,8 @@
 
 - Workflow Status: ACTIVE
 - Current Sprint: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
-- Planning Status: ACTIVE / IMPLEMENTATION AUTHORITY REGRANT REQUIRED / AUTHORITY SUSPENDED
-- Current Sprint Work: IMPLEMENTATION APPROVAL REVALIDATED / AUTHORITY REGRANT PENDING
+- Planning Status: ACTIVE / INITIAL-RETRY VALIDATION CORRECTION IMPLEMENTATION AUTHORIZED
+- Current Sprint Work: AUTHORITY GRANTED / CORRECTION IMPLEMENTATION PENDING
 - Runtime Step Contract: AMENDED / INITIAL-RETRY DISCRIMINATOR / REVALIDATION COMPLETE
 - Previous Runtime Step Contract Checkpoint: `730bde8`
 - Latest Contract Amendment Checkpoint: `59aa291`
@@ -15,13 +15,14 @@
 - Implementation Approval: REVALIDATED
 - Implementation Scope: LOCKED
 - Implementation Approval Checkpoint: `e743068`
-- Runtime Implementation Authority: SUSPENDED PENDING EXPLICIT REGRANT
-- Runtime Implementation Status: IMPLEMENTED / REVIEW FAILED / CHANGES PROHIBITED
-- Production Changes Authorized: NO
+- Runtime Implementation Authority: GRANTED
+- Runtime Implementation Status: IMPLEMENTED / REVIEW FAILED / CORRECTION AUTHORIZED
+- Production Changes Authorized: YES — APPROVED THREE-FILE SCOPE ONLY
 - Runtime Step Implementation Checkpoint: `13a2c26`
 - Runtime Step Implementation Review: FAIL — initial/retry predecessor
   validation correction pending
-- Authorized Work: Runtime Implementation Authority Regrant governance work only.
+- Authorized Work: initial/retry validation correction only within the locked
+  three-file implementation scope.
 - Prohibited Work: serializer/checksum policy implementation until separately approved; Runtime execution; Provider/MCP
   Invocation; orchestration; scheduling; persistence; DB/API/UI; deployment;
   Marketplace; Push; Merge; Deploy.

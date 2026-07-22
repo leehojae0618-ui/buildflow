@@ -1,4 +1,4 @@
-# Runtime Step Runtime Implementation Authority (Historical Record)
+# Runtime Step Runtime Implementation Authority
 
 ## 1. Status
 
@@ -7,21 +7,22 @@ AUTHORITY ID: RUNTIME-STEP-RUNTIME-IMPLEMENTATION-AUTHORITY-001
 PLANNING ID: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 IMPLEMENTATION APPROVAL: HISTORICAL APPROVED / OPERATIVE REVALIDATED
 IMPLEMENTATION SCOPE: LOCKED
-RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING EXPLICIT REGRANT
-RUNTIME IMPLEMENTATION STATUS: IMPLEMENTED / REVIEW FAILED / CHANGES PROHIBITED
-PRODUCTION CHANGES AUTHORIZED: NO
+RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
+RUNTIME IMPLEMENTATION STATUS: IMPLEMENTED / REVIEW FAILED / CORRECTION AUTHORIZED
+PRODUCTION CHANGES AUTHORIZED: YES — APPROVED THREE-FILE SCOPE ONLY
 CURRENT CONTRACT AMENDMENT CHECKPOINT: 59aa291
 AUTHORITY CHECKPOINT: c67adbd
 RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
 ```
 
-This Historical Authority Record granted implementation work only within the
-locked paths below. It does not authorize Runtime execution, external I/O, or
-scope expansion.
+The historical authority record remains preserved. The current operative
+authority is GRANTED only for the initial/retry validation correction within
+the locked paths below. It does not authorize Runtime execution, external I/O,
+or scope expansion.
 
-The historical authority checkpoint remains preserved, but its operative effect
-is suspended pending explicit authority regrant. Implementation Approval is
-REVALIDATED; this record does not authorize production changes.
+The previous `SUSPENDED PENDING EXPLICIT REGRANT` state is historical. The
+current Authority Regrant is limited to the approved three-file correction
+scope. Implementation Approval remains REVALIDATED.
 
 ## 2. Authorized Paths
 

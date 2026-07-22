@@ -9,8 +9,8 @@ HISTORICAL IMPLEMENTATION APPROVAL: APPROVED (SUPERSEDED OPERATIVELY)
 IMPLEMENTATION SCOPE: LOCKED
 RUNTIME IMPLEMENTATION AUTHORITY: HISTORICALLY GRANTED BY `AUTHORITY.md`
 CURRENT OPERATIVE IMPLEMENTATION APPROVAL: REVALIDATED
-CURRENT OPERATIVE RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING EXPLICIT REGRANT
-PRODUCTION CHANGES AUTHORIZED: NO
+CURRENT OPERATIVE RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
+PRODUCTION CHANGES AUTHORIZED: YES — APPROVED THREE-FILE SCOPE ONLY
 CURRENT CONTRACT AMENDMENT CHECKPOINT: 59aa291
 APPROVAL CHECKPOINT: e743068
 ```
@@ -22,7 +22,8 @@ authorize Runtime execution or scope expansion.
 The historical approval remains recorded. Its operative effect was revalidated
 by `RUNTIME-STEP-IMPLEMENTATION-APPROVAL-REVALIDATION-002` after the limited
 initial/retry discriminator contract amendment. That decision does not grant
-Runtime Implementation Authority or authorize production changes.
+Runtime Implementation Authority. The separate regrant records that authority
+only for the approved initial/retry validation correction scope.
 
 ## 2. Approved Implementation Scope
 

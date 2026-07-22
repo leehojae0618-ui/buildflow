@@ -12,8 +12,8 @@ PREVIOUS FIELD-MATRIX AMENDMENT CHECKPOINT: ca54d12
 CONTRACT REVALIDATION: COMPLETE
 CONTRACT DECISION: AMENDED / REVALIDATION COMPLETE
 IMPLEMENTATION APPROVAL: REVALIDATED
-RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING EXPLICIT REGRANT
-PRODUCTION CHANGES AUTHORIZED: NO
+RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
+PRODUCTION CHANGES AUTHORIZED: YES — APPROVED THREE-FILE SCOPE ONLY
 ```
 
 ## 2. Review Scope
@@ -75,8 +75,8 @@ execution, persistence lookup, Provider/MCP work, or a new Runtime capability.
 Independent contract re-review passed. Planning compatibility passed with no
 rewrite required after the resolved P2 checkpoint correction. The historical
 approval and authority records remain preserved. Implementation Approval is
-now REVALIDATED; Runtime Implementation Authority remains suspended pending
-explicit regrant.
+now REVALIDATED; Runtime Implementation Authority is GRANTED only for the
+approved initial/retry validation correction scope.
 
 ## 5. Historical Draft Decision
 
