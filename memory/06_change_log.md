@@ -1,5 +1,13 @@
 # Change Log Memory
 
+## 2026-07-22 — Runtime Step Implementation Approval Revalidation Completion
+
+- Recorded the PASS Implementation Approval Revalidation decision using
+  amendment `59aa291`, contract revalidation `68dbd0c`, and historical-status
+  resolution `c45a6bf`.
+- Approval is REVALIDATED; Authority remains suspended pending explicit
+  regrant. No production code, tests, scope, or dependencies changed.
+
 ## 2026-07-22 — Runtime Step Historical Approval Status Resolution
 
 - Marked the legacy Approval and Authority lifecycle entries as historical or

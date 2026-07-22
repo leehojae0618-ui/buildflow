@@ -4,17 +4,18 @@
 
 ```text
 PLANNING ID: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
-PLANNING STATUS: ACTIVE / IMPLEMENTATION APPROVAL REVALIDATION REQUIRED / AUTHORITY SUSPENDED
-CURRENT SPRINT WORK: CONTRACT REVALIDATION COMPLETE / IMPLEMENTATION APPROVAL REVALIDATION PENDING
+PLANNING STATUS: ACTIVE / IMPLEMENTATION AUTHORITY REGRANT REQUIRED / AUTHORITY SUSPENDED
+CURRENT SPRINT WORK: IMPLEMENTATION APPROVAL REVALIDATED / AUTHORITY REGRANT PENDING
 CONTRACT CHECKPOINT: 730bde8
 CURRENT CONTRACT AMENDMENT: INITIAL-RETRY DISCRIMINATOR (`59aa291`)
 PREVIOUS FIELD-MATRIX AMENDMENT: INDEPENDENT RE-REVIEW PASS (`ca54d12`)
 PREVIOUS SPRINT CLOSEOUT: 3873534
-IMPLEMENTATION APPROVAL: SUSPENDED PENDING REVALIDATION
+IMPLEMENTATION APPROVAL: REVALIDATED
 IMPLEMENTATION SCOPE: LOCKED
 IMPLEMENTATION APPROVAL CHECKPOINT: e743068
-RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING REVALIDATION
+RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING EXPLICIT REGRANT
 RUNTIME IMPLEMENTATION STATUS: IMPLEMENTED / REVIEW FAILED / CHANGES PROHIBITED
+PRODUCTION CHANGES AUTHORIZED: NO
 RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
 ```
 
@@ -27,11 +28,12 @@ MCP server, database, filesystem, or network.
 
 The prior approved contract has a limited Attempt field-matrix amendment with
 independent re-review PASS. Planning Consistency Review is PASS with P0/P1/P2
-`0/0/0` and requires no rewrite. Independent implementation review found a
-blocking predecessor-validation P1. Contract revalidation is now complete with
+`0/0/0` and requires no rewrite. Independent implementation review found an
+initial/retry predecessor validation correction pending. Contract revalidation
+is now complete with
 Planning Compatibility PASS and no rewrite required. Implementation Approval
-and Runtime Implementation Authority remain suspended pending Implementation
-Approval Revalidation. The implemented three-file slice at `13a2c26` must not
+is REVALIDATED. Runtime Implementation Authority remains suspended pending
+explicit regrant. The implemented three-file slice at `13a2c26` must not
 change until authority is regranted.
 
 ## 3. Exact Proposed File Scope

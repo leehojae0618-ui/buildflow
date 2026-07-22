@@ -11,7 +11,9 @@ CURRENT AMENDMENT CHECKPOINT: 59aa291
 PREVIOUS FIELD-MATRIX AMENDMENT CHECKPOINT: ca54d12
 CONTRACT REVIEW: INDEPENDENT RE-REVIEW PASS
 CONTRACT DECISION: AMENDED / REVALIDATION COMPLETE
-IMPLEMENTATION APPROVAL: SUSPENDED PENDING REVALIDATION
+IMPLEMENTATION APPROVAL: REVALIDATED
+RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING EXPLICIT REGRANT
+PRODUCTION CHANGES AUTHORIZED: NO
 ```
 
 ## 2. Scope QA
@@ -23,7 +25,9 @@ amendment-specific QA gate and must pass before independent re-review.
 - [x] Contract remains documentation-only.
 - [x] No code files changed.
 - [x] No test files changed.
-- [x] Runtime Implementation Authority remains `NONE`.
+- [x] Historical Contract QA recorded Runtime Implementation Authority as
+  `NONE`; the current operative Authority remains suspended pending explicit
+  regrant.
 - [x] Runtime execution is not implemented.
 - [x] Provider Invocation is not implemented.
 - [x] MCP Invocation is not implemented.

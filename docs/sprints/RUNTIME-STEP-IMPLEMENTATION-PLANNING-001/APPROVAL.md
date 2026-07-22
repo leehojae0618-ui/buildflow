@@ -8,7 +8,9 @@ PLANNING ID: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 HISTORICAL IMPLEMENTATION APPROVAL: APPROVED (SUPERSEDED OPERATIVELY)
 IMPLEMENTATION SCOPE: LOCKED
 RUNTIME IMPLEMENTATION AUTHORITY: HISTORICALLY GRANTED BY `AUTHORITY.md`
-CURRENT OPERATIVE IMPLEMENTATION APPROVAL: SUSPENDED PENDING REVALIDATION
+CURRENT OPERATIVE IMPLEMENTATION APPROVAL: REVALIDATED
+CURRENT OPERATIVE RUNTIME IMPLEMENTATION AUTHORITY: SUSPENDED PENDING EXPLICIT REGRANT
+PRODUCTION CHANGES AUTHORIZED: NO
 CURRENT CONTRACT AMENDMENT CHECKPOINT: 59aa291
 APPROVAL CHECKPOINT: e743068
 ```
@@ -17,9 +19,10 @@ This Historical Approval Record locked scope before the separate
 `AUTHORITY.md` record granted Runtime Implementation Authority. It does not
 authorize Runtime execution or scope expansion.
 
-The historical approval remains recorded. Its operative effect is suspended
-until Implementation Approval Revalidation completes after the limited
-initial/retry discriminator contract amendment.
+The historical approval remains recorded. Its operative effect was revalidated
+by `RUNTIME-STEP-IMPLEMENTATION-APPROVAL-REVALIDATION-002` after the limited
+initial/retry discriminator contract amendment. That decision does not grant
+Runtime Implementation Authority or authorize production changes.
 
 ## 2. Approved Implementation Scope
 
