@@ -679,7 +679,9 @@ export function validateRuntimeExecutionStepAttempt(
       failures.push(failure("STEP_REQUIRED_FIELD_MISSING", field));
     }
   }
-  if (!Number.isSafeInteger(attempt.attemptNumber) || attempt.attemptNumber < 0) {
+  const hasValidAttemptNumber =
+    Number.isSafeInteger(attempt.attemptNumber) && attempt.attemptNumber >= 1;
+  if (!hasValidAttemptNumber) {
     failures.push(failure("STEP_IDENTIFIER_INVALID", "attemptNumber"));
   }
   if (!attemptStatusSet.has(attempt.status)) {
@@ -725,13 +727,18 @@ export function validateRuntimeExecutionStepAttempt(
   if (attempt.retryDecision !== undefined && !validateRetryDecision(attempt.retryDecision)) {
     failures.push(failure("STEP_RETRY_INVALID", "retryDecision"));
   }
-  if (attempt.previousRuntimeStepAttemptId !== undefined) {
-    if (
-      !isNonEmptyString(attempt.previousRuntimeStepAttemptId) ||
-      attempt.previousRuntimeStepAttemptId === attempt.runtimeStepAttemptId
-    ) {
-      failures.push(failure("STEP_RETRY_INVALID", "previousRuntimeStepAttemptId"));
-    }
+  const hasPredecessor = attempt.previousRuntimeStepAttemptId !== undefined;
+  const hasValidPredecessor =
+    isNonEmptyString(attempt.previousRuntimeStepAttemptId) &&
+    attempt.previousRuntimeStepAttemptId !== attempt.runtimeStepAttemptId;
+  if (hasPredecessor && !hasValidPredecessor) {
+    failures.push(failure("STEP_RETRY_INVALID", "previousRuntimeStepAttemptId"));
+  }
+  if (hasValidAttemptNumber && attempt.attemptNumber === 1 && hasPredecessor) {
+    failures.push(failure("STEP_RETRY_INVALID", "previousRuntimeStepAttemptId"));
+  }
+  if (hasValidAttemptNumber && attempt.attemptNumber > 1 && !hasValidPredecessor) {
+    failures.push(failure("STEP_RETRY_INVALID", "previousRuntimeStepAttemptId"));
   }
   validateMetadata(attempt.metadata, "metadata", failures);
   failures.push(...attemptStatusFailures(attempt));
@@ -770,7 +777,7 @@ export function validateRuntimeExecutionStepAttemptRetry(
   if (next.previousRuntimeStepAttemptId !== previous.runtimeStepAttemptId) {
     failures.push(failure("STEP_RETRY_INVALID", "previousRuntimeStepAttemptId"));
   }
-  if (next.attemptNumber <= previous.attemptNumber) {
+  if (next.attemptNumber !== previous.attemptNumber + 1) {
     failures.push(failure("STEP_RETRY_INVALID", "attemptNumber"));
   }
   return failures.length === 0 ? { valid: true, failures: [] } : { valid: false, failures };

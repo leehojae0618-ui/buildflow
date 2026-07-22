@@ -82,7 +82,7 @@ function validAttempt(
     runtimeExecutionId: "execution-1",
     runtimeStepId: "step-1",
     runtimeStepAttemptId: "attempt-1",
-    attemptNumber: 0,
+    attemptNumber: 1,
     status: "READY",
     inputReferences: [reference("input-1", "INPUT")],
     outputReferences: [],
@@ -326,7 +326,7 @@ describe("RuntimeExecutionStep", () => {
     };
     const next = validAttempt({
       runtimeStepAttemptId: "attempt-2",
-      attemptNumber: 1,
+      attemptNumber: 2,
       previousRuntimeStepAttemptId: "attempt-1",
     });
 
@@ -347,6 +347,95 @@ describe("RuntimeExecutionStep", () => {
         ]),
       }),
     );
+    expect(
+      validateRuntimeExecutionStepAttemptRetry(previous, {
+        ...next,
+        runtimeStepId: "step-other",
+      }),
+    ).toEqual(
+      expect.objectContaining({
+        valid: false,
+        failures: expect.arrayContaining([expect.objectContaining({ target: "runtimeStepId" })]),
+      }),
+    );
+    expect(
+      validateRuntimeExecutionStepAttemptRetry(previous, {
+        ...next,
+        runtimeStepAttemptId: "attempt-1",
+      }),
+    ).toEqual(
+      expect.objectContaining({
+        valid: false,
+        failures: expect.arrayContaining([expect.objectContaining({ code: "STEP_RETRY_INVALID" })]),
+      }),
+    );
+    expect(
+      validateRuntimeExecutionStepAttemptRetry(previous, {
+        ...next,
+        previousRuntimeStepAttemptId: "attempt-other",
+      }),
+    ).toEqual(
+      expect.objectContaining({
+        valid: false,
+        failures: expect.arrayContaining([
+          expect.objectContaining({ target: "previousRuntimeStepAttemptId" }),
+        ]),
+      }),
+    );
+    expect(
+      validateRuntimeExecutionStepAttemptRetry(previous, {
+        ...next,
+        attemptNumber: 3,
+      }),
+    ).toEqual(
+      expect.objectContaining({
+        valid: false,
+        failures: expect.arrayContaining([expect.objectContaining({ target: "attemptNumber" })]),
+      }),
+    );
+  });
+
+  it("enforces the 1-based initial and retry predecessor discriminator", () => {
+    for (const attemptNumber of [0, -1, 1.5, Number.NaN]) {
+      expect(validateRuntimeExecutionStepAttempt(validAttempt({ attemptNumber }))).toEqual(
+        expect.objectContaining({
+          valid: false,
+          failures: expect.arrayContaining([expect.objectContaining({ target: "attemptNumber" })]),
+        }),
+      );
+    }
+
+    expect(
+      validateRuntimeExecutionStepAttempt(
+        validAttempt({ previousRuntimeStepAttemptId: "attempt-previous" }),
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        valid: false,
+        failures: expect.arrayContaining([
+          expect.objectContaining({ target: "previousRuntimeStepAttemptId" }),
+        ]),
+      }),
+    );
+
+    for (const previousRuntimeStepAttemptId of [undefined, "", "attempt-2"]) {
+      expect(
+        validateRuntimeExecutionStepAttempt(
+          validAttempt({
+            attemptNumber: 2,
+            runtimeStepAttemptId: "attempt-2",
+            previousRuntimeStepAttemptId,
+          }),
+        ),
+      ).toEqual(
+        expect.objectContaining({
+          valid: false,
+          failures: expect.arrayContaining([
+            expect.objectContaining({ target: "previousRuntimeStepAttemptId" }),
+          ]),
+        }),
+      );
+    }
   });
 
   it("applies only the approved state transitions", () => {
