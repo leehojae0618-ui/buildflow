@@ -1,4 +1,4 @@
-# Runtime Step Runtime Implementation Authority
+# Runtime Step Runtime Implementation Authority (Historical Record)
 
 ## 1. Status
 
@@ -14,8 +14,9 @@ AUTHORITY CHECKPOINT: c67adbd
 RUNTIME STEP IMPLEMENTATION CHECKPOINT: 13a2c26
 ```
 
-This authority grants implementation work only within the locked paths below.
-It does not authorize Runtime execution, external I/O, or scope expansion.
+This Historical Authority Record granted implementation work only within the
+locked paths below. It does not authorize Runtime execution, external I/O, or
+scope expansion.
 
 The historical authority checkpoint remains preserved, but its operative effect
 is suspended until Implementation Approval Revalidation and authority regrant

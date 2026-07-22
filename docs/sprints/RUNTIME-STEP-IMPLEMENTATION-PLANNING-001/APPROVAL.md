@@ -5,7 +5,7 @@
 ```text
 APPROVAL ID: RUNTIME-STEP-IMPLEMENTATION-APPROVAL-001
 PLANNING ID: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
-IMPLEMENTATION APPROVAL: APPROVED
+HISTORICAL IMPLEMENTATION APPROVAL: APPROVED (SUPERSEDED OPERATIVELY)
 IMPLEMENTATION SCOPE: LOCKED
 RUNTIME IMPLEMENTATION AUTHORITY: HISTORICALLY GRANTED BY `AUTHORITY.md`
 CURRENT OPERATIVE IMPLEMENTATION APPROVAL: SUSPENDED PENDING REVALIDATION
@@ -13,9 +13,9 @@ CURRENT CONTRACT AMENDMENT CHECKPOINT: 59aa291
 APPROVAL CHECKPOINT: e743068
 ```
 
-This approval locked scope before the separate `AUTHORITY.md` record granted
-Runtime Implementation Authority. It does not authorize Runtime execution or
-scope expansion.
+This Historical Approval Record locked scope before the separate
+`AUTHORITY.md` record granted Runtime Implementation Authority. It does not
+authorize Runtime execution or scope expansion.
 
 The historical approval remains recorded. Its operative effect is suspended
 until Implementation Approval Revalidation completes after the limited
@@ -68,7 +68,7 @@ checksum.
 
 ## 6. Authority Boundary
 
-Implementation Approval and Scope Lock did not themselves grant Runtime
-Implementation Authority; the separate `AUTHORITY.md` record grants it for the
-locked three paths. Serializer and checksum policies remain deferred stop
-conditions.
+Historical Implementation Approval and Scope Lock did not themselves grant
+Runtime Implementation Authority; the separate Historical Authority Record in
+`AUTHORITY.md` granted it for the locked three paths. Serializer and checksum
+policies remain deferred stop conditions.

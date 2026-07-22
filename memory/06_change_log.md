@@ -1,5 +1,12 @@
 # Change Log Memory
 
+## 2026-07-22 — Runtime Step Historical Approval Status Resolution
+
+- Marked the legacy Approval and Authority lifecycle entries as historical or
+  superseded so they cannot be interpreted as the current operative state.
+- Current operative state remains `SUSPENDED PENDING REVALIDATION`; no code,
+  tests, scope, approval decision, or authority changed.
+
 ## 2026-07-22 — Runtime Step Contract Revalidation Completion
 
 - Recorded Runtime Step initial/retry discriminator contract revalidation as

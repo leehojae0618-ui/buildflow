@@ -1,5 +1,13 @@
 # Current Sprint Memory
 
+## 2026-07-22 — Runtime Step Historical Approval Status Resolution
+
+- Clarified that the prior Runtime Step Implementation Approval and Authority
+  records are historical and superseded operationally by the current
+  `SUSPENDED PENDING REVALIDATION` state.
+- No contract, planning, implementation scope, production code, or test
+  semantics changed. Implementation Approval Revalidation remains next.
+
 ## 2026-07-22 — Runtime Step Contract Revalidation Completion
 
 - Completed revalidation of the initial/retry discriminator amendment at

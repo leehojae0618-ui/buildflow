@@ -69,18 +69,25 @@ Implementation Approval Revalidation. The implemented three-file slice at
 - `TASK.md` — planning status, baseline, and boundary.
 - `PLAN.md` — exact candidate file table, implementation sequence, validation
   strategy, deferred decisions, and stop conditions.
-- `APPROVAL.md` — approved exact file scope and its Authority handoff.
-- `AUTHORITY.md` — granted authority for the locked scope with deferred-policy
-  stop conditions.
+- `APPROVAL.md` — Historical Approval Record for the exact file scope and its
+  Authority handoff; its operative effect is suspended pending revalidation.
+- `AUTHORITY.md` — Historical Authority Record for the locked scope with
+  deferred-policy stop conditions; its operative effect is suspended pending
+  revalidation.
 - Operational and memory state updates activating this planning Sprint only.
 
-## 7. Planning Exit Criteria
+## 7. Historical Planning Exit Criteria (Superseded)
+
+The following records preserve the pre-amendment planning exit only. They are
+not the current operative approval or authority state; the Status section
+above remains authoritative.
 
 - The plan retains a pure, deterministic, reference-first slice.
 - Every candidate implementation path is exact; wildcard scope is absent.
 - No new dependency is required.
 - Contract-required decisions that remain unresolved are marked for separate
   Implementation Approval rather than invented.
-- Implementation Approval is APPROVED and the exact file scope is LOCKED.
-- Runtime Implementation Authority is GRANTED; implementation is complete and
-  awaits independent implementation review.
+- Historical Implementation Approval was APPROVED and the exact file scope was
+  LOCKED.
+- Historical Runtime Implementation Authority was GRANTED; implementation was
+  complete and awaited independent implementation review.

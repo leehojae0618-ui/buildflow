@@ -160,6 +160,7 @@ Request an Implementation Approval Amendment and stop before code changes if:
 6. a Provider/MCP, persistence, orchestration, or retry-execution concern is
    needed to make the slice pass.
 
-The granted Authority preserves the locked three paths and test authority. It
+The Historical Authority Record preserves the locked three paths and test
+authority. Its operative effect is suspended pending revalidation and it
 requires an Implementation Approval Amendment before code may resolve the
 deferred serializer or digest policy, or any remaining reference-schema detail.
