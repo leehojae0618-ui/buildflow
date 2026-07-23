@@ -1,10 +1,15 @@
 # BuildFlow
 
-AI Result Design Platform
+AI Agent Factory
 
-현재는 AI System Builder Platform 전환 단계입니다.
+사용자 목표를 이해하고, 필요한 정보를 수집하며, 실행 가능한 AI Agent를
+설계·구축·검증해 바로 사용할 수 있게 하는 AI Agent Builder입니다.
 
-제품 도메인 언어는 `docs/project/PROJECT_BIBLE.md`를, 현재 구현 이력은 `MASTER_PLAN.md`를, 현재 작업 상태는 `.buildflow/STATUS.md`를 기준으로 확인합니다. PIVOT-001에서는 문서 도메인만 전환하며 코드·DB·Migration은 변경하지 않습니다.
+개발 방향과 Sprint 완료 기준은
+[`docs/project/DEVELOPMENT_CHARTER.md`](docs/project/DEVELOPMENT_CHARTER.md)를,
+제품 도메인 언어는 [`docs/project/PROJECT_BIBLE.md`](docs/project/PROJECT_BIBLE.md)를,
+현재 운영 상태는 [`.buildflow/STATUS.md`](.buildflow/STATUS.md)를 기준으로
+확인합니다. `MASTER_PLAN.md`는 과거 구현 이력입니다.
 
 ## Supabase Setup
 

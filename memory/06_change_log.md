@@ -1,5 +1,14 @@
 # Change Log Memory
 
+## 2026-07-23 — Development Charter and Canonical Repository Synchronization
+
+- Added the binding `docs/project/DEVELOPMENT_CHARTER.md` and registered it in
+  `AGENTS.md`; checkpoint `1bab9d1`.
+- Completed the approved normal push of canonical `main` to
+  `leehojae0618-ui/buildflow`: `origin/main` synchronized at `883666f`.
+- No force push, merge command, deployment, Vercel project operation, or Live
+  Evidence / AI TEST asset operation occurred.
+
 ## 2026-07-23 — Runtime Step Merge Execution
 
 - Recorded `RUNTIME-STEP-MERGE-EXECUTION-001`: Runtime Step work is already

@@ -1,6 +1,6 @@
 # Next Task
 
-## Current Runtime Step Closeout State — 2026-07-23
+## Current Repository and Visual Closed Beta Slice Planning State — 2026-07-23
 
 ```text
 CURRENT TASK: NONE
@@ -33,10 +33,13 @@ REMAINING FINDINGS: P0 0 / P1 0 / P2 0
 MERGE EXECUTION: COMPLETE
 INTEGRATION STATE: ALREADY INTEGRATED INTO LOCAL MAIN
 MERGE COMMAND: NOT REQUIRED
-REMOTE UPDATE: NOT PERFORMED
-PUSH AUTHORIZATION: NOT GRANTED
+REMOTE UPDATE: COMPLETE — origin/main synchronized at 883666f
+PUSH EXECUTION: COMPLETE — normal push; no force push used
+FUTURE PUSH AUTHORIZATION: NOT GRANTED
 DEPLOY AUTHORIZATION: NOT GRANTED
-NEXT LIFECYCLE STAGE: PUSH GOVERNANCE REVIEW
+NEXT LIFECYCLE STAGE: VISUAL CLOSED BETA SLICE PLANNING
+NEXT CANDIDATE: BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001
+NEXT CANDIDATE STATUS: DRAFT / NOT ACTIVE / NOT APPROVED
 ```
 
 The closed Sprint retains its historical locked three-file implementation scope.
@@ -49,8 +52,9 @@ CLOSED; Merge Execution is complete because the work is already integrated into
 local `main`. Push Governance Review is the next lifecycle stage.
 Serializer/canonicalization and checksum policy remain stop conditions pending
 a separate approval amendment.
-Runtime execution, Provider/MCP Invocation, persistence, Push, Merge, and
-Deploy remain prohibited.
+Runtime execution, Provider/MCP Invocation, persistence, and deployment remain
+prohibited until a separately approved Sprint. The next planning candidate must
+comply with `docs/project/DEVELOPMENT_CHARTER.md`.
 
 ## Historical Closeout State — 2026-07-21
 

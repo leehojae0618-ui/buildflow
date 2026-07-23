@@ -1,5 +1,17 @@
 # Current Sprint Memory
 
+## 2026-07-23 — Development Charter and Repository Synchronization
+
+- Established the binding BuildFlow Development Charter at checkpoint
+  `1bab9d1`. The charter requires browser-visible Sprint progress toward the
+  end-to-end AI Agent Factory experience while preserving Contract First,
+  Approval First, Evidence First, and MCP First.
+- Completed the approved normal push of canonical `main`: `origin/main` now
+  equals `883666f`; no force push, Vercel deployment, or Live Evidence asset
+  action occurred.
+- Next candidate: `BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001`, DRAFT / NOT ACTIVE
+  / NOT APPROVED. It requires a separate scope and approval process.
+
 ## 2026-07-23 — Runtime Step Merge Execution
 
 - `RUNTIME-STEP-MERGE-EXECUTION-001` resolved to
