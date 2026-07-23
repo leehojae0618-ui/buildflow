@@ -6,6 +6,10 @@
 
 ## Source of Truth Priority
 
+`docs/project/DEVELOPMENT_CHARTER.md` is a cross-cutting development constraint.
+All sources below must be interpreted consistently with it; it does not bypass
+approval, security, release, or change-control gates.
+
 1. `.buildflow/CURRENT_TASK.md`
 2. 해당 Sprint의 `PLAN.md` 및 `TASK.md`
 3. `docs/project/MASTER_PRD.md`
@@ -20,6 +24,8 @@
 - `.buildflow/NEXT_TASK.md`: next approved task candidate
 - `docs/sprints/<task-id>/`: task plan, checklist, and report
 - `docs/project/`: product and project direction
+- `docs/project/DEVELOPMENT_CHARTER.md`: binding product-development direction
+  and Sprint completion principles
 - `MASTER_PLAN.md`: legacy implementation history retained for continuity; stale duplicate lines are not current status
 
 ## GPT Responsibilities
