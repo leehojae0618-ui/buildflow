@@ -1,12 +1,14 @@
 # Next Task
 
-## Current Planning State — 2026-07-22
+## Current Runtime Step Closeout State — 2026-07-23
 
 ```text
-CURRENT TASK: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
+CURRENT TASK: NONE
 PROJECT STATE: ACTIVE
-PLANNING STATUS: ACTIVE / RUNTIME STEP IMPLEMENTATION COMPLETE / SPRINT CLOSEOUT PENDING
-CURRENT SPRINT WORK: IMPLEMENTATION COMPLETE / SPRINT CLOSEOUT PENDING
+PLANNING STATUS: CLOSED / RUNTIME STEP IMPLEMENTATION COMPLETE
+CURRENT SPRINT WORK: NONE
+SPRINT STATUS: CLOSED
+ACTIVE SPRINT: NONE
 RUNTIME STEP CONTRACT CHECKPOINT: 730bde8
 LATEST RUNTIME STEP CONTRACT AMENDMENT CHECKPOINT: 59aa291
 PREVIOUS FIELD-MATRIX AMENDMENT CHECKPOINT: ca54d12
@@ -17,7 +19,8 @@ RUNTIME EXECUTION RESULT: COMPLETE / VALIDATED (871824e)
 IMPLEMENTATION APPROVAL: REVALIDATED
 IMPLEMENTATION SCOPE: LOCKED
 IMPLEMENTATION APPROVAL CHECKPOINT: e743068
-RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
+RUNTIME IMPLEMENTATION AUTHORITY: EXPIRED
+RUNTIME STEP STATUS: IMPLEMENTATION COMPLETE
 RUNTIME IMPLEMENTATION STATUS: COMPLETE / INDEPENDENTLY REVIEWED / PASS
 IMPLEMENTATION COMPLETION: COMPLETE
 INDEPENDENT IMPLEMENTATION REVIEW: PASS
@@ -27,16 +30,16 @@ INITIAL/RETRY IMPLEMENTATION CHECKPOINT: 6764c03
 TEST COVERAGE ISSUE-RESOLUTION CHECKPOINT: 6de9421
 INDEPENDENT IMPLEMENTATION RE-REVIEW: RUNTIME-STEP-INDEPENDENT-IMPLEMENTATION-REREVIEW-001 / PASS
 REMAINING FINDINGS: P0 0 / P1 0 / P2 0
-NEXT REQUIRED STAGE: Runtime Step Implementation Sprint Closeout
+NEXT LIFECYCLE STAGE: READY FOR MERGE / RELEASE GOVERNANCE
 ```
 
-The active task retains its historical locked three-file implementation scope.
+The closed Sprint retains its historical locked three-file implementation scope.
 Contract revalidation is complete: the independent re-review and planning
 compatibility passed with no rewrite required. The initial/retry implementation
 is COMPLETE and independently re-reviewed PASS. Implementation Approval remains
-REVALIDATED and Runtime Implementation Authority remains GRANTED, but further
-production changes require new authority. Runtime Step Implementation Sprint
-Closeout is the next required stage.
+REVALIDATED and Runtime Implementation Authority is EXPIRED; further production
+changes require a new authority process. Runtime Step Implementation Sprint is
+CLOSED; Merge / Release Governance is the next lifecycle stage.
 Serializer/canonicalization and checksum policy remain stop conditions pending
 a separate approval amendment.
 Runtime execution, Provider/MCP Invocation, persistence, Push, Merge, and

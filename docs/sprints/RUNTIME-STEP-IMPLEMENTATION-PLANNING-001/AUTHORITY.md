@@ -7,7 +7,8 @@ AUTHORITY ID: RUNTIME-STEP-RUNTIME-IMPLEMENTATION-AUTHORITY-001
 PLANNING ID: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
 IMPLEMENTATION APPROVAL: HISTORICAL APPROVED / OPERATIVE REVALIDATED
 IMPLEMENTATION SCOPE: LOCKED
-RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
+RUNTIME IMPLEMENTATION AUTHORITY: EXPIRED
+RUNTIME STEP STATUS: IMPLEMENTATION COMPLETE
 RUNTIME IMPLEMENTATION STATUS: COMPLETE / INDEPENDENTLY REVIEWED / PASS
 IMPLEMENTATION COMPLETION: COMPLETE
 INDEPENDENT IMPLEMENTATION REVIEW: PASS
@@ -19,18 +20,19 @@ INITIAL/RETRY IMPLEMENTATION CHECKPOINT: 6764c03
 TEST COVERAGE ISSUE-RESOLUTION CHECKPOINT: 6de9421
 INDEPENDENT IMPLEMENTATION RE-REVIEW: RUNTIME-STEP-INDEPENDENT-IMPLEMENTATION-REREVIEW-001 / PASS
 REMAINING FINDINGS: P0 0 / P1 0 / P2 0
-NEXT REQUIRED STAGE: Runtime Step Implementation Sprint Closeout
+NEXT LIFECYCLE STAGE: READY FOR MERGE / RELEASE GOVERNANCE
 ```
 
 The historical authority record remains preserved. The current operative
-authority remains GRANTED, but the approved initial/retry validation correction
-is complete and independently reviewed PASS. It does not authorize further
-production changes, Runtime execution, external I/O, or scope expansion.
+authority is EXPIRED because the approved initial/retry validation correction
+is complete and independently reviewed PASS. Further implementation requires a
+new authority process and no authority exists for Runtime execution, external
+I/O, or scope expansion.
 
 The previous `SUSPENDED PENDING EXPLICIT REGRANT` state is historical. The
 current Authority Regrant was limited to the approved three-file correction
-scope. Implementation Approval remains REVALIDATED; further changes require
-new authority.
+scope and is now historical. Implementation Approval remains REVALIDATED;
+further changes require new authority.
 
 ## 2. Authorized Paths
 

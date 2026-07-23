@@ -9,7 +9,7 @@ HISTORICAL IMPLEMENTATION APPROVAL: APPROVED (SUPERSEDED OPERATIVELY)
 IMPLEMENTATION SCOPE: LOCKED
 RUNTIME IMPLEMENTATION AUTHORITY: HISTORICALLY GRANTED BY `AUTHORITY.md`
 CURRENT OPERATIVE IMPLEMENTATION APPROVAL: REVALIDATED
-CURRENT OPERATIVE RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
+CURRENT OPERATIVE RUNTIME IMPLEMENTATION AUTHORITY: EXPIRED
 PRODUCTION CHANGES AUTHORIZED: NO — IMPLEMENTATION COMPLETE; FURTHER CHANGES REQUIRE NEW AUTHORITY
 CURRENT CONTRACT AMENDMENT CHECKPOINT: 59aa291
 APPROVAL CHECKPOINT: e743068
@@ -24,7 +24,9 @@ by `RUNTIME-STEP-IMPLEMENTATION-APPROVAL-REVALIDATION-002` after the limited
 initial/retry discriminator contract amendment. That decision does not grant
 Runtime Implementation Authority. The separate regrant recorded that authority
 only for the approved initial/retry validation correction scope; that scope is
-now complete and independently re-reviewed PASS at `6de9421`.
+now complete and independently re-reviewed PASS at `6de9421`. The authority
+expired with Sprint Closeout; further implementation requires a new authority
+process.
 
 ## 2. Approved Implementation Scope
 

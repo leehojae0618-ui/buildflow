@@ -2,7 +2,7 @@
 
 ## Task ID
 
-RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
+NONE
 
 ## Project State
 
@@ -11,14 +11,18 @@ ACTIVE
 ## Authority Status
 
 ```text
-ACTIVE / RUNTIME STEP IMPLEMENTATION COMPLETE / SPRINT CLOSEOUT PENDING
-CURRENT SPRINT WORK: IMPLEMENTATION COMPLETE / SPRINT CLOSEOUT PENDING
+ACTIVE / NO ACTIVE SPRINT / RUNTIME STEP IMPLEMENTATION SPRINT CLOSED
+CURRENT SPRINT WORK: NONE
+LAST CLOSED SPRINT: RUNTIME-STEP-IMPLEMENTATION-PLANNING-001
+SPRINT STATUS: CLOSED
+ACTIVE SPRINT: NONE
 RUNTIME STEP CONTRACT: AMENDED / INITIAL-RETRY DISCRIMINATOR / REVALIDATION COMPLETE
 PREVIOUS CONTRACT CHECKPOINT: 730bde8
 IMPLEMENTATION APPROVAL: REVALIDATED
 IMPLEMENTATION SCOPE: LOCKED
 IMPLEMENTATION APPROVAL CHECKPOINT: e743068
-RUNTIME IMPLEMENTATION AUTHORITY: GRANTED
+RUNTIME IMPLEMENTATION AUTHORITY: EXPIRED
+RUNTIME STEP STATUS: IMPLEMENTATION COMPLETE
 RUNTIME IMPLEMENTATION STATUS: COMPLETE / INDEPENDENTLY REVIEWED / PASS
 IMPLEMENTATION COMPLETION: COMPLETE
 INDEPENDENT IMPLEMENTATION REVIEW: PASS
@@ -28,10 +32,10 @@ INITIAL/RETRY IMPLEMENTATION CHECKPOINT: 6764c03
 TEST COVERAGE ISSUE-RESOLUTION CHECKPOINT: 6de9421
 INDEPENDENT IMPLEMENTATION RE-REVIEW: RUNTIME-STEP-INDEPENDENT-IMPLEMENTATION-REREVIEW-001 / PASS
 REMAINING FINDINGS: P0 0 / P1 0 / P2 0
-NEXT REQUIRED STAGE: Runtime Step Implementation Sprint Closeout
+NEXT LIFECYCLE STAGE: READY FOR MERGE / RELEASE GOVERNANCE
 ```
 
-## Approved Contract Baseline
+## Historical Sprint Baseline
 
 - Runtime Step Contract: initial/retry discriminator revalidation complete at
   `59aa291`; prior contract checkpoint `730bde8`; previous field-matrix
@@ -41,18 +45,17 @@ NEXT REQUIRED STAGE: Runtime Step Implementation Sprint Closeout
 - The approved Step contract is not rewritten by this planning task except for
   the separately authorized limited Attempt field-matrix amendment.
 
-## Authorization Boundary
+## Historical Authorization Boundary
 
 - Historical Implementation Approval remains recorded for the locked three-file
   scope; its operative state is REVALIDATED after review
   `RUNTIME-STEP-IMPLEMENTATION-APPROVAL-REVALIDATION-002`.
-- Historical Authority remains recorded; the current operative authority is
-  GRANTED, while further production changes are prohibited because the approved
-  initial/retry implementation is complete.
+- Historical Authority remains recorded; it expired when the Sprint closed.
+  Further implementation requires a new authority process.
 - Production implementation is COMPLETE following checkpoints `6764c03` and
   `6de9421`. Independent re-review
   `RUNTIME-STEP-INDEPENDENT-IMPLEMENTATION-REREVIEW-001` passed with P0/P1/P2
-  `0/0/0`; Sprint Closeout is the next required stage.
+  `0/0/0`; the next lifecycle stage is Merge / Release Governance.
 
 ## Prohibited Work
 
@@ -61,9 +64,9 @@ NEXT REQUIRED STAGE: Runtime Step Implementation Sprint Closeout
   until separately approved.
 - Provider/MCP Invocation, Runtime execution, orchestration, scheduling,
   persistence, DB/API/UI, deployment, Marketplace, Push, Merge, or Deploy.
-- Any further production or test change without new authority.
+- Any production or test change without a new authority process.
 
-## Scope Source
+## Historical Scope Source
 
 - `docs/sprints/RUNTIME-STEP-IMPLEMENTATION-PLANNING-001/TASK.md`
 - `docs/sprints/RUNTIME-STEP-IMPLEMENTATION-PLANNING-001/PLAN.md`
