@@ -5,7 +5,15 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { parseProjectForm } from "@/features/projects/validation";
 import type { ProjectFormState } from "@/features/projects/types";
-import { createRequirementSnapshot } from "@/features/requirements/snapshot";
+import {
+  createRequirementSnapshot,
+  projectClarificationDerivedRevision,
+  type RequirementSnapshotConstraints,
+} from "@/features/requirements/snapshot";
+import {
+  classifyClarificationPreparationError,
+  prepareClarificationAnswerBatch,
+} from "@/features/requirements/clarification";
 import { generateArchitectureCandidates } from "@/features/architecture/candidates";
 import { validateCandidateSelection } from "@/features/architecture/selection";
 import { resolveRequiredConnectors } from "@/features/connectors/resolver";
@@ -17,10 +25,40 @@ import { createInstallationSession } from "@/features/installation/session";
 import { createTestSuite } from "@/features/testing/engine";
 import type { ArchitectureCandidates } from "@/features/architecture/candidates";
 import type { BuildPreference } from "@/features/preferences/types";
-import type { Requirement, ConsentRequirement, CapabilitySummary, ClarificationSummary } from "@/features/requirements/types";
+import type {
+  ClarificationAnswerBatchCommitInput,
+  Requirement,
+  RequirementSnapshot,
+  ConsentRequirement,
+  CapabilitySummary,
+  ClarificationSummary,
+} from "@/features/requirements/types";
 import { normalizeBuildPreference } from "@/features/preferences/types";
 
 type StoredSelectionSnapshot = { [key: string]: unknown; requirement: Requirement; architectureCandidates: ArchitectureCandidates; buildPreference?: BuildPreference; consents?: ConsentRequirement[]; capabilitySummary: CapabilitySummary; clarificationSummary?: ClarificationSummary };
+
+export type SaveClarificationAnswerBatchInput = ClarificationAnswerBatchCommitInput & {
+  projectId: string;
+};
+
+export type SaveClarificationAnswerBatchError =
+  | "PROJECT_ID_INVALID"
+  | "PROJECT_NOT_FOUND"
+  | "SNAPSHOT_UNAVAILABLE"
+  | "STALE_REVISION"
+  | "POLICY_VERSION_UNSUPPORTED"
+  | "ANSWER_BATCH_INVALID"
+  | "SECRET_SHAPED_INPUT"
+  | "PROJECTION_FAILED"
+  | "UNEXPECTED_ERROR"
+  | "PERSISTENCE_FAILED";
+
+export type SaveClarificationAnswerBatchResult =
+  | { ok: true; revision: number }
+  | {
+      ok: false;
+      error: SaveClarificationAnswerBatchError;
+    };
 
 async function requireUser() {
   const supabase = await createSupabaseServerClient();
@@ -52,6 +90,87 @@ export async function updateProject(_state: ProjectFormState, formData: FormData
   if (error) return { error: "프로젝트를 수정하지 못했습니다. 잠시 후 다시 시도해주세요." };
   revalidatePath("/app"); revalidatePath("/app/projects"); revalidatePath(`/app/projects/${projectId}`);
   return {};
+}
+
+/**
+ * Persists exactly one verified Clarification revision in the existing JSON
+ * boundary. The ownership predicate is applied on both read and write; a
+ * failed write leaves the stored snapshot unchanged because no intermediate
+ * update occurs.
+ */
+export async function saveClarificationAnswerBatch(
+  input: SaveClarificationAnswerBatchInput,
+): Promise<SaveClarificationAnswerBatchResult> {
+  if (!/^[0-9a-f-]{36}$/i.test(input.projectId)) return { ok: false, error: "PROJECT_ID_INVALID" };
+
+  const { supabase, user } = await requireUser();
+  const { data: project, error: projectError } = await supabase
+    .from("projects")
+    .select("goal,goal_constraints")
+    .eq("id", input.projectId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (projectError || !project) return { ok: false, error: "PROJECT_NOT_FOUND" };
+
+  const constraints = (project.goal_constraints ?? {}) as Record<string, unknown>;
+  const snapshot = constraints.requirement_snapshot as RequirementSnapshot | undefined;
+  if (!snapshot?.requirement || !snapshot.architectureCandidates || !snapshot.buildPlan) {
+    return { ok: false, error: "SNAPSHOT_UNAVAILABLE" };
+  }
+
+  let persisted: ReturnType<typeof prepareClarificationAnswerBatch>;
+  try {
+    persisted = prepareClarificationAnswerBatch(
+      snapshot.requirement,
+      snapshot.clarification,
+      input,
+    );
+  } catch (error) {
+    return { ok: false, error: classifyClarificationPreparationError(error) };
+  }
+
+  let derived: ReturnType<typeof projectClarificationDerivedRevision>;
+  try {
+    derived = projectClarificationDerivedRevision({
+      diff: persisted.diff,
+      previousSnapshot: snapshot,
+      goal: project.goal?.trim() || snapshot.requirement.goalOriginal,
+      constraints: constraints as RequirementSnapshotConstraints,
+    });
+  } catch {
+    return { ok: false, error: "PROJECTION_FAILED" };
+  }
+
+  try {
+    const nextSnapshot: RequirementSnapshot = {
+      ...(derived.snapshot ?? snapshot),
+      clarification: persisted.clarification,
+    };
+    const revisionColumn = "goal_constraints->requirement_snapshot->clarification->>revision";
+    const writeQuery = supabase
+      .from("projects")
+      .update({
+        goal_constraints: {
+          ...constraints,
+          requirement_snapshot: nextSnapshot,
+        },
+      })
+      .eq("id", input.projectId)
+      .eq("user_id", user.id);
+    const guardedWrite = input.expectedRevision === 0
+      ? writeQuery.or(`${revisionColumn}.is.null,${revisionColumn}.eq.0`)
+      : writeQuery.eq(revisionColumn, String(input.expectedRevision));
+    const { data: writtenProject, error: writeError } = await guardedWrite
+      .select("id")
+      .maybeSingle();
+    if (writeError) return { ok: false, error: "PERSISTENCE_FAILED" };
+    if (!writtenProject) return { ok: false, error: "STALE_REVISION" };
+
+    revalidatePath(`/app/projects/${input.projectId}`);
+    return { ok: true, revision: persisted.clarification.revision };
+  } catch {
+    return { ok: false, error: "UNEXPECTED_ERROR" };
+  }
 }
 
 export async function archiveProject(formData: FormData) {
