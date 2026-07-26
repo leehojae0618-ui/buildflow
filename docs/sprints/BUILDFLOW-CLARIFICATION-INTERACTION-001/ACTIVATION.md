@@ -4,14 +4,15 @@
 
 ```text
 TASK ID: BUILDFLOW-CLARIFICATION-INTERACTION-001
-ACTIVATION STATUS: ACTIVE
+ACTIVATION STATUS: CLOSED — HISTORICAL RECORD
 ACTIVATED BY: PRODUCT OWNER
 ACTIVATION DATE: 2026-07-24 (Asia/Seoul)
 SCOPE STATUS: FROZEN
 IMPLEMENTATION APPROVAL: APPROVED — FROZEN CLARIFICATION SCOPE
-ENGINEERING REVIEW: P1-001 FIX REVIEW / APPROVED
-IMPLEMENTATION AUTHORITY: PAUSED — RE USER QA
-CURRENT STEP: RE USER QA — P1-001 CLARIFICATION FIX
+ENGINEERING REVIEW: COMPLETE / APPROVED
+FINAL USER QA: PASS
+IMPLEMENTATION AUTHORITY: NONE
+CURRENT STEP: CLOSED
 ```
 
 ## Activation Decision
@@ -36,9 +37,9 @@ Implementation → tests → PM/CTO review → next step
 
 All eight planned implementation steps passed PM/CTO engineering review. P1-001
 was corrected within its approved minimal scope and passed PM/CTO Fix Review.
-Implementation is locked pending re User QA. A further correction requires a
-documented QA finding and approved correction scope; no new feature or scope
-expansion is authorized.
+The Sprint is closed following final User QA PASS and the closeout record. A
+future correction requires a new approved Sprint or a separately authorized
+defect-correction scope; no new feature or scope expansion is authorized.
 
 ## Visual Slice Boundary
 
@@ -55,3 +56,8 @@ locked unless a documented User QA finding authorizes a correction.
 - No commit, push, merge, or deploy in this activation task.
 - Stop for a Scope Amendment if any non-authorized path or contract change is
   required.
+
+## Closeout
+
+The Product Owner closed this Sprint after final User QA passed. See
+`CLOSEOUT.md` for the completion record and historical checkpoints.

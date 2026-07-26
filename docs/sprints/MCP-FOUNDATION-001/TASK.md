@@ -2,7 +2,7 @@
 
 ## Status
 
-APPROVED / SCOPE FROZEN
+IMPLEMENTATION COMPLETE / INDEPENDENT REVIEW ACTIVE
 
 ## Title
 
@@ -107,3 +107,10 @@ Allowed work:
 - PM/CTO Review requested
 - Commit not created until explicit Commit Approval
 - Push not performed until explicit Push Approval
+
+## Current Gate
+
+Implementation was committed at `e3344f2` and its implementation report was
+recorded at `4c4b3b6`. The current authorized work is an independent,
+read-only review. No MCP connection, Tool invocation, or corrective code change
+is authorized unless the review identifies and approves a finding.
