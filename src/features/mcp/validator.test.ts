@@ -7,6 +7,8 @@ import {
 } from "./types";
 import {
   validateMcpDiscoverySnapshot,
+  createMcpInvocationFailureContract,
+  projectMcpToolReadiness,
   validateMcpServerDefinition,
   validateMcpToolDefinition,
 } from "./validator";
@@ -121,6 +123,114 @@ describe("MCP foundation contract validator", () => {
     expect(
       validateMcpDiscoverySnapshot(snapshot, sampleMcpServerDefinition).errors,
     ).toContain("MCP_DISCOVERY_SNAPSHOT_INVALID");
+  });
+
+  it("projects an unavailable server as non-callable", () => {
+    const server: McpServerDefinition = {
+      ...sampleMcpServerDefinition,
+      health: { ...sampleMcpServerDefinition.health, status: "UNAVAILABLE" },
+    };
+    expect(projectMcpToolReadiness(server, sampleTool.name)).toMatchObject({
+      callable: false,
+      code: "MCP_SERVER_UNAVAILABLE",
+    });
+  });
+
+  it("maps an unknown tool to a safe tool-not-found projection", () => {
+    expect(
+      projectMcpToolReadiness(sampleMcpServerDefinition, "gmail.unknown"),
+    ).toMatchObject({ callable: false, code: "MCP_TOOL_NOT_FOUND" });
+  });
+
+  it("represents timeout and transport failures without raw error data", () => {
+    expect(createMcpInvocationFailureContract("MCP_TIMEOUT")).toEqual({
+      status: "FAILED",
+      code: "MCP_TIMEOUT",
+    });
+    expect(createMcpInvocationFailureContract("MCP_TRANSPORT_FAILED")).toEqual({
+      status: "FAILED",
+      code: "MCP_TRANSPORT_FAILED",
+    });
+  });
+
+  it("accepts retry-blocked tools only when no retry is configured", () => {
+    const tool: McpToolDefinition = {
+      ...sampleTool,
+      idempotencyPolicy: { mode: "RETRY_BLOCKED", idempotencyKeyRequired: false },
+      retryPolicy: { maxAttempts: 0, retryableErrorCodes: [] },
+    };
+    expect(validateMcpToolDefinition(tool)).toEqual({ valid: true, errors: [] });
+  });
+
+  it("rejects retry-blocked tools that allow retry", () => {
+    const tool: McpToolDefinition = {
+      ...sampleTool,
+      idempotencyPolicy: { mode: "RETRY_BLOCKED", idempotencyKeyRequired: false },
+      retryPolicy: { maxAttempts: 1, retryableErrorCodes: ["RATE_LIMIT"] },
+    };
+    expect(validateMcpToolDefinition(tool).errors).toContain(
+      "MCP_RETRY_IDEMPOTENCY_CONFLICT",
+    );
+  });
+
+  it("rejects other no-retry modes that allow retry", () => {
+    const tool: McpToolDefinition = {
+      ...sampleTool,
+      idempotencyPolicy: { mode: "NOT_SUPPORTED", idempotencyKeyRequired: false },
+      retryPolicy: { maxAttempts: 1, retryableErrorCodes: ["RATE_LIMIT"] },
+    };
+    expect(validateMcpToolDefinition(tool).errors).toContain(
+      "MCP_RETRY_IDEMPOTENCY_CONFLICT",
+    );
+  });
+
+  it("accepts a retry-permitted idempotent tool within bounds", () => {
+    const tool: McpToolDefinition = {
+      ...sampleTool,
+      idempotencyPolicy: { mode: "REQUIRED", idempotencyKeyRequired: true },
+      retryPolicy: { maxAttempts: 2, retryableErrorCodes: ["RATE_LIMIT"] },
+    };
+    expect(validateMcpToolDefinition(tool)).toEqual({ valid: true, errors: [] });
+  });
+
+  it("requires a non-empty redaction policy", () => {
+    const tool: McpToolDefinition = {
+      ...sampleTool,
+      safeResultPolicy: { ...sampleTool.safeResultPolicy, redactedFields: [] },
+    };
+    expect(validateMcpToolDefinition(tool).errors).toContain(
+      "MCP_SAFE_RESULT_REDACTION_REQUIRED",
+    );
+  });
+
+  it("requires non-empty, unique, safe evidence fields", () => {
+    const empty: McpToolDefinition = {
+      ...sampleTool,
+      safeResultPolicy: { ...sampleTool.safeResultPolicy, evidenceFields: [] },
+    };
+    const duplicate: McpToolDefinition = {
+      ...sampleTool,
+      safeResultPolicy: {
+        ...sampleTool.safeResultPolicy,
+        evidenceFields: ["messageId", "messageId"],
+      },
+    };
+    const sensitive: McpToolDefinition = {
+      ...sampleTool,
+      safeResultPolicy: {
+        ...sampleTool.safeResultPolicy,
+        evidenceFields: ["rawPayload"],
+      },
+    };
+    expect(validateMcpToolDefinition(empty).errors).toContain(
+      "MCP_SAFE_RESULT_EVIDENCE_REQUIRED",
+    );
+    expect(validateMcpToolDefinition(duplicate).errors).toContain(
+      "MCP_SAFE_RESULT_FIELDS_DUPLICATE",
+    );
+    expect(validateMcpToolDefinition(sensitive).errors).toContain(
+      "MCP_SAFE_RESULT_EVIDENCE_FIELD_UNSAFE",
+    );
   });
 
   it("keeps the contract isolated from runtime and provider paths", () => {

@@ -17,6 +17,36 @@ export const mcpHealthStatuses = [
 ] as const;
 export type McpHealthStatus = (typeof mcpHealthStatuses)[number];
 
+export const mcpInvocationOutcomeCodes = [
+  "MCP_READY",
+  "MCP_TOOL_NOT_FOUND",
+  "MCP_SERVER_UNAVAILABLE",
+  "MCP_SERVER_DEGRADED",
+  "MCP_TIMEOUT",
+  "MCP_TRANSPORT_FAILED",
+  "MCP_INVOCATION_REJECTED",
+  "MCP_RESULT_INVALID",
+] as const;
+export type McpInvocationOutcomeCode =
+  (typeof mcpInvocationOutcomeCodes)[number];
+
+export type McpReadinessProjection = {
+  callable: boolean;
+  code:
+    | "MCP_READY"
+    | "MCP_TOOL_NOT_FOUND"
+    | "MCP_SERVER_UNAVAILABLE"
+    | "MCP_SERVER_DEGRADED"
+    | "MCP_INVOCATION_REJECTED";
+  serverId: string;
+  toolName: string;
+};
+
+export type McpInvocationFailureContract = {
+  status: "REJECTED" | "FAILED";
+  code: Exclude<McpInvocationOutcomeCode, "MCP_READY">;
+};
+
 export const mcpRiskClasses = ["LOW", "MEDIUM", "HIGH", "CRITICAL"] as const;
 export type McpRiskClass = (typeof mcpRiskClasses)[number];
 
@@ -102,6 +132,8 @@ export type McpSafeResultPolicy = {
   redactedFields: string[];
   evidenceFields: string[];
 };
+
+export const MCP_SAFE_RESULT_MAX_OUTPUT_BYTES = 1_048_576;
 
 export type McpVerificationEvidenceContract = {
   required: boolean;

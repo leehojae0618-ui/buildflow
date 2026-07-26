@@ -2,12 +2,15 @@ import {
   mcpApprovalRequirements,
   mcpHealthStatuses,
   mcpIdempotencyModes,
+  MCP_SAFE_RESULT_MAX_OUTPUT_BYTES,
   mcpPermissionKinds,
   mcpRiskClasses,
   mcpServerTransports,
   mcpTrustStatuses,
   type McpDiscoverySnapshot,
+  type McpInvocationFailureContract,
   type McpPermissionPolicy,
+  type McpReadinessProjection,
   type McpServerDefinition,
   type McpToolDefinition,
 } from "./types";
@@ -28,9 +31,14 @@ export type McpValidationCode =
   | "MCP_RISK_POLICY_INVALID"
   | "MCP_TIMEOUT_INVALID"
   | "MCP_RETRY_INVALID"
+  | "MCP_RETRY_IDEMPOTENCY_CONFLICT"
   | "MCP_IDEMPOTENCY_INVALID"
   | "MCP_RATE_LIMIT_INVALID"
   | "MCP_SAFE_RESULT_INVALID"
+  | "MCP_SAFE_RESULT_REDACTION_REQUIRED"
+  | "MCP_SAFE_RESULT_EVIDENCE_REQUIRED"
+  | "MCP_SAFE_RESULT_FIELDS_DUPLICATE"
+  | "MCP_SAFE_RESULT_EVIDENCE_FIELD_UNSAFE"
   | "MCP_VERIFICATION_INVALID"
   | "MCP_DISCOVERY_SNAPSHOT_INVALID"
   | "MCP_DISCOVERY_TOOL_MISMATCH";
@@ -94,6 +102,53 @@ function validatePermissionPolicy(
   return errors;
 }
 
+function hasUnsafeSafeFieldName(value: string) {
+  const normalized = value.toLowerCase();
+  return [
+    "secret",
+    "password",
+    "credential",
+    "token",
+    "authorization",
+    "api_key",
+    "apikey",
+    "raw",
+    "payload",
+    "stacktrace",
+  ].some((fragment) => normalized.includes(fragment));
+}
+
+function hasBlankField(items: string[]) {
+  return items.some((item) => item.trim().length === 0);
+}
+
+function validateSafeResultPolicy(
+  tool: McpToolDefinition,
+): McpValidationCode[] {
+  const errors: McpValidationCode[] = [];
+  const policy = tool.safeResultPolicy;
+  if (
+    policy.storeRawResult ||
+    policy.maxOutputBytes < 1 ||
+    policy.maxOutputBytes > MCP_SAFE_RESULT_MAX_OUTPUT_BYTES
+  ) {
+    errors.push("MCP_SAFE_RESULT_INVALID");
+  }
+  if (policy.redactedFields.length === 0 || hasBlankField(policy.redactedFields)) {
+    errors.push("MCP_SAFE_RESULT_REDACTION_REQUIRED");
+  }
+  if (policy.evidenceFields.length === 0 || hasBlankField(policy.evidenceFields)) {
+    errors.push("MCP_SAFE_RESULT_EVIDENCE_REQUIRED");
+  }
+  if (!unique(policy.redactedFields) || !unique(policy.evidenceFields)) {
+    errors.push("MCP_SAFE_RESULT_FIELDS_DUPLICATE");
+  }
+  if (policy.evidenceFields.some(hasUnsafeSafeFieldName)) {
+    errors.push("MCP_SAFE_RESULT_EVIDENCE_FIELD_UNSAFE");
+  }
+  return errors;
+}
+
 export function validateMcpToolDefinition(
   tool: McpToolDefinition,
 ): McpValidationResult {
@@ -138,18 +193,19 @@ export function validateMcpToolDefinition(
     errors.push("MCP_IDEMPOTENCY_INVALID");
   }
   if (
+    (tool.idempotencyPolicy.mode === "RETRY_BLOCKED" ||
+      tool.idempotencyPolicy.mode === "NOT_SUPPORTED") &&
+    tool.retryPolicy.maxAttempts !== 0
+  ) {
+    errors.push("MCP_RETRY_IDEMPOTENCY_CONFLICT");
+  }
+  if (
     tool.rateLimitPolicy.maxRequestsPerMinute < 1 ||
     tool.rateLimitPolicy.maxRequestsPerMinute > 10_000
   ) {
     errors.push("MCP_RATE_LIMIT_INVALID");
   }
-  if (
-    tool.safeResultPolicy.storeRawResult ||
-    tool.safeResultPolicy.maxOutputBytes < 1 ||
-    tool.safeResultPolicy.evidenceFields.length === 0
-  ) {
-    errors.push("MCP_SAFE_RESULT_INVALID");
-  }
+  errors.push(...validateSafeResultPolicy(tool));
   if (
     tool.verification.required &&
     tool.verification.safeFields.length === 0
@@ -212,4 +268,39 @@ export function validateMcpDiscoverySnapshot(
     errors.push(...validateMcpToolDefinition(tool).errors);
   }
   return { valid: errors.length === 0, errors: uniqueErrors(errors) };
+}
+
+export function projectMcpToolReadiness(
+  server: McpServerDefinition,
+  toolName: string,
+): McpReadinessProjection {
+  const base = { serverId: server.id, toolName };
+  if (server.health.status === "UNAVAILABLE") {
+    return { ...base, callable: false, code: "MCP_SERVER_UNAVAILABLE" };
+  }
+  if (server.health.status === "DEGRADED") {
+    return { ...base, callable: false, code: "MCP_SERVER_DEGRADED" };
+  }
+  const tool = server.tools.find((candidate) => candidate.name === toolName);
+  if (!tool) {
+    return { ...base, callable: false, code: "MCP_TOOL_NOT_FOUND" };
+  }
+  if (
+    server.trustStatus !== "TRUSTED" ||
+    server.health.status !== "HEALTHY" ||
+    !tool.allowlisted ||
+    !validateMcpServerDefinition(server).valid
+  ) {
+    return { ...base, callable: false, code: "MCP_INVOCATION_REJECTED" };
+  }
+  return { ...base, callable: true, code: "MCP_READY" };
+}
+
+export function createMcpInvocationFailureContract(
+  code: McpInvocationFailureContract["code"],
+): McpInvocationFailureContract {
+  return {
+    status: "FAILED",
+    code,
+  };
 }
