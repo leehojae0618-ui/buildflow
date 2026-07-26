@@ -2,14 +2,14 @@
 
 ## Status
 
-APPROVED / SCOPE FROZEN
+HISTORICAL / COMPLETED
 
 ## Goal
 
 BuildFlow의 AI Agent Builder 방향에 맞춰 Agent Capability, Block, Blueprint,
 Agent Definition, Contract Validator의 공식 계약을 만든다.
 
-이번 Sprint는 Agent Foundation이다. 기존 `ai-inquiry-v1`을 첫 Agent
+This is the historical, completed Agent Foundation Sprint. 기존 `ai-inquiry-v1`을 첫 Agent
 Blueprint compatibility mapping으로 정리하지만, 실제 Provider Execution,
 MCP Server 연결, Marketplace Publishing은 구현하지 않는다.
 
@@ -85,6 +85,16 @@ MCP Server 연결, Marketplace Publishing은 구현하지 않는다.
 - Unit tests
 - `docs/sprints/AGENT-FOUNDATION-001/REPORT.md`
 
+## Historical Scope Boundary
+
+This document records only the originally approved Agent Foundation scope.
+Later Agent work—Tool Resolution, Validation Gate, package contracts, and
+Runtime Plan integration—is related work with separate checkpoints. It is not
+retroactively included in this Sprint's completed scope.
+
+No current production-code, test, Runtime, or MCP change is required to close
+this historical Sprint record.
+
 ## Definition of Done
 
 - Tests PASS
@@ -96,6 +106,5 @@ MCP Server 연결, Marketplace Publishing은 구현하지 않는다.
 - Scope does not include real MCP execution
 - Scope does not include Marketplace implementation
 - Sprint Report 작성
-- Commit 금지 until PM Review and Commit Approval
-- Push 금지
-
+- Historical commit and push gates are complete; see `REPORT.md` and
+  `CLOSEOUT.md` for checkpoints.

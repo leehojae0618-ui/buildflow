@@ -2,7 +2,7 @@
 
 ## Status
 
-IMPLEMENTATION COMPLETE — PM/CTO REVIEW REQUIRED
+CLOSED / COMPLETE / INDEPENDENT DOCUMENTATION REVIEW COMPLETE
 
 ## Summary
 
@@ -12,7 +12,7 @@ capabilities, block contracts, blueprint and definition contracts, a pure Agent
 Definition generator, validation rules, and the `ai-inquiry-v1` compatibility
 mapping.
 
-This Sprint did not connect the contract layer to Provider execution,
+This original Sprint did not connect the contract layer to Provider execution,
 Provisioning, MCP Runtime, Marketplace, UI, or database migrations.
 
 ## Completed Scope
@@ -75,6 +75,22 @@ Provisioning, MCP Runtime, Marketplace, UI, or database migrations.
 - Credential calculation: not included
 - `general-crud-v1` Agent promotion: not included
 
+## Later Related Work — Not Retroactive Scope
+
+The following later Agent-related work is present at current `origin/main`, but
+is not part of this Sprint's original completed scope:
+
+- Tool Resolution planner: `54a438a`
+- Agent Validation Gate: `2d38d91`
+- Agent package profile and evidence contracts: `8fe65ad`, `16593e1`, and
+  later package checkpoints
+- Runtime Plan integration: `6060a67` and its follow-up runtime work
+
+Runtime Plan consumes validated Agent Blueprint and Definition contracts to
+construct a plan. Agent Foundation itself does not directly invoke a Provider
+or MCP tool, execute Runtime work, persist raw results, bypass approval, or own
+queue and retry loops.
+
 ## Product Direction
 
 This Sprint supports the product decision that BuildFlow's primary direction is
@@ -85,16 +101,18 @@ CAPABILITY-002, but it was not promoted into the Agent contract model.
 
 ## Validation Status
 
-Final quality gate: PASS
+Current validation baseline: PASS
 
-- `npm test`: PASS — 40 test files, 180 tests
+- Agent-focused tests: PASS — 20 files / 418 tests
+- Full suite: PASS — 63 files / 668 tests; 1 gated live test skipped
 - `npm run lint`: PASS
 - `npm run typecheck`: PASS
 - `npm run build`: PASS
 - `git diff --check`: PASS
 - Secret pattern scan: PASS
 
-PM/CTO Review is required before Commit Approval.
+Independent documentation review found no implementation finding. Current
+closeout status is recorded in `CLOSEOUT.md`.
 
 ## MVP Impact
 
@@ -108,13 +126,19 @@ for Agent contract completeness yet.
 
 ## Technical Debt and Follow-up
 
-- MCP Registry and Gateway remain planned for `MCP-FOUNDATION-001`.
-- Tool invocation and Tool Resolver remain outside this Sprint.
+- MCP Registry and Gateway were later addressed only as contract foundation
+  work in `MCP-FOUNDATION-001`; live invocation remains outside this Sprint.
+- Tool invocation remains outside this Sprint. Tool Resolution exists as later
+  related work and is not retroactively included here.
 - Agent Generator integration with Requirement and Blueprint selection remains
-  a future Sprint.
+  a future approved Sprint.
 - Marketplace publishing remains outside this Sprint.
 
 ## Commit and Push
 
-- Commit: pending PM Review and Commit Approval
-- Push: prohibited until separate approval
+- Original implementation: `2fce847 feat: add agent foundation contracts`
+- Generator: `01f2350 feat: add agent definition generator`
+- Compatibility mapping: `a822640 feat: add ai inquiry agent compatibility mapping`
+- Original report: `38ec6ad docs: report agent foundation implementation`
+- Historical implementation checkpoints are included in `origin/main`.
+- No new commit or push is authorized by this report.

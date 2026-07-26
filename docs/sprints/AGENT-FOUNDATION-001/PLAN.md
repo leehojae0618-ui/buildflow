@@ -1,7 +1,12 @@
 # AGENT-FOUNDATION-001 — Plan
 
+## Status
+
+HISTORICAL PLAN / COMPLETED
+
 ## Objective
 
+This historical plan defined the original Agent Foundation contract layer.
 BuildFlow가 AI Agent를 안전하게 생성, 검증, 배포, 패키징하기 위한 Agent
 계약 계층을 만든다. 이 Sprint는 Runtime 실행보다 Source of Truth와
 검증 가능한 Contract를 우선한다.
@@ -96,6 +101,8 @@ git diff --check
 
 ## Commit Policy
 
-이 Sprint의 구현은 PM Review와 Commit Approval 전까지 commit하지 않는다.
-Push는 별도 승인 전까지 금지한다.
-
+Historical implementation checkpoints are `2fce847`, `01f2350`, and
+`a822640`; the original implementation report is `38ec6ad`. This plan does
+not authorize new work. Later Tool Resolution, Validation Gate, package, and
+Runtime Plan work are separate follow-up work and must not be interpreted as
+new implementation planned by this document.
