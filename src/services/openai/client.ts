@@ -1,6 +1,6 @@
 import "server-only";
 import OpenAI from "openai";
-import { requireOpenAIEnv } from "@/lib/env/server";
+import { requireOpenAIEnv } from "../../lib/env/server";
 
 export function createOpenAIClient() {
   const { apiKey } = requireOpenAIEnv();

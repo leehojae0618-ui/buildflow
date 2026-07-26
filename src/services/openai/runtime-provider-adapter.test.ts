@@ -62,6 +62,11 @@ describe("OpenAI Runtime Provider Adapter", () => {
       errorCode: "PROVIDER_TIMEOUT",
       retryEligible: false,
     });
+    expect(normalizeOpenAIProviderError({ status: 404, code: "model_not_found" }, 3, "request.1")).toMatchObject({
+      status: "FAILED",
+      errorCode: "PROVIDER_MODEL_UNAVAILABLE",
+      retryEligible: false,
+    });
   });
 
   it("normalizes aborts and unknown errors without a stack trace", () => {
@@ -134,6 +139,7 @@ describe("OpenAI Runtime Provider Adapter", () => {
     ["authentication", { status: 401 }, "PROVIDER_AUTHENTICATION_FAILED"],
     ["timeout", { name: "APIConnectionTimeoutError" }, "PROVIDER_TIMEOUT"],
     ["rate limit", { status: 429 }, "PROVIDER_RATE_LIMITED"],
+    ["model unavailable", { status: 404, code: "model_not_found" }, "PROVIDER_MODEL_UNAVAILABLE"],
     ["unknown SDK error", { stack: "private stack trace" }, "PROVIDER_REQUEST_FAILED"],
   ])("normalizes a %s error through the actual adapter path", async (_label, error, errorCode) => {
     const create = vi.fn().mockRejectedValue(error);

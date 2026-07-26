@@ -11,6 +11,7 @@ import { createOpenAIClient } from "./client";
 type OpenAIErrorShape = {
   status?: unknown;
   name?: unknown;
+  code?: unknown;
 };
 
 export type OpenAIRuntimeProviderAdapterDependencies = {
@@ -30,6 +31,12 @@ function errorName(error: unknown): string {
   return typeof name === "string" ? name : "";
 }
 
+function errorCode(error: unknown): string {
+  if (!error || typeof error !== "object") return "";
+  const code = (error as OpenAIErrorShape).code;
+  return typeof code === "string" ? code : "";
+}
+
 export function normalizeOpenAIProviderError(
   error: unknown,
   latencyMs: number,
@@ -37,6 +44,7 @@ export function normalizeOpenAIProviderError(
 ): ProviderInvocationResult {
   const status = errorStatus(error);
   const name = errorName(error);
+  const code = errorCode(error);
   if (name === "AbortError") {
     return {
       status: "CANCELLED",
@@ -59,6 +67,15 @@ export function normalizeOpenAIProviderError(
     return {
       status: "FAILED",
       errorCode: "PROVIDER_AUTHENTICATION_FAILED",
+      providerRequestReference,
+      latencyMs,
+      retryEligible: false,
+    };
+  }
+  if (status === 404 || code === "model_not_found") {
+    return {
+      status: "FAILED",
+      errorCode: "PROVIDER_MODEL_UNAVAILABLE",
       providerRequestReference,
       latencyMs,
       retryEligible: false,
