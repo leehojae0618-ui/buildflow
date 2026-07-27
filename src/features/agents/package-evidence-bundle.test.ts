@@ -279,6 +279,37 @@ describe("package evidence bundle", () => {
     );
   });
 
+  it("projects Runtime Evidence by reference only in deterministic order", () => {
+    const result = build({
+      runtimeEvidenceReferences: [
+        { runtimeEvidenceId: "evidence.b", integrityChecksum: "b".repeat(64), runtimeExecutionId: "execution.1", eventType: "RUNTIME_COMPLETED", status: "SUCCEEDED", occurredAt: "2026-07-27T00:00:01.000Z" },
+        { runtimeEvidenceId: "evidence.a", integrityChecksum: "a".repeat(64), runtimeExecutionId: "execution.1", eventType: "PROVIDER_INVOCATION_COMPLETED", status: "SUCCEEDED", occurredAt: "2026-07-27T00:00:00.000Z" },
+        { runtimeEvidenceId: "evidence.a", integrityChecksum: "a".repeat(64), runtimeExecutionId: "execution.1", eventType: "PROVIDER_INVOCATION_COMPLETED", status: "SUCCEEDED", occurredAt: "2026-07-27T00:00:00.000Z" },
+      ],
+    });
+    const runtime = result.bundle.evidenceReferences.filter((item) => item.kind === "RUNTIME_EVIDENCE");
+    expect(runtime.map((item) => item.id)).toEqual(["evidence.a", "evidence.b"]);
+    expect(runtime[0].runtimeEvidence).toEqual({
+      runtimeEvidenceId: "evidence.a", integrityChecksum: "a".repeat(64),
+      runtimeExecutionId: "execution.1", eventType: "PROVIDER_INVOCATION_COMPLETED",
+      status: "SUCCEEDED", occurredAt: "2026-07-27T00:00:00.000Z",
+    });
+    expect(result.bundle.limitations).not.toContain("Runtime execution evidence is not present.");
+    expect(JSON.stringify(runtime)).not.toContain("safeInputChecksum");
+  });
+
+  it("blocks a malformed Runtime Evidence reference", () => {
+    const result = build({ runtimeEvidenceReferences: [{ runtimeEvidenceId: "bad", integrityChecksum: "bad", runtimeExecutionId: "execution.1", eventType: "RUNTIME_COMPLETED", status: "SUCCEEDED", occurredAt: "not-a-date" }] });
+    expect(result.status).toBe("INVALID");
+    expect(result.failures.map((item) => item.code)).toContain("CONTRACT_ERROR");
+  });
+
+  it("rejects unsupported Runtime Evidence event/status and malformed optional references", () => {
+    const base = { runtimeEvidenceId: "evidence.a", integrityChecksum: "a".repeat(64), runtimeExecutionId: "execution.1", eventType: "RUNTIME_COMPLETED", status: "SUCCEEDED", occurredAt: "2026-07-27T00:00:00.000Z" };
+    expect(build({ runtimeEvidenceReferences: [{ ...base, eventType: "UNKNOWN" }] }).status).toBe("INVALID");
+    expect(build({ runtimeEvidenceReferences: [{ ...base, approvalRequestReference: "" }] }).status).toBe("INVALID");
+  });
+
   it("does not return VALID in the first implementation", () => {
     expect(build().status).not.toBe("VALID");
   });

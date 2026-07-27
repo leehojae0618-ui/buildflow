@@ -26,11 +26,21 @@ export type RuntimeEvidenceStatus =
   | "CANCELLED"
   | "BLOCKED";
 
+const runtimeEvidenceStatuses: readonly RuntimeEvidenceStatus[] = [
+  "SUCCEEDED",
+  "FAILED",
+  "TIMED_OUT",
+  "CANCELLED",
+  "BLOCKED",
+] as const;
+
 export type RuntimeEvidenceRecord = {
   formatVersion: typeof RUNTIME_EVIDENCE_FORMAT_VERSION;
   runtimeEvidenceId: string;
   runtimePlanId: string;
   runtimeExecutionId: string;
+  runtimeExecutionRequestId?: string;
+  runtimeExecutionStartId?: string;
   runtimeStepId: string;
   runtimeStepAttemptId: string;
   eventType: RuntimeEvidenceEventType;
@@ -43,6 +53,8 @@ export type RuntimeEvidenceRecord = {
   usage?: ProviderUsageFacts;
   latencyMs?: number;
   errorCode?: string;
+  /** Bounded, flat, non-sensitive operational facts only. */
+  metadata?: Record<string, string | number | boolean | null>;
   occurredAt: string;
   integrityChecksum: string;
 };
@@ -59,6 +71,12 @@ export type RuntimeEvidenceFailureCode =
   | "RUNTIME_EVIDENCE_SECRET_DETECTED"
   | "RUNTIME_EVIDENCE_VALUE_INVALID"
   | "RUNTIME_EVIDENCE_DUPLICATE"
+  | "RUNTIME_EVIDENCE_NOT_FOUND"
+  | "RUNTIME_EVIDENCE_UNAUTHORIZED"
+  | "RUNTIME_EVIDENCE_EXECUTION_MISMATCH"
+  | "RUNTIME_EVIDENCE_RECORD_TOO_LARGE"
+  | "RUNTIME_EVIDENCE_MALFORMED_PERSISTED_RECORD"
+  | "RUNTIME_EVIDENCE_PERSISTENCE_FAILED"
   | "RUNTIME_EVIDENCE_INTERNAL_ERROR";
 
 export type RuntimeEvidenceFailure = {
@@ -75,8 +93,32 @@ export type AppendRuntimeEvidenceResult =
   | { status: "FAILED"; failures: RuntimeEvidenceFailure[] };
 
 export interface RuntimeEvidenceSink {
-  append(input: BuildRuntimeEvidenceInput): Promise<AppendRuntimeEvidenceResult>;
+  append(
+    input: BuildRuntimeEvidenceInput,
+    context?: RuntimeEvidenceAppendContext,
+  ): Promise<AppendRuntimeEvidenceResult>;
 }
+
+/**
+ * Server-trusted association data. It intentionally does not belong to Agent,
+ * Plan, Provider, or general Runtime contracts.
+ */
+export type RuntimeEvidenceAppendContext = {
+  projectId: string;
+  userId: string;
+  packageId?: string;
+  packageVersion?: string;
+  evidenceReportId?: string;
+  approvalRequestId?: string;
+};
+
+export const runtimeEvidenceLimits = {
+  maxSerializedBytes: 16 * 1024,
+  maxReferenceLength: 256,
+  maxMetadataEntries: 16,
+  maxMetadataKeyLength: 64,
+  maxMetadataStringLength: 256,
+} as const;
 
 const checksumPattern = /^[a-f0-9]{64}$/;
 const secretPatterns = [
@@ -102,11 +144,37 @@ function isIsoUtc(value: string) {
     new Date(value).toISOString() === value;
 }
 
+function utf8Bytes(value: unknown) {
+  return Buffer.byteLength(stableSerializeAgentPackage(value), "utf8");
+}
+
+function isSafeMetadata(value: unknown): value is Record<string, string | number | boolean | null> {
+  if (value === undefined) return true;
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const entries = Object.entries(value);
+  if (entries.length > runtimeEvidenceLimits.maxMetadataEntries) return false;
+  return entries.every(([key, item]) =>
+    key.length > 0 &&
+    key.length <= runtimeEvidenceLimits.maxMetadataKeyLength &&
+    !/(?:secret|token|password|authorization|prompt|output|response|payload|cookie|credential|apikey|api_key|stack)/i.test(key) &&
+    (item === null || typeof item === "boolean" ||
+      (typeof item === "number" && Number.isFinite(item)) ||
+      (typeof item === "string" && item.length <= runtimeEvidenceLimits.maxMetadataStringLength)),
+  );
+}
+
+function normalizeMetadata(value: unknown): unknown {
+  if (value && typeof value === "object" && !Array.isArray(value) && Object.keys(value).length === 0) {
+    return undefined;
+  }
+  return value;
+}
+
 function containsSecret(value: unknown): boolean {
   if (typeof value === "string") return secretPatterns.some((pattern) => pattern.test(value));
   if (Array.isArray(value)) return value.some(containsSecret);
   if (value && typeof value === "object") {
-    const forbiddenKey = /^(?:secret|token|password|authorization|prompt|output|response|rawPrompt|rawOutput|rawResponse)$/i;
+    const forbiddenKey = /^(?:secret|token|password|authorization|prompt|output|response|payload|cookie|credential|apikey|api_key|stack|rawPrompt|rawOutput|rawResponse|sdkPayload)$/i;
     return Object.entries(value).some(
       ([key, child]) => forbiddenKey.test(key) || containsSecret(child),
     );
@@ -130,7 +198,8 @@ export function buildRuntimeEvidenceRecord(
 ): BuildRuntimeEvidenceResult {
   try {
     const normalized = Object.fromEntries(
-      Object.entries(input).filter(([, value]) => value !== undefined),
+      Object.entries({ ...input, metadata: normalizeMetadata(input.metadata) })
+        .filter(([, value]) => value !== undefined),
     ) as BuildRuntimeEvidenceInput;
     if (containsSecret(normalized)) {
       return { status: "INVALID", failures: [failure("RUNTIME_EVIDENCE_SECRET_DETECTED")] };
@@ -155,8 +224,28 @@ export function buildRuntimeEvidenceRecord(
     if (!isIsoUtc(normalized.occurredAt)) {
       failures.push(failure("RUNTIME_EVIDENCE_TIMESTAMP_INVALID", "occurredAt"));
     }
+    if (!runtimeEvidenceEventTypes.includes(normalized.eventType)) {
+      failures.push(failure("RUNTIME_EVIDENCE_VALUE_INVALID", "eventType"));
+    }
+    if (!runtimeEvidenceStatuses.includes(normalized.status)) {
+      failures.push(failure("RUNTIME_EVIDENCE_VALUE_INVALID", "status"));
+    }
+    if (normalized.provider !== "openai") {
+      failures.push(failure("RUNTIME_EVIDENCE_VALUE_INVALID", "provider"));
+    }
     if (normalized.latencyMs !== undefined && (!Number.isFinite(normalized.latencyMs) || normalized.latencyMs < 0)) {
       failures.push(failure("RUNTIME_EVIDENCE_VALUE_INVALID", "latencyMs"));
+    }
+    for (const [field, value] of Object.entries(normalized)) {
+      if (typeof value === "string" && field !== "model" && value.length > runtimeEvidenceLimits.maxReferenceLength) {
+        failures.push(failure("RUNTIME_EVIDENCE_REFERENCE_INVALID", field));
+      }
+    }
+    if (!isSafeMetadata(normalized.metadata)) {
+      failures.push(failure("RUNTIME_EVIDENCE_VALUE_INVALID", "metadata"));
+    }
+    if (utf8Bytes(normalized) > runtimeEvidenceLimits.maxSerializedBytes) {
+      failures.push(failure("RUNTIME_EVIDENCE_RECORD_TOO_LARGE"));
     }
     if (failures.length > 0) return { status: "INVALID", failures };
     const runtimeEvidenceId = digest(normalized);
@@ -172,29 +261,5 @@ export function buildRuntimeEvidenceRecord(
   }
 }
 
-export class InMemoryRuntimeEvidenceSink implements RuntimeEvidenceSink {
-  private readonly records = new Map<string, RuntimeEvidenceRecord>();
-
-  async append(input: BuildRuntimeEvidenceInput): Promise<AppendRuntimeEvidenceResult> {
-    const built = buildRuntimeEvidenceRecord(input);
-    if (built.status !== "VALID") return { status: "FAILED", failures: built.failures };
-    if (this.records.has(built.value.runtimeEvidenceId)) {
-      return { status: "FAILED", failures: [failure("RUNTIME_EVIDENCE_DUPLICATE")] };
-    }
-    this.records.set(built.value.runtimeEvidenceId, built.value);
-    return {
-      status: "APPENDED",
-      value: built.value,
-      reference: {
-        referenceId: built.value.runtimeEvidenceId,
-        referenceType: "RUNTIME_EVIDENCE",
-        integrityChecksum: built.value.integrityChecksum,
-      },
-      failures: [],
-    };
-  }
-
-  values(): readonly RuntimeEvidenceRecord[] {
-    return Object.freeze([...this.records.values()]);
-  }
-}
+/** @deprecated Use InMemoryRuntimeEvidenceRepository from runtime-evidence-repository. */
+export { InMemoryRuntimeEvidenceRepository as InMemoryRuntimeEvidenceSink } from "./runtime-evidence-repository";

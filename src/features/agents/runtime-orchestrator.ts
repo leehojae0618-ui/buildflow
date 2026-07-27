@@ -26,7 +26,12 @@ import {
   type RuntimeStepAttemptStatus,
   type RuntimeStepStatus,
 } from "./runtime-execution-step";
-import type { RuntimeEvidenceSink, RuntimeEvidenceRecord, RuntimeEvidenceStatus } from "./runtime-evidence";
+import type {
+  RuntimeEvidenceAppendContext,
+  RuntimeEvidenceRecord,
+  RuntimeEvidenceSink,
+  RuntimeEvidenceStatus,
+} from "./runtime-evidence";
 import {
   isSafeRuntimeTransientProviderInput,
   validateRuntimePlan,
@@ -105,6 +110,8 @@ export type ExecuteMinimumRuntimeInput = {
   transientProviderInput: RuntimeTransientProviderInput;
   provider: ProviderAdapter;
   evidenceSink: RuntimeEvidenceSink;
+  /** Server-trusted ownership association for durable evidence repositories. */
+  evidenceContext?: RuntimeEvidenceAppendContext;
   identityFactory?: RuntimeIdentityFactory;
   cancelBeforeInvocation?: boolean;
   signal?: AbortSignal;
@@ -405,6 +412,8 @@ export async function executeMinimumRuntime(
     const appended = await input.evidenceSink.append({
       runtimePlanId: plan.runtimePlanId,
       runtimeExecutionId: start.runtimeExecutionId,
+      runtimeExecutionRequestId: input.runtimeExecutionRequest.runtimeExecutionRequestId,
+      runtimeExecutionStartId: start.runtimeExecutionStartId,
       runtimeStepId: stepId,
       runtimeStepAttemptId: attemptId,
       eventType: "RUNTIME_FAILED",
@@ -414,7 +423,7 @@ export async function executeMinimumRuntime(
       safeInputChecksum: plan.steps[0].safeInputChecksum,
       errorCode: "RUNTIME_CANCELLED_BEFORE_INVOCATION",
       occurredAt: input.completedAt,
-    });
+    }, input.evidenceContext);
     if (appended.status !== "APPENDED") {
       return {
         status: "FINALIZATION_FAILED",
@@ -501,6 +510,8 @@ export async function executeMinimumRuntime(
   const appended = await input.evidenceSink.append({
     runtimePlanId: plan.runtimePlanId,
     runtimeExecutionId: start.runtimeExecutionId,
+    runtimeExecutionRequestId: input.runtimeExecutionRequest.runtimeExecutionRequestId,
+    runtimeExecutionStartId: start.runtimeExecutionStartId,
     runtimeStepId: stepId,
     runtimeStepAttemptId: attemptId,
     eventType: providerFailure ? "PROVIDER_INVOCATION_FAILED" : "PROVIDER_INVOCATION_COMPLETED",
@@ -512,7 +523,7 @@ export async function executeMinimumRuntime(
       ? { safeOutputChecksum: providerSuccess.outputChecksum, providerRequestReference: providerSuccess.providerRequestReference, usage: providerSuccess.usage, latencyMs: providerSuccess.latencyMs }
       : { providerRequestReference: providerOutcome.providerRequestReference, latencyMs: providerOutcome.latencyMs, errorCode: providerErrorCode ?? "PROVIDER_REQUEST_FAILED" }),
     occurredAt: input.completedAt,
-  });
+  }, input.evidenceContext);
   if (appended.status !== "APPENDED") {
     return { status: "FINALIZATION_FAILED", errorCode: "RUNTIME_EVIDENCE_CONSTRUCTION_FAILED", userMessage: userMessage("RUNTIME_EVIDENCE_CONSTRUCTION_FAILED"), runtimeExecutionStart: start, runtimeStep: runningStep, runtimeStepAttempt: runningAttempt, events };
   }

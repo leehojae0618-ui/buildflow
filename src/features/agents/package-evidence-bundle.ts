@@ -54,6 +54,20 @@ export type PackageEvidenceReference = {
   checksumSha256?: string;
   status: PackageEvidenceReferenceStatus;
   limitations: string[];
+  /** Present only for reference-only Runtime Evidence projections. */
+  runtimeEvidence?: PackageRuntimeEvidenceReference;
+};
+
+/** Reference-only Runtime evidence projection; full records never enter a package. */
+export type PackageRuntimeEvidenceReference = {
+  runtimeEvidenceId: string;
+  integrityChecksum: string;
+  runtimeExecutionId: string;
+  eventType: string;
+  status: string;
+  occurredAt: string;
+  safeErrorCode?: string;
+  approvalRequestReference?: string;
 };
 
 export type PackageEvidenceBundleFailure = {
@@ -131,6 +145,7 @@ export type PackageEvidenceBundleBuildInput = {
   packageArtifactReference?: string;
   verificationReportReference?: string;
   approvalReference?: string;
+  runtimeEvidenceReferences?: readonly PackageRuntimeEvidenceReference[];
   metadata?: PackageEvidenceBundle["metadata"];
 };
 
@@ -213,9 +228,7 @@ function containsForbiddenCredentialField(value: unknown): boolean {
   });
 }
 
-function normalizeEvidenceReferences(
-  references: string[],
-): PackageEvidenceReference[] {
+function normalizeEvidenceReferences(references: string[]): PackageEvidenceReference[] {
   const normalized: PackageEvidenceReference[] = references
     .map((reference) => reference.trim())
     .filter(Boolean)
@@ -239,6 +252,57 @@ function normalizeEvidenceReferences(
       `${second.kind}:${second.id}:${second.reference}`,
     ),
   );
+}
+
+function validRuntimeReference(value: PackageRuntimeEvidenceReference) {
+  return Boolean(
+    value.runtimeEvidenceId?.trim() && value.runtimeEvidenceId.length <= 256 &&
+    /^[a-f0-9]{64}$/.test(value.integrityChecksum) &&
+    value.runtimeExecutionId?.trim() && value.runtimeExecutionId.length <= 256 &&
+    runtimeEvidenceEventTypes.includes(value.eventType as (typeof runtimeEvidenceEventTypes)[number]) &&
+    runtimeEvidenceStatuses.includes(value.status as (typeof runtimeEvidenceStatuses)[number]) &&
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value.occurredAt) &&
+    new Date(value.occurredAt).toISOString() === value.occurredAt &&
+    (value.safeErrorCode === undefined || (isPresentReference(value.safeErrorCode) && value.safeErrorCode.length <= 256)) &&
+    (value.approvalRequestReference === undefined || (isPresentReference(value.approvalRequestReference) && value.approvalRequestReference.length <= 256)),
+  );
+}
+
+const runtimeEvidenceEventTypes = [
+  "RUNTIME_STARTED", "PLAN_ACCEPTED", "PROVIDER_INVOCATION_STARTED",
+  "PROVIDER_INVOCATION_COMPLETED", "PROVIDER_INVOCATION_FAILED",
+  "STEP_COMPLETED", "STEP_FAILED", "EVIDENCE_APPENDED", "RUNTIME_COMPLETED", "RUNTIME_FAILED",
+] as const;
+const runtimeEvidenceStatuses = ["SUCCEEDED", "FAILED", "TIMED_OUT", "CANCELLED", "BLOCKED"] as const;
+
+function projectRuntimeEvidence(
+  references: readonly PackageRuntimeEvidenceReference[],
+): PackageEvidenceReference[] {
+  const seen = new Set<string>();
+  return [...references]
+    .sort((first, second) => first.occurredAt === second.occurredAt
+      ? first.runtimeEvidenceId.localeCompare(second.runtimeEvidenceId)
+      : first.occurredAt.localeCompare(second.occurredAt))
+    .filter((item) => !seen.has(item.runtimeEvidenceId) && Boolean(seen.add(item.runtimeEvidenceId)))
+    .map((item) => ({
+      id: item.runtimeEvidenceId,
+      kind: "RUNTIME_EVIDENCE" as const,
+      required: false,
+      reference: `runtime-evidence:${item.runtimeEvidenceId}`,
+      checksumSha256: item.integrityChecksum,
+      status: "PRESENT" as const,
+      limitations: [],
+      runtimeEvidence: {
+        runtimeEvidenceId: item.runtimeEvidenceId,
+        integrityChecksum: item.integrityChecksum,
+        runtimeExecutionId: item.runtimeExecutionId,
+        eventType: item.eventType,
+        status: item.status,
+        occurredAt: item.occurredAt,
+        ...(item.safeErrorCode ? { safeErrorCode: item.safeErrorCode } : {}),
+        ...(item.approvalRequestReference ? { approvalRequestReference: item.approvalRequestReference } : {}),
+      },
+    }));
 }
 
 function inferEvidenceKind(reference: string): PackageEvidenceReferenceKind {
@@ -319,9 +383,18 @@ export function buildPackageEvidenceBundle(
     const report = input.verificationReport;
     const packageArtifactChecksum = artifact.metadata.checksumSha256;
     const verificationReportChecksum = report.reportIntegrityChecksum;
-    const normalizedEvidenceReferences = normalizeEvidenceReferences(
-      report.evidenceReferences,
-    );
+    const runtimeEvidenceReferences = input.runtimeEvidenceReferences ?? [];
+    if (runtimeEvidenceReferences.some((item) => !validRuntimeReference(item))) {
+      failures.push(failure("CONTRACT_ERROR", "Runtime evidence reference is malformed.", "runtimeEvidenceReferences"));
+    }
+    if (runtimeEvidenceReferences.length > 0) {
+      const index = limitations.indexOf("Runtime execution evidence is not present.");
+      if (index >= 0) limitations.splice(index, 1);
+    }
+    const normalizedEvidenceReferences = [
+      ...normalizeEvidenceReferences(report.evidenceReferences),
+      ...projectRuntimeEvidence(runtimeEvidenceReferences),
+    ];
 
     if (!isPresentReference(input.packageArtifactReference)) {
       failures.push(

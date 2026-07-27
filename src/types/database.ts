@@ -983,6 +983,78 @@ export type Database = {
           },
         ]
       }
+      runtime_evidence_records: {
+        Row: {
+          approval_request_id: string | null
+          created_at: string
+          evidence_report_id: string | null
+          event_type: string
+          format_version: string
+          integrity_checksum: string
+          latency_ms: number | null
+          metadata: Json
+          model: string
+          occurred_at: string
+          package_id: string | null
+          package_version: string | null
+          project_id: string
+          provider: string
+          provider_request_reference: string | null
+          runtime_evidence_id: string
+          runtime_execution_id: string
+          runtime_execution_request_id: string | null
+          runtime_execution_start_id: string | null
+          runtime_plan_id: string
+          runtime_step_attempt_id: string
+          runtime_step_id: string
+          safe_error_code: string | null
+          safe_input_checksum: string
+          safe_output_checksum: string | null
+          status: string
+          usage: Json | null
+          user_id: string
+        }
+        Insert: {
+          approval_request_id?: string | null
+          created_at?: string
+          evidence_report_id?: string | null
+          event_type: string
+          format_version: string
+          integrity_checksum: string
+          latency_ms?: number | null
+          metadata?: Json
+          model: string
+          occurred_at: string
+          package_id?: string | null
+          package_version?: string | null
+          project_id: string
+          provider: string
+          provider_request_reference?: string | null
+          runtime_evidence_id: string
+          runtime_execution_id: string
+          runtime_execution_request_id?: string | null
+          runtime_execution_start_id?: string | null
+          runtime_plan_id: string
+          runtime_step_attempt_id: string
+          runtime_step_id: string
+          safe_error_code?: string | null
+          safe_input_checksum: string
+          safe_output_checksum?: string | null
+          status: string
+          usage?: Json | null
+          user_id: string
+        }
+        Update: never
+        Relationships: [
+          {
+            foreignKeyName: "runtime_evidence_records_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       verification_targets: {
         Row: {
           expires_at: string | null

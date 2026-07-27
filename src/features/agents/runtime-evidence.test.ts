@@ -42,6 +42,11 @@ describe("Runtime Evidence", () => {
     expect(buildRuntimeEvidenceRecord(evidenceInput({ occurredAt: "not-a-date" }))).toMatchObject({ status: "INVALID" });
   });
 
+  it("rejects unsupported event/status values without throwing", () => {
+    expect(buildRuntimeEvidenceRecord(evidenceInput({ eventType: "UNKNOWN" as never }))).toMatchObject({ status: "INVALID" });
+    expect(buildRuntimeEvidenceRecord(evidenceInput({ status: "UNKNOWN" as never }))).toMatchObject({ status: "INVALID" });
+  });
+
   it("appends once in memory and rejects duplicate evidence", async () => {
     const sink = new InMemoryRuntimeEvidenceSink();
     const first = await sink.append(evidenceInput());

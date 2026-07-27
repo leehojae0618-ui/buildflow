@@ -18,4 +18,5 @@ export * from "./runtime-execution-step";
 export * from "./runtime-plan";
 export * from "./runtime-provider";
 export * from "./runtime-evidence";
+export * from "./runtime-evidence-repository";
 export * from "./runtime-orchestrator";

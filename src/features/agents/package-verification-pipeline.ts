@@ -7,6 +7,7 @@ import {
   buildPackageEvidenceBundle,
   type PackageEvidenceBundleBuildInput,
   type PackageEvidenceBundleBuildResult,
+  type PackageRuntimeEvidenceReference,
 } from "./package-evidence-bundle";
 import {
   verifyAgentPackageArtifact,
@@ -118,6 +119,7 @@ export type PackageVerificationPipelineInput = AgentPackageExportInput & {
   packageArtifactReference?: string;
   verificationReportReference?: string;
   approvalReference?: string;
+  runtimeEvidenceReferences?: readonly PackageRuntimeEvidenceReference[];
   metadata?: {
     generatedAt?: string;
   };
@@ -642,6 +644,7 @@ export function runPackageVerificationPipeline(
       packageArtifactReference: input.packageArtifactReference,
       verificationReportReference: input.verificationReportReference,
       approvalReference: input.approvalReference,
+      runtimeEvidenceReferences: input.runtimeEvidenceReferences,
       metadata: input.metadata,
     };
     bundleResult = dependencies.buildEvidenceBundle(bundleInput);
