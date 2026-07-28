@@ -16,8 +16,10 @@
 - Default branch: `main`
 - Baseline commit: `e8b8d600ed85637b01e0d790643fa1b74d428b46`
 - Last verified date: `2026-07-28`
-- 작성 기준: 로컬 `main`과 `origin/main`은 모두 위 baseline commit을 가리키며,
-  ahead/behind는 `0/0`이었다.
+- 동기화 직전 로컬 문서 checkpoint: `8e76d854c275393adb01a1146178e36545fda192`
+  (`docs(project): add canonical project state`). 당시 로컬 `main`은
+  `origin/main`보다 `ahead 1 / behind 0`이었다. 이 문서의 상태 분류는 해당
+  Git 상태와 작업 트리의 실제 파일을 기준으로 한다.
 - Working tree: clean이 아니다. Visual Slice, 운영 문서, Runtime Approval,
   Product Runtime Integration 등 미커밋 변경이 존재한다. 이 문서는 해당 변경을
   committed baseline과 혼동하지 않는다.
@@ -108,17 +110,18 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ## 6. Current Sprint State
 
-- 운영 기록 `.buildflow/CURRENT_TASK.md` 및 `.buildflow/STATUS.md`:
-  `ACTIVE SPRINT: NONE`, 다음 전이 `FOUNDATION OR AGENT SPRINT SELECTION`.
+- 현재 활성 Sprint: `PRODUCT-RUNTIME-INTEGRATION-001`.
+  상태는 `IMPLEMENTED — INDEPENDENT IMPLEMENTATION REVIEW REQUIRED`이며,
+  실제 Supabase RPC/RLS/concurrent consume 검증은 아직 실행되지 않았다.
+- 선행 Foundation: `RUNTIME-APPROVAL-FOUNDATION-001`은 구현 완료·독립 검토
+  대기 상태다. 이는 Product Runtime Integration의 선행 검토 항목이며 별도의
+  활성 Sprint로 계산하지 않는다.
+- 다음 공식 게이트: 두 Runtime 변경의 **Independent Implementation Review**.
+  Commit, Push, Deploy, remote migration은 승인되지 않았다.
 - Visual Slice: `BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001`은 USER QA 대기
   상태로 기록되어 있다.
-- 미커밋 Sprint 문서: `RUNTIME-APPROVAL-FOUNDATION-001`은
-  `IMPLEMENTED — READY FOR INDEPENDENT REVIEW`,
-  `PRODUCT-RUNTIME-INTEGRATION-001`은 `IMPLEMENTED — COMPLETE WITH VALIDATION
-  LIMITATIONS`로 기록되어 있다.
-
-따라서 현재 활성 Sprint의 공식 상태는 **UNKNOWN — 운영 문서와 미커밋 Sprint
-문서의 정합화가 필요함**이다. 이 문서는 어느 한쪽을 임의로 우선하지 않는다.
+- 다음 Sprint 후보: `BUSINESS-PLAN-001`의 **작업 계획 제출만** 가능하다.
+  문서 생성 또는 Sprint 활성화는 별도 사용자 승인이 필요하다.
 
 근거 문서:
 
@@ -151,22 +154,23 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
   의존한다.
 - Runtime Approval과 Product Runtime Bridge의 실제 DB RPC/RLS/concurrency
   검증은 미커밋 Sprint Report에서 `NOT RUN`이다.
-- 현재 활성 Sprint의 공식 운영 상태: `UNKNOWN` (Section 6의 문서 불일치).
+- Runtime Approval과 Product Runtime Bridge의 독립 구현 검토 및 실제 DB
+  검증이 아직 완료되지 않았다. Production Ready로 해석하면 안 된다.
 
 ## 9. Current Priorities
 
 ### P0
 
-- 기존 Runtime Approval 및 Product Runtime Integration 변경의 독립 구현
-  검토와 실제 DB RPC/RLS/concurrent consume 검증 여부 결정.
+- `PRODUCT-RUNTIME-INTEGRATION-001` 및 선행
+  `RUNTIME-APPROVAL-FOUNDATION-001`의 독립 구현 검토.
+- 실제 DB RPC/RLS/concurrent consume 검증을 위한 승인된 검증 환경 결정.
 - Visual Closed Beta Slice의 User QA 결과 확인 및 승인된 결함만 처리.
 
 ### P1
 
-- `.buildflow/` 운영 상태와 미커밋 Sprint 문서의 정합화.
 - Product Runtime에 대한 실제 Product UI/API 진입점은 별도 Scope Freeze 후
   검토.
-- 문서 체계 정리는 본 문서를 기준으로 중복 없이 단계적으로 수행.
+- `BUSINESS-PLAN-001`의 사실 기반 작업 계획 검토.
 
 ### P2
 
@@ -196,9 +200,9 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 - Deploy
 - Live external action
 
-단, `PROJECT-STATE-001`은 `docs/PROJECT_STATE.md` 한 파일의 생성과
-`docs(project): add canonical project state` 로컬 Commit에 대해 승인된
-작업이다. Push는 승인되지 않았다.
+단, `SPRINT-STATE-SYNC-001`은 상태 동기화를 위한 운영 문서 수정과
+`docs(ops): synchronize project state and sprint status` 로컬 Commit에 대해
+승인된 작업이다. Push는 승인되지 않았다.
 
 ## 12. Source Documents
 
