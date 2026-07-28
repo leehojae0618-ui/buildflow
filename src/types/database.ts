@@ -983,6 +983,105 @@ export type Database = {
           },
         ]
       }
+      runtime_approval_events: {
+        Row: {
+          approval_id: string
+          created_at: string
+          event_type: string
+          id: string
+          occurred_at: string
+          project_id: string
+          safe_metadata: Json
+          user_id: string
+        }
+        Insert: {
+          approval_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          occurred_at?: string
+          project_id: string
+          safe_metadata?: Json
+          user_id: string
+        }
+        Update: never
+        Relationships: [
+          {
+            foreignKeyName: "runtime_approval_events_approval_id_fkey"
+            columns: ["approval_id"]
+            isOneToOne: false
+            referencedRelation: "runtime_approval_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "runtime_approval_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      runtime_approval_requests: {
+        Row: {
+          approved_at: string | null
+          approved_by_user_id: string | null
+          binding_checksum: string
+          consumed_at: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          model: string
+          project_id: string
+          provider: string
+          rejected_at: string | null
+          rejected_by_user_id: string | null
+          requester_user_id: string
+          revoked_at: string | null
+          revoked_by_user_id: string | null
+          runtime_execution_request_checksum: string
+          runtime_execution_request_id: string
+          runtime_plan_checksum: string
+          runtime_plan_id: string
+          safe_input_checksum: string
+          scope: string
+          status: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by_user_id?: string | null
+          binding_checksum: string
+          consumed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          model: string
+          project_id: string
+          provider: string
+          rejected_at?: string | null
+          rejected_by_user_id?: string | null
+          requester_user_id: string
+          revoked_at?: string | null
+          revoked_by_user_id?: string | null
+          runtime_execution_request_checksum: string
+          runtime_execution_request_id: string
+          runtime_plan_checksum: string
+          runtime_plan_id: string
+          safe_input_checksum: string
+          scope: string
+          status?: string
+        }
+        Update: never
+        Relationships: [
+          {
+            foreignKeyName: "runtime_approval_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       runtime_evidence_records: {
         Row: {
           approval_request_id: string | null
@@ -1209,6 +1308,48 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      consume_runtime_approval_request: {
+        Args: {
+          p_approval_id: string
+          p_binding_checksum: string
+          p_model: string
+          p_project_id: string
+          p_provider: string
+          p_runtime_execution_request_checksum: string
+          p_runtime_execution_request_id: string
+          p_runtime_plan_checksum: string
+          p_runtime_plan_id: string
+          p_safe_input_checksum: string
+          p_scope: string
+          p_user_id: string
+        }
+        Returns: string
+      }
+      create_runtime_approval_request: {
+        Args: {
+          p_binding_checksum: string
+          p_model: string
+          p_project_id: string
+          p_provider: string
+          p_runtime_execution_request_checksum: string
+          p_runtime_execution_request_id: string
+          p_runtime_plan_checksum: string
+          p_runtime_plan_id: string
+          p_safe_input_checksum: string
+          p_scope: string
+          p_user_id: string
+        }
+        Returns: string
+      }
+      decide_runtime_approval_request: {
+        Args: {
+          p_approval_id: string
+          p_decision: string
+          p_project_id: string
+          p_user_id: string
+        }
+        Returns: string
+      }
       clone_provider_credentials_for_worker: {
         Args: {
           p_providers: string[]
