@@ -14,9 +14,9 @@
 
 - Repository: `leehojae0618-ui/buildflow`
 - Default branch: `main`
-- Baseline commit: `a101b9f293048f6399d65ba2b45e43e798c26faf`
+- Baseline commit: `3ffb62b51798e9aa5eab3d56a90b87f724bc4b0d`
 - Last verified date: `2026-07-28`
-- `origin/main`: `a101b9f293048f6399d65ba2b45e43e798c26faf`
+- `origin/main`: `3ffb62b51798e9aa5eab3d56a90b87f724bc4b0d`
   (`ahead 0 / behind 0` at verification).
 - Working tree: clean이 아니다. Visual Slice와 운영 문서 등 미커밋 변경이
   존재한다. Runtime Approval/Product Runtime/Safety 변경은 이 baseline에
@@ -108,19 +108,23 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ## 6. Current Sprint State
 
-- 현재 활성 Sprint: NONE.
+- 현재 활성 Sprint: `LIVE-DB-VALIDATION-001` — `PLANNING / NOT EXECUTION
+  APPROVED`.
+- 이 Sprint는 Runtime Approval/Product Runtime의 실제 Supabase 검증을 위한
+  계획·harness 설계·환경 분리 계약만 다룬다. DB 연결, migration, RPC/RLS 실행,
+  Provider 호출, staging 생성, production 작업은 승인되지 않았다.
 - `RUNTIME-SAFETY-CORRECTION-001`은 User Sprint Exit 승인 후
   `CLOSED / COMPLETE`다. 구현 Commit은 `a101b9f`, 종료 준비 Commit은
-  `06fa299`이며 Deploy는 수행되지 않았다.
+  `06fa299`, 최종 종료 Commit은 `3ffb62`이며 Deploy는 수행되지 않았다.
 - `RUNTIME-APPROVAL-FOUNDATION-001`과
   `PRODUCT-RUNTIME-INTEGRATION-001` 구현은 `a101b9f`에 포함되고 독립 감사
   및 GPT GitHub Commit Review를 통과했다.
-- 다음 공식 후보: 새 Sprint는 활성화되지 않았다. 실제 Supabase DB validation은
-  별도 Live DB Validation Gate이며 Scope 승인 전에는 실행하지 않는다.
+- 다음 공식 gate: `CLAUDE PLAN RE-AUDIT`. 통과 후에도 harness 구현, local DB
+  실행, staging 사용은 각각 별도 사용자 승인이 필요하다.
 - Visual Slice: `BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001`은 USER QA 대기
   상태로 기록되어 있다.
-- 다음 Sprint 후보: `BUSINESS-PLAN-001`의 **작업 계획 제출만** 가능하다.
-  문서 생성 또는 Sprint 활성화는 별도 사용자 승인이 필요하다.
+- 다음 후보 Sprint는 이 계획 Sprint의 re-audit 및 후속 사용자 승인 이후에만
+  검토한다. 현재 실행 후보는 활성화되지 않았다.
 
 근거 문서:
 
@@ -159,7 +163,8 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ### P0
 
-- 실제 DB RPC/RLS/concurrent consume 검증을 위한 승인된 검증 환경 결정.
+- `LIVE-DB-VALIDATION-001` 계획의 독립 재감사. 실제 DB 검증 환경과 실행은
+  재감사 및 별도 사용자 승인 이후에만 결정한다.
 - Visual Closed Beta Slice의 User QA 결과 확인 및 승인된 결함만 처리.
 
 ### P1
@@ -196,9 +201,8 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 - Deploy
 - Live external action
 
-단, `SPRINT-STATE-SYNC-001`은 상태 동기화를 위한 운영 문서 수정과
-`docs(ops): synchronize project state and sprint status` 로컬 Commit에 대해
-승인된 작업이다. Push는 승인되지 않았다.
+단, `LIVE-DB-VALIDATION-001`은 계획 문서와 최소 운영 상태 동기화에 한해
+승인됐다. DB 연결·migration·외부 API·commit·push·deploy는 승인되지 않았다.
 
 ## 12. Source Documents
 
@@ -222,7 +226,10 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 - `docs/sprints/PRODUCT-RUNTIME-INTEGRATION-001/REPORT.md`
 - `docs/sprints/RUNTIME-SAFETY-CORRECTION-001/REPORT.md`
 - `docs/audits/PROJECT-AUDIT-001.md`
-- Git commit `a101b9f293048f6399d65ba2b45e43e798c26faf`
+- `docs/sprints/LIVE-DB-VALIDATION-001/PLAN.md`
+- `docs/sprints/LIVE-DB-VALIDATION-001/TASK.md`
+- `docs/sprints/LIVE-DB-VALIDATION-001/CONTRACT.md`
+- Git commit `3ffb62b51798e9aa5eab3d56a90b87f724bc4b0d`
 
 ## 13. Update Rules
 

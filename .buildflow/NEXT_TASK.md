@@ -2,7 +2,7 @@
 
 ## Status
 
-NO ACTIVE SPRINT
+CLAUDE PLAN RE-AUDIT REQUIRED
 
 ## Reason
 
@@ -11,8 +11,9 @@ approval. Its implementation Commit is
 `a101b9f293048f6399d65ba2b45e43e798c26faf`; its closeout preparation Commit
 is `06fa299dc610a3da9bc7de5b6474b7bde38859c3`.
 
-No Sprint is active. A new implementation Sprint requires a separate Scope
-Freeze and user approval.
+`LIVE-DB-VALIDATION-001` is the active planning Sprint. It creates only the
+validation plan, harness design, environment-separation contract, and required
+operational record. It is `PLANNING / NOT EXECUTION APPROVED`.
 
 `RUNTIME-APPROVAL-FOUNDATION-001` and
 `PRODUCT-RUNTIME-INTEGRATION-001` are included in that Commit. Their actual
@@ -37,16 +38,16 @@ FROZEN / USER QA / IMPLEMENTED / WAITING FOR USER FEEDBACK
 Its implementation passed PM/CTO Code Review with a QA gate. Its code remains
 locked unless User QA identifies an approved correction.
 
-The next candidate gate is:
+The next required gate is:
 
 ```text
-Foundation or Product Sprint Selection, or an explicitly approved Live DB
-Validation Gate
-NO NEW IMPLEMENTATION AUTHORITY
+Claude Plan Re-audit
+NO DB CONNECTION, MIGRATION, EXTERNAL API, OR IMPLEMENTATION AUTHORITY
 ```
 
-`BUSINESS-PLAN-001` is a planning proposal requested after this sync task. It
-is not active and requires separate user approval before any document changes.
+Future harness implementation, local Supabase setup, database validation, and
+any disposable staging use each require separate user approval after the plan
+re-audit.
 
 Actual MCP connection, tool invocation, live Provider/Runtime execution,
 remote migration, persistence changes, UI work, commit, push, and deployment
