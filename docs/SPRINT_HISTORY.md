@@ -9,13 +9,10 @@
 
 ## 2. Current Sprint
 
-| Sprint | Status | Current Gate | Evidence |
-|---|---|---|---|
-| PRODUCT-RUNTIME-INTEGRATION-001 | IMPLEMENTED / INDEPENDENT IMPLEMENTATION REVIEW REQUIRED | Independent review, then approved DB RPC/RLS/concurrent consume validation | `sprints/PRODUCT-RUNTIME-INTEGRATION-001/{TASK,CONTRACT,REPORT}.md` |
-| RUNTIME-APPROVAL-FOUNDATION-001 | IMPLEMENTED / prerequisite independent review required | Independent review and DB atomic-consume validation | `sprints/RUNTIME-APPROVAL-FOUNDATION-001/{CONTRACT,REPORT}.md` |
+활성 Sprint는 없다. 새 구현은 별도 Scope Freeze와 사용자 승인이 필요하다.
 
-`PRODUCT-RUNTIME-INTEGRATION-001`만 활성 Sprint다. Approval Foundation은 선행
-구현·검토 대기 항목이며 두 번째 활성 Sprint로 계산하지 않는다.
+Visual Closed Beta Slice의 User QA와 실제 Supabase DB validation은 병렬 운영
+또는 별도 Gate이며, 활성 구현 Sprint를 자동으로 만들지 않는다.
 
 ## 3. Sprint History
 
@@ -26,16 +23,16 @@
 | MCP-FOUNDATION-001 | MCP registry/readiness/safety contracts | CLOSED / COMPLETE | `619b480` | Independent re-review PASS | `sprints/MCP-FOUNDATION-001/CLOSEOUT.md` |
 | AGENT-FOUNDATION-001 | Pure Agent capability, definition and validation foundation | CLOSED / COMPLETE | `fd3aff1` | Independent documentation review PASS | `sprints/AGENT-FOUNDATION-001/CLOSEOUT.md` |
 | EVIDENCE-RUNTIME-INTEGRATION-001 | Runtime Evidence persistence and Package references | COMMITTED; closeout status UNKNOWN | `e8b8d60` | REPORT records READY FOR INDEPENDENT RE-REVIEW; later closeout document not found | `sprints/EVIDENCE-RUNTIME-INTEGRATION-001/REPORT.md` |
-| RUNTIME-APPROVAL-FOUNDATION-001 | Persisted Runtime approval and atomic consume foundation | IMPLEMENTED / NOT CLOSED | UNKNOWN — uncommitted implementation | Independent review required | `sprints/RUNTIME-APPROVAL-FOUNDATION-001/REPORT.md` |
-| PRODUCT-RUNTIME-INTEGRATION-001 | Authenticated Product Runtime Bridge | IMPLEMENTED / NOT CLOSED | UNKNOWN — uncommitted implementation | Independent review required | `sprints/PRODUCT-RUNTIME-INTEGRATION-001/REPORT.md` |
+| RUNTIME-APPROVAL-FOUNDATION-001 | Persisted Runtime approval and atomic consume foundation | COMMITTED / integrated under Runtime Safety closure | `a101b9f` | Independent audit PASS; Live DB validation pending | `sprints/RUNTIME-APPROVAL-FOUNDATION-001/REPORT.md` |
+| PRODUCT-RUNTIME-INTEGRATION-001 | Authenticated Product Runtime Bridge | COMMITTED / integrated under Runtime Safety closure | `a101b9f` | Independent audit PASS; Live DB validation pending | `sprints/PRODUCT-RUNTIME-INTEGRATION-001/REPORT.md` |
+| RUNTIME-SAFETY-CORRECTION-001 | Runtime/Approval exception safety correction | CLOSED / COMPLETE | `a101b9f`, `06fa299` | Claude independent audit PASS; GPT GitHub review PASS; User Sprint Exit approved | `sprints/RUNTIME-SAFETY-CORRECTION-001/REPORT.md` |
 
 ## 4. Gate History
 
 - Closed means implementation and documented exit evidence are complete; it is
   distinct from `IMPLEMENTED`.
-- The current Runtime Approval and Product Runtime changes must not be committed
-  or treated as Production Ready before independent review and the required DB
-  validation.
+- Runtime Approval and Product Runtime changes are committed but are not
+  Production Ready. Live DB validation remains separate.
 - Visual Closed Beta Slice remains `USER QA / WAITING FOR USER FEEDBACK` in the
   current operating status.
 

@@ -1,12 +1,14 @@
 # BuildFlow Status
 
-- Workflow Status: REVIEW
-- Current Sprint: RUNTIME-SAFETY-CORRECTION-001
-- Sprint Status: IMPLEMENTED / INDEPENDENT AUDIT PASS / COMMITTED / PUSHED / GPT GITHUB REVIEW PASS / SPRINT EXIT READY
-- Active Sprint Count: 1
-- Planning Status: SCOPE FROZEN / IMPLEMENTATION COMPLETE
-- Current Sprint Work: User Sprint Exit approval
-- Scope Status: APPROVED / FROZEN
+- Workflow Status: IDLE
+- Current Sprint: NONE
+- Sprint Status: NO ACTIVE SPRINT
+- Active Sprint Count: 0
+- Planning Status: NEW SPRINT APPROVAL REQUIRED
+- Current Sprint Work: NONE
+- Scope Status: NO ACTIVE SCOPE
+- Runtime Safety Correction: CLOSED / COMPLETE / User Sprint Exit approved
+- Runtime Safety Checkpoints: `a101b9f` / `06fa299`
 - Product Runtime Integration: COMMITTED / included in `a101b9f` / Live DB validation not verified
 - Runtime Approval Foundation: COMMITTED / included in `a101b9f` / Live DB validation not verified
 - MCP Foundation: CLOSED / COMPLETE / INDEPENDENT RE-REVIEW PASS
@@ -19,7 +21,7 @@
 - Visual Closed Beta Slice: USER QA / WAITING FOR USER FEEDBACK
 - Visual Slice Implementation Authority: PAUSED — USER QA
 - Visual Slice Production Changes: NO — QA FINDING REQUIRED
-- Next Required Transition: USER SPRINT EXIT APPROVAL
+- Next Required Transition: NEW SPRINT SCOPE APPROVAL OR APPROVED LIVE DB VALIDATION GATE
 - Runtime Step Contract: AMENDED / INITIAL-RETRY DISCRIMINATOR / REVALIDATION COMPLETE
 - Previous Runtime Step Contract Checkpoint: `730bde8`
 - Latest Contract Amendment Checkpoint: `59aa291`
@@ -48,11 +50,11 @@
 - Push Execution: COMPLETE — normal push; no force push used
 - Future Push Authorization: NOT GRANTED
 - Deploy Authorization: NOT GRANTED
-- Next Lifecycle Stage: USER SPRINT EXIT APPROVAL
-- Next Candidate: BUSINESS-PLAN-001 planning proposal only, after the current
-  review gate; it is not an active or approved Sprint.
-- Authorized Work: Runtime Safety Sprint closeout review and Visual Slice User
-  QA. No new implementation is authorized.
+- Next Lifecycle Stage: FOUNDATION OR PRODUCT SPRINT SELECTION
+- Next Candidate: existing official NEXT_TASK and user approval policy apply;
+  no candidate is active or approved.
+- Authorized Work: Visual Slice User QA and approved read-only planning only.
+  No new implementation is authorized.
 - Prohibited Work: MCP connection or tool invocation, Provider/Runtime
   execution, Session start/resume/continue actions, Provisioning, polling that
   advances state, database migration, API route, deployment, Marketplace, or

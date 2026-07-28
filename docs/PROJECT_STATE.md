@@ -102,20 +102,21 @@ Goal
 ### 검증 상태
 
 각 committed Sprint의 검증 수치는 해당 Sprint Report와 Commit 이력에서
-확인해야 한다. 미커밋 Runtime Approval/Product Runtime 문서는 로컬 테스트,
+확인해야 한다. Runtime Approval/Product Runtime 구현은 로컬 테스트,
 typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검증은
-`NOT RUN`으로 명시한다.
+`NOT VERIFIED`다.
 
 ## 6. Current Sprint State
 
-- 현재 활성 Sprint: `RUNTIME-SAFETY-CORRECTION-001`.
-  상태는 `SPRINT EXIT READY`이며 User Sprint 종료 승인을 기다린다. 아직
-  `CLOSED`로 기록하지 않는다.
+- 현재 활성 Sprint: NONE.
+- `RUNTIME-SAFETY-CORRECTION-001`은 User Sprint Exit 승인 후
+  `CLOSED / COMPLETE`다. 구현 Commit은 `a101b9f`, 종료 준비 Commit은
+  `06fa299`이며 Deploy는 수행되지 않았다.
 - `RUNTIME-APPROVAL-FOUNDATION-001`과
   `PRODUCT-RUNTIME-INTEGRATION-001` 구현은 `a101b9f`에 포함되고 독립 감사
   및 GPT GitHub Commit Review를 통과했다.
-- 다음 공식 게이트: User Sprint Exit 승인. 실제 Supabase DB validation은
-  별도 Live DB Validation Gate다.
+- 다음 공식 후보: 새 Sprint는 활성화되지 않았다. 실제 Supabase DB validation은
+  별도 Live DB Validation Gate이며 Scope 승인 전에는 실행하지 않는다.
 - Visual Slice: `BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001`은 USER QA 대기
   상태로 기록되어 있다.
 - 다음 Sprint 후보: `BUSINESS-PLAN-001`의 **작업 계획 제출만** 가능하다.
@@ -159,7 +160,6 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 ### P0
 
 - 실제 DB RPC/RLS/concurrent consume 검증을 위한 승인된 검증 환경 결정.
-- `RUNTIME-SAFETY-CORRECTION-001`의 User Sprint Exit 승인.
 - Visual Closed Beta Slice의 User QA 결과 확인 및 승인된 결함만 처리.
 
 ### P1

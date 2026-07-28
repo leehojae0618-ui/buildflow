@@ -2,16 +2,17 @@
 
 ## Status
 
-USER SPRINT EXIT APPROVAL REQUIRED
+NO ACTIVE SPRINT
 
 ## Reason
 
-`RUNTIME-SAFETY-CORRECTION-001` is the one active Sprint. Its implementation,
-independent audit, local Commit, `origin/main` Push, and GPT GitHub Commit
-Review are complete at `a101b9f293048f6399d65ba2b45e43e798c26faf`.
+`RUNTIME-SAFETY-CORRECTION-001` is `CLOSED / COMPLETE` after User Sprint Exit
+approval. Its implementation Commit is
+`a101b9f293048f6399d65ba2b45e43e798c26faf`; its closeout preparation Commit
+is `06fa299dc610a3da9bc7de5b6474b7bde38859c3`.
 
-The current required gate is User Sprint Exit approval. The Sprint is not yet
-`CLOSED`.
+No Sprint is active. A new implementation Sprint requires a separate Scope
+Freeze and user approval.
 
 `RUNTIME-APPROVAL-FOUNDATION-001` and
 `PRODUCT-RUNTIME-INTEGRATION-001` are included in that Commit. Their actual
@@ -36,12 +37,12 @@ FROZEN / USER QA / IMPLEMENTED / WAITING FOR USER FEEDBACK
 Its implementation passed PM/CTO Code Review with a QA gate. Its code remains
 locked unless User QA identifies an approved correction.
 
-The current required gate is:
+The next candidate gate is:
 
 ```text
-User Sprint Exit approval
-RUNTIME-SAFETY-CORRECTION-001
-NO CODE, COMMIT, PUSH, DEPLOY, OR MIGRATION AUTHORITY
+Foundation or Product Sprint Selection, or an explicitly approved Live DB
+Validation Gate
+NO NEW IMPLEMENTATION AUTHORITY
 ```
 
 `BUSINESS-PLAN-001` is a planning proposal requested after this sync task. It
