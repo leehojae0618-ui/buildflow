@@ -2,19 +2,21 @@
 
 ## Status
 
-INDEPENDENT IMPLEMENTATION REVIEW REQUIRED
+USER SPRINT EXIT APPROVAL REQUIRED
 
 ## Reason
 
-`PRODUCT-RUNTIME-INTEGRATION-001` is the one active Sprint. Its server-only
-bridge is implemented in the local working tree and requires independent
-implementation review before any commit, push, deployment, or product use.
-The bridge Report records validation limitations: no local/staging Supabase
-RPC, RLS, or concurrent-consume verification has run.
+`RUNTIME-SAFETY-CORRECTION-001` is the one active Sprint. Its implementation,
+independent audit, local Commit, `origin/main` Push, and GPT GitHub Commit
+Review are complete at `a101b9f293048f6399d65ba2b45e43e798c26faf`.
 
-`RUNTIME-APPROVAL-FOUNDATION-001` is the prerequisite foundation. It is also
-implemented in the local working tree and requires independent review of its
-database/RPC validation limitations. It is not a second active Sprint.
+The current required gate is User Sprint Exit approval. The Sprint is not yet
+`CLOSED`.
+
+`RUNTIME-APPROVAL-FOUNDATION-001` and
+`PRODUCT-RUNTIME-INTEGRATION-001` are included in that Commit. Their actual
+Supabase migration/RPC/RLS/concurrent-consume validation remains a separate
+Live DB Validation Gate.
 
 Completed foundation checkpoints remain: `MCP-FOUNDATION-001` (`619b480`),
 `AGENT-FOUNDATION-001` (`fd3aff1`), and
@@ -37,9 +39,9 @@ locked unless User QA identifies an approved correction.
 The current required gate is:
 
 ```text
-Independent implementation review
-PRODUCT-RUNTIME-INTEGRATION-001 + RUNTIME-APPROVAL-FOUNDATION-001
-READ ONLY / NO COMMIT OR PUSH AUTHORITY
+User Sprint Exit approval
+RUNTIME-SAFETY-CORRECTION-001
+NO CODE, COMMIT, PUSH, DEPLOY, OR MIGRATION AUTHORITY
 ```
 
 `BUSINESS-PLAN-001` is a planning proposal requested after this sync task. It

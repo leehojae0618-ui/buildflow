@@ -14,15 +14,13 @@
 
 - Repository: `leehojae0618-ui/buildflow`
 - Default branch: `main`
-- Baseline commit: `e8b8d600ed85637b01e0d790643fa1b74d428b46`
+- Baseline commit: `a101b9f293048f6399d65ba2b45e43e798c26faf`
 - Last verified date: `2026-07-28`
-- 동기화 직전 로컬 문서 checkpoint: `8e76d854c275393adb01a1146178e36545fda192`
-  (`docs(project): add canonical project state`). 당시 로컬 `main`은
-  `origin/main`보다 `ahead 1 / behind 0`이었다. 이 문서의 상태 분류는 해당
-  Git 상태와 작업 트리의 실제 파일을 기준으로 한다.
-- Working tree: clean이 아니다. Visual Slice, 운영 문서, Runtime Approval,
-  Product Runtime Integration 등 미커밋 변경이 존재한다. 이 문서는 해당 변경을
-  committed baseline과 혼동하지 않는다.
+- `origin/main`: `a101b9f293048f6399d65ba2b45e43e798c26faf`
+  (`ahead 0 / behind 0` at verification).
+- Working tree: clean이 아니다. Visual Slice와 운영 문서 등 미커밋 변경이
+  존재한다. Runtime Approval/Product Runtime/Safety 변경은 이 baseline에
+  committed 상태다.
 
 ## 3. Product Definition
 
@@ -61,9 +59,9 @@ Goal
 - **Runtime Evidence**: append-only Repository 계약, In-memory Adapter,
   Supabase Adapter, checksum 및 reference-only Package Evidence projection이
   있다.
-- **Human Approval**: committed baseline에는 기존 Package Approval 계약이
-  있다. 미커밋 `RUNTIME-APPROVAL-FOUNDATION-001`은 Runtime 전용 Approval
-  request/event와 atomic consume 경계를 추가한 상태로 기록되어 있다.
+- **Human Approval**: Runtime 전용 Approval request/event, binding checksum,
+  single-use consume 경계는 committed 상태다. 실제 DB RPC/RLS/concurrency
+  검증은 아직 수행되지 않았다.
 - **Policies**: Scope Freeze, Commit/Push/Deploy 승인 게이트, Contract-first,
   Evidence-first, Approval-first 원칙은 `DEVELOPMENT_CHARTER.md`와 `AGENTS.md`
   에 기록되어 있다.
@@ -84,14 +82,14 @@ Goal
 - Agent Foundation documentation closeout
 - Runtime Evidence persistence 및 Package Evidence reference-only projection
 
-### 미커밋 구현 기록
+### committed Runtime integration
 
-- `RUNTIME-APPROVAL-FOUNDATION-001`: Runtime 전용 Approval repository, atomic
-  consume RPC/migration, focused tests가 구현되었으나 독립 검토와 실제 DB
-  검증이 남아 있다.
-- `PRODUCT-RUNTIME-INTEGRATION-001`: server-only Product Runtime Bridge와
-  focused integration tests가 구현되었으나 독립 검토와 실제 DB RPC/RLS
-  검증이 남아 있다.
+- `RUNTIME-APPROVAL-FOUNDATION-001`과
+  `PRODUCT-RUNTIME-INTEGRATION-001`의 server-only Approval/Product Runtime
+  Bridge 구현은 `a101b9f`에 포함됐다.
+- `RUNTIME-SAFETY-CORRECTION-001`은 예외 경계, checksum canonicalization,
+  binding tamper 방어, rejected approval 처리, action 안전성 테스트를 보완했고
+  독립 감사 및 GPT GitHub Commit Review를 통과했다.
 
 ### 미구현 또는 제품 경로에 미연결인 범위
 
@@ -110,14 +108,14 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ## 6. Current Sprint State
 
-- 현재 활성 Sprint: `PRODUCT-RUNTIME-INTEGRATION-001`.
-  상태는 `IMPLEMENTED — INDEPENDENT IMPLEMENTATION REVIEW REQUIRED`이며,
-  실제 Supabase RPC/RLS/concurrent consume 검증은 아직 실행되지 않았다.
-- 선행 Foundation: `RUNTIME-APPROVAL-FOUNDATION-001`은 구현 완료·독립 검토
-  대기 상태다. 이는 Product Runtime Integration의 선행 검토 항목이며 별도의
-  활성 Sprint로 계산하지 않는다.
-- 다음 공식 게이트: 두 Runtime 변경의 **Independent Implementation Review**.
-  Commit, Push, Deploy, remote migration은 승인되지 않았다.
+- 현재 활성 Sprint: `RUNTIME-SAFETY-CORRECTION-001`.
+  상태는 `SPRINT EXIT READY`이며 User Sprint 종료 승인을 기다린다. 아직
+  `CLOSED`로 기록하지 않는다.
+- `RUNTIME-APPROVAL-FOUNDATION-001`과
+  `PRODUCT-RUNTIME-INTEGRATION-001` 구현은 `a101b9f`에 포함되고 독립 감사
+  및 GPT GitHub Commit Review를 통과했다.
+- 다음 공식 게이트: User Sprint Exit 승인. 실제 Supabase DB validation은
+  별도 Live DB Validation Gate다.
 - Visual Slice: `BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001`은 USER QA 대기
   상태로 기록되어 있다.
 - 다음 Sprint 후보: `BUSINESS-PLAN-001`의 **작업 계획 제출만** 가능하다.
@@ -141,6 +139,7 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 | MCP Readiness/Safety | `619b4802a36a4168a57b2f97269f9d86902a38c1` | `fix(mcp): harden readiness and safety contracts` |
 | Agent Foundation closure | `fd3aff11a1cdfae8821835542d8e2cce9a8bfebb` | `docs(ops): close agent foundation sprint` |
 | Runtime Evidence Persistence | `e8b8d600ed85637b01e0d790643fa1b74d428b46` | `feat(evidence): add runtime evidence persistence` |
+| Runtime Safety Correction | `a101b9f293048f6399d65ba2b45e43e798c26faf` | `fix(runtime): harden approval execution safety` |
 
 ## 8. Known Issues and Technical Debt
 
@@ -153,17 +152,14 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 - `TD-015`: Provider 진행 확인은 전용 queue worker가 아닌 Project UI 재진입에
   의존한다.
 - Runtime Approval과 Product Runtime Bridge의 실제 DB RPC/RLS/concurrency
-  검증은 미커밋 Sprint Report에서 `NOT RUN`이다.
-- Runtime Approval과 Product Runtime Bridge의 독립 구현 검토 및 실제 DB
-  검증이 아직 완료되지 않았다. Production Ready로 해석하면 안 된다.
+  검증은 `NOT VERIFIED`다. Production Ready로 해석하면 안 된다.
 
 ## 9. Current Priorities
 
 ### P0
 
-- `PRODUCT-RUNTIME-INTEGRATION-001` 및 선행
-  `RUNTIME-APPROVAL-FOUNDATION-001`의 독립 구현 검토.
 - 실제 DB RPC/RLS/concurrent consume 검증을 위한 승인된 검증 환경 결정.
+- `RUNTIME-SAFETY-CORRECTION-001`의 User Sprint Exit 승인.
 - Visual Closed Beta Slice의 User QA 결과 확인 및 승인된 결함만 처리.
 
 ### P1
@@ -224,8 +220,9 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 - `docs/sprints/EVIDENCE-RUNTIME-INTEGRATION-001/REPORT.md`
 - `docs/sprints/RUNTIME-APPROVAL-FOUNDATION-001/REPORT.md`
 - `docs/sprints/PRODUCT-RUNTIME-INTEGRATION-001/REPORT.md`
+- `docs/sprints/RUNTIME-SAFETY-CORRECTION-001/REPORT.md`
 - `docs/audits/PROJECT-AUDIT-001.md`
-- Git commit `e8b8d600ed85637b01e0d790643fa1b74d428b46`
+- Git commit `a101b9f293048f6399d65ba2b45e43e798c26faf`
 
 ## 13. Update Rules
 
