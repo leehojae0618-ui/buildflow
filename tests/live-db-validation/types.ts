@@ -25,7 +25,11 @@ export type LiveDbSafeErrorCode =
   | "LIVE_DB_PROVIDER_IDENTITY_INVALID"
   | "LIVE_DB_EXTERNAL_PROVIDER_CALL_DETECTED"
   | "LIVE_DB_CLIENT_NOT_EXPLICITLY_INJECTED"
-  | "LIVE_DB_APP_CLIENT_FACTORY_USED";
+  | "LIVE_DB_APP_CLIENT_FACTORY_USED"
+  | "LIVE_DB_ADMIN_CLIENT_FACTORY_USED"
+  | "LIVE_DB_SERVER_CLIENT_FACTORY_USED"
+  | "LIVE_DB_CLIENT_MODE_INVALID"
+  | "LIVE_DB_VALIDATION_REGISTRY_INVALID";
 
 export type LiveDbEnvironmentInput = {
   targetEnvironment?: string;
@@ -55,6 +59,15 @@ export type LiveDbClientIdentity = {
   serverClientFactoryUsed: false;
 };
 
+/** Untrusted harness input is validated before any repository can be created. */
+export type LiveDbClientIdentityCandidate = {
+  supabaseClientMode?: unknown;
+  appClientFactoryUsed?: unknown;
+  adminClientFactoryUsed?: unknown;
+  serverClientFactoryUsed?: unknown;
+  repositoryDefaultClientFallbackUsed?: unknown;
+};
+
 export type LiveDbProviderIdentity = {
   providerMode: typeof LIVE_DB_PROVIDER_MODE;
   providerAdapterIdentity: typeof LIVE_DB_PROVIDER_ADAPTER_IDENTITY;
@@ -62,4 +75,18 @@ export type LiveDbProviderIdentity = {
   defaultProviderFallbackUsed: false;
   openAIAdapterConstructedByHarness: false;
   openAIAdapterCalled: false;
+};
+
+export type LiveDbCaseExecutionStatus =
+  | "EXECUTED_PASS"
+  | "EXECUTED_FAIL"
+  | "SKIPPED_REQUIRES_LOCAL"
+  | "SKIPPED_REQUIRES_STAGING"
+  | "NOT_APPLICABLE";
+
+export type LiveDbCaseResult = {
+  caseId: string;
+  executionStatus: LiveDbCaseExecutionStatus;
+  verdict: "PASS" | "FAIL" | "SKIPPED";
+  safeErrorCode?: LiveDbSafeErrorCode;
 };

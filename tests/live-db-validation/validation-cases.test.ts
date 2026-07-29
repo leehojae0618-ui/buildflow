@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
-  dryRunnableValidationCases,
   liveDbValidationCases,
+  unitTestableValidationCases,
+  validateLiveDbValidationCaseRegistry,
   validateLiveDbValidationCases,
 } from "./validation-cases";
 
@@ -13,16 +14,20 @@ describe("LIVE-DB validation case registry", () => {
     expect(liveDbValidationCases.some((item) => item.category === "PRODUCT_RUNTIME")).toBe(true);
   });
 
-  it("uses unique deterministic ids and keeps database cases out of dry execution", () => {
+  it("uses approved classifications and keeps database cases out of unit execution", () => {
     expect(validateLiveDbValidationCases()).toBe(true);
-    expect(dryRunnableValidationCases().every((item) => item.classification === "DRY_RUNNABLE")).toBe(true);
-    expect(dryRunnableValidationCases().map((item) => item.id)).not.toContain("consume-exactly-one-winner");
+    expect(unitTestableValidationCases().every((item) => item.classification === "UNIT_TESTABLE_WITHOUT_DB")).toBe(true);
+    expect(unitTestableValidationCases().map((item) => item.id)).not.toContain("consume-exactly-one-winner");
+    expect(liveDbValidationCases.some((item) => item.classification === "REQUIRES_STAGING")).toBe(true);
   });
 
-  it("rejects duplicate or malformed case definitions", () => {
-    expect(validateLiveDbValidationCases([
-      { id: "duplicate", category: "ENVIRONMENT", classification: "DRY_RUNNABLE", expectedResult: "safe" },
-      { id: "duplicate", category: "ENVIRONMENT", classification: "DRY_RUNNABLE", expectedResult: "safe" },
-    ])).toBe(false);
+  it("rejects duplicate or unknown case definitions with a dedicated safe code", () => {
+    expect(validateLiveDbValidationCaseRegistry([
+      { id: "duplicate", category: "ENVIRONMENT", classification: "UNIT_TESTABLE_WITHOUT_DB", expectedResult: "safe" },
+      { id: "duplicate", category: "ENVIRONMENT", classification: "UNIT_TESTABLE_WITHOUT_DB", expectedResult: "safe" },
+    ])).toEqual({ status: "INVALID", safeErrorCode: "LIVE_DB_VALIDATION_REGISTRY_INVALID" });
+    expect(validateLiveDbValidationCaseRegistry([
+      { id: "unknown", category: "ENVIRONMENT", classification: "UNKNOWN" as never, expectedResult: "safe" },
+    ])).toEqual({ status: "INVALID", safeErrorCode: "LIVE_DB_VALIDATION_REGISTRY_INVALID" });
   });
 });

@@ -2,12 +2,16 @@ import {
   LIVE_DB_DRY_MIGRATION_VERSION,
   LIVE_DB_PROVIDER_ADAPTER_IDENTITY,
   LIVE_DB_PROVIDER_MODE,
+  type LiveDbCaseExecutionStatus,
+  type LiveDbCaseResult,
   type LiveDbTargetEnvironment,
 } from "./types";
 
+export type LiveDbEvidenceTargetEnvironment = LiveDbTargetEnvironment | "unknown";
+
 export type LiveDbValidationEvidenceSummary = {
   validationRunId: string;
-  targetEnvironment: LiveDbTargetEnvironment;
+  targetEnvironment: LiveDbEvidenceTargetEnvironment;
   targetProjectRefMasked: string;
   actorType: "HARNESS";
   providerMode: typeof LIVE_DB_PROVIDER_MODE;
@@ -16,19 +20,24 @@ export type LiveDbValidationEvidenceSummary = {
   migrationVersion: typeof LIVE_DB_DRY_MIGRATION_VERSION;
   secretExposureDetected: false;
   executionMode: "DRY";
+  caseResults: readonly LiveDbCaseResult[];
   executedCaseIds: readonly string[];
+  failedCaseIds: readonly string[];
   skippedCaseIds: readonly string[];
+  notApplicableCaseIds: readonly string[];
   verdict: "PASS" | "FAIL";
 };
 
 export function createLiveDbDryEvidenceSummary(input: {
   validationRunId: string;
-  targetEnvironment: LiveDbTargetEnvironment;
+  targetEnvironment: LiveDbEvidenceTargetEnvironment;
   targetProjectRefMasked: string;
-  executedCaseIds: readonly string[];
-  skippedCaseIds: readonly string[];
+  caseResults: readonly LiveDbCaseResult[];
   verdict: "PASS" | "FAIL";
 }): LiveDbValidationEvidenceSummary {
+  const caseResults = Object.freeze(input.caseResults.map((item) => Object.freeze({ ...item })));
+  const caseIdsFor = (status: LiveDbCaseExecutionStatus) =>
+    Object.freeze(caseResults.filter((item) => item.executionStatus === status).map((item) => item.caseId));
   return Object.freeze({
     validationRunId: input.validationRunId,
     targetEnvironment: input.targetEnvironment,
@@ -40,8 +49,14 @@ export function createLiveDbDryEvidenceSummary(input: {
     migrationVersion: LIVE_DB_DRY_MIGRATION_VERSION,
     secretExposureDetected: false,
     executionMode: "DRY",
-    executedCaseIds: Object.freeze([...input.executedCaseIds]),
-    skippedCaseIds: Object.freeze([...input.skippedCaseIds]),
+    caseResults,
+    executedCaseIds: caseIdsFor("EXECUTED_PASS"),
+    failedCaseIds: caseIdsFor("EXECUTED_FAIL"),
+    skippedCaseIds: Object.freeze([
+      ...caseIdsFor("SKIPPED_REQUIRES_LOCAL"),
+      ...caseIdsFor("SKIPPED_REQUIRES_STAGING"),
+    ]),
+    notApplicableCaseIds: caseIdsFor("NOT_APPLICABLE"),
     verdict: input.verdict,
   });
 }
