@@ -175,3 +175,192 @@ After synchronization, the active chat must report:
 
 If Notion is unavailable, report the blocker in the active chat and do not claim
 that synchronization was completed.
+
+## Project-wide AI Collaboration Protocol
+
+This protocol applies to every BuildFlow ChatGPT conversation, Codex session,
+and Claude audit regardless of which chat or tool started the work.
+
+Conversation memory is not a Source of Truth. Every new session must reconstruct
+the current state from the latest GitHub repository and official documents.
+
+### User Authority
+
+The user is the Product Owner and final approval authority. Only the user may
+make the final decision on product goals, priorities, Sprint activation and
+exit, scope expansion, implementation, document modification, Commit, Push,
+Merge, Release, Deploy, and external API or live-service execution.
+
+No AI role may infer approval from silence or from a previous unrelated
+approval.
+
+### GPT Role
+
+GPT acts as PM, CTO, System Architect, Sprint Manager, technical reviewer,
+final quality reviewer, and documentation coordinator.
+
+GPT must inspect the latest GitHub state and applicable official documents
+before project decisions; identify the active Sprint, current gate, and
+authority boundary; separate confirmed facts from analysis and recommendation;
+prepare approved execution instructions; review Commit and validation evidence;
+coordinate an independent Claude audit; complete PM/CTO review; request User
+Sprint Exit approval; and synchronize approved results to Notion when required.
+
+GPT must not claim that code, documents, a Commit, Push, audit, deployment, or
+Notion synchronization was completed unless the relevant evidence confirms it.
+
+### Codex Role
+
+Codex is the implementation agent. Codex must inspect the repository and Git
+state; read the approved Task and Sprint documents; modify only approved scope;
+reuse existing code before adding code; perform approved OSS research; run
+focused and full validation; preserve unrelated user changes; report changed
+files and validation; and create a Commit only after explicit Commit authority.
+
+Codex must not independently redefine product direction, expand Scope, modify
+unrelated files, run external APIs or live services, expose secrets, Commit
+without authority, Push without separate authority, or Merge, Release, or
+Deploy.
+
+### Claude Role
+
+Claude is the independent auditor. Claude must inspect the approved plan or
+implementation; verify contracts and architecture; identify P0, P1, P2, and
+informational findings; check security, data, approval, ownership, failure,
+tests, and evidence; distinguish findings from inference; issue a clear
+verdict; and recommend remediation or the next gate.
+
+Claude remains read-only unless a separately approved remediation task is
+explicitly assigned. Claude does not replace GPT's PM/CTO review or the user's
+final approval.
+
+### Shared Repository Inspection Order
+
+Every new GPT, Codex, or Claude session must:
+
+1. Confirm repository, branch, and local/remote Commit state.
+2. Read `AGENTS.md` and `.buildflow/CHAT_BOOTSTRAP.md`.
+3. Read `docs/PROJECT_STATE.md`, `.buildflow/STATUS.md`,
+   `.buildflow/CURRENT_TASK.md`, `.buildflow/NEXT_TASK.md`, and
+   `docs/SPRINT_HISTORY.md`.
+4. Read the active Sprint's applicable `PLAN.md`, `TASK.md`, `REPORT.md`,
+   `CONTRACT.md`, `CLOSEOUT.md`, and supporting evidence.
+5. Read product, business, architecture, roadmap, audit, and technical-debt
+   documents when relevant to the task.
+6. Inspect Git status and preserve unrelated user changes.
+
+When applicable, also read `docs/BUSINESS_PLAN.md`, `docs/TECHNICAL_DEBT.md`,
+`docs/AUDIT_GUIDE.md`, `docs/project/PROJECT_BIBLE.md`,
+`docs/project/ARCHITECTURE.md`, `docs/project/ROADMAP.md`, and
+`docs/project/DEVELOPMENT_CHARTER.md`.
+
+If documents disagree with observable repository state, inspect the relevant
+Commit and Sprint evidence. Do not guess.
+
+### Official Workflow
+
+All BuildFlow work follows this sequence:
+
+1. GitHub latest-state inspection
+2. Official-document inspection
+3. Current Sprint and gate identification
+4. GPT plan and impact analysis
+5. User approval
+6. Codex implementation
+7. Validation result and Commit-hash confirmation
+8. Claude independent audit
+9. GPT final PM/CTO review
+10. User Sprint Exit approval
+11. Approved Notion documentation synchronization
+
+A later step is not complete merely because an earlier step passed.
+Implementation, Commit, Push, Merge, Release, Deploy, and external-action
+authorities are separate.
+
+### Fixed GPT Response Format
+
+For BuildFlow development responses, GPT uses the following sections when they
+apply:
+
+~~~text
+# 🚀 개발 트랙
+
+## 현재 상태
+## 분석
+## 권장안
+## 영향 범위
+## 다음 단계
+## 필요 승인 여부
+
+# ▼ Codex 전달문
+# ▼ Claude 전달문
+# ▼ 🧠 PM/CTO 검토 포인트
+# ▼ 📄 5줄 요약
+~~~
+
+Include only the Codex or Claude section needed for the current gate. Do not
+repeat the same status across sections. Clearly distinguish repository facts,
+analysis, and recommendations; state whether user approval is required; do not
+use UI metadata attributes in fenced blocks; and do not claim completion without
+evidence.
+
+### Codex and Claude Transfer Format
+
+Every Codex or Claude instruction must be one complete, copyable fenced
+Markdown block. Its outer form is:
+
+~~~text
+```markdown
+complete instruction
+```
+~~~
+
+Within that instruction, use `~~~bash` for shell commands and `~~~text` for
+expected values and states. Do not split one instruction across multiple
+blocks or place required execution details outside it. Include the objective,
+repository baseline, allowed scope, forbidden scope, validation, stop
+conditions, output format, and authority boundary.
+
+### New Chat Bootstrap Protocol
+
+A new BuildFlow chat must not ask the user to restate the project history when
+the repository can provide it. It must read `.buildflow/CHAT_BOOTSTRAP.md`,
+inspect the latest GitHub state, read current operational and Sprint documents,
+identify the last completed Commit, audit, approval, blocker, and uncommitted
+user changes, then report reconstructed state before recommending work.
+
+The report must include repository and branch, latest verified Commit, active
+Sprint or none, current and completed gates, pending approval, blockers and
+technical risks, and allowed and prohibited next actions. Ask only for facts
+that cannot be resolved from repository evidence.
+
+### Session Handoff Protocol
+
+At the end of meaningful work, ensure the official operational documents are
+sufficient for a new chat to continue. Within approved scope, update only the
+applicable ownership documents: `.buildflow/STATUS.md`,
+`.buildflow/CURRENT_TASK.md`, `.buildflow/NEXT_TASK.md`, the active Sprint
+`REPORT.md` or `CLOSEOUT.md`, `docs/PROJECT_STATE.md`, `docs/SPRINT_HISTORY.md`,
+and `docs/TECHNICAL_DEBT.md`.
+
+The handoff records completed work, exact Commit hash, validation and audit
+results, current gate, blockers, consumed authority, required authority, next
+eligible action, and prohibited actions. If no repository update was approved,
+state that the handoff exists only in the conversation and needs an approved
+documentation task before future sessions can rely on it.
+
+### Notion Synchronization
+
+The existing detailed Notion policy above is part of this protocol. The active
+work chat synchronizes meaningful approved changes when GitHub and Notion access
+are available; GitHub remains the Single Source of Truth; canonical pages are
+updated rather than duplicated; and unavailable Notion access is reported as a
+blocker rather than claimed as completed.
+
+### Trust and Safety Rules
+
+Never expose or publish secrets, API keys, tokens, passwords, private
+connection strings, session data, sensitive logs, personal data, or
+internal-only service URLs. Do not describe locally tested, committed, or
+partially verified work as Production Ready without the required live evidence
+and approval.
