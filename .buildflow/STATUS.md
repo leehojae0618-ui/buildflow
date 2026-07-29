@@ -2,11 +2,11 @@
 
 - Workflow Status: PLANNING
 - Current Sprint: LIVE-DB-VALIDATION-001
-- Sprint Status: PLANNING / NOT EXECUTION APPROVED
+- Sprint Status: PLANNING / HARNESS SCOPE DEFINITION
 - Active Sprint Count: 1
-- Planning Status: CLAUDE PLAN RE-AUDIT REQUIRED
-- Current Sprint Work: Live DB validation plan, harness design, and environment separation rules only
-- Scope Status: DOCUMENTATION-ONLY PLANNING SCOPE
+- Planning Status: PLANNING FOUNDATION COMPLETE / HARNESS SCOPE DRAFT
+- Current Sprint Work: Repository-direct validation Harness Scope documentation only
+- Scope Status: REPOSITORY-DIRECT-HARNESS-001 / DOCUMENTATION-ONLY SCOPE DRAFT
 - Execution Authority: NONE
 - Harness Implementation Authority: NONE
 - DB Connection Authority: NONE
@@ -15,6 +15,9 @@
 - External Provider Authority: NONE
 - Production Authority: NONE
 - Deploy Authority: NONE
+- Planning Foundation: COMPLETE / PUSHED / GPT GITHUB REVIEW PASS — `7a9d63a`
+- Claude Plan Re-Audit: COMPLETE / CONDITIONAL APPROVAL
+- P1 Document Corrections: COMPLETE
 - Runtime Safety Correction: CLOSED / COMPLETE / User Sprint Exit approved
 - Runtime Safety Checkpoints: `a101b9f` / `06fa299`
 - Product Runtime Integration: COMMITTED / included in `a101b9f` / Live DB validation not verified
@@ -29,7 +32,7 @@
 - Visual Closed Beta Slice: USER QA / WAITING FOR USER FEEDBACK
 - Visual Slice Implementation Authority: PAUSED — USER QA
 - Visual Slice Production Changes: NO — QA FINDING REQUIRED
-- Next Required Transition: CLAUDE PLAN RE-AUDIT
+- Next Required Transition: HARNESS IMPLEMENTATION SCOPE APPROVAL
 - Runtime Step Contract: AMENDED / INITIAL-RETRY DISCRIMINATOR / REVALIDATION COMPLETE
 - Previous Runtime Step Contract Checkpoint: `730bde8`
 - Latest Contract Amendment Checkpoint: `59aa291`
@@ -58,12 +61,12 @@
 - Push Execution: COMPLETE — normal push; no force push used
 - Future Push Authorization: NOT GRANTED
 - Deploy Authorization: NOT GRANTED
-- Next Lifecycle Stage: FOUNDATION OR PRODUCT SPRINT SELECTION
-- Next Candidate: existing official NEXT_TASK and user approval policy apply;
-  no candidate is active or approved.
-- Authorized Work: Visual Slice User QA and `LIVE-DB-VALIDATION-001` planning
-  documents only. No DB, harness, migration, external API, or implementation
-  execution is authorized.
+- Next Lifecycle Stage: HARNESS IMPLEMENTATION SCOPE APPROVAL
+- Next Candidate: `REPOSITORY-DIRECT-HARNESS-001` Scope Draft; no Harness
+  implementation or execution authority is approved.
+- Authorized Work: Visual Slice User QA and `LIVE-DB-VALIDATION-001` Harness
+  Scope documentation only. No DB, Harness implementation, migration, external
+  API, or implementation execution is authorized.
 - Prohibited Work: MCP connection or tool invocation, Provider/Runtime
   execution, Session start/resume/continue actions, Provisioning, polling that
   advances state, database migration, API route, deployment, Marketplace, or

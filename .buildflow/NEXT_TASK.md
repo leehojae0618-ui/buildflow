@@ -2,7 +2,7 @@
 
 ## Status
 
-CLAUDE PLAN RE-AUDIT REQUIRED
+HARNESS IMPLEMENTATION SCOPE APPROVAL REQUIRED
 
 ## Reason
 
@@ -11,9 +11,11 @@ approval. Its implementation Commit is
 `a101b9f293048f6399d65ba2b45e43e798c26faf`; its closeout preparation Commit
 is `06fa299dc610a3da9bc7de5b6474b7bde38859c3`.
 
-`LIVE-DB-VALIDATION-001` is the active planning Sprint. It creates only the
-validation plan, harness design, environment-separation contract, and required
-operational record. It is `PLANNING / NOT EXECUTION APPROVED`.
+`LIVE-DB-VALIDATION-001` remains the active planning Sprint. Its Planning
+Foundation is complete and pushed at `7a9d63a`; Claude Plan Re-Audit completed
+with conditional approval, P1-A/P1-B document corrections are complete, and
+GPT GitHub Review passed. The current work unit is
+`REPOSITORY-DIRECT-HARNESS-001`, a `SCOPE DRAFT / NOT IMPLEMENTATION APPROVED`.
 
 `RUNTIME-APPROVAL-FOUNDATION-001` and
 `PRODUCT-RUNTIME-INTEGRATION-001` are included in that Commit. Their actual
@@ -41,13 +43,13 @@ locked unless User QA identifies an approved correction.
 The next required gate is:
 
 ```text
-Claude Plan Re-audit
-NO DB CONNECTION, MIGRATION, EXTERNAL API, OR IMPLEMENTATION AUTHORITY
+Harness Implementation Scope Approval
+NO HARNESS IMPLEMENTATION, DB CONNECTION, MIGRATION, SQL/RPC, OR EXTERNAL PROVIDER AUTHORITY
 ```
 
-Future harness implementation, local Supabase setup, database validation, and
-any disposable staging use each require separate user approval after the plan
-re-audit.
+Harness implementation, local Supabase setup, database validation, and any
+disposable staging use each require separate user approval. Planning Foundation
+completion is not DB validation or Harness implementation completion.
 
 Actual MCP connection, tool invocation, live Provider/Runtime execution,
 remote migration, persistence changes, UI work, commit, push, and deployment
