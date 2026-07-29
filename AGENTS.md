@@ -74,3 +74,104 @@ PLANNING → READY → IN_PROGRESS → REVIEW → QA → DONE
 - Commit Approval must precede Commit, and every user-visible committed change must have a matching Release Notes update before Push Approval.
 - During the MVP period, the operating process, review cadence, debt management, release management, approval gates, and semantic version rules are frozen. Changes require a serious operational or product integrity issue and Product Review approval.
 - New ideas during MVP are classified as MVP-required (must fit the frozen roadmap), Beta backlog, or Future backlog. Large features outside the frozen roadmap are not started.
+
+## Project-wide Notion Documentation Policy
+
+This policy applies to every BuildFlow conversation and work session, regardless
+of which chat initiated or completed the work.
+
+### Execution Location
+
+- Documentation synchronization must be performed from the same BuildFlow chat
+  in which the day's meaningful planning, implementation, audit, review, or
+  decision work was completed whenever that chat has access to GitHub and
+  Notion.
+- Do not require the user to return to one designated documentation chat.
+- A different chat may perform recovery or backfill only when the original work
+  chat cannot access the required tools or the user explicitly requests it.
+- Scheduled automation is a fallback and consistency check. It does not replace
+  documentation from the active work chat when the active chat can perform it.
+
+### Daily Trigger
+
+At the end of a day or after a meaningful BuildFlow milestone, the active work
+chat must check whether documentation synchronization is required.
+
+Meaningful work includes:
+
+- product planning or direction changes
+- approved architecture or operating decisions
+- Sprint activation, implementation, audit, closeout, or status changes
+- commits, pushes, validation evidence, failures, blockers, or technical debt
+- investor, collaborator, Beta, business, or roadmap information changes
+
+Minor discussion with no approved decision, repository change, or status change
+does not require external-share document modification. It may be recorded as
+`no material change` in the daily log when appropriate.
+
+### Required Source Check
+
+Before writing to Notion, inspect the latest `main` state and the applicable
+source documents. At minimum, check the files relevant to the day's work from:
+
+- `docs/PROJECT_STATE.md`
+- `docs/BUSINESS_PLAN.md`
+- `docs/SPRINT_HISTORY.md`
+- `docs/TECHNICAL_DEBT.md`
+- `docs/project/PROJECT_BIBLE.md`
+- `docs/project/ARCHITECTURE.md`
+- `docs/project/ROADMAP.md`
+- `docs/project/DEVELOPMENT_CHARTER.md`
+- `.buildflow/STATUS.md`
+- `.buildflow/CURRENT_TASK.md`
+- the active Sprint's `PLAN.md`, `TASK.md`, `REPORT.md`, and `CLOSEOUT.md` when present
+
+GitHub and approved Sprint evidence remain the Single Source of Truth. Notion
+must not override or invent repository state.
+
+### Required Notion Outputs
+
+1. Create or update the daily BuildFlow development log for the current KST date.
+2. Record the latest verified Commit SHA, current Sprint or gate, completed work,
+   validation or audit result, blockers, risks, decisions, and next step.
+3. When the underlying source changed materially, update the existing canonical
+   Notion pages rather than creating duplicates:
+   - Product Bible
+   - Business Plan
+   - Roadmap
+   - BuildFlow external sharing hub
+   - Investor and collaborator overview
+   - Product and technical overview
+   - Direction and roadmap overview
+   - Operating principles and development system
+4. Preserve and update the cumulative development history when a major milestone
+   changes the overall project narrative.
+
+### Content Quality Rules
+
+- Do not create title-only pages, role-description placeholders, empty shells, or
+  link-only documents when a full document was requested.
+- Preserve existing substantive content and update only the changed sections.
+- Do not replace a complete page with a shorter placeholder or generic summary.
+- Clearly distinguish `CONFIRMED`, `HYPOTHESIS`, `UNKNOWN`, `IMPLEMENTED`,
+  `PARTIAL`, `PLANNED`, `BLOCKED`, and `NOT VERIFIED`.
+- Do not describe committed or locally tested work as Production Ready without
+  the required live evidence and approval.
+- Include dates and Commit hashes where they are supported by the repository.
+- Never publish secrets, credentials, tokens, passwords, private connection
+  strings, sensitive logs, internal-only URLs, or personal data.
+- External-facing pages must be understandable to investors and prospective
+  collaborators without requiring access to the source repository.
+
+### Completion Report
+
+After synchronization, the active chat must report:
+
+- pages created or updated
+- source Commit SHA and source documents checked
+- material changes reflected
+- pages intentionally left unchanged and why
+- any missing evidence or unresolved inconsistency
+
+If Notion is unavailable, report the blocker in the active chat and do not claim
+that synchronization was completed.
