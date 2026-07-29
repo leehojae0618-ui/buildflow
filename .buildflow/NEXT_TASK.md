@@ -2,7 +2,7 @@
 
 ## Status
 
-HARNESS IMPLEMENTATION SCOPE APPROVAL REQUIRED
+CLAUDE LOCAL VALIDATION PLAN AUDIT REQUIRED
 
 ## Reason
 
@@ -14,8 +14,9 @@ is `06fa299dc610a3da9bc7de5b6474b7bde38859c3`.
 `LIVE-DB-VALIDATION-001` remains the active planning Sprint. Its Planning
 Foundation is complete and pushed at `7a9d63a`; Claude Plan Re-Audit completed
 with conditional approval, P1-A/P1-B document corrections are complete, and
-GPT GitHub Review passed. The current work unit is
-`REPOSITORY-DIRECT-HARNESS-001`, a `SCOPE DRAFT / NOT IMPLEMENTATION APPROVED`.
+GPT GitHub Review passed. `REPOSITORY-DIRECT-HARNESS-001` was implemented,
+independently audited, and pushed at `b4eb63f`. The current work unit is
+`SUPABASE-LOCAL-VALIDATION-PLAN`, a `PLAN DRAFT / NOT EXECUTION APPROVED`.
 
 `RUNTIME-APPROVAL-FOUNDATION-001` and
 `PRODUCT-RUNTIME-INTEGRATION-001` are included in that Commit. Their actual
@@ -43,13 +44,13 @@ locked unless User QA identifies an approved correction.
 The next required gate is:
 
 ```text
-Harness Implementation Scope Approval
-NO HARNESS IMPLEMENTATION, DB CONNECTION, MIGRATION, SQL/RPC, OR EXTERNAL PROVIDER AUTHORITY
+Claude Local Validation Plan Audit
+NO SUPABASE CLI, DOCKER, DB CONNECTION, MIGRATION, SQL/RPC, RLS, CONCURRENCY, OR EXTERNAL PROVIDER AUTHORITY
 ```
 
-Harness implementation, local Supabase setup, database validation, and any
-disposable staging use each require separate user approval. Planning Foundation
-completion is not DB validation or Harness implementation completion.
+Local tooling inspection, Supabase setup, database validation, and any
+disposable staging use each require separate user approval. Dry Harness and
+planning completion are not Local DB validation completion.
 
 Actual MCP connection, tool invocation, live Provider/Runtime execution,
 remote migration, persistence changes, UI work, commit, push, and deployment

@@ -14,9 +14,9 @@
 
 - Repository: `leehojae0618-ui/buildflow`
 - Default branch: `main`
-- Baseline commit: `7a9d63a16b492b4453e59dcd324cd1b08cf93502`
-- Last verified date: `2026-07-28`
-- `origin/main`: `7a9d63a16b492b4453e59dcd324cd1b08cf93502`
+- Baseline commit: `b4eb63fab005eb98381ae318c6c17be9c729fb9d`
+- Last verified date: `2026-07-29`
+- `origin/main`: `b4eb63fab005eb98381ae318c6c17be9c729fb9d`
   (`ahead 0 / behind 0` at verification).
 - Working tree: clean이 아니다. Visual Slice와 운영 문서 등 미커밋 변경이
   존재한다. Runtime Approval/Product Runtime/Safety 변경은 이 baseline에
@@ -90,6 +90,9 @@ Goal
 - `RUNTIME-SAFETY-CORRECTION-001`은 예외 경계, checksum canonicalization,
   binding tamper 방어, rejected approval 처리, action 안전성 테스트를 보완했고
   독립 감사 및 GPT GitHub Commit Review를 통과했다.
+- `REPOSITORY-DIRECT-HARNESS-001`은 Local DB 실행 전의 dry guard, 명시적
+  LIVE_DB client 주입 경계, Fake Provider, 안전한 validation evidence 및
+  결정적 테스트를 `b4eb63f`에서 추가했다. 실제 DB 실행은 포함하지 않는다.
 
 ### 미구현 또는 제품 경로에 미연결인 범위
 
@@ -108,21 +111,23 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ## 6. Current Sprint State
 
-- 현재 활성 Sprint: `LIVE-DB-VALIDATION-001` — `PLANNING / HARNESS SCOPE
-  DEFINITION`.
+- 현재 활성 Sprint: `LIVE-DB-VALIDATION-001` — `PLANNING / LOCAL EXECUTION
+  PLAN`.
 - Planning Foundation은 `7a9d63a`에서 pushed 상태이며, Claude Plan Re-Audit의
   조건부 승인과 P1-A/P1-B 문서 보완, GPT GitHub Review PASS가 기록됐다.
-- 현재 Work Unit은 `REPOSITORY-DIRECT-HARNESS-001`의 Scope Draft다. DB 연결,
-  Harness 구현, migration, RPC/RLS 실행, Provider 호출, staging 생성,
-  production 작업은 승인되지 않았다.
+- `REPOSITORY-DIRECT-HARNESS-001`은 `b4eb63f`에서 구현·독립 감사·push까지
+  완료됐다. 현재 Work Unit은 `SUPABASE-LOCAL-VALIDATION-PLAN`이며, DB 연결,
+  migration, RPC/RLS 실행, Provider 호출, staging 생성, production 작업은
+  승인되지 않았다.
 - `RUNTIME-SAFETY-CORRECTION-001`은 User Sprint Exit 승인 후
   `CLOSED / COMPLETE`다. 구현 Commit은 `a101b9f`, 종료 준비 Commit은
   `06fa299`, 최종 종료 Commit은 `3ffb62`이며 Deploy는 수행되지 않았다.
 - `RUNTIME-APPROVAL-FOUNDATION-001`과
   `PRODUCT-RUNTIME-INTEGRATION-001` 구현은 `a101b9f`에 포함되고 독립 감사
   및 GPT GitHub Commit Review를 통과했다.
-- 다음 공식 gate: `HARNESS IMPLEMENTATION SCOPE APPROVAL`. 통과 후에도 local
-  DB 실행과 staging 사용은 각각 별도 사용자 승인이 필요하다.
+- 다음 공식 gate: `CLAUDE LOCAL VALIDATION PLAN AUDIT`. 통과 후에도 tooling,
+  Local DB 실행, migration, RLS/concurrency, staging 사용은 각각 별도 사용자
+  승인이 필요하다.
 - Visual Slice: `BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001`은 USER QA 대기
   상태로 기록되어 있다.
 - 다음 후보 Sprint는 이 계획 Sprint의 re-audit 및 후속 사용자 승인 이후에만
@@ -165,8 +170,9 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ### P0
 
-- `LIVE-DB-VALIDATION-001` Repository-direct Harness Scope의 승인 검토. 실제
-  DB 검증 환경과 실행은 Harness 구현 및 별도 사용자 승인 이후에만 결정한다.
+- `LIVE-DB-VALIDATION-001` Supabase Local validation plan의 독립 감사와
+  dry-harness P2 hardening 범위 검토. 실제 DB 검증 환경과 실행은 각 Gate의
+  별도 사용자 승인 이후에만 결정한다.
 - Visual Closed Beta Slice의 User QA 결과 확인 및 승인된 결함만 처리.
 
 ### P1
@@ -203,8 +209,8 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 - Deploy
 - Live external action
 
-단, `LIVE-DB-VALIDATION-001`은 Harness Scope 문서와 최소 운영 상태 동기화에
-한해 승인됐다. Harness 구현·DB 연결·migration·외부 API·commit·push·deploy는
+단, `LIVE-DB-VALIDATION-001`은 Supabase Local 실행 계획 문서와 최소 운영 상태
+동기화에 한해 승인됐다. DB 연결·migration·외부 API·commit·push·deploy는
 승인되지 않았다.
 
 ## 12. Source Documents
@@ -233,7 +239,9 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 - `docs/sprints/LIVE-DB-VALIDATION-001/TASK.md`
 - `docs/sprints/LIVE-DB-VALIDATION-001/CONTRACT.md`
 - `docs/sprints/LIVE-DB-VALIDATION-001/HARNESS_SCOPE.md`
-- Git commit `7a9d63a16b492b4453e59dcd324cd1b08cf93502`
+- `docs/sprints/LIVE-DB-VALIDATION-001/LOCAL_VALIDATION_PLAN.md`
+- Git commits `7a9d63a16b492b4453e59dcd324cd1b08cf93502` and
+  `b4eb63fab005eb98381ae318c6c17be9c729fb9d`
 
 ## 13. Update Rules
 
