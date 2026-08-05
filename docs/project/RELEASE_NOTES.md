@@ -4,7 +4,7 @@ This file records user-visible product changes. Internal refactoring, documentat
 
 ## Unreleased
 
-- BF0 Product Experience: `/bf0`에서 아이디어를 요구사항·목표·입력·승인·결과 흐름으로 정리하고, Build Plan과 단계별 초안을 검토·수정할 수 있습니다. 이 화면은 연결 전 설계 초안이며 외부 실행·저장·Provider 호출은 수행하지 않습니다.
+- BF0 Product Experience: `/bf0`에서 아이디어를 요구사항·목표·입력·승인·결과 흐름으로 정리하고, Build Plan과 단계별 초안을 검토·수정할 수 있습니다. 로그인한 사용자는 완료한 설계를 Project와 Requirement Snapshot으로 저장할 수 있으며, 외부 실행·Provider 호출은 수행하지 않습니다.
 - Connector Summary: Project Detail now shows required external providers and their connection status without executing OAuth or API calls.
 - Account Wizard Foundation: 필요한 계정별 동의 단계와 연결 상태를 Installation 흐름에서 확인할 수 있습니다. 실제 OAuth 인증은 실행하지 않습니다.
 - Architecture Options: 사용자가 무료 중심, 균형형, 성능 중심 후보를 비용·자동화율·작업량·시간 기준으로 비교할 수 있습니다.
