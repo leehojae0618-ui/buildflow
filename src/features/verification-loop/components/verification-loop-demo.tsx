@@ -1,0 +1,26 @@
+import type { CanonicalBlueprint, NormalizedEvidence, VerificationVerdict } from "../types";
+import { createInquiryVerificationLoopFixture } from "../fixtures";
+
+function Badge({ children, tone = "zinc" }: { children: React.ReactNode; tone?: "red" | "emerald" | "amber" | "zinc" }) {
+  const tones = { red: "border-red-400/40 bg-red-400/10 text-red-200", emerald: "border-emerald-400/40 bg-emerald-400/10 text-emerald-200", amber: "border-amber-400/40 bg-amber-400/10 text-amber-100", zinc: "border-zinc-700 bg-zinc-900 text-zinc-300" };
+  return <span className={`inline-flex border px-2 py-1 text-xs ${tones[tone]}`}>{children}</span>;
+}
+
+function BlueprintCard({ title, blueprint }: { title: string; blueprint: CanonicalBlueprint }) {
+  return <section className="border border-zinc-800 bg-zinc-950/70 p-5">
+    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-medium text-zinc-100">{title}</h2><Badge>{blueprint.version}</Badge></div>
+    <ol className="mt-4 grid gap-2">
+      {blueprint.steps.map((step) => <li key={step.id} className="border border-zinc-800 bg-zinc-900/40 p-3 text-sm"><p className="font-medium text-zinc-100">{step.label}</p><p className="mt-1 text-xs text-zinc-400">{step.type} · depends on: {step.dependsOn.join(", ") || "none"} · approval: {step.requiresApproval ? "required" : "not required"}</p></li>)}
+    </ol>
+  </section>;
+}
+
+function EvidenceCard({ evidence, verdict }: { evidence: NormalizedEvidence; verdict: VerificationVerdict }) {
+  const tone = verdict.status === "FAILED" ? "red" : verdict.status === "VERIFIED" ? "emerald" : "amber";
+  return <section className="border border-zinc-800 bg-zinc-950/70 p-5"><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-medium text-zinc-100">Evidence와 Verdict</h2><Badge tone={tone}>{verdict.presentation}</Badge></div><p className="mt-3 text-sm text-amber-100">시뮬레이션 결과입니다. 실제 Slack, Make, n8n 또는 외부 시스템은 실행되지 않았습니다.</p><dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2"><div><dt className="text-zinc-500">Source</dt><dd className="text-zinc-200">{evidence.sourceType}</dd></div><div><dt className="text-zinc-500">Trust</dt><dd className="text-zinc-200">{evidence.trustLevel}</dd></div><div><dt className="text-zinc-500">Observed</dt><dd className="text-zinc-200">{evidence.observed.join(", ")}</dd></div><div><dt className="text-zinc-500">Integrity</dt><dd className="break-all text-zinc-400">{evidence.integrityChecksum}</dd></div></dl><p className="mt-4 text-sm text-zinc-300">{verdict.details.join(" ")}</p></section>;
+}
+
+export function VerificationLoopDemo() {
+  const loop = createInquiryVerificationLoopFixture();
+  return <main className="min-h-screen bg-[#090909] px-6 py-12 text-zinc-100"><section className="mx-auto max-w-4xl"><p className="text-xs uppercase tracking-[0.25em] text-cyan-300">Internal verification lab</p><h1 className="mt-3 text-3xl font-semibold">Approval Gate Verification Loop</h1><p className="mt-3 max-w-2xl text-sm text-zinc-400">{loop.goal}</p><div className="mt-6 border border-amber-400/30 bg-amber-400/5 p-4 text-sm text-amber-100">이 화면은 내부 Fixture 기반 Vertical Slice입니다. 외부 시스템, Provider, MCP, DB는 실행하거나 변경하지 않습니다.</div><section className="mt-8 border border-zinc-800 bg-zinc-950/70 p-5"><h2 className="text-lg font-medium">Acceptance Tests</h2><div className="mt-4 grid gap-3 md:grid-cols-2">{loop.acceptanceTests.map((testCase) => <article key={testCase.id} className="border border-zinc-800 p-4"><Badge tone={testCase.severity === "CRITICAL" ? "red" : "zinc"}>{testCase.id}</Badge><h3 className="mt-3 font-medium">{testCase.title}</h3><p className="mt-2 text-sm text-zinc-400">Expected: {testCase.expectedObservations.join(", ")}</p><p className="mt-2 text-sm text-red-200">Forbidden: {testCase.forbiddenObservations.join(", ")}</p></article>)}</div></section><div className="mt-8 grid gap-6"><BlueprintCard title="Before: Canonical Blueprint" blueprint={loop.initialBlueprint} /><EvidenceCard evidence={loop.initialEvidence} verdict={loop.initialVerdict} /><section className="border border-cyan-400/30 bg-cyan-400/5 p-5"><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-medium text-cyan-100">Remediation</h2><Badge tone="amber">Human approval required</Badge></div><p className="mt-3 text-zinc-100">{loop.remediation.summary}</p><p className="mt-2 text-sm text-zinc-400">Before: {loop.remediation.before}</p><p className="mt-1 text-sm text-emerald-200">After: {loop.remediation.after}</p></section><BlueprintCard title="After: Approval Gate inserted" blueprint={loop.remediatedBlueprint} /><EvidenceCard evidence={loop.reverificationEvidence} verdict={loop.reverificationVerdict} /><section className="border border-emerald-400/30 bg-emerald-400/5 p-5"><h2 className="text-lg font-medium text-emerald-100">Reverification lineage</h2><p className="mt-3 text-sm text-zinc-200">{loop.lineage.originalExecutionId} → {loop.lineage.remediationId} → {loop.lineage.reverificationExecutionId}</p><p className="mt-2 text-sm text-zinc-400">Same test case: {loop.lineage.testCaseId} · {loop.lineage.originalVerdict} → {loop.lineage.reverificationVerdict}</p></section></div></section></main>;
+}
