@@ -51,6 +51,7 @@ export default function Home() {
 
           <div className="mt-10">
             <div className="flex flex-wrap gap-3">
+              <Link href="/bf0" className="inline-flex items-center border border-violet-300/40 bg-violet-300/10 px-5 py-3 text-sm font-medium text-violet-100 hover:bg-violet-300/20">설계 초안 체험</Link>
               <Link href="/signup" className="inline-flex items-center border border-cyan-400/50 bg-cyan-400/10 px-5 py-3 text-sm font-medium text-cyan-200 hover:bg-cyan-400/20">시작하기</Link>
               <Link href="/login" className="inline-flex items-center border border-zinc-700 px-5 py-3 text-sm font-medium text-zinc-300 hover:border-cyan-400/50 hover:text-cyan-200">로그인</Link>
             </div>
