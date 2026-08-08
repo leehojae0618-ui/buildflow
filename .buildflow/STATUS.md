@@ -1,28 +1,43 @@
 # BuildFlow Status
 
-- Workflow Status: PLANNING
-- Current Sprint: LIVE-DB-VALIDATION-001
-- Sprint Status: PLANNING / LOCAL EXECUTION PLAN
-- Active Sprint Count: 1
-- Planning Status: PLANNING FOUNDATION COMPLETE / DRY HARNESS PUSHED / LOCAL PLAN DRAFT
-- Current Sprint Work: Supabase Local validation plan documentation only
-- Scope Status: SUPABASE-LOCAL-VALIDATION-PLAN / PLAN DRAFT / NOT EXECUTION APPROVED
-- Execution Authority: NONE
-- Local Plan Documentation Authority: APPROVED
-- Supabase CLI Install Authority: NONE
-- Docker Execution Authority: NONE
-- Supabase Local Start Authority: NONE
-- Harness Implementation Authority: COMPLETE / PUSHED; Local Integration Authority: NONE
-- DB Connection Authority: NONE
-- Migration Authority: NONE
-- External API Authority: NONE
-- External Provider Authority: NONE
-- RLS Validation Authority: NONE
-- Concurrent Consume Authority: NONE
-- Staging Authority: NONE
-- Production Authority: NONE
-- Deploy Authority: NONE
+- Workflow Status: NO ACTIVE IMPLEMENTATION SPRINT
+- Current Sprint: NONE
+- Sprint Status: NO ACTIVE IMPLEMENTATION SPRINT
+- Active Sprint Count: 0
+- Latest Completed Sprint: BF0-PRODUCT-EXPERIENCE-001
+- BF0: CLOSED / COMPLETE / User Sprint Exit APPROVED
+- BF0 Product Checkpoint: `15746f14d8c5e5adf75045b2d4d774ad12335549`
+- BF0 Exit-record Checkpoint: `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d`
+- BF0 Deploy: NOT PERFORMED
+- Implementation, Commit, Push, and Deploy Authority: NONE
+- DB, Migration, Runtime, Provider, and External Action Authority: NONE
+- Next Implementation Sprint: NOT SELECTED / REQUIRES USER APPROVAL
+
+## Paused Work
+
+- `LIVE-DB-VALIDATION-001`: PAUSED / BLOCKED BY LOCAL ENVIRONMENT. It is not
+  closed, completed, or a repository implementation failure. Repeated Local
+  Supabase healthcheck failures on the 8GB M1 environment make Local DB
+  validation non-viable as-is. No further Local startup is authorized. Remote
+  validation remains a separately approved future option.
 - Planning Foundation: COMPLETE / PUSHED / GPT GITHUB REVIEW PASS — `7a9d63a`
+- Dry Harness Implementation: COMPLETE / PUSHED — `b4eb63f`
+- Actual DB connection, migration, RPC, RLS, concurrent consume, staging, and
+  production validation remain NOT AUTHORIZED.
+
+## Completed Lifecycle Pending User Exit
+
+- `LV5-NO-KEY-REMEDIATION-001`: IMPLEMENTED / VALIDATED / INDEPENDENT AUDIT
+  PASS / COMMITTED / PUSHED.
+- Checkpoint: `54bbc89529c735445b1ef68ea68195c317ea3877`.
+- User Sprint Exit: PENDING.
+- Browser QA: NOT VERIFIED / separate gate.
+- Actual n8n Import: NOT VERIFIED / separate gate.
+- Real Make Configuration: NOT VERIFIED / separate gate.
+- Deploy: NOT PERFORMED.
+
+## Historical Runtime and Foundation State
+
 - Claude Plan Re-Audit: COMPLETE / CONDITIONAL APPROVAL
 - P1 Document Corrections: COMPLETE
 - Dry Harness Implementation: COMPLETE / PUSHED — `b4eb63f`
@@ -42,7 +57,6 @@
 - Visual Closed Beta Slice: USER QA / WAITING FOR USER FEEDBACK
 - Visual Slice Implementation Authority: PAUSED — USER QA
 - Visual Slice Production Changes: NO — QA FINDING REQUIRED
-- Next Required Transition: CLAUDE LOCAL VALIDATION PLAN AUDIT
 - Runtime Step Contract: AMENDED / INITIAL-RETRY DISCRIMINATOR / REVALIDATION COMPLETE
 - Previous Runtime Step Contract Checkpoint: `730bde8`
 - Latest Contract Amendment Checkpoint: `59aa291`
@@ -71,12 +85,11 @@
 - Push Execution: COMPLETE — normal push; no force push used
 - Future Push Authorization: NOT GRANTED
 - Deploy Authorization: NOT GRANTED
-- Next Lifecycle Stage: CLAUDE LOCAL VALIDATION PLAN AUDIT
-- Next Candidate: Local tooling inspection only after plan audit and separate
-  user approval.
-- Authorized Work: Visual Slice User QA and `LIVE-DB-VALIDATION-001` Local
-  validation plan documentation only. No DB, migration, external API, or Local
-  execution is authorized.
+- Open Gates: LV5 User Sprint Exit; Visual Slice User QA; separately approved
+  remote or alternative LIVE-DB validation.
+- Authorized Work: no implementation work is authorized until a new Scope Freeze
+  and user approval. No DB, migration, Runtime, Provider, external API, or
+  Local execution is authorized.
 - Prohibited Work: MCP connection or tool invocation, Provider/Runtime
   execution, Session start/resume/continue actions, Provisioning, polling that
   advances state, database migration, API route, deployment, Marketplace, or

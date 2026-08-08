@@ -2,7 +2,7 @@
 
 ## Status
 
-CLAUDE LOCAL VALIDATION PLAN AUDIT REQUIRED
+NO ACTIVE IMPLEMENTATION SPRINT — USER APPROVAL REQUIRED
 
 ## Reason
 
@@ -11,12 +11,17 @@ approval. Its implementation Commit is
 `a101b9f293048f6399d65ba2b45e43e798c26faf`; its closeout preparation Commit
 is `06fa299dc610a3da9bc7de5b6474b7bde38859c3`.
 
-`LIVE-DB-VALIDATION-001` remains the active planning Sprint. Its Planning
-Foundation is complete and pushed at `7a9d63a`; Claude Plan Re-Audit completed
-with conditional approval, P1-A/P1-B document corrections are complete, and
-GPT GitHub Review passed. `REPOSITORY-DIRECT-HARNESS-001` was implemented,
-independently audited, and pushed at `b4eb63f`. The current work unit is
-`SUPABASE-LOCAL-VALIDATION-PLAN`, a `PLAN DRAFT / NOT EXECUTION APPROVED`.
+`LIVE-DB-VALIDATION-001` is PAUSED / BLOCKED BY LOCAL ENVIRONMENT. Its Planning
+Foundation is complete and pushed at `7a9d63a`; the dry harness is pushed at
+`b4eb63f`. Repeated Local Supabase healthcheck failures on the 8GB M1 host
+mean Local DB validation is not viable as-is. The Sprint is not closed or
+completed; no further Local startup is authorized, and a remote validation
+environment remains a separately approved future option.
+
+`BF0-PRODUCT-EXPERIENCE-001` is `CLOSED / COMPLETE`. User Sprint Exit is
+APPROVED; its product checkpoint is `15746f14d8c5e5adf75045b2d4d774ad12335549`
+and its exit-record checkpoint is
+`51011d66c3a3fea9ec7b2058592fbabfbdd4f78d`. Deploy is NOT PERFORMED.
 
 `RUNTIME-APPROVAL-FOUNDATION-001` and
 `PRODUCT-RUNTIME-INTEGRATION-001` are included in that Commit. Their actual
@@ -41,11 +46,15 @@ FROZEN / USER QA / IMPLEMENTED / WAITING FOR USER FEEDBACK
 Its implementation passed PM/CTO Code Review with a QA gate. Its code remains
 locked unless User QA identifies an approved correction.
 
-The next required gate is:
+Open gates are:
 
 ```text
-Claude Local Validation Plan Audit
-NO SUPABASE CLI, DOCKER, DB CONNECTION, MIGRATION, SQL/RPC, RLS, CONCURRENCY, OR EXTERNAL PROVIDER AUTHORITY
+NO ACTIVE IMPLEMENTATION SPRINT
+
+LV5-NO-KEY-REMEDIATION-001: USER SPRINT EXIT PENDING
+BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001: USER QA WAITING
+LIVE-DB-VALIDATION-001: PAUSED / BLOCKED; remote or alternative validation requires separate user approval
+NEXT IMPLEMENTATION SPRINT: NOT SELECTED / REQUIRES USER APPROVAL
 ```
 
 Local tooling inspection, Supabase setup, database validation, and any
@@ -53,8 +62,19 @@ disposable staging use each require separate user approval. Dry Harness and
 planning completion are not Local DB validation completion.
 
 Actual MCP connection, tool invocation, live Provider/Runtime execution,
-remote migration, persistence changes, UI work, commit, push, and deployment
-remain prohibited until separately approved.
+remote migration, persistence changes, Commit, Push, and
+deployment remain prohibited until separately approved.
+
+## LV5 No-Key Governance Gate
+
+`LV5-NO-KEY-REMEDIATION-001` has completed its technical lifecycle through
+Push `54bbc89529c735445b1ef68ea68195c317ea3877`.
+
+- Next governance gate: USER SPRINT EXIT DECISION.
+- Browser QA: separate follow-up validation gate / NOT VERIFIED.
+- Actual n8n Import and real Make Configuration: separate explicit-approval
+  gates / NOT VERIFIED.
+- Deploy: NOT PERFORMED.
 
 All remaining contents in this file are historical planning records.
 # Draft Candidate — CORE-RUNTIME-001 / Phase 1 (Not Active)

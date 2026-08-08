@@ -14,13 +14,14 @@
 
 - Repository: `leehojae0618-ui/buildflow`
 - Default branch: `main`
-- Baseline commit: `b4eb63fab005eb98381ae318c6c17be9c729fb9d`
-- Last verified date: `2026-07-29`
-- `origin/main`: `b4eb63fab005eb98381ae318c6c17be9c729fb9d`
+- Latest verified remote checkpoint: `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d`
+- Local HEAD: `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d`
+- `origin/main`: `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d`
   (`ahead 0 / behind 0` at verification).
-- Working tree: clean이 아니다. Visual Slice와 운영 문서 등 미커밋 변경이
-  존재한다. Runtime Approval/Product Runtime/Safety 변경은 이 baseline에
-  committed 상태다.
+- Last verified date: `2026-08-08`
+- Working tree: clean이 아니다. User-owned Visual Slice, MCP, Charter, memory,
+  autonomous UI, and prior operational documentation changes are present.
+  They are not implicitly authorized for a single Commit.
 
 ## 3. Product Definition
 
@@ -94,6 +95,17 @@ Goal
   LIVE_DB client 주입 경계, Fake Provider, 안전한 validation evidence 및
   결정적 테스트를 `b4eb63f`에서 추가했다. 실제 DB 실행은 포함하지 않는다.
 
+### Builder / No-Key verification capability
+
+- `LV5-NO-KEY-REMEDIATION-001`: IMPLEMENTED / VALIDATED / INDEPENDENT AUDIT
+  PASS / PUSHED (`54bbc89529c735445b1ef68ea68195c317ea3877`); User Sprint Exit은
+  PENDING이다.
+- Static n8n Import Readiness는 IMPLEMENTED다. Actual n8n Import는 NOT
+  VERIFIED다.
+- Browser QA, real Make Configuration, external execution은 NOT VERIFIED다.
+- Evidence는 `USER_SUBMITTED`이며 직접적인 platform observation을 주장하지
+  않는다. Production Ready: NO.
+
 ### 미구현 또는 제품 경로에 미연결인 범위
 
 - Product UI에서 Runtime 실행을 시작하는 동선
@@ -111,27 +123,35 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ## 6. Current Sprint State
 
-- 현재 활성 Sprint: `LIVE-DB-VALIDATION-001` — `PLANNING / LOCAL EXECUTION
-  PLAN`.
-- Planning Foundation은 `7a9d63a`에서 pushed 상태이며, Claude Plan Re-Audit의
-  조건부 승인과 P1-A/P1-B 문서 보완, GPT GitHub Review PASS가 기록됐다.
-- `REPOSITORY-DIRECT-HARNESS-001`은 `b4eb63f`에서 구현·독립 감사·push까지
-  완료됐다. 현재 Work Unit은 `SUPABASE-LOCAL-VALIDATION-PLAN`이며, DB 연결,
-  migration, RPC/RLS 실행, Provider 호출, staging 생성, production 작업은
-  승인되지 않았다.
+- 현재 활성 implementation Sprint: NONE.
+- `BF0-PRODUCT-EXPERIENCE-001`은 `CLOSED / COMPLETE`다. User Sprint Exit은
+  APPROVED이며, product checkpoint는 `15746f14d8c5e5adf75045b2d4d774ad12335549`,
+  exit-record checkpoint는 `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d`다.
+  Deploy는 NOT PERFORMED다.
+- `LIVE-DB-VALIDATION-001`은 `PAUSED / BLOCKED BY LOCAL ENVIRONMENT`다.
+  8GB M1 host에서 반복된 Local Supabase healthcheck 실패로 Local DB 검증은
+  현 상태에서 진행하지 않는다. 이 Sprint는 closed, completed, 또는 저장소
+  구현 실패가 아니며, 원격 검증은 별도 승인이 필요한 미래 옵션이다.
+- Planning Foundation은 `7a9d63a`에서 pushed 상태이며,
+  `REPOSITORY-DIRECT-HARNESS-001`은 `b4eb63f`에서 구현·독립 감사·push까지
+  완료됐다. 실제 DB 연결, migration, RPC/RLS, Provider 호출, staging, 및
+  production 작업은 승인되지 않았다.
 - `RUNTIME-SAFETY-CORRECTION-001`은 User Sprint Exit 승인 후
   `CLOSED / COMPLETE`다. 구현 Commit은 `a101b9f`, 종료 준비 Commit은
   `06fa299`, 최종 종료 Commit은 `3ffb62`이며 Deploy는 수행되지 않았다.
 - `RUNTIME-APPROVAL-FOUNDATION-001`과
   `PRODUCT-RUNTIME-INTEGRATION-001` 구현은 `a101b9f`에 포함되고 독립 감사
   및 GPT GitHub Commit Review를 통과했다.
-- 다음 공식 gate: `CLAUDE LOCAL VALIDATION PLAN AUDIT`. 통과 후에도 tooling,
-  Local DB 실행, migration, RLS/concurrency, staging 사용은 각각 별도 사용자
-  승인이 필요하다.
-- Visual Slice: `BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001`은 USER QA 대기
-  상태로 기록되어 있다.
-- 다음 후보 Sprint는 이 계획 Sprint의 re-audit 및 후속 사용자 승인 이후에만
-  검토한다. 현재 실행 후보는 활성화되지 않았다.
+- `LV5-NO-KEY-REMEDIATION-001`은 기술 lifecycle에서
+  IMPLEMENTED / VALIDATED / INDEPENDENT AUDIT PASS / PUSHED 상태이나 User
+  Sprint Exit은 PENDING이다. 이는 현재 활성 Sprint가 아니며, Browser QA,
+  actual n8n Import, real Make Configuration은 별도 NOT VERIFIED gate다.
+- Visual Slice: `BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001`은
+  IMPLEMENTED / USER QA / WAITING FOR USER FEEDBACK 상태이며, implementation
+  authority는 PAUSED — USER QA다.
+- Open gates는 LV5 User Sprint Exit, Visual Slice User QA, 그리고 별도 사용자
+  승인이 필요한 LIVE-DB 원격 또는 대체 검증이다. 다음 implementation Sprint는
+  선택되지 않았으며 별도 Scope Freeze와 사용자 승인이 필요하다.
 
 근거 문서:
 
@@ -152,6 +172,13 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 | Agent Foundation closure | `fd3aff11a1cdfae8821835542d8e2cce9a8bfebb` | `docs(ops): close agent foundation sprint` |
 | Runtime Evidence Persistence | `e8b8d600ed85637b01e0d790643fa1b74d428b46` | `feat(evidence): add runtime evidence persistence` |
 | Runtime Safety Correction | `a101b9f293048f6399d65ba2b45e43e798c26faf` | `fix(runtime): harden approval execution safety` |
+| Simulated Verification Loop | `ef3b798b7a87a0b8e9afb873c4c35fec26638e5c` | `feat(verification): add simulated remediation loop` |
+| Make/n8n Preview Adapters | `13542a2af8dee21cf10df22398e88cb3418f2f6a` | `feat(builders): add Make and n8n preview adapters` |
+| Guarded Builder Client Foundation | `0a286466b5f21771fc740b57ad8378d4599beabc` | `feat(builders): add guarded Make and n8n client foundation` |
+| No-Key Execution Flow | `e52cb8294a25ce84da6a50ae5456d5e0820bd37b` | `feat(builders): add no-key execution flow` |
+| No-Key Remediation Hardening | `54bbc89529c735445b1ef68ea68195c317ea3877` | `fix(builders): harden no-key remediation flow` |
+| BF0 Product Experience entry | `15746f14d8c5e5adf75045b2d4d774ad12335549` | `feat(product): expose bf0 draft from home` |
+| BF0 Product Experience exit | `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d` | `docs(product): close bf0 product experience sprint` |
 
 ## 8. Known Issues and Technical Debt
 
@@ -170,10 +197,10 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ### P0
 
-- `LIVE-DB-VALIDATION-001` Supabase Local validation plan의 독립 감사와
-  dry-harness P2 hardening 범위 검토. 실제 DB 검증 환경과 실행은 각 Gate의
-  별도 사용자 승인 이후에만 결정한다.
-- Visual Closed Beta Slice의 User QA 결과 확인 및 승인된 결함만 처리.
+- 활성 implementation Sprint는 없다. 새 implementation은 별도 Scope Freeze와
+  사용자 승인이 필요하다.
+- `LV5-NO-KEY-REMEDIATION-001` User Sprint Exit, Visual Closed Beta Slice User
+  QA, 그리고 별도 승인 범위의 LIVE-DB 대체 검증만 open gate로 유지한다.
 
 ### P1
 
@@ -209,9 +236,7 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 - Deploy
 - Live external action
 
-단, `LIVE-DB-VALIDATION-001`은 Supabase Local 실행 계획 문서와 최소 운영 상태
-동기화에 한해 승인됐다. DB 연결·migration·외부 API·commit·push·deploy는
-승인되지 않았다.
+DB 연결·migration·외부 API·commit·push·deploy는 별도 사용자 승인이 필요하다.
 
 ## 12. Source Documents
 
