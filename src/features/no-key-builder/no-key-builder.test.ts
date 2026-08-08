@@ -4,6 +4,7 @@ import { approvedNoKeySubmission, forbiddenNoKeySubmission, noKeyBlueprint, noKe
 import { buildNoKeyExecutionPackage } from "./package-builder";
 import { submitNoKeyResult } from "./result-submission";
 import { assertNoKeySubmissionSafe } from "./secret-guard";
+import { createNoKeyVerificationExport } from "./verification-export";
 
 describe("No-Key Builder Flow", () => {
   it("keeps packages in No-Key mode with no external creation or execution", () => {
@@ -31,7 +32,9 @@ describe("No-Key Builder Flow", () => {
     if (noKeyN8nPackage.artifact.kind !== "N8N_WORKFLOW_EXPORT") throw new Error("unexpected artifact");
     expect(noKeyN8nPackage.artifact.importInstructions.join(" ")).toContain("Import");
     expect(noKeyN8nPackage.artifact.connectionInstructions.join(" ")).toContain("직접");
-    expect(noKeyN8nPackage.artifact.workflowJson).toContain("N8N_WORKFLOW_PREVIEW");
+    expect(noKeyN8nPackage.artifact.workflowJson).toContain("n8n-nodes-base.manualTrigger");
+    expect(noKeyN8nPackage.artifact.importReadiness).toMatchObject({ status: "PASS", realPlatformValidation: "REQUIRES_REAL_PLATFORM_VALIDATION" });
+    expect(noKeyN8nPackage.artifact.workflow.active).toBe(false);
   });
 
   it("rejects API-key, Bearer, Cookie, and sensitive log input", () => {
@@ -39,6 +42,7 @@ describe("No-Key Builder Flow", () => {
     expect(() => assertNoKeySubmissionSafe([`Bearer ${"a".repeat(20)}`])).toThrow("NO_KEY_SUBMISSION_CONTAINS_SENSITIVE_VALUE");
     expect(() => assertNoKeySubmissionSafe(["Cookie=session-value"])).toThrow("NO_KEY_SUBMISSION_CONTAINS_SENSITIVE_VALUE");
     expect(() => submitNoKeyResult(noKeyN8nPackage, validInquiryApprovedTest, { ...approvedNoKeySubmission, sanitizedLogExcerpt: "password=do-not-store" })).toThrow("NO_KEY_SUBMISSION_CONTAINS_SENSITIVE_VALUE");
+    expect(() => submitNoKeyResult(noKeyN8nPackage, validInquiryApprovedTest, { ...approvedNoKeySubmission, blueprintChecksum: `sk-${"a".repeat(24)}` })).toThrow("NO_KEY_SUBMISSION_CONTAINS_SENSITIVE_VALUE");
   });
 
   it("records user-submitted provenance without claiming an external observation", () => {
@@ -60,5 +64,28 @@ describe("No-Key Builder Flow", () => {
 
   it("does not treat a package alone as verified evidence", () => {
     expect(submitNoKeyResult(noKeyN8nPackage, validInquiryApprovedTest, { ...approvedNoKeySubmission, observations: [] }).verdict.status).not.toBe("VERIFIED");
+  });
+
+  it("exports only sanitized user-submitted verification data", () => {
+    const outcome = submitNoKeyResult(noKeyN8nPackage, validInquiryApprovedTest, approvedNoKeySubmission);
+    const exported = createNoKeyVerificationExport(approvedNoKeySubmission, outcome);
+    expect(exported.fileName).toMatch(/^buildflow-verification-[a-f0-9]{12}\.json$/);
+    expect(JSON.parse(exported.content)).toMatchObject({
+      provenance: "USER_SUBMITTED",
+      trustLevel: "USER_SUBMITTED",
+      externalPlatformDirectlyObservedByBuildFlow: false,
+      verdict: { status: "VERIFIED" },
+    });
+    expect(() => createNoKeyVerificationExport({ ...approvedNoKeySubmission, sanitizedLogExcerpt: "Authorization: Bearer unsafe" }, outcome)).toThrow("NO_KEY_SUBMISSION_CONTAINS_SENSITIVE_VALUE");
+    expect(() => createNoKeyVerificationExport({ ...approvedNoKeySubmission, blueprintChecksum: `sk-${"a".repeat(24)}` }, outcome)).toThrow("NO_KEY_SUBMISSION_CONTAINS_SENSITIVE_VALUE");
+  });
+
+  it("keeps Make as manual setup with approval before Slack and no external execution", () => {
+    if (noKeyMakePackage.artifact.kind !== "MAKE_MANUAL_SETUP_GUIDE") throw new Error("unexpected artifact");
+    const sequence = noKeyMakePackage.artifact.moduleSequence.join(" ");
+    expect(sequence.indexOf("Approval")).toBeLessThan(sequence.indexOf("Slack"));
+    expect(noKeyMakePackage.artifact).not.toHaveProperty("credentials");
+    expect(JSON.stringify(noKeyMakePackage)).not.toMatch(/sk-|Bearer\s|authorization\s*:/i);
+    expect(noKeyMakePackage).toMatchObject({ actualExternalCreation: false, actualExternalExecution: false });
   });
 });

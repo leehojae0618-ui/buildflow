@@ -5,10 +5,90 @@ import { compileN8nWorkflow } from "../external-builders/n8n/compiler";
 import type { ExternalBuilderPlatform } from "../external-builders/types";
 import { deliveryBeforeApprovalTest, validInquiryApprovedTest } from "../verification-loop/fixtures";
 import type { CanonicalBlueprint } from "../verification-loop/types";
-import type { NoKeyExecutionPackage } from "./types";
+import { validateN8nImportReadiness } from "./n8n-import-readiness";
+import type { N8nImportWorkflow, NoKeyExecutionPackage } from "./types";
 
 function blueprintChecksum(blueprint: CanonicalBlueprint): string {
   return createHash("sha256").update(stableSerializeAgentPackage(blueprint), "utf8").digest("hex");
+}
+
+function stableNodeId(checksum: string, ordinal: number): string {
+  const source = `${checksum}${ordinal.toString(16).padStart(2, "0")}`.slice(0, 32);
+  return `${source.slice(0, 8)}-${source.slice(8, 12)}-${source.slice(12, 16)}-${source.slice(16, 20)}-${source.slice(20, 32)}`;
+}
+
+function buildN8nImportWorkflow(blueprint: CanonicalBlueprint, checksum: string): N8nImportWorkflow {
+  const nodes: N8nImportWorkflow["nodes"] = [
+    {
+      id: stableNodeId(checksum, 1),
+      name: "Manual Trigger",
+      parameters: {},
+      type: "n8n-nodes-base.manualTrigger",
+      typeVersion: 1,
+      position: [0, 0],
+    },
+    {
+      id: stableNodeId(checksum, 2),
+      name: "Prepare Inquiry",
+      parameters: {
+        assignments: {
+          assignments: [
+            { id: stableNodeId(checksum, 21), name: "inquiry", value: blueprint.goal, type: "string" },
+            { id: stableNodeId(checksum, 22), name: "approved", value: true, type: "boolean" },
+          ],
+        },
+        options: {},
+      },
+      type: "n8n-nodes-base.set",
+      typeVersion: 3.4,
+      position: [260, 0],
+    },
+    {
+      id: stableNodeId(checksum, 3),
+      name: "Approval Gate",
+      parameters: {
+        conditions: {
+          options: { caseSensitive: true, leftValue: "", typeValidation: "strict", version: 2 },
+          conditions: [{
+            id: stableNodeId(checksum, 31),
+            leftValue: "={{ $json.approved }}",
+            rightValue: true,
+            operator: { type: "boolean", operation: "true", singleValue: true },
+          }],
+          combinator: "and",
+        },
+        options: {},
+      },
+      type: "n8n-nodes-base.if",
+      typeVersion: 2.2,
+      position: [540, 0],
+    },
+    {
+      id: stableNodeId(checksum, 4),
+      name: "Slack Placeholder After Approval",
+      parameters: {
+        assignments: {
+          assignments: [{ id: stableNodeId(checksum, 41), name: "delivery", value: "SLACK_PLACEHOLDER_NO_CREDENTIAL", type: "string" }],
+        },
+        options: {},
+      },
+      type: "n8n-nodes-base.set",
+      typeVersion: 3.4,
+      position: [820, -100],
+    },
+  ];
+
+  return {
+    name: `BuildFlow No-Key ${blueprint.id}`,
+    nodes,
+    connections: {
+      "Manual Trigger": { main: [[{ node: "Prepare Inquiry", type: "main", index: 0 }]] },
+      "Prepare Inquiry": { main: [[{ node: "Approval Gate", type: "main", index: 0 }]] },
+      "Approval Gate": { main: [[{ node: "Slack Placeholder After Approval", type: "main", index: 0 }], []] },
+    },
+    settings: { executionOrder: "v1" },
+    active: false,
+  };
 }
 
 const resultSubmissionSchema = [
@@ -33,15 +113,19 @@ export function buildNoKeyExecutionPackage(platform: ExternalBuilderPlatform, bl
   };
   if (platform === "N8N") {
     const compiled = compileN8nWorkflow({ blueprint });
+    const workflow = buildN8nImportWorkflow(blueprint, checksum);
+    const importReadiness = validateN8nImportReadiness(workflow);
     return {
       ...common,
       setupSteps: ["n8n에 로그인합니다.", "Workflow JSON을 Import 화면에서 검토합니다.", "Slack Credential을 n8n 내부에서 직접 연결합니다.", "활성화 전 Approval Gate와 Slack 연결 순서를 확인합니다.", "사용자가 직접 활성화·실행한 뒤 결과를 제출합니다."],
       requiredUserConnections: compiled.credentialRequirements.map((item) => item.reference),
       artifact: {
         kind: "N8N_WORKFLOW_EXPORT",
-        workflowJson: JSON.stringify(compiled.artifact, null, 2),
+        workflowJson: JSON.stringify(workflow, null, 2),
+        workflow,
+        importReadiness,
         fileName: `buildflow-n8n-${checksum.slice(0, 12)}.json`,
-        importInstructions: ["n8n Workflow Import를 엽니다.", "이 JSON은 Preview Artifact임을 확인합니다.", "Import 후 실제 node schema와 version 호환성을 검토합니다.", "Import 성공은 실행 성공이 아닙니다."],
+        importInstructions: ["n8n Workflow Import를 엽니다.", "이 JSON은 credential-free 최소 Import 후보임을 확인합니다.", "Slack 단계는 credential 없는 placeholder이며 실제 Slack Action이 아닙니다.", "Readiness PASS는 실제 Import 또는 실행 성공이 아닙니다."],
         connectionInstructions: ["Credential은 n8n Credential 화면에서 직접 생성·선택합니다.", "BuildFlow에 API Key나 OAuth Token을 입력하지 않습니다.", "Slack Action은 Approval Gate 뒤에서만 연결합니다."],
         importCompatibility: "REQUIRES_REAL_PLATFORM_VALIDATION",
       },

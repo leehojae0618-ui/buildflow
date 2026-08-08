@@ -33,10 +33,41 @@ export type NoKeyUserSubmittedEvidence = {
 export type NoKeyN8nArtifact = {
   kind: "N8N_WORKFLOW_EXPORT";
   workflowJson: string;
+  workflow: N8nImportWorkflow;
+  importReadiness: N8nImportReadiness;
   fileName: string;
   importInstructions: readonly string[];
   connectionInstructions: readonly string[];
   importCompatibility: "REQUIRES_REAL_PLATFORM_VALIDATION";
+};
+
+export type N8nImportNode = {
+  id: string;
+  name: string;
+  parameters: Record<string, unknown>;
+  type: "n8n-nodes-base.manualTrigger" | "n8n-nodes-base.set" | "n8n-nodes-base.if";
+  typeVersion: number;
+  position: readonly [number, number];
+};
+
+export type N8nImportConnection = {
+  node: string;
+  type: "main";
+  index: 0;
+};
+
+export type N8nImportWorkflow = {
+  name: string;
+  nodes: readonly N8nImportNode[];
+  connections: Readonly<Record<string, { main: readonly (readonly N8nImportConnection[])[] }>>;
+  settings: { executionOrder: "v1" };
+  active: false;
+};
+
+export type N8nImportReadiness = {
+  status: "PASS" | "FAILED";
+  realPlatformValidation: "REQUIRES_REAL_PLATFORM_VALIDATION";
+  issues: readonly string[];
 };
 
 export type NoKeyMakeArtifact = {

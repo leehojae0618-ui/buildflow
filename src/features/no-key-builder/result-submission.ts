@@ -14,6 +14,7 @@ export function submitNoKeyResult(
   submission: NoKeyResultSubmission,
 ): NoKeySubmissionOutcome {
   assertNoKeySubmissionSafe([
+    submission.blueprintChecksum,
     submission.externalWorkflowReference,
     submission.externalExecutionReference,
     submission.sanitizedLogExcerpt,
