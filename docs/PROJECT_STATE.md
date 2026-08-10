@@ -14,9 +14,9 @@
 
 - Repository: `leehojae0618-ui/buildflow`
 - Default branch: `main`
-- Latest verified remote checkpoint: `8570ae32bc0d82152017cf08af9a386dafea20b9`
-- Local HEAD: `8570ae32bc0d82152017cf08af9a386dafea20b9`
-- `origin/main`: `8570ae32bc0d82152017cf08af9a386dafea20b9`
+- Latest verified remote checkpoint: `ee80b8fa7f639d26e6d8a82d9f4ec41804a066c4`
+- Local HEAD: `ee80b8fa7f639d26e6d8a82d9f4ec41804a066c4`
+- `origin/main`: `ee80b8fa7f639d26e6d8a82d9f4ec41804a066c4`
   (`ahead 0 / behind 0` at verification).
 - Last verified date: `2026-08-10`
 - Working tree: clean이 아니다. User-owned Visual Slice, MCP, Charter, memory,
@@ -97,9 +97,10 @@ Goal
 
 ### Builder / No-Key verification capability
 
-- `LV5-NO-KEY-REMEDIATION-001`: IMPLEMENTED / VALIDATED / INDEPENDENT AUDIT
-  PASS / PUSHED (`54bbc89529c735445b1ef68ea68195c317ea3877`); User Sprint Exit은
-  PENDING이다.
+- `LV5-NO-KEY-REMEDIATION-001`: CLOSED / COMPLETE. IMPLEMENTED / VALIDATED /
+  INDEPENDENT AUDIT PASS / PUSHED
+  (`54bbc89529c735445b1ef68ea68195c317ea3877`); User Sprint Exit은
+  APPROVED — 2026-08-10이다.
 - Static n8n Import Readiness는 IMPLEMENTED다. Actual n8n Import는 NOT
   VERIFIED다.
 - Browser QA, real Make Configuration, external execution은 NOT VERIFIED다.
@@ -142,16 +143,17 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 - `RUNTIME-APPROVAL-FOUNDATION-001`과
   `PRODUCT-RUNTIME-INTEGRATION-001` 구현은 `a101b9f`에 포함되고 독립 감사
   및 GPT GitHub Commit Review를 통과했다.
-- `LV5-NO-KEY-REMEDIATION-001`은 기술 lifecycle에서
-  IMPLEMENTED / VALIDATED / INDEPENDENT AUDIT PASS / PUSHED 상태이나 User
-  Sprint Exit은 PENDING이다. 이는 현재 활성 Sprint가 아니며, Browser QA,
-  actual n8n Import, real Make Configuration은 별도 NOT VERIFIED gate다.
+- `LV5-NO-KEY-REMEDIATION-001`은 CLOSED / COMPLETE다. 기술 lifecycle은
+  IMPLEMENTED / VALIDATED / INDEPENDENT AUDIT PASS / PUSHED 상태이고 User
+  Sprint Exit은 APPROVED — 2026-08-10이다. 이는 현재 활성 Sprint가 아니며,
+  Browser QA, actual n8n Import, real Make Configuration, external execution은
+  별도 NOT VERIFIED gate다. Deploy는 NOT PERFORMED이고 Production Ready는 NO다.
 - Visual Slice: `BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001`은
   IMPLEMENTED / USER QA / WAITING FOR USER FEEDBACK 상태이며, implementation
   authority는 PAUSED — USER QA다.
-- Open gates는 LV5 User Sprint Exit, Visual Slice User QA, 그리고 별도 사용자
-  승인이 필요한 LIVE-DB 원격 또는 대체 검증이다. 다음 implementation Sprint는
-  선택되지 않았으며 별도 Scope Freeze와 사용자 승인이 필요하다.
+- Open gates는 Visual Slice User QA, 그리고 별도 사용자 승인이 필요한 LIVE-DB
+  원격 또는 대체 검증이다. 다음 implementation Sprint는 선택되지 않았으며
+  별도 Scope Freeze와 사용자 승인이 필요하다.
 
 근거 문서:
 
@@ -199,8 +201,8 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 - 활성 implementation Sprint는 없다. 새 implementation은 별도 Scope Freeze와
   사용자 승인이 필요하다.
-- `LV5-NO-KEY-REMEDIATION-001` User Sprint Exit, Visual Closed Beta Slice User
-  QA, 그리고 별도 승인 범위의 LIVE-DB 대체 검증만 open gate로 유지한다.
+- Visual Closed Beta Slice User QA, 그리고 별도 승인 범위의 LIVE-DB 대체
+  검증만 open gate로 유지한다.
 
 ### P1
 

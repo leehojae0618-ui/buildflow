@@ -4,7 +4,7 @@
 - Current Sprint: NONE
 - Sprint Status: NO ACTIVE IMPLEMENTATION SPRINT
 - Active Sprint Count: 0
-- Latest Completed Sprint: BF0-PRODUCT-EXPERIENCE-001
+- Latest Completed Sprint: LV5-NO-KEY-REMEDIATION-001
 - BF0: CLOSED / COMPLETE / User Sprint Exit APPROVED
 - BF0 Product Checkpoint: `15746f14d8c5e5adf75045b2d4d774ad12335549`
 - BF0 Exit-record Checkpoint: `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d`
@@ -25,15 +25,17 @@
 - Actual DB connection, migration, RPC, RLS, concurrent consume, staging, and
   production validation remain NOT AUTHORIZED.
 
-## Completed Lifecycle Pending User Exit
+## Completed Lifecycle Closed
 
-- `LV5-NO-KEY-REMEDIATION-001`: IMPLEMENTED / VALIDATED / INDEPENDENT AUDIT
-  PASS / COMMITTED / PUSHED.
+- `LV5-NO-KEY-REMEDIATION-001`: CLOSED / COMPLETE / USER SPRINT EXIT APPROVED.
+- Technical lifecycle: IMPLEMENTED / VALIDATED / INDEPENDENT AUDIT PASS /
+  COMMITTED / PUSHED.
 - Checkpoint: `54bbc89529c735445b1ef68ea68195c317ea3877`.
-- User Sprint Exit: PENDING.
+- User Sprint Exit: APPROVED — 2026-08-10.
 - Browser QA: NOT VERIFIED / separate gate.
 - Actual n8n Import: NOT VERIFIED / separate gate.
 - Real Make Configuration: NOT VERIFIED / separate gate.
+- External execution: NOT VERIFIED.
 - Deploy: NOT PERFORMED.
 
 ## Historical Runtime and Foundation State
@@ -85,8 +87,8 @@
 - Push Execution: COMPLETE — normal push; no force push used
 - Future Push Authorization: NOT GRANTED
 - Deploy Authorization: NOT GRANTED
-- Open Gates: LV5 User Sprint Exit; Visual Slice User QA; separately approved
-  remote or alternative LIVE-DB validation.
+- Open Gates: Visual Slice User QA; separately approved remote or alternative
+  LIVE-DB validation.
 - Authorized Work: no implementation work is authorized until a new Scope Freeze
   and user approval. No DB, migration, Runtime, Provider, external API, or
   Local execution is authorized.

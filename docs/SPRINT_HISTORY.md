@@ -16,7 +16,8 @@
 종료나 저장소 구현 실패가 아니며, Local Supabase 환경의 반복 healthcheck
 실패를 보존한 상태다. 원격 검증은 별도 승인 Gate다.
 
-`LV5-NO-KEY-REMEDIATION-001`은 User Sprint Exit PENDING 상태이며,
+`LV5-NO-KEY-REMEDIATION-001`은 CLOSED / COMPLETE / USER SPRINT EXIT APPROVED
+상태이며,
 `BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001`은 IMPLEMENTED / USER QA / WAITING
 FOR USER FEEDBACK 상태다. 두 상태 모두 활성 implementation Sprint를 만들지
 않는다.
@@ -34,7 +35,7 @@ FOR USER FEEDBACK 상태다. 두 상태 모두 활성 implementation Sprint를 �
 | PRODUCT-RUNTIME-INTEGRATION-001 | Authenticated Product Runtime Bridge | COMMITTED / integrated under Runtime Safety closure | `a101b9f` | Independent audit PASS; Live DB validation pending | `sprints/PRODUCT-RUNTIME-INTEGRATION-001/REPORT.md` |
 | RUNTIME-SAFETY-CORRECTION-001 | Runtime/Approval exception safety correction | CLOSED / COMPLETE | `a101b9f`, `06fa299` | Claude independent audit PASS; GPT GitHub review PASS; User Sprint Exit approved | `sprints/RUNTIME-SAFETY-CORRECTION-001/REPORT.md` |
 | LIVE-DB-VALIDATION-001 | Local Supabase validation planning and dry-harness preparation | PAUSED / BLOCKED BY LOCAL ENVIRONMENT | `7a9d63a`, `b4eb63f` | Local startup healthcheck failure; no further Local startup authorized | `sprints/LIVE-DB-VALIDATION-001/` |
-| LV5-NO-KEY-REMEDIATION-001 | No-Key n8n readiness, Guest Lab, and local `USER_SUBMITTED` Evidence/Verdict flow | IMPLEMENTED / VALIDATED / AUDIT PASS / PUSHED / USER EXIT PENDING | `54bbc895` | Independent audit PASS after F1/F2 correction; Browser QA, actual n8n Import, and real Make Configuration NOT VERIFIED | `sprints/LV5-NO-KEY-REMEDIATION-001/REPORT.md` |
+| LV5-NO-KEY-REMEDIATION-001 | No-Key n8n readiness, Guest Lab, and local `USER_SUBMITTED` Evidence/Verdict flow | CLOSED / COMPLETE / USER SPRINT EXIT APPROVED | `54bbc895` | Independent audit PASS after F1/F2 correction; Browser QA, actual n8n Import, and real Make Configuration remain NOT VERIFIED | `sprints/LV5-NO-KEY-REMEDIATION-001/REPORT.md` |
 | BF0-PRODUCT-EXPERIENCE-001 | UI-only Product Experience journey and homepage entry | CLOSED / COMPLETE | `15746f14`, `51011d66` | User Persona QA PASS; User Visual QA PASS; P0/P1/P2 0/0/0; User Sprint Exit approved | `sprints/BF0-PRODUCT-EXPERIENCE-001/EXIT.md` |
 
 ## 4. Gate History

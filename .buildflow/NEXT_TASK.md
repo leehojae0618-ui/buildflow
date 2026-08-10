@@ -51,7 +51,6 @@ Open gates are:
 ```text
 NO ACTIVE IMPLEMENTATION SPRINT
 
-LV5-NO-KEY-REMEDIATION-001: USER SPRINT EXIT PENDING
 BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001: USER QA WAITING
 LIVE-DB-VALIDATION-001: PAUSED / BLOCKED; remote or alternative validation requires separate user approval
 NEXT IMPLEMENTATION SPRINT: NOT SELECTED / REQUIRES USER APPROVAL
@@ -67,14 +66,16 @@ deployment remain prohibited until separately approved.
 
 ## LV5 No-Key Governance Gate
 
-`LV5-NO-KEY-REMEDIATION-001` has completed its technical lifecycle through
-Push `54bbc89529c735445b1ef68ea68195c317ea3877`.
+`LV5-NO-KEY-REMEDIATION-001` is CLOSED / COMPLETE. Its technical lifecycle is
+complete through Push `54bbc89529c735445b1ef68ea68195c317ea3877`, and User
+Sprint Exit was APPROVED on 2026-08-10.
 
-- Next governance gate: USER SPRINT EXIT DECISION.
 - Browser QA: separate follow-up validation gate / NOT VERIFIED.
 - Actual n8n Import and real Make Configuration: separate explicit-approval
   gates / NOT VERIFIED.
+- External execution: NOT VERIFIED.
 - Deploy: NOT PERFORMED.
+- Production Ready: NO.
 
 All remaining contents in this file are historical planning records.
 # Draft Candidate — CORE-RUNTIME-001 / Phase 1 (Not Active)
