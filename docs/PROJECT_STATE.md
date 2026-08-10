@@ -10,15 +10,22 @@
 관찰 가능한 상태를 요약하며, 충돌이 있으면 Git 상태와 해당 Sprint 문서를
 우선 확인한다.
 
-## 2. Repository Snapshot
+문서에 기록된 source baseline은 이 상태 기록을 작성할 때 사용한 provenance다.
+현재 HEAD 또는 `origin/main`을 대신하지 않으며, 작업 시작 시 실제 Git 상태는
+반드시 Git 명령으로 직접 재확인한다.
+
+## 2. Repository State Record
 
 - Repository: `leehojae0618-ui/buildflow`
 - Default branch: `main`
-- Latest verified remote checkpoint: `ee80b8fa7f639d26e6d8a82d9f4ec41804a066c4`
-- Local HEAD: `ee80b8fa7f639d26e6d8a82d9f4ec41804a066c4`
-- `origin/main`: `ee80b8fa7f639d26e6d8a82d9f4ec41804a066c4`
-  (`ahead 0 / behind 0` at verification).
-- Last verified date: `2026-08-10`
+- State record source baseline:
+  `db3512f4485d060718c2b183a592270d506b5494`
+- Source baseline verification: local HEAD and `origin/main` were synchronized
+  at this baseline (`ahead 0 / behind 0`) when this state record was prepared.
+- State record verified date: `2026-08-10`
+- Current Git state: MUST be verified directly from Git at task start. This
+  document does not guarantee that its source baseline is the current HEAD or
+  `origin/main` after this document or later commits.
 - Working tree: clean이 아니다. User-owned Visual Slice, MCP, Charter, memory,
   autonomous UI, and prior operational documentation changes are present.
   They are not implicitly authorized for a single Commit.
