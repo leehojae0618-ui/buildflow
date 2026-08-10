@@ -14,11 +14,11 @@
 
 - Repository: `leehojae0618-ui/buildflow`
 - Default branch: `main`
-- Latest verified remote checkpoint: `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d`
-- Local HEAD: `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d`
-- `origin/main`: `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d`
+- Latest verified remote checkpoint: `8570ae32bc0d82152017cf08af9a386dafea20b9`
+- Local HEAD: `8570ae32bc0d82152017cf08af9a386dafea20b9`
+- `origin/main`: `8570ae32bc0d82152017cf08af9a386dafea20b9`
   (`ahead 0 / behind 0` at verification).
-- Last verified date: `2026-08-08`
+- Last verified date: `2026-08-10`
 - Working tree: clean이 아니다. User-owned Visual Slice, MCP, Charter, memory,
   autonomous UI, and prior operational documentation changes are present.
   They are not implicitly authorized for a single Commit.
