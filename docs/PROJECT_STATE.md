@@ -116,11 +116,17 @@ Goal
 
 ### 미구현 또는 제품 경로에 미연결인 범위
 
-- Product UI에서 Runtime 실행을 시작하는 동선
+- Product UI에서 실제 Provider/외부 Runtime 실행을 시작하는 동선
 - 공개 Product Runtime API Route
 - 실제 DB 환경에서의 Runtime Approval RPC/RLS/concurrent consume 검증
 - 실제 Product Runtime E2E 및 브라우저 실행 흐름
 - MCP 실제 연결·Tool invocation·queue·retry·streaming
+
+`PRODUCT-RUNTIME-VERTICAL-SLICE-001`은 BF0 direct-input 설계를 기존 Runtime
+계약으로 안전하게 투영하는 documentation-only Scope Freeze다. 구현은 아직
+승인되지 않았다. 첫 Slice는 별도 명시적 사용자 승인 뒤 결정적이고 네트워크 없는
+controlled ProviderAdapter를 사용해 Core 경로를 검증하는 후보이며, 실제 OpenAI,
+Supabase, DB, 외부 서비스 호출을 포함하지 않는다.
 
 ### 검증 상태
 
@@ -132,6 +138,12 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 ## 6. Current Sprint State
 
 - 현재 활성 implementation Sprint: NONE.
+- `BF0-UX-SIMPLIFICATION-001`은 `CLOSED / COMPLETE / USER SPRINT EXIT
+  APPROVED`다. 최종 checkpoint는
+  `84ac5e2da7c3642d322b69adaf76fe2186af7b63`이며 Push는 COMPLETE다. Codex
+  Final Regression, Final Browser Gap Check, GPT PM/CTO Final Review는 PASS다.
+  Claude Final Independent Audit은 `SKIPPED BY PRODUCT OWNER`다. Deploy는 NOT
+  PERFORMED이고 Production Ready는 NO다.
 - `BF0-PRODUCT-EXPERIENCE-001`은 `CLOSED / COMPLETE`다. User Sprint Exit은
   APPROVED이며, product checkpoint는 `15746f14d8c5e5adf75045b2d4d774ad12335549`,
   exit-record checkpoint는 `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d`다.
@@ -158,9 +170,10 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 - Visual Slice: `BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001`은
   IMPLEMENTED / USER QA / WAITING FOR USER FEEDBACK 상태이며, implementation
   authority는 PAUSED — USER QA다.
-- Open gates는 Visual Slice User QA, 그리고 별도 사용자 승인이 필요한 LIVE-DB
-  원격 또는 대체 검증이다. 다음 implementation Sprint는 선택되지 않았으며
-  별도 Scope Freeze와 사용자 승인이 필요하다.
+- Open gates는 Visual Slice User QA, 별도 사용자 승인이 필요한 LIVE-DB 원격 또는
+  대체 검증, 그리고 `PRODUCT-RUNTIME-VERTICAL-SLICE-001` implementation
+  approval이다. 이 Vertical Slice 후보는 `SCOPE FROZEN / IMPLEMENTATION NOT
+  APPROVED`이며 active implementation은 아니다.
 
 근거 문서:
 
@@ -188,6 +201,7 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 | No-Key Remediation Hardening | `54bbc89529c735445b1ef68ea68195c317ea3877` | `fix(builders): harden no-key remediation flow` |
 | BF0 Product Experience entry | `15746f14d8c5e5adf75045b2d4d774ad12335549` | `feat(product): expose bf0 draft from home` |
 | BF0 Product Experience exit | `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d` | `docs(product): close bf0 product experience sprint` |
+| BF0 UX Simplification | `84ac5e2da7c3642d322b69adaf76fe2186af7b63` | `feat(product): simplify bf0 guided build experience` |
 
 ## 8. Known Issues and Technical Debt
 
@@ -206,15 +220,15 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ### P0
 
-- 활성 implementation Sprint는 없다. 새 implementation은 별도 Scope Freeze와
-  사용자 승인이 필요하다.
+- 활성 implementation Sprint는 없다. `PRODUCT-RUNTIME-VERTICAL-SLICE-001`은
+  Scope Frozen candidate이며, 구현은 별도 사용자 승인이 필요하다.
 - Visual Closed Beta Slice User QA, 그리고 별도 승인 범위의 LIVE-DB 대체
   검증만 open gate로 유지한다.
 
 ### P1
 
-- Product Runtime에 대한 실제 Product UI/API 진입점은 별도 Scope Freeze 후
-  검토.
+- BF0 Runtime Artifact Projection과 controlled no-network Slice는 별도 구현
+  승인 뒤 검토. 실제 Product UI/API Provider 진입점은 이 후보의 범위 밖이다.
 - `BUSINESS-PLAN-001`의 사실 기반 작업 계획 검토.
 
 ### P2

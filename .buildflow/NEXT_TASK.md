@@ -23,6 +23,13 @@ APPROVED; its product checkpoint is `15746f14d8c5e5adf75045b2d4d774ad12335549`
 and its exit-record checkpoint is
 `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d`. Deploy is NOT PERFORMED.
 
+`BF0-UX-SIMPLIFICATION-001` is `CLOSED / COMPLETE / USER SPRINT EXIT
+APPROVED` on 2026-08-13. Its final checkpoint is
+`84ac5e2da7c3642d322b69adaf76fe2186af7b63`; the Commit is pushed. Codex final
+regression, final browser gap check, and GPT PM/CTO final review passed. Claude
+final independent audit was `SKIPPED BY PRODUCT OWNER`. Deploy was not
+performed and Production Ready remains NO.
+
 `RUNTIME-APPROVAL-FOUNDATION-001` and
 `PRODUCT-RUNTIME-INTEGRATION-001` are included in that Commit. Their actual
 Supabase migration/RPC/RLS/concurrent-consume validation remains a separate
@@ -53,7 +60,8 @@ NO ACTIVE IMPLEMENTATION SPRINT
 
 BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001: USER QA WAITING
 LIVE-DB-VALIDATION-001: PAUSED / BLOCKED; remote or alternative validation requires separate user approval
-NEXT IMPLEMENTATION SPRINT: NOT SELECTED / REQUIRES USER APPROVAL
+NEXT IMPLEMENTATION SPRINT: PRODUCT-RUNTIME-VERTICAL-SLICE-001
+PRODUCT-RUNTIME-VERTICAL-SLICE-001: SCOPE FROZEN / IMPLEMENTATION NOT APPROVED / USER APPROVAL REQUIRED
 ```
 
 Local tooling inspection, Supabase setup, database validation, and any
@@ -63,6 +71,27 @@ planning completion are not Local DB validation completion.
 Actual MCP connection, tool invocation, live Provider/Runtime execution,
 remote migration, persistence changes, Commit, Push, and
 deployment remain prohibited until separately approved.
+
+## Scope-Frozen Candidate — PRODUCT-RUNTIME-VERTICAL-SLICE-001
+
+Status: `SCOPE FROZEN / IMPLEMENTATION NOT APPROVED / USER APPROVAL REQUIRED`
+
+This candidate connects an eligible BF0 direct-input design to the existing
+Product Runtime bridge only through a controlled, no-network execution path.
+It is not an external automation Sprint. BF0 Build Plan guidance is never a
+Core `RuntimePlan`; a validated Runtime Artifact Projection is required first.
+
+- Eligible first slice: direct input, one internal AI_RESPONSE-compatible
+  provider step, no external read/write/side effect.
+- Explicit runtime authorization remains a separate user action. BF0 approval
+  preference does not grant it.
+- Controlled execution may use only deterministic product-owned adapters with
+  in-memory approval and Evidence. It must not call OpenAI, Supabase, DB, MCP,
+  n8n, Make, OAuth, or another external service.
+- Unsupported or external BF0 flows remain guide-only / connection-required /
+  actual execution NOT AVAILABLE.
+- Implementation authority, Commit authority, Push authority, Deploy
+  authority, and DB/Runtime/Provider/External execution authority: NONE.
 
 ## LV5 No-Key Governance Gate
 

@@ -7,6 +7,8 @@ import {
   type Bf0ProjectDraftInput,
   type Bf0ProjectPersistenceResult,
 } from "./draft-persistence";
+import { projectBf0Runtime } from "./bf0-runtime-projection";
+import { executeControlledProductRuntime } from "../product-runtime/controlled-product-runtime";
 
 /** Creates a Project from a completed BF0 design; it never starts Runtime work. */
 export async function createProjectFromBf0Draft(
@@ -41,5 +43,24 @@ export async function createProjectFromBf0Draft(
     });
   } catch {
     return { ok: false, errorCode: "PERSISTENCE_FAILED" };
+  }
+}
+
+/** Starts only the explicitly requested, no-network controlled Runtime path. */
+export async function runControlledBf0Runtime(input: {
+  idea: string;
+  goal: string | null;
+  source: string | null;
+  approval: string | null;
+  output: string | null;
+}) {
+  const projection = projectBf0Runtime(input);
+  if (projection.status !== "ELIGIBLE") {
+    return { status: projection.status, safeMessage: projection.safeMessage } as const;
+  }
+  try {
+    return await executeControlledProductRuntime(projection);
+  } catch {
+    return { status: "FAILED" as const, safeMessage: "통제된 내부 실행 검증을 완료하지 못했습니다." };
   }
 }

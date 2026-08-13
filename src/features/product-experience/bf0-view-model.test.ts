@@ -60,6 +60,17 @@ describe("BF0 product experience ViewModel", () => {
     expect(getFirstIncompleteRoute(draft)).toBe("plan");
   });
 
+  it("prioritizes explicit input sources and leaves vague inquiries for clarification", () => {
+    const directInput = buildRecommendedDraft("고객 문의를 직접 입력하면 답변 초안을 만들어주는 AI를 만들고 싶어요");
+    const webForm = buildRecommendedDraft("웹 폼으로 들어온 고객 문의를 분류하고 싶어요");
+    const ambiguous = buildRecommendedDraft("고객 문의를 분류하고 답변 초안을 만들고 싶어요");
+
+    expect(directInput.source).toBe("직접 입력");
+    expect(webForm.source).toBe("웹 폼");
+    expect(ambiguous.source).toBeNull();
+    expect(getClarificationQueue(ambiguous)[0]).toMatchObject({ route: "source" });
+  });
+
   it("asks one clarification at a time when required input is missing", () => {
     const draft = buildRecommendedDraft("손님 후기를 매주 요약해서 보여주면 좋겠어요");
     const queue = getClarificationQueue(draft);
@@ -276,6 +287,15 @@ describe("BF0 product experience ViewModel", () => {
     expect(preview.remainingQuestions.length).toBeGreaterThan(0);
     expect(preview.costStatus).not.toMatch(/0원|무료|외부 LLM 비용 없음/);
     expect(preview.disclaimer).toContain("보장하지 않습니다");
+  });
+
+  it("keeps Navigator required accounts unique while preserving selected order", () => {
+    const sameAccount = buildNavigatorSummary({ ...completeDraft, source: "Slack", output: "Slack" });
+    const differentAccounts = buildNavigatorSummary({ ...completeDraft, source: "Gmail", output: "Slack" });
+
+    expect(sameAccount.requiredAccounts).toEqual(["Slack"]);
+    expect(new Set(sameAccount.requiredAccounts).size).toBe(sameAccount.requiredAccounts.length);
+    expect(differentAccounts.requiredAccounts).toEqual(["Gmail", "Slack"]);
   });
 
   it("maps report and file ideas to distinct requirement-aware navigator paths", () => {

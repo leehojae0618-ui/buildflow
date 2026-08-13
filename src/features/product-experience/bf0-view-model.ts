@@ -254,10 +254,11 @@ function recommendGoal(idea: string, requirements: Bf0RequirementCandidate[]): s
 
 function recommendSource(idea: string, requirements: Bf0RequirementCandidate[]): string | null {
   const lower = idea.toLowerCase();
+  if (/직접\s*(입력|작성|기입|써서|적어서)/.test(idea)) return "직접 입력";
   if (requirements.some((item) => item.id === "github-trigger" || item.id === "github-source")) return "GitHub / Repository";
   if (/gmail|메일|이메일/.test(lower) && !/이메일.*받|이메일.*보내|메일.*받/.test(idea)) return "Gmail";
   if (/파일|업로드|문서/.test(idea) && !/문서로 저장|문서로 남/.test(idea)) return "파일 업로드";
-  if (/웹\s*폼|폼|설문|문의/.test(idea)) return "웹 폼";
+  if (/웹\s*폼|web\s*form|구글\s*폼|google\s*forms?|사이트\s*폼|폼\s*제출|설문(?:\s*(폼|응답))?/i.test(idea)) return "웹 폼";
   if (/slack/i.test(idea) && !/slack.*보내|slack.*전달|slack.*알려/.test(lower)) return "Slack";
   if (/매주|매월|매일|정해진 시간/.test(idea) && !/후기|리뷰/.test(idea)) return "정해진 시간";
   return null;
@@ -364,13 +365,14 @@ export function buildNavigatorSummary(draft: Bf0DesignDraft): Bf0NavigatorSummar
   });
   const path = [...new Set(pathFromRequirements)].slice(0, 6);
   const selectedAccounts = [draft.source, draft.output].filter((value): value is string => Boolean(value));
+  const requiredAccounts = [...new Set(selectedAccounts)];
   return {
     ...base,
     recommendedPath: path.length > 0 ? path : ["입력 위치 확인", "작업 목표 정리", "승인 기준 확인", "결과 위치 선택"],
     recommendationReasons: requirements.length > 0
       ? ["입력에서 찾은 요구사항 후보를 기준으로 경로를 정리했습니다.", "추가 연결 또는 기준 확인이 필요한 항목은 실제 구축 전에 검토해야 합니다."]
       : ["입력 문구만으로는 필요한 도구와 권한을 확정할 수 없습니다."],
-    requiredAccounts: selectedAccounts.length > 0 ? selectedAccounts : ["사용 중인 도구 확인 필요"],
+    requiredAccounts: requiredAccounts.length > 0 ? requiredAccounts : ["사용 중인 도구 확인 필요"],
     finalFlow: path.length > 0 ? path : ["입력 확인", "처리 기준", "사용자 확인", "결과 선택"],
   };
 }

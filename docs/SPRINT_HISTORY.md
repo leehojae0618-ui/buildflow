@@ -9,8 +9,9 @@
 
 ## 2. Current Sprint
 
-활성 Sprint는 없다. 새 implementation은 별도 Scope Freeze와 사용자 승인이
-필요하다.
+활성 Sprint는 없다. `PRODUCT-RUNTIME-VERTICAL-SLICE-001`은
+`SCOPE FROZEN / IMPLEMENTATION NOT APPROVED` 후보이며, 구현에는 별도 사용자
+승인이 필요하다.
 
 `LIVE-DB-VALIDATION-001`은 `PAUSED / BLOCKED BY LOCAL ENVIRONMENT`다. 이는
 종료나 저장소 구현 실패가 아니며, Local Supabase 환경의 반복 healthcheck
@@ -21,6 +22,10 @@
 `BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001`은 IMPLEMENTED / USER QA / WAITING
 FOR USER FEEDBACK 상태다. 두 상태 모두 활성 implementation Sprint를 만들지
 않는다.
+
+`BF0-UX-SIMPLIFICATION-001`은 CLOSED / COMPLETE / USER SPRINT EXIT APPROVED
+상태다. 다음 Product Runtime 후보는 Scope Frozen 상태일 뿐 active
+implementation이 아니다.
 
 ## 3. Sprint History
 
@@ -37,6 +42,7 @@ FOR USER FEEDBACK 상태다. 두 상태 모두 활성 implementation Sprint를 �
 | LIVE-DB-VALIDATION-001 | Local Supabase validation planning and dry-harness preparation | PAUSED / BLOCKED BY LOCAL ENVIRONMENT | `7a9d63a`, `b4eb63f` | Local startup healthcheck failure; no further Local startup authorized | `sprints/LIVE-DB-VALIDATION-001/` |
 | LV5-NO-KEY-REMEDIATION-001 | No-Key n8n readiness, Guest Lab, and local `USER_SUBMITTED` Evidence/Verdict flow | CLOSED / COMPLETE / USER SPRINT EXIT APPROVED | `54bbc895` | Independent audit PASS after F1/F2 correction; Browser QA, actual n8n Import, and real Make Configuration remain NOT VERIFIED | `sprints/LV5-NO-KEY-REMEDIATION-001/REPORT.md` |
 | BF0-PRODUCT-EXPERIENCE-001 | UI-only Product Experience journey and homepage entry | CLOSED / COMPLETE | `15746f14`, `51011d66` | User Persona QA PASS; User Visual QA PASS; P0/P1/P2 0/0/0; User Sprint Exit approved | `sprints/BF0-PRODUCT-EXPERIENCE-001/EXIT.md` |
+| BF0-UX-SIMPLIFICATION-001 | BF0 UX simplification and guided build experience | CLOSED / COMPLETE / USER SPRINT EXIT APPROVED | `84ac5e2` | Codex regression PASS; final browser gap check PASS; GPT final review PASS; Claude final audit SKIPPED BY PRODUCT OWNER | `sprints/BF0-UX-SIMPLIFICATION-001/REPORT.md`, `sprints/BF0-UX-SIMPLIFICATION-001/CLOSEOUT.md` |
 
 ## 4. Gate History
 
