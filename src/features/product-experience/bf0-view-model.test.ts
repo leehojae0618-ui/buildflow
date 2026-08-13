@@ -1,15 +1,18 @@
 import { describe, expect, it } from "vitest";
 import {
   BF0_GOAL_OPTIONS,
+  BF0_APPROVAL_OPTIONS,
   BF0_OUTPUT_OPTIONS,
   BF0_SOURCE_OPTIONS,
   EMPTY_BF0_DRAFT,
   buildBuildPlan,
   buildNavigatorSummary,
   buildNavigatorPreview,
+  buildRecommendedDraft,
   buildWorkflowDraft,
   clampStepIndex,
   getCapabilityStatus,
+  getClarificationQueue,
   getCompletionCopy,
   getCostAndAccessSummary,
   getActiveRequirements,
@@ -42,7 +45,44 @@ describe("BF0 product experience ViewModel", () => {
     expect(getFirstIncompleteRoute(EMPTY_BF0_DRAFT)).toBe("idea");
     expect(getFirstIncompleteRoute({ ...EMPTY_BF0_DRAFT, idea: "요청을 정리합니다" })).toBe("goal");
     expect(getFirstIncompleteRoute({ ...completeDraft, output: null })).toBe("output");
-    expect(getFirstIncompleteRoute(completeDraft)).toBe("workflow");
+    expect(getFirstIncompleteRoute(completeDraft)).toBe("plan");
+  });
+
+  it("uses clear input to create a recommended draft without unnecessary clarification", () => {
+    const draft = buildRecommendedDraft("웹 폼으로 들어온 고객 문의를 분류해서 Slack으로 보내고 싶어요");
+    expect(draft).toMatchObject({
+      goal: "분류하고 담당자에게 전달",
+      source: "웹 폼",
+      approval: "항상 승인",
+      output: "Slack",
+    });
+    expect(getClarificationQueue(draft)).toEqual([]);
+    expect(getFirstIncompleteRoute(draft)).toBe("plan");
+  });
+
+  it("asks one clarification at a time when required input is missing", () => {
+    const draft = buildRecommendedDraft("손님 후기를 매주 요약해서 보여주면 좋겠어요");
+    const queue = getClarificationQueue(draft);
+    expect(queue[0]).toMatchObject({
+      route: "source",
+      question: "정보는 어디에서 들어오나요?",
+    });
+    expect(queue.map((item) => item.route)).toContain("output");
+    expect(getFirstIncompleteRoute(draft)).toBe("source");
+  });
+
+  it("keeps approval in a safe recommendation without silently approving real execution", () => {
+    const draft = buildRecommendedDraft("웹 폼 고객 문의를 Slack으로 알려줘");
+    expect(draft.approval).toBe("항상 승인");
+    expect(BF0_APPROVAL_OPTIONS.find((option) => option.value === draft.approval)?.title).toBe("실행 전 확인");
+    expect(getCompletionCopy(draft).notExecuted.join(" ")).toMatch(/Runtime|Provider|Agent/);
+  });
+
+  it("keeps workflow, cost access, and step mode out of the mandatory route model", () => {
+    const draft = buildRecommendedDraft("웹 폼 고객 문의를 Slack으로 알려줘");
+    expect(getFirstIncompleteRoute(draft)).toBe("plan");
+    expect(getClarificationQueue(draft).map((item) => item.route)).not.toEqual(expect.arrayContaining(["workflow", "access"]));
+    expect(buildBuildPlan(draft).length).toBeGreaterThan(0);
   });
 
   it("projects the selected values into a four-part workflow draft", () => {
@@ -117,6 +157,115 @@ describe("BF0 product experience ViewModel", () => {
     const plan = buildBuildPlan(completeDraft);
     expect(plan.every((item) => Boolean(item.guideUrl || item.guideRoute))).toBe(true);
     expect(plan.every((item) => Boolean(item.editRoute))).toBe(true);
+  });
+
+  it("exposes clear work location, action inputs, and next action for actionable build-plan items", () => {
+    const plan = buildBuildPlan({
+      ...completeDraft,
+      source: "웹 폼",
+      output: "Slack",
+    });
+    const source = plan.find((item) => item.id === "source");
+    expect(source).toMatchObject({
+      workLocation: "Google Forms 또는 사용 중인 웹 폼",
+      guideUrl: "https://forms.google.com/",
+      nextAction: expect.stringContaining("문의 분류 기준"),
+    });
+    expect(source?.steps.join(" ")).toMatch(/준비|추가|입력/);
+    expect(source?.actionInputs?.flatMap((group) => group.values)).toEqual(expect.arrayContaining(["이름", "이메일", "문의 유형", "문의 내용"]));
+    expect(source?.completion).toContain("테스트 응답 1건");
+  });
+
+  it("keeps external connection plans truthful while still showing where to work", () => {
+    const plan = buildBuildPlan(completeDraft);
+    const output = plan.find((item) => item.id === "output");
+    expect(output).toMatchObject({
+      workLocation: "Slack 설정",
+      guideUrl: "https://slack.com/",
+      state: "연결 필요",
+    });
+    expect(output?.caution).toContain("메시지를 보내거나 연결하지 않았습니다");
+    expect(output?.steps.join(" ")).not.toMatch(/연결 완료|전송 완료|정상 작동/);
+  });
+
+  it("keeps unsupported build-plan states visible with a clear work location", () => {
+    const plan = buildBuildPlan({ ...completeDraft, output: "데이터베이스" });
+    const output = plan.find((item) => item.id === "output");
+    expect(output).toMatchObject({
+      state: "현재 미지원",
+      workLocation: "후속 DB Scope 필요",
+    });
+    expect(output?.actionInputs?.flatMap((group) => group.values)).toEqual(expect.arrayContaining(["저장 항목", "보존 기간", "권한 범위"]));
+  });
+
+  it("exposes WHO WHEN WHERE WHAT WHY HOW for every build-plan item", () => {
+    const plan = buildBuildPlan({
+      ...completeDraft,
+      source: "웹 폼",
+      output: "Slack",
+    });
+    expect(plan.length).toBeGreaterThan(0);
+    expect(plan.every((item) => Boolean(item.actor && item.timing && item.workLocation && item.task && item.reason && item.steps.length > 0))).toBe(true);
+    expect(plan.every((item) => Boolean(item.completion && item.nextAction))).toBe(true);
+  });
+
+  it("links verified Google Forms question inputs to exact official location metadata", () => {
+    const source = buildBuildPlan({ ...completeDraft, source: "웹 폼" }).find((item) => item.id === "source");
+    expect(source?.inputTargets?.map((target) => target.value)).toEqual(expect.arrayContaining(["이름", "이메일", "문의 유형", "문의 내용"]));
+    expect(source?.inputTargets).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        service: "Google Forms",
+        screen: "폼 편집 화면",
+        control: "질문 추가",
+        field: "질문 제목",
+        verificationState: "OFFICIAL_VERIFIED",
+        officialSource: "https://support.google.com/docs/answer/2839737",
+      }),
+    ]));
+  });
+
+  it("does not invent unverified external UI paths for GitHub connection scope", () => {
+    const idea = "GitHub에 새 PR이 올라오면 코드 변경사항을 분석해서 보안 취약점이 있는지 확인하고, 위험도가 높으면 Slack #security 채널에 바로 알려줘야 해요. 승인 없이는 절대 자동 머지되면 안 됩니다.";
+    const requirements = extractRequirementCandidates(idea);
+    const githubInput = buildBuildPlan({ ...completeDraft, idea, originalIdea: idea, source: "GitHub / Repository", output: "Slack", requirementCandidates: requirements, userEditedRequirements: requirements, hasUserEditedRequirements: true }).find((item) => item.id === "github-pr-input");
+    const unverifiedTarget = githubInput?.inputTargets?.find((target) => target.verificationState === "NOT_VERIFIED");
+    expect(unverifiedTarget).toMatchObject({
+      screen: "현재 공식 화면 기준 확인 필요",
+      control: "현재 공식 화면 기준 확인 필요",
+    });
+    expect(githubInput?.inputTargets?.some((target) => target.control === "Files changed" && target.verificationState === "OFFICIAL_VERIFIED")).toBe(true);
+  });
+
+  it("keeps Build Plan and Step Mode on the same instruction item contract", () => {
+    const [firstItem] = buildBuildPlan({
+      ...completeDraft,
+      source: "웹 폼",
+      output: "Slack",
+    });
+    const fieldsReadByBothViews = {
+      actor: firstItem.actor,
+      timing: firstItem.timing,
+      workLocation: firstItem.workLocation,
+      task: firstItem.task,
+      reason: firstItem.reason,
+      steps: firstItem.steps,
+      inputTargets: firstItem.inputTargets,
+      completion: firstItem.completion,
+      nextAction: firstItem.nextAction,
+    };
+    expect(fieldsReadByBothViews.inputTargets?.length).toBeGreaterThan(0);
+    expect(fieldsReadByBothViews).toMatchObject({
+      actor: "사용자",
+      workLocation: "Google Forms 또는 사용 중인 웹 폼",
+      completion: expect.stringContaining("테스트 응답 1건"),
+      nextAction: expect.stringContaining("문의 분류 기준"),
+    });
+  });
+
+  it("renders input value metadata only when values exist", () => {
+    const plan = buildBuildPlan(completeDraft);
+    expect(plan.every((item) => (item.inputTargets?.length ?? 0) === (item.actionInputs?.flatMap((group) => group.values).length ?? 0) || Boolean(item.inputTargets?.some((target) => target.verificationState === "OFFICIAL_VERIFIED")))).toBe(true);
+    expect(plan.flatMap((item) => item.inputTargets ?? []).every((target) => target.value.trim().length > 0)).toBe(true);
   });
 
   it("creates a requirement-aware inquiry preview without claiming a verified integration", () => {
@@ -385,5 +534,8 @@ describe("BF0 product experience ViewModel", () => {
     const completion = getCompletionCopy(completeDraft);
     expect(completion.title).toBe("구축 경로 초안이 정리되었습니다");
     expect(completion.lines.join(" ")).toContain("아직 구축 또는 실행되지 않았습니다");
+    expect(completion.prepared).toContain("구축 계획 초안");
+    expect(completion.notExecuted.join(" ")).toContain("외부 서비스 연결");
+    expect(completion.nextActions.join(" ")).toContain("별도 승인 Gate");
   });
 });

@@ -12,12 +12,14 @@ import {
   EMPTY_BF0_DRAFT,
   buildBuildPlan,
   buildNavigatorSummary,
+  buildRecommendedDraft,
   buildWorkflowDraft,
   clampStepIndex,
   extractRequirementCandidates,
   getActiveRequirements,
   getCompletionCopy,
   getCostAndAccessSummary,
+  getClarificationQueue,
   getFirstIncompleteRoute,
   getIdeaValidationError,
   getRequirementGaps,
@@ -37,9 +39,7 @@ import { Bf0ActionFooter, Bf0Brand, Bf0ProgressHeader } from "./bf0-shared";
 import { Bf0StepMode } from "./bf0-step-mode";
 
 const onboardingSlides = [
-  { title: "아이디어를 말하세요", description: "하고 싶은 일을 평소 말하듯 입력하면 BuildFlow가 요청의 목적부터 정리합니다.", glyph: "✦" },
-  { title: "필요한 것만 묻습니다", description: "입력 위치, 승인 방식, 결과 전달처처럼 설계에 필요한 결정만 한 페이지씩 확인합니다.", glyph: "↗" },
-  { title: "실행을 준비하는 설계 초안으로 정리합니다", description: "작동 흐름, 필요한 권한, 예상 비용과 구축 순서를 확인한 뒤 다음 단계를 검토합니다.", glyph: "✓" },
+  { title: "원하는 일을 말하면 BuildFlow가 정리합니다", description: "꼭 필요한 것만 확인한 뒤 구축 계획 초안을 만듭니다.", glyph: "✦" },
 ];
 
 export function Bf0ProductExperience() {
@@ -66,13 +66,14 @@ export function Bf0ProductExperience() {
   const activeRequirements = useMemo(() => getActiveRequirements(draft), [draft]);
   const requirementGaps = useMemo(() => getRequirementGaps(activeRequirements), [activeRequirements]);
   const navigatorPreview = useMemo(() => buildNavigatorSummary(draft), [draft]);
+  const clarificationQueue = useMemo(() => getClarificationQueue(draft), [draft]);
   const stepSummary = useMemo(() => getStepProgressSummary(buildPlan, stepProgress), [buildPlan, stepProgress]);
   const safeStepIndex = clampStepIndex(stepIndex, buildPlan.length);
 
   const navigate = (target: Bf0Route) => {
     const firstIncomplete = getFirstIncompleteRoute(draft);
-    const protectedRoutes: Bf0Route[] = ["workflow", "access", "plan", "step", "complete"];
-    if (protectedRoutes.includes(target) && firstIncomplete !== "workflow") {
+    const protectedRoutes: Bf0Route[] = ["plan", "step", "complete"];
+    if (protectedRoutes.includes(target) && firstIncomplete !== "plan") {
       setRoute(firstIncomplete);
       return;
     }
@@ -82,6 +83,16 @@ export function Bf0ProductExperience() {
     }
     if (target === "step") setStepIndex(0);
     setRoute(target);
+  };
+
+  const confirmBuildSummary = () => {
+    const firstIncomplete = getFirstIncompleteRoute(draft);
+    navigate(firstIncomplete === "plan" ? "plan" : firstIncomplete);
+  };
+
+  const continueClarification = () => {
+    const nextRoute = getFirstIncompleteRoute(draft);
+    navigate(nextRoute === "plan" ? "navigator" : nextRoute);
   };
 
   const choose = (key: keyof Pick<Bf0DesignDraft, "goal" | "source" | "approval" | "output">, value: string) => {
@@ -100,7 +111,7 @@ export function Bf0ProductExperience() {
     submissionLocked.current = true;
     setSubmittingIdea(true);
     const requirementCandidates = extractRequirementCandidates(normalized);
-    setDraft({ ...EMPTY_BF0_DRAFT, idea: normalized, originalIdea: normalized, requirementCandidates, userEditedRequirements: requirementCandidates, hasUserEditedRequirements: true, unsupportedRequirements: getRequirementGaps(requirementCandidates), unresolvedQuestions: getUnresolvedQuestions(requirementCandidates) });
+    setDraft(buildRecommendedDraft(normalized, requirementCandidates));
     setCustomGoal("");
     setCustomSource("");
     setCustomOutput("");
@@ -183,12 +194,12 @@ export function Bf0ProductExperience() {
       onSubmit={submitIdea}
       onBack={() => navigate("onboarding")}
     />}
-    {route === "navigator" && <Bf0NavigatorPreviewScreen preview={navigatorPreview} requirements={activeRequirements} gaps={requirementGaps} onBack={() => navigate("idea")} onConfirm={() => navigate("goal")} onUpdateRequirement={updateRequirement} onRemoveRequirement={removeRequirement} onAddRequirement={addRequirement} />}
+    {route === "navigator" && <Bf0NavigatorPreviewScreen preview={navigatorPreview} draft={draft} requirements={activeRequirements} gaps={requirementGaps} clarifications={clarificationQueue} onBack={() => navigate("idea")} onConfirm={confirmBuildSummary} onClarify={(target) => navigate(target)} onUpdateRequirement={updateRequirement} onRemoveRequirement={removeRequirement} onAddRequirement={addRequirement} />}
     {route === "goal" && <ChoiceScreen
       route={route}
-      eyebrow="01 · 목표"
+      eyebrow="확인 필요 · 목표"
       title="가장 중요한 결과는 무엇인가요?"
-      description="처음 입력한 아이디어에서 우선할 결과 하나만 선택합니다."
+      description="추천 초안을 만들기 위해 이 결정만 추가로 확인합니다."
       prompt={draft.idea}
       options={BF0_GOAL_OPTIONS}
       value={draft.goal}
@@ -196,55 +207,55 @@ export function Bf0ProductExperience() {
       customValue={customGoal}
       customLabel="다른 목표 직접 입력"
       onCustomChange={(value) => { setCustomGoal(value); choose("goal", normalizeIdea(value)); }}
-      onBack={() => navigate("idea")}
-      onNext={() => navigate("source")}
-      nextLabel="다음"
+      onBack={() => navigate("navigator")}
+      onNext={continueClarification}
+      nextLabel="요약으로 돌아가기"
     />}
     {route === "source" && <ChoiceScreen
       route={route}
-      eyebrow="02 · 입력"
+      eyebrow="확인 필요 · 입력"
       title="정보는 어디에서 들어오나요?"
-      description="자동 설계가 시작되는 입력 위치를 선택합니다. 실제 연결은 이 화면에서 수행하지 않습니다."
+      description="시작 위치가 명확하지 않아 한 가지만 확인합니다. 실제 연결은 수행하지 않습니다."
       options={BF0_SOURCE_OPTIONS}
       value={draft.source}
       onSelect={(value) => { setCustomSource(""); choose("source", value); }}
       customValue={customSource}
       customLabel="직접 입력 위치 적기"
       onCustomChange={(value) => { setCustomSource(value); choose("source", normalizeIdea(value)); }}
-      onBack={() => navigate("goal")}
-      onNext={() => navigate("approval")}
-      nextLabel="다음"
+      onBack={() => navigate("navigator")}
+      onNext={continueClarification}
+      nextLabel="요약으로 돌아가기"
     />}
     {route === "approval" && <ChoiceScreen
       route={route}
-      eyebrow="03 · 확인"
+      eyebrow="확인 필요 · 승인"
       title="실행 전에 확인할까요?"
-      description="외부 작업이 생길 경우의 통제 방식을 설계합니다. 이 선택은 실제 실행 허가가 아닙니다."
+      description="외부 작업 통제 방식은 사용자가 명시적으로 정해야 합니다. 이 선택은 실제 실행 허가가 아닙니다."
       options={BF0_APPROVAL_OPTIONS}
       value={draft.approval}
       onSelect={(value) => choose("approval", value)}
-      onBack={() => navigate("source")}
-      onNext={() => navigate("output")}
-      nextLabel="다음"
+      onBack={() => navigate("navigator")}
+      onNext={continueClarification}
+      nextLabel="요약으로 돌아가기"
     />}
     {route === "output" && <ChoiceScreen
       route={route}
-      eyebrow="04 · 결과"
+      eyebrow="확인 필요 · 결과"
       title="결과는 어디로 보낼까요?"
-      description="결과를 전달하거나 보관할 위치를 선택합니다. 현재 연결 상태와 설계 선택은 구분됩니다."
+      description="결과 위치가 명확하지 않아 한 가지만 확인합니다. 현재 연결 상태와 설계 선택은 구분됩니다."
       options={BF0_OUTPUT_OPTIONS}
       value={draft.output}
       onSelect={(value) => { setCustomOutput(""); choose("output", value); }}
       customValue={customOutput}
       customLabel="직접 결과 위치 적기"
       onCustomChange={(value) => { setCustomOutput(value); choose("output", normalizeIdea(value)); }}
-      onBack={() => navigate("approval")}
-      onNext={() => navigate("workflow")}
-      nextLabel="설계 보기"
+      onBack={() => navigate("navigator")}
+      onNext={continueClarification}
+      nextLabel="요약으로 돌아가기"
     />}
     {route === "workflow" && <WorkflowScreen workflow={workflow} preview={navigatorPreview} requirements={activeRequirements} onBack={() => navigate("output")} onNext={() => navigate("access")} />}
     {route === "access" && <AccessScreen summary={costAndAccess} route={route} onBack={() => navigate("workflow")} onNext={() => navigate("plan")} />}
-    {route === "plan" && <Bf0BuildPlanScreen items={buildPlan} summary={completion.flow} onBack={() => navigate("access")} onNavigate={navigate} onNext={() => navigate("complete")} onStartStepMode={() => navigate("step")} />}
+    {route === "plan" && <Bf0BuildPlanScreen items={buildPlan} summary={completion.flow} onBack={() => navigate("navigator")} onNavigate={navigate} onNext={() => navigate("complete")} onStartStepMode={() => navigate("step")} />}
     {route === "step" && <Bf0StepMode items={buildPlan} index={safeStepIndex} progress={stepProgress} onBack={() => safeStepIndex === 0 ? navigate("plan") : setStepIndex((index) => index - 1)} onNext={() => safeStepIndex === buildPlan.length - 1 ? navigate("complete") : setStepIndex((index) => index + 1)} onShowPlan={() => navigate("plan")} onProgress={(id, value) => setStepProgress((current) => ({ ...current, [id]: value }))} />}
     {route === "complete" && <CompletionScreen completion={completion} requirements={activeRequirements} gaps={requirementGaps} unresolvedQuestions={completion.unresolvedQuestions} stepSummary={stepSummary} onRestart={restart} onEditRequirements={() => navigate("navigator")} onPlan={() => navigate("plan")} onSave={() => void saveAsProject()} saving={saveState === "saving"} saveMessage={saveMessage} />}
   </main>;
@@ -264,7 +275,7 @@ function OnboardingScreen({ index, onSelect, onSkip, onNext }: { index: number; 
       <div className="mt-12 flex items-center justify-center gap-3" aria-label="온보딩 단계">
         {onboardingSlides.map((item, itemIndex) => <button key={item.title} type="button" onClick={() => onSelect(itemIndex)} aria-label={`${itemIndex + 1}단계: ${item.title}`} aria-current={index === itemIndex ? "step" : undefined} className={`min-h-[44px] min-w-[44px] rounded-full p-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200 ${index === itemIndex ? "text-cyan-100" : "text-slate-500"}`}><span className={`block h-2 rounded-full transition-all ${index === itemIndex ? "w-8 bg-cyan-200" : "w-2 bg-slate-600"}`} /></button>)}
       </div>
-      <button type="button" onClick={onNext} className="mt-6 min-h-[52px] rounded-2xl border border-cyan-200/50 bg-cyan-300/15 px-7 text-sm font-semibold text-cyan-50 shadow-[0_10px_30px_rgba(34,211,238,.12)] transition hover:bg-cyan-300/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200">{index === onboardingSlides.length - 1 ? "아이디어 입력하기" : "다음"} <span aria-hidden="true">→</span></button>
+      <button type="button" onClick={onNext} className="mt-6 min-h-[52px] rounded-2xl border border-cyan-200/50 bg-cyan-300/15 px-7 text-sm font-semibold text-cyan-50 shadow-[0_10px_30px_rgba(34,211,238,.12)] transition hover:bg-cyan-300/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200">시작하기 <span aria-hidden="true">→</span></button>
     </div>
   </section>;
 }
@@ -318,5 +329,10 @@ function AccessScreen({ summary, route, onBack, onNext }: { summary: ReturnType<
 }
 
 function CompletionScreen({ completion, requirements, gaps, unresolvedQuestions, stepSummary, onRestart, onEditRequirements, onPlan, onSave, saving, saveMessage }: { completion: ReturnType<typeof getCompletionCopy>; requirements: Bf0RequirementCandidate[]; gaps: Bf0RequirementCandidate[]; unresolvedQuestions: string[]; stepSummary: ReturnType<typeof getStepProgressSummary>; onRestart: () => void; onEditRequirements: () => void; onPlan: () => void; onSave: () => void; saving: boolean; saveMessage: string | null }) {
-  return <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-12"><div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(93,125,255,.2),transparent_33%)]" /><div className="relative z-10 mx-auto w-full max-w-[740px] rounded-[2rem] border border-slate-700/80 bg-slate-950/85 p-6 text-center shadow-[0_30px_100px_rgba(0,0,0,.35)] sm:p-10"><Bf0Brand /><div aria-hidden="true" className="mx-auto mt-9 grid size-20 place-items-center rounded-full border border-cyan-200/40 bg-cyan-200/10 text-3xl text-cyan-100">✓</div><p className="mt-7 text-xs font-medium tracking-[0.25em] text-cyan-200">DESIGN DRAFT</p><h1 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">{completion.title}</h1><div className="mt-5 grid gap-2 text-left text-sm leading-6 text-slate-300">{completion.lines.map((line) => <p key={line} className="rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3">{line}</p>)}</div>{unresolvedQuestions.length > 0 && <section className="mt-6 rounded-2xl border border-amber-200/20 bg-amber-200/5 p-5 text-left"><h2 className="text-sm font-medium text-amber-100">아직 확인이 필요한 항목</h2><ul className="mt-3 grid gap-2 text-sm leading-6 text-slate-200">{unresolvedQuestions.map((question) => <li key={question} className="break-words">• {question}</li>)}</ul></section>}{gaps.length > 0 && <section className="mt-4 rounded-2xl border border-violet-200/20 bg-violet-200/5 p-5 text-left"><h2 className="text-sm font-medium text-violet-100">별도 연결 또는 도구가 필요한 요구</h2><ul className="mt-3 grid gap-2 text-sm leading-6 text-slate-200">{gaps.map((requirement) => <li key={requirement.id} className="break-words">• {requirement.value} · {requirement.support}</li>)}</ul></section>}<dl className="mt-7 overflow-hidden rounded-2xl border border-slate-800 text-left text-sm"><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">사용자 완료 표시</dt><dd className="text-slate-100">{stepSummary.userReportedComplete}단계</dd></div><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">남은 단계</dt><dd className="text-slate-100">{stepSummary.remaining}단계</dd></div><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">자동 검증 상태</dt><dd className="text-slate-100">{completion.actualVerificationState}</dd></div><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">실제 외부 연결</dt><dd className="text-slate-100">{completion.externalConnectionState}</dd></div><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">보존된 요구</dt><dd className="text-slate-100">{requirements.length}개</dd></div><div className="grid gap-1 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">작동 흐름</dt><dd className="break-words text-slate-100">{completion.flow}</dd></div></dl><p className="mt-5 text-sm leading-6 text-slate-400">사용자가 모든 단계를 표시했더라도 실제 연결과 작동은 아직 자동 검증되지 않았습니다.</p><div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><button type="button" onClick={onEditRequirements} className="min-h-[48px] rounded-xl border border-slate-700 px-5 text-sm font-medium text-slate-200 hover:border-cyan-200/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200">확인 항목 수정하기</button><button type="button" onClick={onPlan} className="min-h-[48px] rounded-xl border border-cyan-200/45 bg-cyan-200/10 px-5 text-sm font-semibold text-cyan-50 hover:bg-cyan-200/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200">전체 계획 보기</button><button type="button" onClick={onSave} disabled={saving} className="min-h-[48px] rounded-xl border border-emerald-200/45 bg-emerald-200/10 px-5 text-sm font-semibold text-emerald-50 hover:bg-emerald-200/20 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-200">{saving ? "프로젝트 저장 중..." : "프로젝트로 저장"}</button><button type="button" onClick={onRestart} className="min-h-[48px] rounded-xl border border-slate-700 px-5 text-sm font-medium text-slate-200 hover:border-cyan-200/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200">처음부터 다시 시작</button></div>{saveMessage && <p role="status" className="mt-4 text-sm text-amber-100">{saveMessage}</p>}</div></section>;
+  return <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-12"><div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(93,125,255,.2),transparent_33%)]" /><div className="relative z-10 mx-auto w-full max-w-[820px] rounded-[2rem] border border-slate-700/80 bg-slate-950/85 p-6 text-center shadow-[0_30px_100px_rgba(0,0,0,.35)] sm:p-10"><Bf0Brand /><div aria-hidden="true" className="mx-auto mt-9 grid size-20 place-items-center rounded-full border border-cyan-200/40 bg-cyan-200/10 text-3xl text-cyan-100">✓</div><p className="mt-7 text-xs font-medium tracking-[0.25em] text-cyan-200">DESIGN DRAFT</p><h1 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">{completion.title}</h1><div className="mt-6 grid gap-4 text-left md:grid-cols-3"><CompletionList title="준비된 것" items={completion.prepared} tone="cyan" /><CompletionList title="아직 연결/실행되지 않은 것" items={completion.notExecuted} tone="amber" /><CompletionList title="다음에 할 일" items={completion.nextActions} tone="violet" /></div>{unresolvedQuestions.length > 0 && <section className="mt-6 rounded-2xl border border-amber-200/20 bg-amber-200/5 p-5 text-left"><h2 className="text-sm font-medium text-amber-100">아직 확인이 필요한 항목</h2><ul className="mt-3 grid gap-2 text-sm leading-6 text-slate-200">{unresolvedQuestions.map((question) => <li key={question} className="break-words">• {question}</li>)}</ul></section>}{gaps.length > 0 && <section className="mt-4 rounded-2xl border border-violet-200/20 bg-violet-200/5 p-5 text-left"><h2 className="text-sm font-medium text-violet-100">별도 연결 또는 도구가 필요한 요구</h2><ul className="mt-3 grid gap-2 text-sm leading-6 text-slate-200">{gaps.map((requirement) => <li key={requirement.id} className="break-words">• {requirement.value} · {requirement.support}</li>)}</ul></section>}<dl className="mt-7 overflow-hidden rounded-2xl border border-slate-800 text-left text-sm"><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">사용자 완료 표시</dt><dd className="text-slate-100">{stepSummary.userReportedComplete}단계</dd></div><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">남은 단계</dt><dd className="text-slate-100">{stepSummary.remaining}단계</dd></div><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">자동 검증 상태</dt><dd className="text-slate-100">{completion.actualVerificationState}</dd></div><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">실제 외부 연결</dt><dd className="text-slate-100">{completion.externalConnectionState}</dd></div><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">보존된 요구</dt><dd className="text-slate-100">{requirements.length}개</dd></div><div className="grid gap-1 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">작동 흐름</dt><dd className="break-words text-slate-100">{completion.flow}</dd></div></dl><p className="mt-5 text-sm leading-6 text-slate-400">사용자가 모든 단계를 표시했더라도 실제 연결과 작동은 아직 자동 검증되지 않았습니다.</p><div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><button type="button" onClick={onPlan} className="min-h-[48px] rounded-xl border border-cyan-200/45 bg-cyan-200/10 px-5 text-sm font-semibold text-cyan-50 hover:bg-cyan-200/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200">전체 계획 보기</button><button type="button" onClick={onEditRequirements} className="min-h-[48px] rounded-xl border border-slate-700 px-5 text-sm font-medium text-slate-200 hover:border-cyan-200/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200">확인 항목 수정하기</button><button type="button" onClick={onSave} disabled={saving} className="min-h-[48px] rounded-xl border border-emerald-200/45 bg-emerald-200/10 px-5 text-sm font-semibold text-emerald-50 hover:bg-emerald-200/20 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-200">{saving ? "프로젝트 저장 중..." : "프로젝트로 저장"}</button><button type="button" onClick={onRestart} className="min-h-[48px] rounded-xl border border-slate-700 px-5 text-sm font-medium text-slate-200 hover:border-cyan-200/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200">처음부터 다시 시작</button></div>{saveMessage && <p role="status" className="mt-4 text-sm text-amber-100">{saveMessage}</p>}</div></section>;
+}
+
+function CompletionList({ title, items, tone }: { title: string; items: string[]; tone: "cyan" | "amber" | "violet" }) {
+  const toneClass = tone === "cyan" ? "border-cyan-200/20 bg-cyan-200/5 text-cyan-100" : tone === "amber" ? "border-amber-200/20 bg-amber-200/5 text-amber-100" : "border-violet-200/20 bg-violet-200/5 text-violet-100";
+  return <section className={`rounded-2xl border p-5 ${toneClass}`}><h2 className="text-sm font-semibold">{title}</h2><ul className="mt-3 grid gap-2 text-sm leading-6 text-slate-200">{items.map((item) => <li key={item}>• {item}</li>)}</ul></section>;
 }

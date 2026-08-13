@@ -53,15 +53,39 @@ export type Bf0CapabilityStatus =
   | "추가 연결 필요"
   | "현재 미지원";
 
+export type Bf0InputVerificationState = "OFFICIAL_VERIFIED" | "NOT_VERIFIED";
+
+export type Bf0InputTarget = {
+  id: string;
+  label: string;
+  service: string;
+  screen: string;
+  control: string;
+  field: string;
+  value: string;
+  format?: string;
+  setting?: string;
+  verificationState: Bf0InputVerificationState;
+  officialSource?: string;
+};
+
 export type Bf0BuildPlanItem = {
   id: string;
   title: string;
   state: "설계 초안" | "연결 필요" | "구축 가이드" | "현재 미지원" | "검증 필요";
+  actor: string;
+  timing: string;
+  workLocation: string;
+  task: string;
+  reason: string;
   summary: string;
   detail: string;
   steps: string[];
+  actionInputs?: Array<{ label: string; values: string[] }>;
+  inputTargets?: Bf0InputTarget[];
   completion: string;
   caution: string;
+  nextAction: string;
   guideLabel: string;
   guideState: "설계 초안" | "연결 필요" | "구축 가이드" | "현재 미지원" | "검증 필요";
   guideUrl?: string;
@@ -93,6 +117,15 @@ export type Bf0NavigatorPreview = {
 
 export type Bf0NavigatorSummary = Bf0NavigatorPreview;
 
+export type Bf0ClarificationRoute = Extract<Bf0Route, "goal" | "source" | "approval" | "output">;
+
+export type Bf0Clarification = {
+  route: Bf0ClarificationRoute;
+  label: string;
+  question: string;
+  reason: string;
+};
+
 export type Bf0StepProgress = "not-started" | "in-progress" | "user-reported-complete" | "problem-reported";
 
 export const BF0_STEP_PROBLEM_OPTIONS = [
@@ -104,13 +137,13 @@ export const BF0_STEP_PROBLEM_OPTIONS = [
 ] as const;
 
 export const BF0_DESIGN_STEPS: Array<{ route: Bf0Route; label: string }> = [
-  { route: "goal", label: "목표" },
-  { route: "source", label: "입력" },
-  { route: "approval", label: "승인" },
-  { route: "output", label: "결과" },
-  { route: "workflow", label: "흐름" },
-  { route: "access", label: "비용·권한" },
+  { route: "navigator", label: "요약" },
+  { route: "goal", label: "필요 확인" },
+  { route: "source", label: "필요 확인" },
+  { route: "approval", label: "필요 확인" },
+  { route: "output", label: "필요 확인" },
   { route: "plan", label: "구축 계획" },
+  { route: "complete", label: "완료" },
 ];
 
 export const BF0_GOAL_OPTIONS: Bf0ChoiceOption[] = [
@@ -133,7 +166,7 @@ export const BF0_SOURCE_OPTIONS: Bf0ChoiceOption[] = [
 ];
 
 export const BF0_APPROVAL_OPTIONS: Bf0ChoiceOption[] = [
-  { value: "항상 승인", title: "항상 승인", description: "모든 외부 작업을 사용자 확인 뒤 진행하는 설계 선호입니다." },
+  { value: "항상 승인", title: "실행 전 확인", description: "모든 외부 작업을 사용자 확인 뒤 진행하는 안전한 설계 선호입니다." },
   { value: "중요 작업만 승인", title: "중요 작업만 승인", description: "전송·삭제·수정 같은 영향이 큰 작업을 확인하는 설계 선호입니다." },
   { value: "조건부 승인", title: "조건부 승인", description: "정한 조건에서만 확인을 요구하는 설계 선호입니다." },
   { value: "자동 진행", title: "자동 진행", description: "자동 실행 가능 상태가 아니라, 향후 설계 선호를 기록합니다." },
@@ -189,6 +222,55 @@ export function buildNavigatorPreview(idea: string, requirementOverrides?: Bf0Re
     userEditedRequirements: requirementOverrides,
     hasUserEditedRequirements: Boolean(requirementOverrides),
   });
+}
+
+export function buildRecommendedDraft(idea: string, requirementCandidates = extractRequirementCandidates(idea)): Bf0DesignDraft {
+  const normalized = normalizeIdea(idea);
+  return {
+    ...EMPTY_BF0_DRAFT,
+    idea: normalized,
+    originalIdea: normalized,
+    goal: recommendGoal(normalized, requirementCandidates),
+    source: recommendSource(normalized, requirementCandidates),
+    approval: "항상 승인",
+    output: recommendOutput(normalized, requirementCandidates),
+    requirementCandidates,
+    userEditedRequirements: requirementCandidates,
+    hasUserEditedRequirements: true,
+    unsupportedRequirements: getRequirementGaps(requirementCandidates),
+    unresolvedQuestions: getUnresolvedQuestions(requirementCandidates),
+  };
+}
+
+function recommendGoal(idea: string, requirements: Bf0RequirementCandidate[]): string | null {
+  const lower = idea.toLowerCase();
+  if (requirements.some((item) => item.id === "security-check" || item.id === "risk-condition") || /검사|검증|보안|취약점|risk|위험/.test(lower)) return "검사·검증";
+  if (/보고서|요약|매주|매월|매일|리포트/.test(idea)) return "정기 보고서 생성";
+  if (/문의|담당자|분류|전달/.test(idea)) return "분류하고 담당자에게 전달";
+  if (/정리|저장|파일|데이터/.test(idea)) return "데이터 정리 및 저장";
+  if (/알림|알려|실패|발생/.test(idea)) return "반복 업무 알림";
+  return null;
+}
+
+function recommendSource(idea: string, requirements: Bf0RequirementCandidate[]): string | null {
+  const lower = idea.toLowerCase();
+  if (requirements.some((item) => item.id === "github-trigger" || item.id === "github-source")) return "GitHub / Repository";
+  if (/gmail|메일|이메일/.test(lower) && !/이메일.*받|이메일.*보내|메일.*받/.test(idea)) return "Gmail";
+  if (/파일|업로드|문서/.test(idea) && !/문서로 저장|문서로 남/.test(idea)) return "파일 업로드";
+  if (/웹\s*폼|폼|설문|문의/.test(idea)) return "웹 폼";
+  if (/slack/i.test(idea) && !/slack.*보내|slack.*전달|slack.*알려/.test(lower)) return "Slack";
+  if (/매주|매월|매일|정해진 시간/.test(idea) && !/후기|리뷰/.test(idea)) return "정해진 시간";
+  return null;
+}
+
+function recommendOutput(idea: string, requirements: Bf0RequirementCandidate[]): string | null {
+  if (requirements.some((item) => item.id === "slack-destination")) return "Slack";
+  if (/slack/i.test(idea) && /보내|전달|알려|채널/.test(idea)) return "Slack";
+  if (/이메일|메일/.test(idea) && /받|보내|전달/.test(idea)) return "이메일";
+  if (/문서|docs|보고서/.test(idea) && /저장|남|문서/.test(idea)) return "문서";
+  if (/데이터베이스|db|database/.test(idea)) return "데이터베이스";
+  if (/다운로드|내려받/.test(idea)) return "다운로드 결과";
+  return null;
 }
 
 export function buildNavigatorSummary(draft: Bf0DesignDraft): Bf0NavigatorSummary {
@@ -295,11 +377,37 @@ export function buildNavigatorSummary(draft: Bf0DesignDraft): Bf0NavigatorSummar
 
 export function getFirstIncompleteRoute(draft: Bf0DesignDraft): Bf0Route {
   if (!draft.idea) return "idea";
-  if (!draft.goal) return "goal";
-  if (!draft.source) return "source";
-  if (!draft.approval) return "approval";
-  if (!draft.output) return "output";
-  return "workflow";
+  return getClarificationQueue(draft)[0]?.route ?? "plan";
+}
+
+export function getClarificationQueue(draft: Bf0DesignDraft): Bf0Clarification[] {
+  if (!draft.idea) return [];
+  const queue: Bf0Clarification[] = [];
+  if (!draft.goal) queue.push({
+    route: "goal",
+    label: "목표 확인",
+    question: "가장 중요한 결과는 무엇인가요?",
+    reason: "입력만으로 기대 결과를 안전하게 정하지 못했습니다.",
+  });
+  if (!draft.source) queue.push({
+    route: "source",
+    label: "입력 위치 확인",
+    question: "정보는 어디에서 들어오나요?",
+    reason: "시작 위치가 명확해야 구축 계획을 안전하게 만들 수 있습니다.",
+  });
+  if (!draft.approval) queue.push({
+    route: "approval",
+    label: "실행 전 확인 방식",
+    question: "실행 전에 어떻게 확인할까요?",
+    reason: "외부 작업 통제 방식은 사용자가 명시적으로 정해야 합니다.",
+  });
+  if (!draft.output) queue.push({
+    route: "output",
+    label: "결과 위치 확인",
+    question: "결과는 어디로 보내면 될까요?",
+    reason: "결과 전달 위치가 정해져야 계획의 마지막 단계를 정리할 수 있습니다.",
+  });
+  return queue;
 }
 
 function candidate(id: string, kind: Bf0RequirementKind, label: string, value: string, sourceText: string, support: Bf0RequirementSupport, confidence: Bf0RequirementCandidate["confidence"] = "높음"): Bf0RequirementCandidate {
@@ -464,6 +572,17 @@ export function buildWorkflowDraft(draft: Bf0DesignDraft) {
 }
 
 type PlanState = Bf0BuildPlanItem["state"];
+type BuildPlanDraftItem = Omit<Bf0BuildPlanItem, "actor" | "timing" | "workLocation" | "task" | "reason" | "actionInputs" | "inputTargets" | "nextAction"> & Partial<Pick<Bf0BuildPlanItem, "actor" | "timing" | "workLocation" | "task" | "reason" | "actionInputs" | "inputTargets" | "nextAction">>;
+
+const OFFICIAL_SOURCES = {
+  googleForms: "https://support.google.com/docs/answer/2839737",
+  githubPullRequestReview: "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-pull-requests-quickstart",
+  githubPullRequestReviews: "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/about-pull-request-reviews",
+  slackCreateChannel: "https://slack.com/help/articles/201402297-Create-a-channel",
+  slackSendMessages: "https://slack.com/help/articles/201457107-Send-and-read-messages",
+} as const;
+
+const UNVERIFIED_LOCATION_COPY = "현재 공식 화면 기준 확인 필요";
 
 function planStateFromCapability(status: Bf0CapabilityStatus): PlanState {
   if (status === "추가 연결 필요") return "연결 필요";
@@ -473,16 +592,18 @@ function planStateFromCapability(status: Bf0CapabilityStatus): PlanState {
   return "설계 초안";
 }
 
-function sourcePlan(draft: Bf0DesignDraft): Omit<Bf0BuildPlanItem, "id"> {
+function sourcePlan(draft: Bf0DesignDraft): Omit<BuildPlanDraftItem, "id"> {
   const source = draft.source ?? "입력 위치";
   const state = planStateFromCapability(getCapabilityStatus(BF0_SOURCE_OPTIONS, draft.source));
-  const guides: Record<string, Omit<Bf0BuildPlanItem, "id">> = {
+  const guides: Record<string, Omit<BuildPlanDraftItem, "id">> = {
     Gmail: {
       title: "Gmail 입력 준비",
       state,
+      workLocation: "Gmail",
       summary: "문의 메일을 구분하기 전에 사용할 계정, 테스트 메일, 읽기 권한 범위를 정리합니다.",
       detail: "새 문의를 가져오려면 메일을 읽을 수 있는 계정과 최소 권한 범위가 필요합니다.",
       steps: ["자동화에 사용할 Google 계정을 선택합니다.", "개인정보가 없는 테스트 문의 메일을 한 통 준비합니다.", "실제 연결 전에는 읽기 권한만 필요한지 검토합니다."],
+      actionInputs: [{ label: "준비할 테스트 입력", values: ["개인정보가 없는 문의 메일 1건", "자동화에 사용할 Google 계정", "읽기 권한 검토 기준"] }],
       completion: "사용할 계정과 테스트 메일, 필요한 최소 권한이 정리되면 완료입니다.",
       caution: "아직 BuildFlow와 Gmail은 연결되지 않았습니다. 테스트 계정 또는 별도 라벨 사용을 권장합니다.",
       guideLabel: "Gmail 공식 설정 열기",
@@ -494,10 +615,13 @@ function sourcePlan(draft: Bf0DesignDraft): Omit<Bf0BuildPlanItem, "id"> {
     "웹 폼": {
       title: "웹 폼 입력 준비",
       state,
+      workLocation: "Google Forms 또는 사용 중인 웹 폼",
       summary: "문의에 필요한 필드와 테스트 응답을 정리해 웹 폼 기반 설계의 입력 구조를 확인합니다.",
       detail: "웹 폼의 제출 데이터는 이름, 문의 내용처럼 실제 분류에 필요한 항목만 포함해야 합니다.",
-      steps: ["사용할 기존 폼 또는 테스트용 폼을 선택합니다.", "이름, 이메일, 문의 유형, 문의 내용 중 필요한 항목을 정합니다.", "개인정보가 없는 테스트 응답 한 건을 준비합니다."],
-      completion: "필요한 입력 필드와 테스트 응답 형식이 정리되면 완료입니다.",
+      steps: ["새 테스트 폼을 준비하거나 사용할 기존 폼을 정하세요.", "질문 항목에 이름, 이메일, 문의 유형, 문의 내용을 추가할지 확인하세요.", "개인정보가 없는 테스트 응답 1건을 직접 입력할 준비를 하세요."],
+      actionInputs: [{ label: "질문 항목", values: ["이름", "이메일", "문의 유형", "문의 내용"] }],
+      inputTargets: googleFormQuestionTargets(["이름", "이메일", "문의 유형", "문의 내용"]),
+      completion: "필요한 입력 항목이 준비됐고 개인정보가 없는 테스트 응답 1건을 직접 입력할 준비가 되면 완료입니다.",
       caution: "폼 응답이 BuildFlow로 전달되거나 저장되는 상태는 아닙니다.",
       guideLabel: "Google Forms 열기",
       guideState: "구축 가이드",
@@ -508,9 +632,11 @@ function sourcePlan(draft: Bf0DesignDraft): Omit<Bf0BuildPlanItem, "id"> {
     "파일 업로드": {
       title: "사용할 파일 형식 정하기",
       state,
+      workLocation: "Google Drive 또는 파일 보관 위치",
       summary: "파일 업로드로 시작하는 설계에 사용할 형식, 필수 항목, 테스트 파일을 정합니다.",
       detail: "파일마다 열 이름과 내용 형식이 다를 수 있으므로 정리할 정보와 출력 형식을 먼저 합의해야 합니다.",
       steps: ["우선 지원할 파일 형식과 최대 크기를 정합니다.", "정리할 열 또는 문서 항목을 목록으로 만듭니다.", "개인정보가 없는 샘플 파일 한 개를 준비합니다."],
+      actionInputs: [{ label: "준비할 내용", values: ["파일 형식", "정리할 열 또는 문서 항목", "개인정보가 없는 샘플 파일 1개"] }],
       completion: "파일 형식, 정리 대상, 샘플 파일이 준비되면 완료입니다.",
       caution: "파일 업로드와 저장은 현재 UI-only 범위에서 수행하지 않습니다.",
       guideLabel: "Google Drive 열기",
@@ -522,9 +648,11 @@ function sourcePlan(draft: Bf0DesignDraft): Omit<Bf0BuildPlanItem, "id"> {
     Slack: {
       title: "Slack 입력 범위 정하기",
       state,
+      workLocation: "Slack 설정",
       summary: "어떤 채널의 어떤 메시지를 입력으로 볼지와 테스트 채널을 먼저 정합니다.",
       detail: "Slack 메시지를 입력으로 사용하려면 대상 채널과 읽기 권한의 범위를 최소화해야 합니다.",
       steps: ["대상 Slack 워크스페이스와 테스트 채널을 정합니다.", "처리할 메시지 유형과 제외할 대화를 구분합니다.", "민감정보가 없는 테스트 메시지를 준비합니다."],
+      actionInputs: [{ label: "정할 내용", values: ["워크스페이스", "테스트 채널", "처리할 메시지 유형", "제외할 대화 기준"] }],
       completion: "대상 채널과 메시지 범위, 테스트 메시지가 정리되면 완료입니다.",
       caution: "Slack 연결이나 메시지 읽기는 아직 시작되지 않았습니다.",
       guideLabel: "Slack 공식 사이트 열기",
@@ -536,9 +664,11 @@ function sourcePlan(draft: Bf0DesignDraft): Omit<Bf0BuildPlanItem, "id"> {
     "직접 입력": {
       title: "직접 입력 기준 정리",
       state,
+      workLocation: "BuildFlow 내부 설계",
       summary: "사용자가 직접 넣는 정보의 형식과 확인 항목을 설계 초안으로 정리합니다.",
       detail: "직접 입력은 외부 연결 없이 시작점을 확인할 수 있지만, 실제 처리 규칙은 별도 검토가 필요합니다.",
       steps: ["입력할 내용과 기대 결과를 한 문장으로 정리합니다.", "민감한 정보는 입력하지 않는 기준을 정합니다.", "테스트에 사용할 예시 입력을 준비합니다."],
+      actionInputs: [{ label: "작성할 내용", values: ["입력 예시 1개", "기대 결과", "민감정보 제외 기준"] }],
       completion: "입력 기준과 안전한 예시가 준비되면 완료입니다.",
       caution: "직접 입력도 실제 Runtime 실행이나 저장을 시작하지 않습니다.",
       guideLabel: "입력 위치 다시 보기",
@@ -550,9 +680,11 @@ function sourcePlan(draft: Bf0DesignDraft): Omit<Bf0BuildPlanItem, "id"> {
     "정해진 시간": {
       title: "실행 주기와 시간대 정하기",
       state,
+      workLocation: "일정 설계",
       summary: "정기 실행을 위한 주기, 시간대, 실행하지 않을 기간을 설계합니다.",
       detail: "예약 실행은 실제 연결과 운영 검증 전에 시간대와 실패 시 처리 방식을 먼저 정해야 합니다.",
       steps: ["매일·매주 등 원하는 실행 주기를 정합니다.", "사용자 기준 시간대와 휴일 처리 기준을 적습니다.", "샘플 데이터로 검토할 시간을 정합니다."],
+      actionInputs: [{ label: "정할 내용", values: ["실행 주기", "요일과 시간", "휴일 또는 예외 기간"] }],
       completion: "주기, 시간대, 예외 기간이 정리되면 완료입니다.",
       caution: "현재 화면은 예약 실행을 설정하거나 시작하지 않습니다.",
       guideLabel: "Google Calendar 열기",
@@ -564,45 +696,45 @@ function sourcePlan(draft: Bf0DesignDraft): Omit<Bf0BuildPlanItem, "id"> {
   };
 
   return guides[source] ?? {
-    title: `${source} 입력 준비`, state, summary: getCapabilityDescription(BF0_SOURCE_OPTIONS, draft.source), detail: "입력 위치의 실제 연결과 권한 획득은 이 UI 범위에 포함되지 않습니다.", steps: ["입력 형식과 빈도를 정합니다.", "안전한 샘플을 준비합니다."], completion: "입력 위치와 검토 범위가 정리되면 완료입니다.", caution: "현재 선택은 연결되었거나 수신을 시작했다는 뜻이 아닙니다.", guideLabel: "입력 위치 다시 보기", guideState: state, guideRoute: "source", editRoute: "source", editLabel: "입력 위치 다시 선택",
+    title: `${source} 입력 준비`, state, workLocation: source, summary: getCapabilityDescription(BF0_SOURCE_OPTIONS, draft.source), detail: "입력 위치의 실제 연결과 권한 획득은 이 UI 범위에 포함되지 않습니다.", steps: ["입력 형식과 빈도를 적으세요.", "개인정보가 없는 안전한 샘플을 준비하세요."], completion: "입력 위치와 검토 범위가 정리되면 완료입니다.", caution: "현재 선택은 연결되었거나 수신을 시작했다는 뜻이 아닙니다.", guideLabel: "입력 위치 다시 보기", guideState: state, guideRoute: "source", editRoute: "source", editLabel: "입력 위치 다시 선택",
   };
 }
 
-function goalPlan(draft: Bf0DesignDraft): Omit<Bf0BuildPlanItem, "id"> {
+function goalPlan(draft: Bf0DesignDraft): Omit<BuildPlanDraftItem, "id"> {
   const goal = draft.goal ?? "선택한 목표";
-  const guides: Record<string, Omit<Bf0BuildPlanItem, "id">> = {
-    "분류하고 담당자에게 전달": { title: "문의 분류 기준 정리", state: "설계 초안", summary: "문의 유형, 담당자, 전달하지 않을 예외를 기준으로 분류 초안을 만듭니다.", detail: "분류 결과가 누구에게 전달되는지와 잘못 분류됐을 때의 처리 기준이 필요합니다.", steps: ["자주 발생하는 문의 유형을 3~5개로 적습니다.", "각 유형의 담당자 또는 검토자를 정합니다.", "분류가 불명확할 때 사용자 확인으로 보내는 기준을 정합니다."], completion: "유형·담당자·예외 기준이 정리되면 완료입니다.", caution: "분류 규칙과 메시지 전달은 아직 실행되지 않습니다.", guideLabel: "목표 다시 보기", guideState: "설계 초안", guideRoute: "goal", editRoute: "goal", editLabel: "목표 다시 선택" },
-    "정기 보고서 생성": { title: "보고서에 포함할 항목 확인", state: "설계 초안", summary: "보고서 목적, 포함할 지표, 수신자가 이해할 형식을 설계합니다.", detail: "보고서 생성 전에는 데이터 출처와 갱신 주기, 누락 데이터 처리 방식을 확인해야 합니다.", steps: ["보고서에서 답해야 할 질문을 정합니다.", "포함할 지표와 기간을 선택합니다.", "읽는 사람이 확인할 요약 형식을 정합니다."], completion: "지표·기간·요약 형식이 정리되면 완료입니다.", caution: "보고서 데이터 수집이나 생성은 아직 수행하지 않습니다.", guideLabel: "목표 다시 보기", guideState: "설계 초안", guideRoute: "goal", editRoute: "goal", editLabel: "목표 다시 선택" },
-    "데이터 정리 및 저장": { title: "정리할 항목과 출력 형식 확인", state: "설계 초안", summary: "흩어진 정보에서 남길 항목, 형식, 검토 기준을 설계합니다.", detail: "데이터 정리는 원본 보존 여부와 중복·누락 처리 기준을 먼저 정해야 합니다.", steps: ["남길 항목과 제거할 항목을 나눕니다.", "출력 형식과 이름 규칙을 정합니다.", "중복·누락 값의 처리 기준을 적습니다."], completion: "정리 대상과 출력 형식, 예외 기준이 정리되면 완료입니다.", caution: "데이터 변경이나 저장은 이 화면에서 수행하지 않습니다.", guideLabel: "목표 다시 보기", guideState: "설계 초안", guideRoute: "goal", editRoute: "goal", editLabel: "목표 다시 선택" },
-    "검사·검증": { title: "검사 기준과 예외 조건 정리", state: "설계 초안", summary: "무엇을 확인할지, 어떤 결과를 위험으로 볼지, 사용자 확인이 필요한 경우를 설계합니다.", detail: "검사 기준과 결과 처리 방식은 실제 도구 연결이나 실행 전에 먼저 확인해야 합니다.", steps: ["확인할 변경사항이나 결과 범위를 정합니다.", "위험 또는 예외로 판단할 기준을 적습니다.", "사용자 확인이 필요한 결과 처리 방식을 정합니다."], completion: "검사 기준·예외 조건·사용자 확인 지점이 정리되면 완료입니다.", caution: "이 선택은 실제 검사 실행이나 검증 성공을 의미하지 않습니다.", guideLabel: "목표 다시 보기", guideState: "설계 초안", guideRoute: "goal", editRoute: "goal", editLabel: "목표 다시 선택" },
-    "반복 업무 알림": { title: "알림 조건과 수신자 정리", state: "설계 초안", summary: "어떤 조건에서 누구에게 어떤 내용을 알려줄지 설계합니다.", detail: "알림이 과도해지지 않도록 조건, 빈도, 중단 기준을 명확히 해야 합니다.", steps: ["알림을 시작할 조건을 한 문장으로 정합니다.", "수신자와 전달 내용을 정합니다.", "반복 알림 제한과 취소 기준을 정합니다."], completion: "조건·수신자·빈도 기준이 정리되면 완료입니다.", caution: "알림 발송이나 예약은 아직 시작되지 않습니다.", guideLabel: "목표 다시 보기", guideState: "설계 초안", guideRoute: "goal", editRoute: "goal", editLabel: "목표 다시 선택" },
+  const guides: Record<string, Omit<BuildPlanDraftItem, "id">> = {
+    "분류하고 담당자에게 전달": { title: "문의 분류 기준 정리", state: "설계 초안", workLocation: "BuildFlow 내부 설계", summary: "문의 유형, 담당자, 전달하지 않을 예외를 기준으로 분류 초안을 만듭니다.", detail: "분류 결과가 누구에게 전달되는지와 잘못 분류됐을 때의 처리 기준이 필요합니다.", steps: ["자주 발생하는 문의 유형을 3~5개로 적으세요.", "각 문의 유형 옆에 담당자 또는 검토자를 적으세요.", "분류가 불명확할 때 사용자 확인으로 보내는 기준을 적으세요."], actionInputs: [{ label: "입력할 내용", values: ["문의 유형", "담당자 또는 검토자", "분류가 애매할 때의 확인 기준"] }], completion: "문의 유형, 담당자, 예외 기준이 한 번에 볼 수 있게 정리되면 완료입니다.", caution: "분류 규칙과 메시지 전달은 아직 실행되지 않습니다.", guideLabel: "목표 다시 보기", guideState: "설계 초안", guideRoute: "goal", editRoute: "goal", editLabel: "목표 다시 선택" },
+    "정기 보고서 생성": { title: "보고서에 포함할 항목 확인", state: "설계 초안", workLocation: "BuildFlow 내부 설계", summary: "보고서 목적, 포함할 지표, 수신자가 이해할 형식을 설계합니다.", detail: "보고서 생성 전에는 데이터 출처와 갱신 주기, 누락 데이터 처리 방식을 확인해야 합니다.", steps: ["보고서가 답해야 할 질문을 적으세요.", "포함할 지표와 기간을 선택하세요.", "읽는 사람이 확인할 요약 형식을 적으세요."], actionInputs: [{ label: "입력할 내용", values: ["보고서 질문", "포함할 지표", "기간", "요약 형식"] }], completion: "지표, 기간, 요약 형식이 정리되면 완료입니다.", caution: "보고서 데이터 수집이나 생성은 아직 수행하지 않습니다.", guideLabel: "목표 다시 보기", guideState: "설계 초안", guideRoute: "goal", editRoute: "goal", editLabel: "목표 다시 선택" },
+    "데이터 정리 및 저장": { title: "정리할 항목과 출력 형식 확인", state: "설계 초안", workLocation: "BuildFlow 내부 설계", summary: "흩어진 정보에서 남길 항목, 형식, 검토 기준을 설계합니다.", detail: "데이터 정리는 원본 보존 여부와 중복·누락 처리 기준을 먼저 정해야 합니다.", steps: ["남길 항목과 제거할 항목을 나눠 적으세요.", "출력 형식과 이름 규칙을 적으세요.", "중복·누락 값의 처리 기준을 적으세요."], actionInputs: [{ label: "입력할 내용", values: ["남길 항목", "제거할 항목", "출력 형식", "중복·누락 처리 기준"] }], completion: "정리 대상과 출력 형식, 예외 기준이 정리되면 완료입니다.", caution: "데이터 변경이나 저장은 이 화면에서 수행하지 않습니다.", guideLabel: "목표 다시 보기", guideState: "설계 초안", guideRoute: "goal", editRoute: "goal", editLabel: "목표 다시 선택" },
+    "검사·검증": { title: "검사 기준과 예외 조건 정리", state: "설계 초안", workLocation: "BuildFlow 내부 설계", summary: "무엇을 확인할지, 어떤 결과를 위험으로 볼지, 사용자 확인이 필요한 경우를 설계합니다.", detail: "검사 기준과 결과 처리 방식은 실제 도구 연결이나 실행 전에 먼저 확인해야 합니다.", steps: ["확인할 변경사항이나 결과 범위를 적으세요.", "위험 또는 예외로 판단할 기준을 적으세요.", "사용자 확인이 필요한 결과 처리 방식을 적으세요."], actionInputs: [{ label: "입력할 내용", values: ["검사 범위", "위험 기준", "사용자 확인 조건"] }], completion: "검사 기준, 예외 조건, 사용자 확인 지점이 정리되면 완료입니다.", caution: "이 선택은 실제 검사 실행이나 검증 성공을 의미하지 않습니다.", guideLabel: "목표 다시 보기", guideState: "설계 초안", guideRoute: "goal", editRoute: "goal", editLabel: "목표 다시 선택" },
+    "반복 업무 알림": { title: "알림 조건과 수신자 정리", state: "설계 초안", workLocation: "BuildFlow 내부 설계", summary: "어떤 조건에서 누구에게 어떤 내용을 알려줄지 설계합니다.", detail: "알림이 과도해지지 않도록 조건, 빈도, 중단 기준을 명확히 해야 합니다.", steps: ["알림을 시작할 조건을 한 문장으로 적으세요.", "수신자와 전달 내용을 적으세요.", "반복 알림 제한과 취소 기준을 적으세요."], actionInputs: [{ label: "입력할 내용", values: ["알림 조건", "수신자", "전달 내용", "반복 제한"] }], completion: "조건, 수신자, 빈도 기준이 정리되면 완료입니다.", caution: "알림 발송이나 예약은 아직 시작되지 않습니다.", guideLabel: "목표 다시 보기", guideState: "설계 초안", guideRoute: "goal", editRoute: "goal", editLabel: "목표 다시 선택" },
   };
-  return guides[goal] ?? { title: `${goal} 기준 정리`, state: "설계 초안", summary: `“${draft.idea || "입력한 아이디어"}”의 기대 결과와 제외 범위를 정리합니다.`, detail: "현재 선택은 브라우저 세션에만 유지되는 설계 초안입니다.", steps: ["기대 결과를 한 문장으로 적습니다.", "제외할 작업과 예외 상황을 정합니다."], completion: "목표와 제외 범위가 검토되면 완료입니다.", caution: "실제 Agent나 실행 계획을 생성하지 않습니다.", guideLabel: "목표 다시 보기", guideState: "설계 초안", guideRoute: "goal", editRoute: "goal", editLabel: "목표 다시 선택" };
+  return guides[goal] ?? { title: `${goal} 기준 정리`, state: "설계 초안", workLocation: "BuildFlow 내부 설계", summary: `“${draft.idea || "입력한 아이디어"}”의 기대 결과와 제외 범위를 정리합니다.`, detail: "현재 선택은 브라우저 세션에만 유지되는 설계 초안입니다.", steps: ["기대 결과를 한 문장으로 적으세요.", "제외할 작업과 예외 상황을 적으세요."], actionInputs: [{ label: "입력할 내용", values: ["기대 결과", "제외할 작업", "예외 상황"] }], completion: "목표와 제외 범위가 검토되면 완료입니다.", caution: "실제 Agent나 실행 계획을 생성하지 않습니다.", guideLabel: "목표 다시 보기", guideState: "설계 초안", guideRoute: "goal", editRoute: "goal", editLabel: "목표 다시 선택" };
 }
 
-function approvalPlan(draft: Bf0DesignDraft): Omit<Bf0BuildPlanItem, "id"> {
+function approvalPlan(draft: Bf0DesignDraft): Omit<BuildPlanDraftItem, "id"> {
   const approval = draft.approval ?? "승인 방식";
-  const details: Record<string, { summary: string; steps: string[]; completion: string; caution: string }> = {
-    "항상 승인": { summary: "모든 외부 작업 전 사용자의 확인을 받는 기준을 정합니다.", steps: ["승인 요청을 받을 사람을 정합니다.", "확인해야 하는 정보와 취소 기준을 정합니다.", "응답이 없을 때 진행하지 않는 원칙을 확인합니다."], completion: "승인 담당자와 취소 기준이 정리되면 완료입니다.", caution: "이 선택은 실제 승인 요청을 만들거나 소비하지 않습니다." },
-    "중요 작업만 승인": { summary: "전송·삭제·수정처럼 영향이 큰 작업만 구분해 확인하는 기준을 정합니다.", steps: ["외부 영향이 큰 작업을 목록으로 만듭니다.", "자동 검토와 사용자 확인의 경계를 정합니다.", "경계가 애매한 작업은 승인으로 보내는 원칙을 정합니다."], completion: "승인이 필요한 작업 범위가 정리되면 완료입니다.", caution: "실제 승인 정책이나 자동 실행 허가가 아닙니다." },
-    "조건부 승인": { summary: "금액, 대상, 분류 결과처럼 확인이 필요한 조건을 설계합니다.", steps: ["승인을 요구할 조건을 구체적으로 적습니다.", "조건에 맞지 않을 때의 중단 기준을 정합니다.", "조건 변경 권한을 가진 사람을 정합니다."], completion: "조건과 중단 기준이 검토되면 완료입니다.", caution: "조건 기반 실행은 별도 Runtime·Approval Gate에서 검증해야 합니다." },
-    "자동 진행": { summary: "향후 자동화를 검토할 수 있는 반복 작업의 조건을 설계 선호로 기록합니다.", steps: ["반복되고 영향이 낮은 작업만 후보로 정합니다.", "사용자 확인이 필요한 예외를 먼저 정합니다.", "실제 허가 전 검증 기준을 정합니다."], completion: "자동화 후보와 예외 기준이 정리되면 완료입니다.", caution: "자동 진행은 실제 실행 가능·승인 완료·자동 실행 허가를 의미하지 않습니다." },
+  const details: Record<string, { summary: string; steps: string[]; actionInputs: Bf0BuildPlanItem["actionInputs"]; completion: string; caution: string }> = {
+    "항상 승인": { summary: "모든 외부 작업 전 사용자의 확인을 받는 기준을 정합니다.", steps: ["승인 요청을 받을 사람을 적으세요.", "확인해야 하는 정보와 취소 기준을 적으세요.", "응답이 없을 때 진행하지 않는 원칙을 확인하세요."], actionInputs: [{ label: "입력할 내용", values: ["승인 담당자", "확인할 정보", "취소 기준", "응답 없음 처리"] }], completion: "승인 담당자와 취소 기준이 정리되면 완료입니다.", caution: "이 선택은 실제 승인 요청을 만들거나 소비하지 않습니다." },
+    "중요 작업만 승인": { summary: "전송·삭제·수정처럼 영향이 큰 작업만 구분해 확인하는 기준을 정합니다.", steps: ["외부 영향이 큰 작업을 목록으로 적으세요.", "자동 검토와 사용자 확인의 경계를 적으세요.", "경계가 애매한 작업은 승인으로 보내는 원칙을 적으세요."], actionInputs: [{ label: "입력할 내용", values: ["승인이 필요한 작업", "자동 검토 가능 작업", "애매한 작업 처리 원칙"] }], completion: "승인이 필요한 작업 범위가 정리되면 완료입니다.", caution: "실제 승인 정책이나 자동 실행 허가가 아닙니다." },
+    "조건부 승인": { summary: "금액, 대상, 분류 결과처럼 확인이 필요한 조건을 설계합니다.", steps: ["승인을 요구할 조건을 구체적으로 적으세요.", "조건에 맞지 않을 때의 중단 기준을 적으세요.", "조건 변경 권한을 가진 사람을 적으세요."], actionInputs: [{ label: "입력할 내용", values: ["승인 조건", "중단 기준", "조건 변경 담당자"] }], completion: "조건과 중단 기준이 검토되면 완료입니다.", caution: "조건 기반 실행은 별도 Runtime·Approval Gate에서 검증해야 합니다." },
+    "자동 진행": { summary: "향후 자동화를 검토할 수 있는 반복 작업의 조건을 설계 선호로 기록합니다.", steps: ["반복되고 영향이 낮은 작업만 후보로 적으세요.", "사용자 확인이 필요한 예외를 먼저 적으세요.", "실제 허가 전 검증 기준을 적으세요."], actionInputs: [{ label: "입력할 내용", values: ["자동화 후보", "사용자 확인 예외", "실제 허가 전 검증 기준"] }], completion: "자동화 후보와 예외 기준이 정리되면 완료입니다.", caution: "자동 진행은 실제 실행 가능·승인 완료·자동 실행 허가를 의미하지 않습니다." },
   };
   const detail = details[approval] ?? details["항상 승인"];
-  return { title: `${approval} 방식 확인`, state: "검증 필요", summary: detail.summary, detail: "승인 요청 생성·결정·소비는 기존 Product/Runtime 경계의 별도 기능이며 이 UI가 실행하지 않습니다.", steps: detail.steps, completion: detail.completion, caution: detail.caution, guideLabel: "승인 방식 다시 보기", guideState: "검증 필요", guideRoute: "approval", editRoute: "approval", editLabel: "승인 방식 다시 선택" };
+  return { title: `${approval} 방식 확인`, state: "검증 필요", workLocation: "BuildFlow 내부 설계", summary: detail.summary, detail: "승인 요청 생성·결정·소비는 기존 Product/Runtime 경계의 별도 기능이며 이 UI가 실행하지 않습니다.", steps: detail.steps, actionInputs: detail.actionInputs, completion: detail.completion, caution: detail.caution, guideLabel: "승인 방식 다시 보기", guideState: "검증 필요", guideRoute: "approval", editRoute: "approval", editLabel: "승인 방식 다시 선택" };
 }
 
-function outputPlan(draft: Bf0DesignDraft): Omit<Bf0BuildPlanItem, "id"> {
+function outputPlan(draft: Bf0DesignDraft): Omit<BuildPlanDraftItem, "id"> {
   const output = draft.output ?? "결과 위치";
   const state = planStateFromCapability(getCapabilityStatus(BF0_OUTPUT_OPTIONS, draft.output));
-  const guides: Record<string, Omit<Bf0BuildPlanItem, "id">> = {
-    Slack: { title: "Slack 결과 채널 준비", state, summary: "결과를 받을 워크스페이스와 테스트 채널, 메시지 형식을 정합니다.", detail: "결과를 전달하려면 대상 채널과 메시지 작성 권한의 범위를 최소화해야 합니다.", steps: ["테스트용 Slack 채널을 정합니다.", "누가 결과를 확인할지와 메시지 형식을 정합니다.", "실제 연결 전 테스트 메시지 기준을 정합니다."], completion: "테스트 채널과 결과 형식이 정리되면 완료입니다.", caution: "Slack으로 메시지를 보내거나 연결하지 않았습니다.", guideLabel: "Slack 공식 사이트 열기", guideState: "연결 필요", guideUrl: "https://slack.com/", editRoute: "output", editLabel: "결과 위치 다시 선택" },
-    "이메일": { title: "이메일 수신자와 제목 형식 정하기", state, summary: "결과를 받을 수신자, 제목 규칙, 검토용 테스트 메일을 정합니다.", detail: "이메일 전달은 수신자 범위와 민감 정보 포함 여부를 먼저 검토해야 합니다.", steps: ["테스트 수신자와 제목 형식을 정합니다.", "결과 본문에 포함할 정보와 제외할 정보를 구분합니다.", "테스트용 수신 환경을 준비합니다."], completion: "수신자·제목·본문 기준이 정리되면 완료입니다.", caution: "이메일 발송이나 계정 연결은 아직 수행하지 않습니다.", guideLabel: "결과 위치 다시 보기", guideState: "연결 필요", guideRoute: "output", editRoute: "output", editLabel: "결과 위치 다시 선택" },
-    "문서": { title: "문서 저장 위치와 이름 규칙 정하기", state, summary: "문서의 위치, 제목 형식, 접근 권한과 검토 기준을 설계합니다.", detail: "문서에 남길 내용과 공유 범위는 실제 저장 전 별도로 확인해야 합니다.", steps: ["테스트용 문서 위치를 정합니다.", "문서 제목과 섹션 형식을 정합니다.", "검토자와 공유 범위를 정합니다."], completion: "저장 위치·이름 규칙·공유 범위가 정리되면 완료입니다.", caution: "문서 생성이나 저장은 아직 수행하지 않습니다.", guideLabel: "Google Docs 열기", guideState: "구축 가이드", guideUrl: "https://docs.google.com/", editRoute: "output", editLabel: "결과 위치 다시 선택" },
-    "데이터베이스": { title: "데이터베이스 결과 저장은 현재 미지원", state, summary: "현재 UI-only 범위에는 결과를 데이터베이스에 저장하는 기능이 포함되지 않습니다.", detail: "데이터 저장에는 별도 스키마, 권한, 보존 정책, 검증 Gate가 필요합니다.", steps: ["필요한 저장 항목과 보존 기간을 정리합니다.", "별도 제품·DB Scope를 요청하기 전에 사용자 영향과 권한을 검토합니다."], completion: "후속 Scope에서 저장 요구를 검토할 준비가 되면 완료입니다.", caution: "현재 상태에서 DB 연결·Migration·저장은 진행하지 않습니다.", guideLabel: "결과 위치 다시 보기", guideState: "현재 미지원", guideRoute: "output", editRoute: "output", editLabel: "다른 결과 위치 선택" },
-    "다운로드 결과": { title: "다운로드 결과 형식 정하기", state, summary: "사용자가 내려받을 결과의 파일 형식, 이름, 검토 기준을 설계합니다.", detail: "다운로드 결과는 생성 시점과 보관 방식, 민감 정보 포함 여부를 별도로 확인해야 합니다.", steps: ["필요한 파일 형식과 이름 규칙을 정합니다.", "결과에 포함할 항목과 제외할 항목을 정합니다.", "샘플 결과를 검토할 기준을 적습니다."], completion: "파일 형식·이름·검토 기준이 정리되면 완료입니다.", caution: "파일 생성이나 다운로드 제공은 아직 수행하지 않습니다.", guideLabel: "결과 위치 다시 보기", guideState: "구축 가이드", guideRoute: "output", editRoute: "output", editLabel: "결과 위치 다시 선택" },
+  const guides: Record<string, Omit<BuildPlanDraftItem, "id">> = {
+    Slack: { title: "Slack 결과 채널 준비", state, workLocation: "Slack 설정", summary: "결과를 받을 워크스페이스와 테스트 채널, 메시지 형식을 정합니다.", detail: "결과를 전달하려면 대상 채널과 메시지 작성 권한의 범위를 최소화해야 합니다.", steps: ["결과를 받을 테스트용 Slack 채널을 정하세요.", "누가 결과를 확인할지와 메시지 형식을 적으세요.", "실제 연결 전 테스트 메시지 기준을 적으세요."], actionInputs: [{ label: "입력할 내용", values: ["워크스페이스", "테스트 채널", "결과 확인자", "메시지 형식"] }], inputTargets: slackChannelTargets(["테스트 채널", "메시지 형식"]), completion: "테스트 채널과 결과 형식이 정리되면 완료입니다.", caution: "Slack으로 메시지를 보내거나 연결하지 않았습니다.", guideLabel: "Slack 공식 사이트 열기", guideState: "연결 필요", guideUrl: "https://slack.com/", editRoute: "output", editLabel: "결과 위치 다시 선택" },
+    "이메일": { title: "이메일 수신자와 제목 형식 정하기", state, workLocation: "이메일 설정", summary: "결과를 받을 수신자, 제목 규칙, 검토용 테스트 메일을 정합니다.", detail: "이메일 전달은 수신자 범위와 민감 정보 포함 여부를 먼저 검토해야 합니다.", steps: ["테스트 수신자와 제목 형식을 적으세요.", "결과 본문에 포함할 정보와 제외할 정보를 구분하세요.", "테스트용 수신 환경을 준비하세요."], actionInputs: [{ label: "입력할 내용", values: ["테스트 수신자", "제목 형식", "본문 포함 항목", "본문 제외 항목"] }], completion: "수신자, 제목, 본문 기준이 정리되면 완료입니다.", caution: "이메일 발송이나 계정 연결은 아직 수행하지 않습니다.", guideLabel: "결과 위치 다시 보기", guideState: "연결 필요", guideRoute: "output", editRoute: "output", editLabel: "결과 위치 다시 선택" },
+    "문서": { title: "문서 저장 위치와 이름 규칙 정하기", state, workLocation: "Google Docs 또는 문서 보관 위치", summary: "문서의 위치, 제목 형식, 접근 권한과 검토 기준을 설계합니다.", detail: "문서에 남길 내용과 공유 범위는 실제 저장 전 별도로 확인해야 합니다.", steps: ["테스트용 문서 위치를 정하세요.", "문서 제목과 섹션 형식을 적으세요.", "검토자와 공유 범위를 적으세요."], actionInputs: [{ label: "입력할 내용", values: ["문서 위치", "제목 형식", "섹션 형식", "검토자", "공유 범위"] }], completion: "저장 위치, 이름 규칙, 공유 범위가 정리되면 완료입니다.", caution: "문서 생성이나 저장은 아직 수행하지 않습니다.", guideLabel: "Google Docs 열기", guideState: "구축 가이드", guideUrl: "https://docs.google.com/", editRoute: "output", editLabel: "결과 위치 다시 선택" },
+    "데이터베이스": { title: "데이터베이스 결과 저장은 현재 미지원", state, workLocation: "후속 DB Scope 필요", summary: "현재 UI-only 범위에는 결과를 데이터베이스에 저장하는 기능이 포함되지 않습니다.", detail: "데이터 저장에는 별도 스키마, 권한, 보존 정책, 검증 Gate가 필요합니다.", steps: ["필요한 저장 항목과 보존 기간을 적으세요.", "별도 제품·DB Scope 요청 전에 사용자 영향과 권한을 검토하세요."], actionInputs: [{ label: "후속 Scope에 필요한 내용", values: ["저장 항목", "보존 기간", "권한 범위"] }], completion: "후속 Scope에서 저장 요구를 검토할 준비가 되면 완료입니다.", caution: "현재 상태에서 DB 연결·Migration·저장은 진행하지 않습니다.", guideLabel: "결과 위치 다시 보기", guideState: "현재 미지원", guideRoute: "output", editRoute: "output", editLabel: "다른 결과 위치 선택" },
+    "다운로드 결과": { title: "다운로드 결과 형식 정하기", state, workLocation: "BuildFlow 내부 설계", summary: "사용자가 내려받을 결과의 파일 형식, 이름, 검토 기준을 설계합니다.", detail: "다운로드 결과는 생성 시점과 보관 방식, 민감 정보 포함 여부를 별도로 확인해야 합니다.", steps: ["필요한 파일 형식과 이름 규칙을 적으세요.", "결과에 포함할 항목과 제외할 항목을 정하세요.", "샘플 결과를 검토할 기준을 적으세요."], actionInputs: [{ label: "입력할 내용", values: ["파일 형식", "이름 규칙", "포함 항목", "제외 항목", "검토 기준"] }], completion: "파일 형식, 이름, 검토 기준이 정리되면 완료입니다.", caution: "파일 생성이나 다운로드 제공은 아직 수행하지 않습니다.", guideLabel: "결과 위치 다시 보기", guideState: "구축 가이드", guideRoute: "output", editRoute: "output", editLabel: "결과 위치 다시 선택" },
   };
-  return guides[output] ?? { title: `${output} 결과 준비`, state, summary: getCapabilityDescription(BF0_OUTPUT_OPTIONS, draft.output), detail: "결과 전달은 실제 외부 서비스 연결과 검증이 완료된 뒤에만 사용할 수 있습니다.", steps: ["결과 형식과 수신자를 정의합니다.", "필요한 권한과 실패 시 대처 방법을 검토합니다."], completion: "전달 위치와 사용자 검토 기준이 정리되면 완료입니다.", caution: "이 UI는 메시지를 보내거나 데이터를 저장하지 않습니다.", guideLabel: "결과 위치 다시 보기", guideState: state, guideRoute: "output", editRoute: "output", editLabel: "결과 위치 다시 선택" };
+  return guides[output] ?? { title: `${output} 결과 준비`, state, workLocation: output, summary: getCapabilityDescription(BF0_OUTPUT_OPTIONS, draft.output), detail: "결과 전달은 실제 외부 서비스 연결과 검증이 완료된 뒤에만 사용할 수 있습니다.", steps: ["결과 형식과 수신자를 적으세요.", "필요한 권한과 실패 시 대처 방법을 검토하세요."], actionInputs: [{ label: "입력할 내용", values: ["결과 형식", "수신자", "필요 권한", "실패 시 대처"] }], completion: "전달 위치와 사용자 검토 기준이 정리되면 완료입니다.", caution: "이 UI는 메시지를 보내거나 데이터를 저장하지 않습니다.", guideLabel: "결과 위치 다시 보기", guideState: state, guideRoute: "output", editRoute: "output", editLabel: "결과 위치 다시 선택" };
 }
 
 export function buildBuildPlan(draft: Bf0DesignDraft): Bf0BuildPlanItem[] {
@@ -621,12 +753,12 @@ export function buildBuildPlan(draft: Bf0DesignDraft): Bf0BuildPlanItem[] {
   const handledRequirements = requirements.filter((requirement) => !additionalIds.has(requirement.id));
   const requirementPlan = buildRequirementPlan(handledRequirements);
   const additionalRequirementPlan = additionalRequirements.map(buildAdditionalRequirementPlanItem);
-  const standardPlan: Bf0BuildPlanItem[] = [
+  const standardPlan: BuildPlanDraftItem[] = [
     { id: "source", ...sourcePlan(draft) },
     { id: "goal", ...goalPlan(draft) },
     { id: "approval", ...approvalPlan(draft) },
     { id: "output", ...outputPlan(draft) },
-    { id: "verification", title: "샘플로 전체 흐름 확인", state: "검증 필요", summary: `${source} → ${goal} → ${approval} → ${output} 순서를 개인정보가 없는 샘플로 검토합니다.`, detail: "실제 연결 전에는 기대 결과, 실패 시 중단 조건, 사용자 확인 지점을 명확히 해야 합니다.", steps: ["개인정보가 없는 샘플 한 건을 준비합니다.", "각 단계의 기대 결과와 중단 조건을 기록합니다.", "실제 실행은 별도 승인 및 검증 Gate에서만 진행합니다."], completion: "검증 범위와 중단 조건이 합의되면 완료입니다.", caution: "현재 화면은 검증 실행이나 Evidence 생성을 수행하지 않습니다.", guideLabel: "작동 흐름 다시 보기", guideState: "검증 필요", guideRoute: "workflow", editRoute: "workflow", editLabel: "작동 흐름 다시 보기" },
+    { id: "verification", title: "샘플로 전체 흐름 확인", state: "검증 필요", workLocation: "BuildFlow 내부 설계", summary: `${source} → ${goal} → ${approval} → ${output} 순서를 개인정보가 없는 샘플로 검토합니다.`, detail: "실제 연결 전에는 기대 결과, 실패 시 중단 조건, 사용자 확인 지점을 명확히 해야 합니다.", steps: ["개인정보가 없는 샘플 입력 1건을 준비하세요.", "각 단계의 기대 결과와 중단 조건을 적으세요.", "실제 실행은 별도 승인 및 검증 Gate에서만 진행한다는 점을 확인하세요."], actionInputs: [{ label: "입력할 내용", values: ["개인정보가 없는 샘플 1건", "기대 결과", "실패 시 중단 조건", "사용자 확인 지점"] }], completion: "샘플 입력, 기대 결과, 중단 조건이 정리되면 완료입니다.", caution: "현재 화면은 검증 실행이나 Evidence 생성을 수행하지 않습니다.", guideLabel: "작동 흐름 다시 보기", guideState: "검증 필요", guideRoute: "workflow", editRoute: "workflow", editLabel: "작동 흐름 다시 보기" },
   ];
   const verification = standardPlan.filter((item) => item.id === "verification");
   const requirementsFor = (...kinds: Bf0RequirementKind[]) => handledRequirements.filter((requirement) => kinds.includes(requirement.kind));
@@ -647,10 +779,10 @@ export function buildBuildPlan(draft: Bf0DesignDraft): Bf0BuildPlanItem[] {
       if (item.id === "output" && requirementLinks.length > 0) return { ...item, title: "결과 전달 위치 정하기", summary: "사용자가 결과를 받을 위치와 전달 방식을 확인합니다.", detail: "결과 위치가 정해진 뒤에도 실제 연결과 권한은 별도 검토가 필요합니다.", requirements: requirementLinks };
       return { ...item, requirements: requirementLinks };
     });
-  if (requirementPlan.length === 0) return [...assignedStandardPlan, ...additionalRequirementPlan, ...verification];
-  if (hasGitHubRequirement) return [...requirementPlan, ...additionalRequirementPlan, ...verification];
+  if (requirementPlan.length === 0) return finalizeBuildPlanItems([...assignedStandardPlan, ...additionalRequirementPlan, ...verification]);
+  if (hasGitHubRequirement) return finalizeBuildPlanItems([...requirementPlan, ...additionalRequirementPlan, ...verification]);
   const dataAndSchedulePlan = requirementPlan.filter((item) => item.id.startsWith("data-") || item.id.startsWith("schedule-") || item.id.startsWith("condition-"));
-  return [
+  return finalizeBuildPlanItems([
     ...assignedStandardPlan.filter((item) => item.id === "source"),
     ...dataAndSchedulePlan.filter((item) => item.id.startsWith("data-")),
     ...dataAndSchedulePlan.filter((item) => item.id.startsWith("schedule-")),
@@ -660,14 +792,14 @@ export function buildBuildPlan(draft: Bf0DesignDraft): Bf0BuildPlanItem[] {
     ...dataAndSchedulePlan.filter((item) => item.id.startsWith("condition-")),
     ...additionalRequirementPlan,
     ...verification,
-  ];
+  ]);
 }
 
-function buildRequirementPlan(requirements: Bf0RequirementCandidate[]): Bf0BuildPlanItem[] {
+function buildRequirementPlan(requirements: Bf0RequirementCandidate[]): BuildPlanDraftItem[] {
   const byId = (id: string) => requirements.filter((item) => item.id === id);
   const hasGitHub = requirements.some((item) => item.id === "github-trigger" || item.id === "github-source");
   if (hasGitHub) {
-    const plans: Bf0BuildPlanItem[] = [];
+    const plans: BuildPlanDraftItem[] = [];
     const githubInputRequirements = [...byId("github-trigger"), ...byId("github-source")];
     if (githubInputRequirements.length > 0) plans.push(requirementPlanItem("github-pr-input", "GitHub PR 입력 방식 확인", "연결 필요", "새 PR 생성 이벤트와 코드 변경사항을 어떤 방식으로 받을지 정리합니다.", "GitHub 연결 방식과 최소 권한은 별도 확인이 필요합니다.", ["대상 Repository와 PR 이벤트 범위를 정합니다.", "테스트용 PR 이벤트 범위를 정합니다."], "입력 이벤트와 최소 권한 범위가 정리되면 완료입니다.", "GitHub 연결이나 API 호출은 시작하지 않습니다.", githubInputRequirements));
     if (byId("github-source").length > 0) plans.push(requirementPlanItem("code-change-scope", "분석할 코드 변경 범위 정하기", "구축 가이드", "PR의 어떤 변경사항을 검사할지 정리합니다.", "코드 diff 범위와 제외할 파일을 먼저 확인해야 합니다.", ["검사할 Repository와 경로를 정합니다.", "제외할 생성 파일·민감 파일 기준을 정합니다."], "검사 대상과 제외 기준이 정리되면 완료입니다.", "실제 코드 분석은 수행하지 않습니다.", byId("github-source")));
@@ -687,7 +819,7 @@ function buildRequirementPlan(requirements: Bf0RequirementCandidate[]): Bf0Build
   });
 }
 
-function buildAdditionalRequirementPlanItem(requirement: Bf0RequirementCandidate): Bf0BuildPlanItem {
+function buildAdditionalRequirementPlanItem(requirement: Bf0RequirementCandidate): BuildPlanDraftItem {
   const state: Bf0BuildPlanItem["state"] = requirement.support === "추가 연결 필요" ? "연결 필요" : requirement.support === "구축 가이드 가능" ? "구축 가이드" : requirement.support === "표준 선택으로 표현 가능" ? "설계 초안" : "검증 필요";
   const content: Record<Bf0RequirementKind, { title: string; detail: string; steps: string[] }> = {
     trigger: { title: "추가 시작 조건 확인", detail: "추가 시작 조건의 적용 범위와 예외를 확인합니다.", steps: ["시작 조건을 한 문장으로 검토합니다.", "예외와 중단 기준을 정합니다."] },
@@ -704,8 +836,150 @@ function buildAdditionalRequirementPlanItem(requirement: Bf0RequirementCandidate
   return requirementPlanItem(`additional-${requirement.id}`, `${item.title}: ${requirement.value}`, state, requirement.value, item.detail, item.steps, "추가 요구사항의 의미와 남은 확인 사항이 정리되면 완료입니다.", "이 항목은 설계 초안이며 실제 연결·실행·검증 결과가 아닙니다.", [requirement]);
 }
 
-function requirementPlanItem(id: string, title: string, state: Bf0BuildPlanItem["state"], summary: string, detail: string, steps: string[], completion: string, caution: string, requirements: Bf0RequirementCandidate[]): Bf0BuildPlanItem {
-  return { id, title, state, summary, detail, steps, completion, caution, guideLabel: "구축 계획 다시 보기", guideState: state, guideRoute: "plan", editRoute: "plan", editLabel: "요구사항 다시 보기", requirements };
+function requirementPlanItem(id: string, title: string, state: Bf0BuildPlanItem["state"], summary: string, detail: string, steps: string[], completion: string, caution: string, requirements: Bf0RequirementCandidate[]): BuildPlanDraftItem {
+  const guide = requirementGuide(requirements);
+  const actionInputs = actionInputsFromRequirements(requirements);
+  const inputValues = actionInputs?.flatMap((group) => group.values) ?? [];
+  const inputTargets = id === "github-pr-input"
+    ? githubPullRequestTargets(inputValues)
+    : id === "security-slack"
+      ? slackChannelTargets(["테스트 채널", "메시지 형식"])
+      : undefined;
+  return { id, title, state, workLocation: inferRequirementWorkLocation(requirements), summary, detail, steps: steps.map(toActionSentence), actionInputs, inputTargets, completion: toCompletionCheck(completion), caution, guideLabel: guide.label, guideState: state, guideUrl: guide.url, guideRoute: guide.url ? undefined : "plan", editRoute: "plan", editLabel: "요구사항 다시 보기", requirements };
+}
+
+function finalizeBuildPlanItems(items: BuildPlanDraftItem[]): Bf0BuildPlanItem[] {
+  return items.map((item, index) => {
+    const actionInputs = item.actionInputs?.filter((group) => group.values.length > 0);
+    const workLocation = item.workLocation ?? workLocationFromGuide(item);
+    return {
+      ...item,
+      actor: item.actor ?? "사용자",
+      timing: item.timing ?? timingForIndex(index),
+      workLocation,
+      task: item.task ?? item.summary,
+      reason: item.reason ?? item.detail,
+      actionInputs,
+      inputTargets: item.inputTargets ?? inputTargetsFromActionInputs(item, workLocation, actionInputs),
+      nextAction: item.nextAction ?? (items[index + 1] ? `${String(index + 2).padStart(2, "0")} · ${items[index + 1].title}` : "구축 계획 확인 완료"),
+    };
+  });
+}
+
+function timingForIndex(index: number): string {
+  if (index === 0) return "구축 계획을 확인한 뒤 첫 번째로 수행합니다.";
+  return `STEP ${index} 완료 후 수행합니다.`;
+}
+
+function inputTargetsFromActionInputs(item: BuildPlanDraftItem, workLocation: string, actionInputs?: Bf0BuildPlanItem["actionInputs"]): Bf0InputTarget[] | undefined {
+  const values = actionInputs?.flatMap((group) => group.values.map((value) => ({ label: group.label, value }))) ?? [];
+  if (values.length === 0) return undefined;
+  return values.map(({ label, value }, index) => ({
+    id: `${item.id}-input-${index + 1}`,
+    label,
+    service: workLocation,
+    screen: UNVERIFIED_LOCATION_COPY,
+    control: UNVERIFIED_LOCATION_COPY,
+    field: label,
+    value,
+    format: "현재 공식 화면 기준 확인 필요",
+    setting: "현재 공식 화면 기준 확인 필요",
+    verificationState: "NOT_VERIFIED",
+  }));
+}
+
+function googleFormQuestionTargets(values: string[]): Bf0InputTarget[] {
+  return values.map((value, index) => ({
+    id: `google-form-question-${index + 1}`,
+    label: "질문 항목",
+    service: "Google Forms",
+    screen: "폼 편집 화면",
+    control: "질문 추가",
+    field: "질문 제목",
+    value,
+    format: "질문 유형은 설계에 따라 선택",
+    setting: "필수 여부는 설계에 따라 설정",
+    verificationState: "OFFICIAL_VERIFIED",
+    officialSource: OFFICIAL_SOURCES.googleForms,
+  }));
+}
+
+function slackChannelTargets(values: string[]): Bf0InputTarget[] {
+  return values.map((value, index) => ({
+    id: `slack-channel-${index + 1}`,
+    label: "Slack 채널 설정",
+    service: "Slack",
+    screen: "채널 생성 화면 또는 채널/DM 화면",
+    control: value === "메시지 형식" ? "message field" : "사이드바의 plus sign → Channel",
+    field: value === "메시지 형식" ? "message field" : "channel name",
+    value,
+    format: value === "메시지 형식" ? "텍스트 메시지" : "Slack 채널 이름",
+    setting: value === "메시지 형식" ? "전송 전 사용자 확인 기준" : "public/private 여부 선택",
+    verificationState: "OFFICIAL_VERIFIED",
+    officialSource: value === "메시지 형식" ? OFFICIAL_SOURCES.slackSendMessages : OFFICIAL_SOURCES.slackCreateChannel,
+  }));
+}
+
+function githubPullRequestTargets(values: string[]): Bf0InputTarget[] {
+  return values.map((value, index) => ({
+    id: `github-pr-${index + 1}`,
+    label: "GitHub PR 확인 항목",
+    service: "GitHub",
+    screen: index === 0 ? UNVERIFIED_LOCATION_COPY : "Pull request",
+    control: index === 0 ? UNVERIFIED_LOCATION_COPY : "Files changed",
+    field: index === 0 ? "Repository / PR 범위" : "PR 이벤트 범위",
+    value,
+    format: "현재 연결 방식과 Repository 기준 확인 필요",
+    setting: "현재 공식 화면 기준 확인 필요",
+    verificationState: index === 0 ? "NOT_VERIFIED" : "OFFICIAL_VERIFIED",
+    officialSource: index === 0 ? undefined : OFFICIAL_SOURCES.githubPullRequestReview,
+  }));
+}
+
+function workLocationFromGuide(item: BuildPlanDraftItem): string {
+  if (item.guideUrl?.includes("mail.google.com")) return "Gmail";
+  if (item.guideUrl?.includes("forms.google.com")) return "Google Forms";
+  if (item.guideUrl?.includes("drive.google.com")) return "Google Drive";
+  if (item.guideUrl?.includes("slack.com")) return "Slack 설정";
+  if (item.guideUrl?.includes("docs.google.com")) return "Google Docs";
+  if (item.guideUrl?.includes("calendar.google.com")) return "일정 설계";
+  if (item.guideRoute) return "BuildFlow 내부 설계";
+  return "확인 필요";
+}
+
+function inferRequirementWorkLocation(requirements: Bf0RequirementCandidate[]): string {
+  if (requirements.some((item) => item.value.toLowerCase().includes("github") || item.id.includes("github"))) return "GitHub 또는 Repository 설정";
+  if (requirements.some((item) => item.value.toLowerCase().includes("slack") || item.id.includes("slack"))) return "Slack 설정";
+  if (requirements.some((item) => item.kind === "schedule")) return "일정 설계";
+  return "BuildFlow 내부 설계";
+}
+
+function requirementGuide(requirements: Bf0RequirementCandidate[]): { label: string; url?: string } {
+  if (requirements.some((item) => item.value.toLowerCase().includes("github") || item.id.includes("github"))) return { label: "GitHub 열기", url: "https://github.com/" };
+  if (requirements.some((item) => item.value.toLowerCase().includes("slack") || item.id.includes("slack"))) return { label: "Slack 공식 사이트 열기", url: "https://slack.com/" };
+  return { label: "구축 계획 다시 보기" };
+}
+
+function actionInputsFromRequirements(requirements: Bf0RequirementCandidate[]): Bf0BuildPlanItem["actionInputs"] {
+  const values = requirements.map((item) => item.value).filter(Boolean);
+  return values.length > 0 ? [{ label: "입력할 내용", values }] : undefined;
+}
+
+function toActionSentence(value: string): string {
+  if (/하세요\.?$/.test(value)) return value;
+  return value
+    .replace(/정합니다\.$/, "정하세요.")
+    .replace(/검토합니다\.$/, "검토하세요.")
+    .replace(/준비합니다\.$/, "준비하세요.")
+    .replace(/만듭니다\.$/, "만드세요.")
+    .replace(/기록합니다\.$/, "기록하세요.")
+    .replace(/적습니다\.$/, "적으세요.");
+}
+
+function toCompletionCheck(value: string): string {
+  return value
+    .replace(/정리되면 완료입니다\.$/, "정리되면 완료입니다.")
+    .replace(/합의되면 완료입니다\.$/, "합의되면 완료입니다.");
 }
 
 export function getCostAndAccessSummary(draft: Bf0DesignDraft) {
@@ -744,6 +1018,7 @@ export function getCompletionCopy(draft: Bf0DesignDraft) {
   const requirementGaps = getRequirementGaps(activeRequirements);
   const unresolvedQuestions = getUnresolvedQuestions(activeRequirements);
   const hasUnresolved = unresolvedQuestions.length > 0 || requirementGaps.length > 0;
+  const flow = `${draft.source ?? "입력 확인 필요"} → ${draft.goal ?? "처리 확인 필요"} → ${draft.approval ?? "실행 전 확인"} → ${draft.output ?? "결과 위치 확인 필요"}`;
   return {
     title: "구축 경로 초안이 정리되었습니다",
     lines: [
@@ -751,7 +1026,21 @@ export function getCompletionCopy(draft: Bf0DesignDraft) {
       "외부 서비스는 아직 연결되지 않았습니다.",
       "실제 Agent는 아직 구축 또는 실행되지 않았습니다.",
     ],
-    flow: `${draft.source ?? "입력"} → ${draft.goal ?? "처리"} → ${draft.approval ?? "확인"} → ${draft.output ?? "결과"}`,
+    prepared: [
+      "요청 요약",
+      "구축 계획 초안",
+      "사용자가 검토할 다음 행동",
+    ],
+    notExecuted: [
+      "외부 서비스 연결",
+      "Runtime 또는 Provider 실행",
+      "Agent 구축·배포·자동 검증",
+    ],
+    nextActions: [
+      hasUnresolved ? "남은 확인 항목을 검토합니다." : "구축 계획을 검토합니다.",
+      "실제 연결과 실행은 별도 승인 Gate에서 진행합니다.",
+    ],
+    flow,
     activeRequirements,
     requirementGaps,
     unresolvedQuestions,
