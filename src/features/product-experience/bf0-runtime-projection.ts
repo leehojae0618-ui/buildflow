@@ -54,23 +54,32 @@ export type Bf0RuntimeProjection =
 
 type Bf0RuntimeIneligible = Exclude<Bf0RuntimeProjection, { status: "ELIGIBLE" }>;
 
-const controlledBlueprint: AgentBlueprint = {
-  id: "bf0-controlled-runtime",
+export type Bf0RuntimeProjectionOptions = {
+  runtimeInput?: string;
+  systemInstruction?: string;
+  model?: string;
+  profileId?: string;
+};
+
+function createBf0RuntimeBlueprint(options: Required<Pick<Bf0RuntimeProjectionOptions, "model" | "profileId">>): AgentBlueprint {
+  return {
+  id: options.profileId,
   version: "1.0.0",
-  displayName: "BF0 Controlled Runtime",
+  displayName: options.profileId === "bf0-controlled-runtime" ? "BF0 Controlled Runtime" : "BF0 Customer Reply Runtime",
   capabilities: ["AI_RESPONSE"],
   deliveryModes: ["CHAT"],
   interfaceModes: ["WEB_CHAT"],
   requiredProviders: ["openai"],
   compatibility: { minBuildFlowVersion: "0.1.0", minRuntimeVersion: "1.0.0" },
   blocks: [
-    { id: "model.controlled", kind: "MODEL", name: "Controlled runtime model contract", required: true, provider: "openai", model: "controlled-runtime-v1" },
-    { id: "prompt.controlled", kind: "PROMPT", name: "Controlled runtime prompt", required: true, promptRef: "prompts/bf0-controlled-runtime/system" },
-    { id: "guardrail.controlled", kind: "GUARDRAIL", name: "Controlled runtime guardrail", required: true, rules: ["NO_SECRET_EXPOSURE", "NO_UNAPPROVED_TOOL_EXECUTION"] },
-    { id: "output.controlled", kind: "OUTPUT", name: "Controlled runtime result", required: true, schema: { id: "bf0-controlled-runtime-result", version: "1.0.0" } },
-    { id: "delivery.controlled", kind: "DELIVERY_SURFACE", name: "BuildFlow web result", required: true, deliveryMode: "CHAT", interfaces: ["WEB_CHAT"] },
+    { id: "model.runtime", kind: "MODEL", name: "Runtime model contract", required: true, provider: "openai", model: options.model },
+    { id: "prompt.runtime", kind: "PROMPT", name: "Runtime prompt", required: true, promptRef: `prompts/${options.profileId}/system` },
+    { id: "guardrail.runtime", kind: "GUARDRAIL", name: "Runtime guardrail", required: true, rules: ["NO_SECRET_EXPOSURE", "NO_UNAPPROVED_TOOL_EXECUTION"] },
+    { id: "output.runtime", kind: "OUTPUT", name: "BuildFlow web result", required: true, schema: { id: `${options.profileId}-result`, version: "1.0.0" } },
+    { id: "delivery.runtime", kind: "DELIVERY_SURFACE", name: "BuildFlow web result", required: true, deliveryMode: "CHAT", interfaces: ["WEB_CHAT"] },
   ],
-};
+  };
+}
 
 const externalPattern = /gmail|slack|github|repository|webhook|\bapi\b|database|\bdb\b|n8n|make|mcp|oauth|google\s*forms?|web\s*form|웹\s*폼|구글\s*폼|데이터베이스|파일\s*(업로드|저장)|외부\s*(연결|서비스)/i;
 
@@ -106,34 +115,44 @@ export function getBf0RuntimeEligibility(draft: Pick<Bf0DesignDraft, "idea" | "g
  * Builds the small, no-tool product artifact chain used only after the user
  * explicitly requests a controlled internal verification.
  */
-export function projectBf0Runtime(draft: Pick<Bf0DesignDraft, "idea" | "goal" | "source" | "approval" | "output">): Bf0RuntimeProjection {
+export function projectBf0Runtime(
+  draft: Pick<Bf0DesignDraft, "idea" | "goal" | "source" | "approval" | "output">,
+  options: Bf0RuntimeProjectionOptions = {},
+): Bf0RuntimeProjection {
   const eligibility = getBf0RuntimeEligibility(draft);
   if (eligibility) return eligibility;
 
+  const runtimeInput = options.runtimeInput === undefined
+    ? draft.idea.trim()
+    : options.runtimeInput.trim();
+  const model = options.model?.trim() || "controlled-runtime-v1";
+  const profileId = options.profileId?.trim() || "bf0-controlled-runtime";
+  const blueprint = createBf0RuntimeBlueprint({ model, profileId });
+
   const transientProviderInput: RuntimeTransientProviderInput = {
-    systemInstruction: "Produce only a controlled BuildFlow runtime reference. Do not call external services.",
-    userInput: draft.idea.trim(),
+    systemInstruction: options.systemInstruction?.trim() || "Produce only a controlled BuildFlow runtime reference. Do not call external services.",
+    userInput: runtimeInput,
   };
   if (/sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16}|Bearer\s+/i.test(transientProviderInput.userInput)) {
     return ineligible("UNSAFE_INPUT", "안전하게 처리할 수 없는 입력이 포함되어 내부 실행 검증을 시작하지 않았습니다.");
   }
 
-  const inputChecksum = digest({ source: "direct-input", idea: transientProviderInput.userInput });
-  const projectId = `bf0-controlled-${inputChecksum.slice(0, 24)}`;
-  const userId = `bf0-controlled-user-${inputChecksum.slice(0, 16)}`;
-  if (!validateAgentBlueprint(controlledBlueprint).valid) return invalid();
+  const inputChecksum = digest({ source: "direct-input", runtimeInput: transientProviderInput.userInput });
+  const projectId = `${profileId}-${inputChecksum.slice(0, 24)}`;
+  const userId = `${profileId}-user-${inputChecksum.slice(0, 16)}`;
+  if (!validateAgentBlueprint(blueprint).valid) return invalid();
 
   const generated = generateAgentDefinition({
     projectId,
     goal: draft.goal!.trim(),
-    blueprint: controlledBlueprint,
+    blueprint,
     selectedDeliveryMode: "CHAT",
     selectedInterfaceModes: ["WEB_CHAT"],
   });
-  if (generated.warnings.length || generated.definition.validationStatus !== "VALID" || !validateAgentDefinition(generated.definition, controlledBlueprint).valid) return invalid();
+  if (generated.warnings.length || generated.definition.validationStatus !== "VALID" || !validateAgentDefinition(generated.definition, blueprint).valid) return invalid();
 
   const toolResolutionPlan = resolveAgentToolRequirements({ requirements: [], candidates: [] });
-  const validationGate = validateAgentReadiness({ definition: generated.definition, blueprint: controlledBlueprint, toolResolutionPlan, mcpTools: [] });
+  const validationGate = validateAgentReadiness({ definition: generated.definition, blueprint, toolResolutionPlan, mcpTools: [] });
   const profile = createAgentPackageProfile({ packageId: `pkg.${projectId}`, packageVersion: "1.0.0", buildflowVersion: "0.1.0", definition: generated.definition, toolResolutionPlan, validationGate, mcpTools: [] });
   const readiness = validateAgentPackageReadiness(profile, { toolResolutionPlan, validationGate, mcpTools: [] });
   if (!readiness.exportReady) return invalid();
@@ -162,13 +181,13 @@ export function projectBf0Runtime(draft: Pick<Bf0DesignDraft, "idea" | "goal" | 
     const approvalGate = evaluatePackageApprovalGate({ evidenceReport: evidenceReport.report, request: request.request, decisions: recordedDecisions.map((decision) => decision.record), requestedExecutionScopes: ["RUNTIME_EXECUTION"] });
     if (approvalGate.gateStatus !== "APPROVED_WITH_LIMITATIONS" || approvalGate.authorization.authorizationStatus !== "AUTHORIZED_WITH_LIMITATIONS") return invalid();
     const inputArtifactReference = { artifactId: `bf0-input-${inputChecksum.slice(0, 24)}`, artifactType: "bf0-direct-input", integrityChecksum: inputChecksum, mediaType: "text/plain", storageReference: "memory://bf0-direct-input" };
-    const runtimeExecutionRequest = buildRuntimeExecutionRequest({ approvalGate, requestedExecutionMode: "STANDARD", executionProfileReference: { referenceId: "bf0-controlled-runtime-profile", integrityChecksum: digest({ profile: "bf0-controlled-runtime" }), referenceType: "runtime-profile" }, requestedBy: approver, inputArtifactReferences: [inputArtifactReference], requestedCapabilityReferences: [{ capabilityId: "AI_RESPONSE", policyReference: "policy://bf0-controlled-ai-response", integrityChecksum: digest({ capability: "AI_RESPONSE" }) }], expirationPolicy: { mode: "REFERENCE_ONLY", expirationReference: "bf0-controlled-invocation" } });
+    const runtimeExecutionRequest = buildRuntimeExecutionRequest({ approvalGate, requestedExecutionMode: "STANDARD", executionProfileReference: { referenceId: `${profileId}-profile`, integrityChecksum: digest({ profile: profileId }), referenceType: "runtime-profile" }, requestedBy: approver, inputArtifactReferences: [inputArtifactReference], requestedCapabilityReferences: [{ capabilityId: "AI_RESPONSE", policyReference: `policy://${profileId}/ai-response`, integrityChecksum: digest({ capability: "AI_RESPONSE" }) }], expirationPolicy: { mode: "REFERENCE_ONLY", expirationReference: `${profileId}-invocation` } });
     if (runtimeExecutionRequest.status !== "VALID") return invalid();
-    const runtimePlan = buildRuntimePlan({ runtimeExecutionRequest: runtimeExecutionRequest.value, blueprint: controlledBlueprint, blueprintIntegrityChecksum: digest(controlledBlueprint), agentDefinition: generated.definition, agentDefinitionIntegrityChecksum: digest(generated.definition), inputArtifactReference, transientProviderInput });
+    const runtimePlan = buildRuntimePlan({ runtimeExecutionRequest: runtimeExecutionRequest.value, blueprint, blueprintIntegrityChecksum: digest(blueprint), agentDefinition: generated.definition, agentDefinitionIntegrityChecksum: digest(generated.definition), inputArtifactReference, transientProviderInput });
     if (runtimePlan.status !== "VALID" || !validateRuntimePlan(runtimePlan.value).valid) return invalid();
     const runtimeApprovalBinding = buildRuntimeApprovalBinding({ projectId, userId, runtimeExecutionRequest: runtimeExecutionRequest.value, runtimePlan: runtimePlan.value });
     if (runtimeApprovalBinding.status !== "VALID") return invalid();
-    return { status: "ELIGIBLE", projectId, userId, blueprint: controlledBlueprint, definition: generated.definition, approvalGate, runtimeExecutionRequest: runtimeExecutionRequest.value, runtimePlan: runtimePlan.value, runtimeApprovalBinding: runtimeApprovalBinding.value, transientProviderInput };
+    return { status: "ELIGIBLE", projectId, userId, blueprint, definition: generated.definition, approvalGate, runtimeExecutionRequest: runtimeExecutionRequest.value, runtimePlan: runtimePlan.value, runtimeApprovalBinding: runtimeApprovalBinding.value, transientProviderInput };
   } catch {
     return invalid();
   }

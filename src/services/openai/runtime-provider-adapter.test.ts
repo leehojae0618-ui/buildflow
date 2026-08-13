@@ -118,6 +118,35 @@ describe("OpenAI Runtime Provider Adapter", () => {
     expect(serialized).not.toContain("sdkPayload");
   });
 
+  it("captures product-owned output without adding it to the provider result", async () => {
+    const output = "고객에게 보여 줄 답변 초안";
+    const capture = vi.fn();
+    const create = vi.fn().mockResolvedValue({ output_text: output });
+    const adapter = createOpenAIRuntimeProviderAdapter(() => 100, {
+      isConfigured: () => true,
+      createClient: () => ({ responses: { create } }) as never,
+      onOutputText: capture,
+    });
+
+    const result = await adapter.execute(command());
+    expect(capture).toHaveBeenCalledWith(output);
+    expect(JSON.stringify(result)).not.toContain(output);
+  });
+
+  it("fails safely when product-owned output capture is unavailable", async () => {
+    const output = "do-not-return-this-output";
+    const create = vi.fn().mockResolvedValue({ output_text: output });
+    const adapter = createOpenAIRuntimeProviderAdapter(() => 100, {
+      isConfigured: () => true,
+      createClient: () => ({ responses: { create } }) as never,
+      onOutputText: () => { throw new Error("capture failed"); },
+    });
+
+    const result = await adapter.execute(command());
+    expect(result).toMatchObject({ status: "FAILED", errorCode: "PROVIDER_REQUEST_FAILED" });
+    expect(JSON.stringify(result)).not.toContain(output);
+  });
+
   it("does not treat an empty OpenAI response as success", async () => {
     const create = vi.fn().mockResolvedValue({ output_text: "   " });
     const result = await adapterFor(create).execute(command());

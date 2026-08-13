@@ -9,9 +9,11 @@
 
 ## 2. Current Sprint
 
-활성 Sprint는 없다. `PRODUCT-RUNTIME-VERTICAL-SLICE-001`은
-`SCOPE FROZEN / IMPLEMENTATION NOT APPROVED` 후보이며, 구현에는 별도 사용자
-승인이 필요하다.
+활성 Sprint는 `PRODUCT-RUNTIME-REAL-AI-SLICE-001`이며 IMPLEMENTATION IN
+PROGRESS 상태다. Live Provider, DB, external action, Commit, Push, Deploy는
+별도 승인 전까지 수행하지 않는다. `PRODUCT-RUNTIME-VERTICAL-SLICE-001`의
+controlled runtime 구현은 main `609eb083`에서 관찰됐으며, 과거 implementation
+authority provenance는 소급 주장하지 않는다.
 
 `LIVE-DB-VALIDATION-001`은 `PAUSED / BLOCKED BY LOCAL ENVIRONMENT`다. 이는
 종료나 저장소 구현 실패가 아니며, Local Supabase 환경의 반복 healthcheck
@@ -43,6 +45,7 @@ implementation이 아니다.
 | LV5-NO-KEY-REMEDIATION-001 | No-Key n8n readiness, Guest Lab, and local `USER_SUBMITTED` Evidence/Verdict flow | CLOSED / COMPLETE / USER SPRINT EXIT APPROVED | `54bbc895` | Independent audit PASS after F1/F2 correction; Browser QA, actual n8n Import, and real Make Configuration remain NOT VERIFIED | `sprints/LV5-NO-KEY-REMEDIATION-001/REPORT.md` |
 | BF0-PRODUCT-EXPERIENCE-001 | UI-only Product Experience journey and homepage entry | CLOSED / COMPLETE | `15746f14`, `51011d66` | User Persona QA PASS; User Visual QA PASS; P0/P1/P2 0/0/0; User Sprint Exit approved | `sprints/BF0-PRODUCT-EXPERIENCE-001/EXIT.md` |
 | BF0-UX-SIMPLIFICATION-001 | BF0 UX simplification and guided build experience | CLOSED / COMPLETE / USER SPRINT EXIT APPROVED | `84ac5e2` | Codex regression PASS; final browser gap check PASS; GPT final review PASS; Claude final audit SKIPPED BY PRODUCT OWNER | `sprints/BF0-UX-SIMPLIFICATION-001/REPORT.md`, `sprints/BF0-UX-SIMPLIFICATION-001/CLOSEOUT.md` |
+| PRODUCT-RUNTIME-REAL-AI-SLICE-001 | Direct-input customer-reply Real-AI product path with a disabled-by-default live Provider gate | IMPLEMENTATION IN PROGRESS | Uncommitted | Mock/injected-provider validation pending | `sprints/PRODUCT-RUNTIME-REAL-AI-SLICE-001/` |
 
 ## 4. Gate History
 

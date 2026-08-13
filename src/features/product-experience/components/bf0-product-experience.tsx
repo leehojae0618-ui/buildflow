@@ -1,8 +1,8 @@
 "use client";
 
-import { type FormEvent, useMemo, useRef, useState } from "react";
+import { type FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createProjectFromBf0Draft, runControlledBf0Runtime } from "../actions";
+import { createProjectFromBf0Draft, getBf0RealAIAvailability, runControlledBf0Runtime, runRealAIBf0Runtime } from "../actions";
 import {
   BF0_APPROVAL_OPTIONS,
   BF0_GOAL_OPTIONS,
@@ -62,6 +62,12 @@ export function Bf0ProductExperience() {
   const [runtimeState, setRuntimeState] = useState<"idle" | "running" | "succeeded" | "failed">("idle");
   const [runtimeMessage, setRuntimeMessage] = useState<string | null>(null);
   const [runtimeReferences, setRuntimeReferences] = useState<{ execution?: string; evidence?: string }>({});
+  const [realAiAvailability, setRealAiAvailability] = useState<"loading" | "available" | "unavailable">("loading");
+  const [realAiInput, setRealAiInput] = useState("");
+  const [realAiState, setRealAiState] = useState<"idle" | "running" | "succeeded" | "failed">("idle");
+  const [realAiMessage, setRealAiMessage] = useState<string | null>(null);
+  const [realAiOutput, setRealAiOutput] = useState<string | null>(null);
+  const [realAiReferences, setRealAiReferences] = useState<{ execution?: string; evidence?: string }>({});
   const submissionLocked = useRef(false);
 
   const workflow = useMemo(() => buildWorkflowDraft(draft), [draft]);
@@ -76,6 +82,14 @@ export function Bf0ProductExperience() {
   const safeStepIndex = clampStepIndex(stepIndex, buildPlan.length);
   const runtimeInputNeedsSafetyReview = clientSecretPattern.test(draft.idea);
   const runtimeCandidate = !runtimeInputNeedsSafetyReview && draft.source === "직접 입력" && draft.output === "다운로드 결과" && !/gmail|slack|github|repository|webhook|\bapi\b|database|\bdb\b|n8n|make|mcp|oauth|google\s*forms?|web\s*form|웹\s*폼|구글\s*폼|데이터베이스|파일\s*(업로드|저장)|외부\s*(연결|서비스)/i.test([draft.idea, draft.goal, draft.source, draft.output].filter(Boolean).join(" "));
+
+  useEffect(() => {
+    let active = true;
+    void getBf0RealAIAvailability()
+      .then((available) => { if (active) setRealAiAvailability(available ? "available" : "unavailable"); })
+      .catch(() => { if (active) setRealAiAvailability("unavailable"); });
+    return () => { active = false; };
+  }, []);
 
   const navigate = (target: Bf0Route) => {
     const firstIncomplete = getFirstIncompleteRoute(draft);
@@ -162,6 +176,11 @@ export function Bf0ProductExperience() {
     setRuntimeState("idle");
     setRuntimeMessage(null);
     setRuntimeReferences({});
+    setRealAiInput("");
+    setRealAiState("idle");
+    setRealAiMessage(null);
+    setRealAiOutput(null);
+    setRealAiReferences({});
     setOnboardingIndex(0);
     setRoute("idea");
   };
@@ -204,6 +223,23 @@ export function Bf0ProductExperience() {
     }
     setRuntimeState("failed");
     setRuntimeMessage("safeMessage" in result ? result.safeMessage : "통제된 내부 실행 검증을 완료하지 못했습니다.");
+  };
+
+  const startRealAiRuntime = async () => {
+    if (realAiState === "running" || realAiAvailability !== "available" || !runtimeCandidate || !realAiInput.trim()) return;
+    setRealAiState("running");
+    setRealAiMessage(null);
+    setRealAiOutput(null);
+    setRealAiReferences({});
+    const result = await runRealAIBf0Runtime({ idea: draft.idea, goal: draft.goal, source: draft.source, approval: draft.approval, output: draft.output, runtimeInput: realAiInput });
+    if (result.status === "SUCCEEDED") {
+      setRealAiState("succeeded");
+      setRealAiOutput(result.answerDraft);
+      setRealAiReferences({ execution: result.runtimeResult.executionId, evidence: result.packageEvidence.runtimeEvidenceReferences[0]?.runtimeEvidenceId });
+      return;
+    }
+    setRealAiState("failed");
+    setRealAiMessage(result.safeMessage);
   };
 
   return <main className="min-h-screen overflow-x-hidden bg-[#050812] text-slate-100">
@@ -285,7 +321,10 @@ export function Bf0ProductExperience() {
     {route === "access" && <AccessScreen summary={costAndAccess} route={route} onBack={() => navigate("workflow")} onNext={() => navigate("plan")} />}
     {route === "plan" && <Bf0BuildPlanScreen items={buildPlan} summary={completion.flow} onBack={() => navigate("navigator")} onNavigate={navigate} onNext={() => navigate("complete")} onStartStepMode={() => navigate("step")} />}
     {route === "step" && <Bf0StepMode items={buildPlan} index={safeStepIndex} progress={stepProgress} onBack={() => safeStepIndex === 0 ? navigate("plan") : setStepIndex((index) => index - 1)} onNext={() => safeStepIndex === buildPlan.length - 1 ? navigate("complete") : setStepIndex((index) => index + 1)} onShowPlan={() => navigate("plan")} onProgress={(id, value) => setStepProgress((current) => ({ ...current, [id]: value }))} />}
-    {route === "complete" && <CompletionScreen completion={completion} requirements={activeRequirements} gaps={requirementGaps} unresolvedQuestions={completion.unresolvedQuestions} stepSummary={stepSummary} runtimeCandidate={runtimeCandidate} runtimeInputNeedsSafetyReview={runtimeInputNeedsSafetyReview} runtimeState={runtimeState} runtimeMessage={runtimeMessage} runtimeReferences={runtimeReferences} onStartControlledRuntime={() => void startControlledRuntime()} onRestart={restart} onEditRequirements={() => navigate("navigator")} onPlan={() => navigate("plan")} onSave={() => void saveAsProject()} saving={saveState === "saving"} saveMessage={saveMessage} />}
+    {route === "complete" && <>
+      <CompletionScreen completion={completion} requirements={activeRequirements} gaps={requirementGaps} unresolvedQuestions={completion.unresolvedQuestions} stepSummary={stepSummary} runtimeCandidate={runtimeCandidate} runtimeInputNeedsSafetyReview={runtimeInputNeedsSafetyReview} runtimeState={runtimeState} runtimeMessage={runtimeMessage} runtimeReferences={runtimeReferences} onStartControlledRuntime={() => void startControlledRuntime()} onRestart={restart} onEditRequirements={() => navigate("navigator")} onPlan={() => navigate("plan")} onSave={() => void saveAsProject()} saving={saveState === "saving"} saveMessage={saveMessage} />
+      <RealAITrialPanel eligible={runtimeCandidate} availability={realAiAvailability} input={realAiInput} state={realAiState} message={realAiMessage} output={realAiOutput} references={realAiReferences} onInputChange={setRealAiInput} onRun={() => void startRealAiRuntime()} />
+    </>}
   </main>;
 }
 
@@ -359,6 +398,12 @@ function AccessScreen({ summary, route, onBack, onNext }: { summary: ReturnType<
 function CompletionScreen({ completion, requirements, gaps, unresolvedQuestions, stepSummary, runtimeCandidate, runtimeInputNeedsSafetyReview, runtimeState, runtimeMessage, runtimeReferences, onStartControlledRuntime, onRestart, onEditRequirements, onPlan, onSave, saving, saveMessage }: { completion: ReturnType<typeof getCompletionCopy>; requirements: Bf0RequirementCandidate[]; gaps: Bf0RequirementCandidate[]; unresolvedQuestions: string[]; stepSummary: ReturnType<typeof getStepProgressSummary>; runtimeCandidate: boolean; runtimeInputNeedsSafetyReview: boolean; runtimeState: "idle" | "running" | "succeeded" | "failed"; runtimeMessage: string | null; runtimeReferences: { execution?: string; evidence?: string }; onStartControlledRuntime: () => void; onRestart: () => void; onEditRequirements: () => void; onPlan: () => void; onSave: () => void; saving: boolean; saveMessage: string | null }) {
   const runtimePanel = runtimeState === "succeeded" ? <section className="mt-6 rounded-2xl border border-emerald-200/30 bg-emerald-200/5 p-5 text-left"><h2 className="text-sm font-semibold text-emerald-100">통제된 내부 실행 검증 완료</h2><dl className="mt-3 grid gap-2 text-sm leading-6 text-slate-300"><div><dt className="inline text-slate-500">Runtime 경로: </dt><dd className="inline">정상</dd></div><div><dt className="inline text-slate-500">외부 AI Provider 호출: </dt><dd className="inline">없음</dd></div><div><dt className="inline text-slate-500">외부 서비스 작업: </dt><dd className="inline">없음</dd></div><div><dt className="inline text-slate-500">Evidence: </dt><dd className="inline">내부 검증 reference 생성 (invocation-local memory)</dd></div>{runtimeReferences.execution && <div><dt className="inline text-slate-500">Runtime execution reference: </dt><dd className="inline break-all">{runtimeReferences.execution}</dd></div>}{runtimeReferences.evidence && <div><dt className="inline text-slate-500">Runtime evidence reference: </dt><dd className="inline break-all">{runtimeReferences.evidence}</dd></div>}</dl><p className="mt-3 text-sm leading-6 text-slate-400">실제 연결과 운영은 아직 수행되지 않았습니다.</p></section> : runtimeState === "running" ? <section role="status" className="mt-6 rounded-2xl border border-cyan-200/20 bg-cyan-200/5 p-5 text-left text-sm leading-6 text-cyan-50">BuildFlow 내부 실행 경로를 확인하고 있습니다.</section> : runtimeState === "failed" ? <section role="status" className="mt-6 rounded-2xl border border-amber-200/20 bg-amber-200/5 p-5 text-left text-sm leading-6 text-amber-50">{runtimeMessage ?? "통제된 내부 실행 검증을 완료하지 못했습니다."}</section> : runtimeCandidate ? <section className="mt-6 rounded-2xl border border-cyan-200/20 bg-cyan-200/5 p-5 text-left"><h2 className="text-sm font-semibold text-cyan-50">내부 실행 검증 가능</h2><p className="mt-2 text-sm leading-6 text-slate-300">외부 서비스 작업과 외부 AI API 호출 없이 BuildFlow 내부 Runtime 경로만 확인합니다.</p><button type="button" onClick={onStartControlledRuntime} className="mt-4 min-h-[48px] rounded-xl border border-cyan-200/45 bg-cyan-200/10 px-5 text-sm font-semibold text-cyan-50 hover:bg-cyan-200/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200">통제된 실행 검증 시작</button></section> : <section className="mt-6 rounded-2xl border border-slate-700 bg-slate-900/40 p-5 text-left"><h2 className="text-sm font-semibold text-slate-100">내부 실행 검증 대상 아님</h2><p className="mt-2 text-sm leading-6 text-slate-400">{runtimeInputNeedsSafetyReview ? "이 입력은 현재 통제된 내부 실행 검증 대상이 아닙니다. 민감하거나 추가 안전 확인이 필요한 정보는 실행 검증에 사용할 수 없습니다." : "이 설계는 현재 통제된 내부 실행 대상이 아닙니다. 구축 가이드는 계속 확인할 수 있으며, 실제 연결이나 외부 실행은 수행되지 않습니다."}</p></section>;
   return <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-12"><div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(93,125,255,.2),transparent_33%)]" /><div className="relative z-10 mx-auto w-full max-w-[820px] rounded-[2rem] border border-slate-700/80 bg-slate-950/85 p-6 text-center shadow-[0_30px_100px_rgba(0,0,0,.35)] sm:p-10"><Bf0Brand /><div aria-hidden="true" className="mx-auto mt-9 grid size-20 place-items-center rounded-full border border-cyan-200/40 bg-cyan-200/10 text-3xl text-cyan-100">✓</div><p className="mt-7 text-xs font-medium tracking-[0.25em] text-cyan-200">DESIGN DRAFT</p><h1 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">{completion.title}</h1><div className="mt-6 grid gap-4 text-left md:grid-cols-3"><CompletionList title="준비된 것" items={completion.prepared} tone="cyan" /><CompletionList title="아직 연결/실행되지 않은 것" items={completion.notExecuted} tone="amber" /><CompletionList title="다음에 할 일" items={completion.nextActions} tone="violet" /></div>{unresolvedQuestions.length > 0 && <section className="mt-6 rounded-2xl border border-amber-200/20 bg-amber-200/5 p-5 text-left"><h2 className="text-sm font-medium text-amber-100">아직 확인이 필요한 항목</h2><ul className="mt-3 grid gap-2 text-sm leading-6 text-slate-200">{unresolvedQuestions.map((question) => <li key={question} className="break-words">• {question}</li>)}</ul></section>}{gaps.length > 0 && <section className="mt-4 rounded-2xl border border-violet-200/20 bg-violet-200/5 p-5 text-left"><h2 className="text-sm font-medium text-violet-100">별도 연결 또는 도구가 필요한 요구</h2><ul className="mt-3 grid gap-2 text-sm leading-6 text-slate-200">{gaps.map((requirement) => <li key={requirement.id} className="break-words">• {requirement.value} · {requirement.support}</li>)}</ul></section>}<dl className="mt-7 overflow-hidden rounded-2xl border border-slate-800 text-left text-sm"><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">사용자 완료 표시</dt><dd className="text-slate-100">{stepSummary.userReportedComplete}단계</dd></div><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">남은 단계</dt><dd className="text-slate-100">{stepSummary.remaining}단계</dd></div><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">자동 검증 상태</dt><dd className="text-slate-100">{completion.actualVerificationState}</dd></div><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">실제 외부 연결</dt><dd className="text-slate-100">{completion.externalConnectionState}</dd></div><div className="grid gap-1 border-b border-slate-800 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">보존된 요구</dt><dd className="text-slate-100">{requirements.length}개</dd></div><div className="grid gap-1 p-4 sm:grid-cols-[150px_1fr]"><dt className="text-slate-500">작동 흐름</dt><dd className="break-words text-slate-100">{completion.flow}</dd></div></dl>{runtimePanel}<p className="mt-5 text-sm leading-6 text-slate-400">사용자가 모든 단계를 표시했더라도 실제 연결과 작동은 아직 자동 검증되지 않았습니다.</p><div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><button type="button" onClick={onPlan} className="min-h-[48px] rounded-xl border border-cyan-200/45 bg-cyan-200/10 px-5 text-sm font-semibold text-cyan-50 hover:bg-cyan-200/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200">전체 계획 보기</button><button type="button" onClick={onEditRequirements} className="min-h-[48px] rounded-xl border border-slate-700 px-5 text-sm font-medium text-slate-200 hover:border-cyan-200/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200">확인 항목 수정하기</button><button type="button" onClick={onSave} disabled={saving} className="min-h-[48px] rounded-xl border border-emerald-200/45 bg-emerald-200/10 px-5 text-sm font-semibold text-emerald-50 hover:bg-emerald-200/20 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-200">{saving ? "프로젝트 저장 중..." : "프로젝트로 저장"}</button><button type="button" onClick={onRestart} className="min-h-[48px] rounded-xl border border-slate-700 px-5 text-sm font-medium text-slate-200 hover:border-cyan-200/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200">처음부터 다시 시작</button></div>{saveMessage && <p role="status" className="mt-4 text-sm text-amber-100">{saveMessage}</p>}</div></section>;
+}
+
+function RealAITrialPanel({ eligible, availability, input, state, message, output, references, onInputChange, onRun }: { eligible: boolean; availability: "loading" | "available" | "unavailable"; input: string; state: "idle" | "running" | "succeeded" | "failed"; message: string | null; output: string | null; references: { execution?: string; evidence?: string }; onInputChange: (value: string) => void; onRun: () => void }) {
+  const canRun = eligible && availability === "available" && state !== "running" && input.trim().length > 0;
+  const copy = () => { if (output) void navigator.clipboard?.writeText(output); };
+  return <section className="border-t border-slate-800 bg-[#070b16] px-5 py-12 sm:px-8"><div className="mx-auto w-full max-w-[820px]"><p className="text-xs font-medium tracking-[0.22em] text-cyan-200">REAL AI TEST</p><h2 className="mt-3 text-2xl font-semibold text-white">실제로 시험해 보기</h2><p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">고객 문의 내용을 별도로 입력하면 AI 답변 초안을 만듭니다. 설계 설명은 이 실행의 고객 문의로 사용되지 않습니다.</p>{!eligible ? <p className="mt-5 rounded-xl border border-slate-700 bg-slate-950/60 p-4 text-sm leading-6 text-slate-400">현재 설계는 직접 입력과 다운로드 결과를 선택한 경우에만 실제 AI 시험 대상이 됩니다. 외부 연결이나 외부 전송은 수행하지 않습니다.</p> : <><label className="mt-6 block text-sm font-medium text-slate-100" htmlFor="bf0-real-ai-input">고객 문의 내용</label><textarea id="bf0-real-ai-input" value={input} onChange={(event) => onInputChange(event.target.value)} maxLength={2000} disabled={state === "running"} placeholder="예: 환불 요청을 했는데 아직 처리가 되지 않았습니다." className="mt-3 min-h-32 w-full resize-y rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm leading-6 text-slate-100 outline-none focus:border-cyan-200 disabled:cursor-not-allowed disabled:opacity-60" /><p className="mt-3 text-sm leading-6 text-slate-400">이 실행은 AI Provider를 사용합니다. 운영자가 실제 AI 실행을 활성화한 경우 API 사용량이 발생할 수 있습니다.</p>{availability !== "available" && <p className="mt-4 text-sm leading-6 text-amber-100">실제 AI 실행은 현재 준비 중입니다. 내부 설계와 실행 경로는 준비되어 있습니다.</p>}<button type="button" onClick={onRun} disabled={!canRun} className="mt-5 min-h-12 rounded-lg border border-cyan-200/45 bg-cyan-200/10 px-5 text-sm font-semibold text-cyan-50 hover:bg-cyan-200/20 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200">{state === "running" ? "AI 답변 초안 만드는 중..." : "AI로 답변 초안 만들기"}</button>{state === "failed" && <p role="status" className="mt-4 rounded-lg border border-amber-200/20 bg-amber-200/5 p-4 text-sm leading-6 text-amber-100">{message ?? "AI 답변 초안을 만들지 못했습니다. 잠시 후 다시 시도해 주세요."}</p>}{state === "succeeded" && output && <section className="mt-6 border-t border-slate-800 pt-6"><div className="flex items-center justify-between gap-4"><h3 className="text-lg font-semibold text-white">답변 초안</h3><button type="button" onClick={copy} className="min-h-11 rounded-lg border border-slate-700 px-4 text-sm font-medium text-slate-200 hover:border-cyan-200/50">복사</button></div><p className="mt-4 whitespace-pre-wrap rounded-lg border border-emerald-200/20 bg-emerald-200/5 p-4 text-sm leading-7 text-slate-100">{output}</p><dl className="mt-4 grid gap-2 text-xs leading-5 text-slate-400">{references.execution && <div><dt className="inline">실행 reference: </dt><dd className="inline break-all">{references.execution}</dd></div>}{references.evidence && <div><dt className="inline">Evidence reference: </dt><dd className="inline break-all">{references.evidence}</dd></div>}<div>외부 서비스 작업 및 영구 DB 저장은 수행하지 않았습니다.</div></dl></section>}</>}</div></section>;
 }
 
 function CompletionList({ title, items, tone }: { title: string; items: string[]; tone: "cyan" | "amber" | "violet" }) {

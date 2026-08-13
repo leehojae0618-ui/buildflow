@@ -25,6 +25,28 @@ describe("projectBf0Runtime", () => {
     expect(first.blueprint.blocks.some((block) => block.kind === "TOOL" || block.kind === "MEMORY")).toBe(false);
   });
 
+  it("preserves controlled runtime fallback only when runtime input is omitted", () => {
+    const value = projectBf0Runtime(directDraft);
+    expect(value.status).toBe("ELIGIBLE");
+    if (value.status !== "ELIGIBLE") return;
+    expect(value.transientProviderInput.userInput).toBe(directDraft.idea);
+  });
+
+  it("does not fall back to design input when explicit runtime input is empty", () => {
+    const value = projectBf0Runtime(directDraft, { runtimeInput: "" });
+    expect(value.status).toBe("INVALID");
+    expect(JSON.stringify(value)).not.toContain(directDraft.idea);
+  });
+
+  it("uses explicit runtime input instead of design input when provided", () => {
+    const runtimeInput = "환불 요청이 아직 처리되지 않았습니다.";
+    const value = projectBf0Runtime(directDraft, { runtimeInput });
+    expect(value.status).toBe("ELIGIBLE");
+    if (value.status !== "ELIGIBLE") return;
+    expect(value.transientProviderInput.userInput).toBe(runtimeInput);
+    expect(value.transientProviderInput.userInput).not.toBe(directDraft.idea);
+  });
+
   it.each([
     ["Gmail", "다운로드 결과"],
     ["Slack", "다운로드 결과"],

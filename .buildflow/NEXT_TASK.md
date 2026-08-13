@@ -56,12 +56,12 @@ locked unless User QA identifies an approved correction.
 Open gates are:
 
 ```text
-NO ACTIVE IMPLEMENTATION SPRINT
+ACTIVE IMPLEMENTATION SPRINT: PRODUCT-RUNTIME-REAL-AI-SLICE-001
 
 BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001: USER QA WAITING
 LIVE-DB-VALIDATION-001: PAUSED / BLOCKED; remote or alternative validation requires separate user approval
-NEXT IMPLEMENTATION SPRINT: PRODUCT-RUNTIME-VERTICAL-SLICE-001
-PRODUCT-RUNTIME-VERTICAL-SLICE-001: SCOPE FROZEN / IMPLEMENTATION NOT APPROVED / USER APPROVAL REQUIRED
+PRODUCT-RUNTIME-VERTICAL-SLICE-001: REPOSITORY-OBSERVED CONTROLLED RUNTIME PRESENT IN MAIN / `609eb083`; historical implementation authority is not retroactively asserted
+PRODUCT-RUNTIME-REAL-AI-SLICE-001: IMPLEMENTATION IN PROGRESS / Commit, Push, Deploy, live Provider, DB, and external execution require separate approval
 ```
 
 Local tooling inspection, Supabase setup, database validation, and any

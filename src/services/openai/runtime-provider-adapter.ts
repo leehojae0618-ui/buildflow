@@ -17,6 +17,7 @@ type OpenAIErrorShape = {
 export type OpenAIRuntimeProviderAdapterDependencies = {
   isConfigured?: () => boolean;
   createClient?: typeof createOpenAIClient;
+  onOutputText?: (output: string) => void;
 };
 
 function errorStatus(error: unknown): number | undefined {
@@ -142,6 +143,17 @@ export function createOpenAIRuntimeProviderAdapter(
           return {
             status: "FAILED",
             errorCode: "PROVIDER_EMPTY_RESPONSE",
+            providerRequestReference,
+            latencyMs,
+            retryEligible: false,
+          };
+        }
+        try {
+          dependencies.onOutputText?.(output);
+        } catch {
+          return {
+            status: "FAILED",
+            errorCode: "PROVIDER_REQUEST_FAILED",
             providerRequestReference,
             latencyMs,
             retryEligible: false,

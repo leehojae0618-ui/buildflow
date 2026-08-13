@@ -27,7 +27,7 @@ export class ControlledProviderAdapter implements ProviderAdapter {
   }
 }
 
-class InMemoryRuntimeApprovalRepository implements RuntimeApprovalRepository {
+export class InvocationLocalRuntimeApprovalRepository implements RuntimeApprovalRepository {
   private value: RuntimeApprovalRequest | null = null;
 
   async create(input: CreateRuntimeApprovalInput) {
@@ -65,7 +65,7 @@ export type ControlledProductRuntimeResult = ExecuteApprovedProductRuntimeResult
 };
 
 export async function executeControlledProductRuntime(projection: Extract<Bf0RuntimeProjection, { status: "ELIGIBLE" }>): Promise<ControlledProductRuntimeResult> {
-  const approvalRepository = new InMemoryRuntimeApprovalRepository();
+  const approvalRepository = new InvocationLocalRuntimeApprovalRepository();
   const created = await approvalRepository.create({ binding: projection.runtimeApprovalBinding });
   if (created.status !== "OK") return { status: "REJECTED", errorCode: "APPROVAL_NOT_USABLE", userMessage: "The controlled runtime approval is unavailable.", failures: ["APPROVAL_NOT_USABLE"], controlled: true, evidenceStorage: "INVOCATION_LOCAL_MEMORY" };
   const approved = await approvalRepository.decide({ approvalId: created.value.approvalId, projectId: projection.projectId, userId: projection.userId, decision: "APPROVE" });

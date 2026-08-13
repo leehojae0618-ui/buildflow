@@ -9,6 +9,7 @@ import {
 } from "./draft-persistence";
 import { projectBf0Runtime } from "./bf0-runtime-projection";
 import { executeControlledProductRuntime } from "../product-runtime/controlled-product-runtime";
+import { executeRealAIProductRuntime, getRealAIProductRuntimeAvailability } from "../product-runtime/real-ai-product-runtime";
 
 /** Creates a Project from a completed BF0 design; it never starts Runtime work. */
 export async function createProjectFromBf0Draft(
@@ -63,4 +64,21 @@ export async function runControlledBf0Runtime(input: {
   } catch {
     return { status: "FAILED" as const, safeMessage: "통제된 내부 실행 검증을 완료하지 못했습니다." };
   }
+}
+
+/** Returns only product availability; it never invokes a Provider. */
+export async function getBf0RealAIAvailability() {
+  return getRealAIProductRuntimeAvailability();
+}
+
+/** Starts one explicitly requested, direct-input customer-reply draft. */
+export async function runRealAIBf0Runtime(input: {
+  idea: string;
+  goal: string | null;
+  source: string | null;
+  approval: string | null;
+  output: string | null;
+  runtimeInput: string;
+}) {
+  return executeRealAIProductRuntime(input, input.runtimeInput);
 }

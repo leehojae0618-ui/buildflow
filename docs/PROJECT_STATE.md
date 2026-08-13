@@ -122,11 +122,16 @@ Goal
 - 실제 Product Runtime E2E 및 브라우저 실행 흐름
 - MCP 실제 연결·Tool invocation·queue·retry·streaming
 
-`PRODUCT-RUNTIME-VERTICAL-SLICE-001`은 BF0 direct-input 설계를 기존 Runtime
-계약으로 안전하게 투영하는 documentation-only Scope Freeze다. 구현은 아직
-승인되지 않았다. 첫 Slice는 별도 명시적 사용자 승인 뒤 결정적이고 네트워크 없는
-controlled ProviderAdapter를 사용해 Core 경로를 검증하는 후보이며, 실제 OpenAI,
-Supabase, DB, 외부 서비스 호출을 포함하지 않는다.
+`PRODUCT-RUNTIME-VERTICAL-SLICE-001`의 controlled runtime 구현은
+`609eb083`의 main에서 관찰된다. Controlled Runtime은 코드에 IMPLEMENTED 상태이며
+외부 Provider 호출과 외부 서비스 작업은 NONE, Persistent DB Evidence는 NOT VERIFIED다.
+이 관찰은 과거 구현 권한 provenance를 소급해 주장하지 않는다. Production Ready는 NO다.
+
+`PRODUCT-RUNTIME-REAL-AI-SLICE-001`은 현재 승인된 implementation Sprint다.
+BF0 direct-input 설계와 별도의 actual runtime input을 분리하고, OpenAI adapter를
+product path에 연결하되 feature flag 기본값 false와 mock/injected-provider 검증만
+허용한다. Live OpenAI, DB, 외부 서비스, Commit, Push, Deploy는 별도 승인 전까지
+NOT AUTHORIZED다.
 
 ### 검증 상태
 
@@ -137,7 +142,11 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ## 6. Current Sprint State
 
-- 현재 활성 implementation Sprint: NONE.
+- 현재 활성 implementation Sprint: `PRODUCT-RUNTIME-REAL-AI-SLICE-001`.
+- Runtime Real-AI Slice: IMPLEMENTATION IN PROGRESS. Design input과 runtime
+  input 분리, product-owned output capture, feature flag default false, mock-only
+  validation이 승인 범위다. Actual OpenAI Call, external service action, DB,
+  Commit, Push, Deploy: NOT PERFORMED / NOT AUTHORIZED.
 - `BF0-UX-SIMPLIFICATION-001`은 `CLOSED / COMPLETE / USER SPRINT EXIT
   APPROVED`다. 최종 checkpoint는
   `84ac5e2da7c3642d322b69adaf76fe2186af7b63`이며 Push는 COMPLETE다. Codex
@@ -171,9 +180,7 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
   IMPLEMENTED / USER QA / WAITING FOR USER FEEDBACK 상태이며, implementation
   authority는 PAUSED — USER QA다.
 - Open gates는 Visual Slice User QA, 별도 사용자 승인이 필요한 LIVE-DB 원격 또는
-  대체 검증, 그리고 `PRODUCT-RUNTIME-VERTICAL-SLICE-001` implementation
-  approval이다. 이 Vertical Slice 후보는 `SCOPE FROZEN / IMPLEMENTATION NOT
-  APPROVED`이며 active implementation은 아니다.
+  대체 검증, 그리고 current Real-AI Slice의 implementation validation이다.
 
 근거 문서:
 
@@ -220,8 +227,8 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ### P0
 
-- 활성 implementation Sprint는 없다. `PRODUCT-RUNTIME-VERTICAL-SLICE-001`은
-  Scope Frozen candidate이며, 구현은 별도 사용자 승인이 필요하다.
+- `PRODUCT-RUNTIME-REAL-AI-SLICE-001`은 approved implementation scope다. 실제
+  Provider execution은 별도 Live Provider Gate가 필요하다.
 - Visual Closed Beta Slice User QA, 그리고 별도 승인 범위의 LIVE-DB 대체
   검증만 open gate로 유지한다.
 
