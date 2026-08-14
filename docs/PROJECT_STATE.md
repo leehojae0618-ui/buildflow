@@ -32,28 +32,29 @@
 
 ## 3. Product Definition
 
-BuildFlow의 공식 제품 정의는 **AI Agent Factory**다. 사용자가 목표를
-설명하면 BuildFlow가 필요한 정보를 확인하고, 실행 가능한 AI Agent를 설계·구축·
-검증하여 사용할 수 있게 하며, Agent Package 공유를 지향한다.
+BuildFlow의 공식 제품 정의는 **Recipe-First Integration and Orchestration
+Product**다. 사용자가 목표를 설명하면 BuildFlow가 기존 AI·자동화·업무 서비스를
+engine-independent Recipe로 조합하고, 필요한 연결·구축·테스트·관리 계획을
+제시한다.
 
 비개발자 중심 사용자 흐름은 다음과 같다.
 
 ```text
 Goal
-→ Clarification
-→ Agent / Blueprint design
-→ Build Plan
-→ Approval
-→ Runtime / Provider / Tool execution
-→ Evidence
-→ Result
-→ Agent use or sharing
+→ Intent Understanding
+→ Recipe Search and Ranking
+→ Recipe Selection
+→ Connection Plan
+→ Approved Build / Install
+→ Verification / Evidence
+→ Health and Management
 ```
 
-현재 범위에는 Requirement·Clarification·Agent/Runtime/Evidence Foundation과
-기존 Project·Workflow 기반이 포함된다. 범용 Web App Builder, 승인되지 않은
-외부 실행, Marketplace 확장, 대규모 Multi-Agent·Billing·공개 API는 현재
-명시적으로 보류 또는 별도 승인 대상이다.
+Requirement·Clarification·Capability·Approval·Evidence·Provider/Tool Adapter와
+기존 Project·Workflow 기반은 재사용한다. BF0 및 Agent/Runtime-first UX는
+Legacy / Not Primary Product Path로 보존한다. 승인되지 않은 외부 실행,
+Marketplace 확장, 대규모 Multi-Agent·Billing·공개 API는 보류 또는 별도 승인
+대상이다.
 
 ## 4. Current Architecture
 
@@ -127,11 +128,16 @@ Goal
 외부 Provider 호출과 외부 서비스 작업은 NONE, Persistent DB Evidence는 NOT VERIFIED다.
 이 관찰은 과거 구현 권한 provenance를 소급해 주장하지 않는다. Production Ready는 NO다.
 
-`PRODUCT-RUNTIME-REAL-AI-SLICE-001`은 현재 승인된 implementation Sprint다.
-BF0 direct-input 설계와 별도의 actual runtime input을 분리하고, OpenAI adapter를
-product path에 연결하되 feature flag 기본값 false와 mock/injected-provider 검증만
-허용한다. Live OpenAI, DB, 외부 서비스, Commit, Push, Deploy는 별도 승인 전까지
-NOT AUTHORIZED다.
+`PRODUCT-RUNTIME-REAL-AI-SLICE-001`은 local checkpoint `e3d0f1f`에 기록됐고
+Push는 NOT PERFORMED다. Browser QA와 Live Provider, DB, external service
+evidence는 NOT VERIFIED다.
+
+`RECIPE-FIRST-PRODUCT-RESET-001`은 local uncommitted change로 구현 중이며,
+successor `RECIPE-FIRST-BUILD-PACKAGE-001`이 ACTIVE / LOCAL IMPLEMENTATION
+ONLY다. BuildPackage, engine compatibility/recommendation, connection plan,
+configuration plan, missing-information, test plan, and build preview UI를
+포함한다. 실제 Provider/API/OAuth, engine 생성·실행, credential 저장, DB
+migration, Commit, Push, Deploy는 NOT AUTHORIZED다.
 
 ### 검증 상태
 
@@ -142,11 +148,11 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ## 6. Current Sprint State
 
-- 현재 활성 implementation Sprint: `PRODUCT-RUNTIME-REAL-AI-SLICE-001`.
-- Runtime Real-AI Slice: IMPLEMENTATION IN PROGRESS. Design input과 runtime
-  input 분리, product-owned output capture, feature flag default false, mock-only
-  validation이 승인 범위다. Actual OpenAI Call, external service action, DB,
-  Commit, Push, Deploy: NOT PERFORMED / NOT AUTHORIZED.
+- 현재 활성 implementation Sprint: `RECIPE-FIRST-BUILD-PACKAGE-001`.
+- Recipe-First Build Package: ACTIVE / LOCAL IMPLEMENTATION ONLY. Recipe 선택,
+  deterministic engine recommendation, BuildPackage, Connection/Configuration/
+  Test Plan을 브라우저에 보이는 vertical slice로 구현한다. 외부 실행과
+  Commit/Push/Deploy는 NOT PERFORMED / NOT AUTHORIZED다.
 - `BF0-UX-SIMPLIFICATION-001`은 `CLOSED / COMPLETE / USER SPRINT EXIT
   APPROVED`다. 최종 checkpoint는
   `84ac5e2da7c3642d322b69adaf76fe2186af7b63`이며 Push는 COMPLETE다. Codex
@@ -180,7 +186,8 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
   IMPLEMENTED / USER QA / WAITING FOR USER FEEDBACK 상태이며, implementation
   authority는 PAUSED — USER QA다.
 - Open gates는 Visual Slice User QA, 별도 사용자 승인이 필요한 LIVE-DB 원격 또는
-  대체 검증, 그리고 current Real-AI Slice의 implementation validation이다.
+  대체 검증, local Real-AI checkpoint의 PM/CTO Commit Review, 그리고 current
+  Recipe-First Build Package Slice의 implementation validation이다.
 
 근거 문서:
 
@@ -209,6 +216,7 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 | BF0 Product Experience entry | `15746f14d8c5e5adf75045b2d4d774ad12335549` | `feat(product): expose bf0 draft from home` |
 | BF0 Product Experience exit | `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d` | `docs(product): close bf0 product experience sprint` |
 | BF0 UX Simplification | `84ac5e2da7c3642d322b69adaf76fe2186af7b63` | `feat(product): simplify bf0 guided build experience` |
+| Guarded Real-AI Product Slice | `e3d0f1ff5d1f78cd6a73b60ae57b1abac3b57fe6` | Local checkpoint only; NOT PUSHED |
 
 ## 8. Known Issues and Technical Debt
 
@@ -227,8 +235,9 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ### P0
 
-- `PRODUCT-RUNTIME-REAL-AI-SLICE-001`은 approved implementation scope다. 실제
-  Provider execution은 별도 Live Provider Gate가 필요하다.
+- `RECIPE-FIRST-PRODUCT-RESET-001` is the active local-only implementation scope.
+  Actual Provider, OAuth, execution engine, DB, Commit, Push, and Deploy remain
+  separate gates.
 - Visual Closed Beta Slice User QA, 그리고 별도 승인 범위의 LIVE-DB 대체
   검증만 open gate로 유지한다.
 
@@ -245,12 +254,13 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ## 10. Operating Workflow
 
-1. GPT/Claude/Codex가 작업 전 GitHub 최신 상태와 working tree를 확인한다.
+1. GPT/Codex가 작업 전 GitHub 최신 상태와 working tree를 확인한다.
 2. GPT가 계획 및 PM/CTO 검토를 수행한다.
 3. 사용자가 Scope와 작업 권한을 승인한다.
 4. Codex가 승인 범위에서 구현 및 문서 작성을 수행한다.
 5. Codex가 Commit hash와 검증 결과를 제출한다.
-6. Claude가 독립 감사를 수행한다.
+6. Live E2E, Closed Beta/Release, P0/P1 security, substantial Core change에서만
+   Claude가 독립 감사를 수행한다.
 7. GPT가 최종 검토를 수행한다.
 8. 사용자가 Sprint Exit를 승인한다.
 

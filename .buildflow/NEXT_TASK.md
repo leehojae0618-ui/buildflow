@@ -2,7 +2,26 @@
 
 ## Status
 
-NO ACTIVE IMPLEMENTATION SPRINT — USER APPROVAL REQUIRED
+ACTIVE IMPLEMENTATION SPRINT — RECIPE-FIRST-BUILD-PACKAGE-001
+
+## Current Direction
+
+BuildFlow is now Recipe-First: natural-language intent, canonical Recipe search
+and ranking, service connection planning, approved build/install, verification,
+and management. BF0 and Runtime-first flows remain preserved Legacy paths.
+
+`RECIPE-FIRST-BUILD-PACKAGE-001` is authorized for local implementation only.
+Commit, Push, Deploy, live Provider/API/OAuth, external workflow creation or
+execution, credential storage, DB migration, and MCP invocation remain
+prohibited.
+
+Routine local Sprint flow is GPT scope, Codex implementation and validation,
+then GPT PM/CTO review. Claude independent audit is reserved for the first Live
+E2E with OAuth/credentials/external write, Closed Beta/Release, suspected
+P0/P1 security, or a substantial Core change.
+
+`PRODUCT-RUNTIME-REAL-AI-SLICE-001` has local checkpoint `e3d0f1f`; Push is
+NOT PERFORMED and Browser QA remains NOT VERIFIED.
 
 ## Reason
 

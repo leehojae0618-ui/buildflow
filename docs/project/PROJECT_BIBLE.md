@@ -2,11 +2,14 @@
 
 ## Product Definition
 
-BuildFlow는 사용자가 원하는 AI 업무 결과를 설명하면 요구사항을 정리하고,
-AI Agent를 설계·구축·배포·검증하여 실제 사용할 수 있게 하며, 완성된
-Agent를 Package로 공유할 수 있게 하는 AI Agent Builder and Marketplace다.
+BuildFlow는 사용자가 원하는 일을 자연어로 설명하면, 기존 AI·자동화·업무
+서비스를 가장 적합한 Recipe로 조합하고 연결·구축·테스트·관리를 쉽게 하는
+Recipe-First Integration and Orchestration Product다.
 
-기존 Recommendation, Workflow, Template 기능은 이 Builder 경험을 구성하는 현재 MVP 기반 도메인으로 유지한다.
+Requirement, Capability, Approval, Evidence, Provider/Tool Adapter, 기존
+Recommendation·Workflow·Template 자산은 Recipe를 안전하게 연결하고 관리하기
+위한 기반으로 유지한다. 기존 Agent/Runtime-first UX는 삭제하지 않지만
+`LEGACY / NOT PRIMARY PRODUCT PATH`로 취급한다.
 
 독립적인 범용 Web App 또는 Platform 생성은 현재 핵심 제품 범위가 아니다.
 웹 UI, API, Database, Auth, Hosting은 AI Agent를 사용·관리·운영하기 위한
@@ -14,16 +17,13 @@ Agent를 Package로 공유할 수 있게 하는 AI Agent Builder and Marketplace
 
 ## Service Definition
 
-1. 요구사항 이해
-2. 부족한 정보 확인
-3. 제약과 책임 분류
-4. 사용자 동의
-5. AI Agent 설계
-6. Build Plan 작성
-7. 자동·보조 구축
-8. 사용자 작업 안내
-9. 설치와 테스트
-10. 사용 가능한 AI Agent와 운영 주소 전달
+1. 사용자의 의도 이해
+2. 실제 Recipe 검색과 Ranking
+3. 서비스 Capability와 연결 요구사항 비교
+4. Recipe 선택과 Connection Plan
+5. Build/Install Plan
+6. 명시적 승인 뒤 자동·보조 구축
+7. 테스트, Evidence, Health 관리
 
 ## Core Philosophy
 
@@ -39,7 +39,15 @@ Agent를 Package로 공유할 수 있게 하는 AI Agent Builder and Marketplace
 
 ## Product Scope
 
-### MVP Foundation
+### Recipe-First MVP
+
+- Canonical Recipe, Source/License provenance, Failure Knowledge
+- Service Capability와 Connection Requirement
+- deterministic Intent analysis, Recipe retrieval, explainable ranking
+- engine-independent Connection Plan과 preview-only Execution Adapter
+- 자연어 목표에서 Top Recipe를 비교·선택하는 Product UI
+
+### Legacy Foundation
 
 - Project, 인증, 기준 Tool과 Blueprint 데이터
 - Requirement와 Recommendation 기반의 초기 Build Session 진입
@@ -68,7 +76,9 @@ Agent를 Package로 공유할 수 있게 하는 AI Agent Builder and Marketplace
 
 ## BuildFlow Responsibility
 
-BuildFlow는 요구사항을 구조화하고, 설계·구축 계획·자동화 가능한 작업을 제안하며, 사용자가 수행해야 할 작업과 검증 조건을 안내한다. 지원되는 범위에서는 구축·설치·테스트 과정을 자동화하거나 보조한다.
+BuildFlow는 목표를 구조화하고, 검증 가능한 Recipe와 서비스 조합을 추천하며,
+연결·구축·테스트·관리 계획을 제시한다. 지원되는 범위에서는 명시적 승인 뒤
+외부 실행 엔진을 통해 구축·설치·테스트 과정을 자동화하거나 보조한다.
 
 ## Automation Boundary
 
@@ -81,7 +91,10 @@ BuildFlow는 요구사항을 구조화하고, 설계·구축 계획·자동화 �
 ## Limitations
 
 - BuildFlow는 모든 외부 Tool의 실행을 보장하지 않는다.
-- 현재 핵심 자동 구축 대상은 AI Agent다.
+- Recipe 추천과 연결 계획은 실제 외부 실행을 뜻하지 않는다. OAuth, credential,
+  외부 write, workflow 생성, Provider 호출은 별도 승인과 검증이 필요하다.
+- 현재 핵심 제품 경로는 Recipe 조합과 안전한 연결 계획이며, AI Agent 생성은
+  재사용 가능한 Legacy 기반이다.
 - AI 문의 v1은 실제 AI Agent 대표 경로 Evidence다.
 - General CRUD v1은 자동 구축 엔진의 과거 Capability Evidence로 보존하지만
   신규 범용 SaaS 또는 Platform 확장의 근거로 사용하지 않는다.
