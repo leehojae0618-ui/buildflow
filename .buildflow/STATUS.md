@@ -1,7 +1,7 @@
 # BuildFlow Status
 
 - Workflow Status: ACTIVE IMPLEMENTATION SPRINT
-- Current Sprint: RECIPE-FIRST-BUILD-PACKAGE-001
+- Current Sprint: FIRST-LIVE-RECIPE-E2E-001 / PHASE-A
 - Sprint Status: IMPLEMENTATION IN PROGRESS
 - Active Sprint Count: 1
 - Latest Completed Sprint: BF0-UX-SIMPLIFICATION-001
@@ -10,7 +10,7 @@
 - BF0 Exit-record Checkpoint: `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d`
 - BF0 Claude Final Audit: SKIPPED BY PRODUCT OWNER
 - BF0 Deploy: NOT PERFORMED
-- Implementation Authority: APPROVED — RECIPE-FIRST-BUILD-PACKAGE-001 local scope only
+- Implementation Authority: APPROVED — FIRST-LIVE-RECIPE-E2E-001 / PHASE-A local scope only
 - Commit, Push, and Deploy Authority: NONE
 - Live Provider, DB, Migration, and External Action Authority: NONE
 - Repository-observed controlled runtime: PRESENT IN MAIN / `609eb083`
@@ -21,18 +21,18 @@
 - Historical implementation authority provenance: NOT RETROACTIVELY ASSERTED
 - Production Ready: NO
 
-## Current Recipe-First Sprint
+## Current Live Recipe Sprint
 
-- `RECIPE-FIRST-PRODUCT-RESET-001`: IMPLEMENTED LOCALLY / UNCOMMITTED /
-  superseded by the active Build Package Sprint.
-- `RECIPE-FIRST-BUILD-PACKAGE-001`: ACTIVE / LOCAL IMPLEMENTATION ONLY.
+- `RECIPE-FIRST-PRODUCT-RESET-001` and `RECIPE-FIRST-BUILD-PACKAGE-001`:
+  local checkpoint `ebd0290` / NOT PUSHED.
+- `FIRST-LIVE-RECIPE-E2E-001 / PHASE-A`: ACTIVE / LOCAL IMPLEMENTATION ONLY.
 - Product direction: Recipe-First Integration/Orchestration. Agent/Runtime-first
   flows remain Legacy / Not Primary Product Path and are not deleted.
-- Allowed: Recipe selection, engine compatibility/recommendation, canonical
-  BuildPackage, Connection/Configuration/Test Plan, missing-information,
-  Build Preview UI, focused tests, and minimal official state alignment.
-- Prohibited: Commit, Push, Deploy, live Provider/API/OAuth, external engine
-  creation or execution, credential storage, DB migration, MCP invocation.
+- Allowed: server-only Pipedream Connect/Slack boundary, default-off kill
+  switches, fake-adapter validation, truthful Recipe UI, and minimal official
+  state alignment.
+- Prohibited: Commit, Push, Deploy, live Pipedream/Slack/OAuth/provider/API,
+  external engine execution, credential storage, DB migration, MCP invocation.
 - `PRODUCT-RUNTIME-REAL-AI-SLICE-001` checkpoint: local `e3d0f1f` / NOT PUSHED.
   Browser QA remains NOT VERIFIED; actual Provider, DB, and external calls: NONE.
 

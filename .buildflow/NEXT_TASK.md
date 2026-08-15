@@ -2,7 +2,7 @@
 
 ## Status
 
-ACTIVE IMPLEMENTATION SPRINT — RECIPE-FIRST-BUILD-PACKAGE-001
+ACTIVE IMPLEMENTATION SPRINT — FIRST-LIVE-RECIPE-E2E-001 / PHASE-A
 
 ## Current Direction
 
@@ -10,10 +10,11 @@ BuildFlow is now Recipe-First: natural-language intent, canonical Recipe search
 and ranking, service connection planning, approved build/install, verification,
 and management. BF0 and Runtime-first flows remain preserved Legacy paths.
 
-`RECIPE-FIRST-BUILD-PACKAGE-001` is authorized for local implementation only.
-Commit, Push, Deploy, live Provider/API/OAuth, external workflow creation or
-execution, credential storage, DB migration, and MCP invocation remain
-prohibited.
+`FIRST-LIVE-RECIPE-E2E-001 / PHASE-A` is authorized for local implementation
+only. It prepares default-off Pipedream Connect and Slack test-write boundaries.
+Commit, Push, Deploy, live Pipedream/Slack/Provider/API/OAuth, external workflow
+creation or execution, credential storage, DB migration, and MCP invocation
+remain prohibited.
 
 Routine local Sprint flow is GPT scope, Codex implementation and validation,
 then GPT PM/CTO review. Claude independent audit is reserved for the first Live

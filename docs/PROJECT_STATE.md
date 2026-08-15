@@ -148,11 +148,14 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 ## 6. Current Sprint State
 
-- 현재 활성 implementation Sprint: `RECIPE-FIRST-BUILD-PACKAGE-001`.
-- Recipe-First Build Package: ACTIVE / LOCAL IMPLEMENTATION ONLY. Recipe 선택,
-  deterministic engine recommendation, BuildPackage, Connection/Configuration/
-  Test Plan을 브라우저에 보이는 vertical slice로 구현한다. 외부 실행과
-  Commit/Push/Deploy는 NOT PERFORMED / NOT AUTHORIZED다.
+- Recipe-First Product Reset 및 Build Package는 local checkpoint `ebd0290`에
+  구현되어 있으며 NOT PUSHED다.
+- 현재 활성 implementation Sprint는 `FIRST-LIVE-RECIPE-E2E-001 / PHASE-A`다.
+  server-only Pipedream Connect/Slack 경계와 default-off kill switches를
+  로컬로 구현한다.
+- Commit, Push, Deploy, Pipedream/Slack/Provider/API/OAuth, external engine
+  creation/execution, credential storage, DB migration, MCP invocation은
+  허용되지 않는다.
 - `BF0-UX-SIMPLIFICATION-001`은 `CLOSED / COMPLETE / USER SPRINT EXIT
   APPROVED`다. 최종 checkpoint는
   `84ac5e2da7c3642d322b69adaf76fe2186af7b63`이며 Push는 COMPLETE다. Codex
