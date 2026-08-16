@@ -20,6 +20,7 @@ export const liveRecipeFailureCodes = [
   "CONNECT_CANCELLED",
   "CONNECT_RETURNED_UNVERIFIED",
   "SLACK_ACCOUNT_NOT_VERIFIED",
+  "DESTINATION_NOT_APPROVED",
   "WRITE_NOT_APPROVED",
   "WRITE_DISABLED",
   "DUPLICATE_REQUEST",
@@ -35,7 +36,7 @@ export type LiveRecipeEvidence = {
   recipeId: string;
   engine: "PIPEDREAM";
   service: "SLACK";
-  actionType: "CONNECT_LINK" | "TEST_MESSAGE";
+  actionType: "CONNECT_LINK" | "TEST_MESSAGE" | "AI_NEWS_DIGEST";
   externalUserSafeReference: string;
   requestedAt: string;
   completedAt?: string;
@@ -62,6 +63,7 @@ export type SlackTestActionPreparation = {
 
 export type SlackTestActionResult = {
   safeExternalReference: string;
+  slackTimestamp?: string;
 };
 
 export type LiveRecipeResult<T> =
@@ -78,3 +80,13 @@ export const slackWriteRequestSchema = z.object({
 export type SlackWriteRequest = z.infer<typeof slackWriteRequestSchema>;
 
 export const slackConnectionTestMessage = "BuildFlow 연결 테스트가 성공했습니다. ✅";
+
+export const slackDigestWriteRequestSchema = z.object({
+  approved: z.literal(true),
+  recipeId: z.literal("recipe.ai-news-slack-digest"),
+  targetConfigurationReference: z.string().min(3).max(160),
+  requestId: z.string().regex(/^slack-digest-[a-zA-Z0-9_-]{8,120}$/),
+  message: z.string().min(20).max(4000),
+}).strict();
+
+export type SlackDigestWriteRequest = z.infer<typeof slackDigestWriteRequestSchema>;

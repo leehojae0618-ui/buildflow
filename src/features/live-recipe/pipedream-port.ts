@@ -7,6 +7,7 @@ export type PipedreamConnectPort = {
   listSlackAccounts(input: { externalUserId: string }): Promise<SlackAccountReference[]>;
   prepareSlackTestAction(): SlackTestActionPreparation;
   runSlackTestAction(input: { externalUserId: string; targetConfigurationReference: string }): Promise<SlackTestActionResult>;
+  runSlackDigestAction?(input: { externalUserId: string; approvedSlackAccountId: string; targetConfigurationReference: string; message: string }): Promise<SlackTestActionResult>;
 };
 
 export class FakePipedreamConnectAdapter implements PipedreamConnectPort {
@@ -38,4 +39,9 @@ export class FakePipedreamConnectAdapter implements PipedreamConnectPort {
     this.invocationCount.runSlackTestAction += 1;
     return { safeExternalReference: "pd_fake_action" };
   }
+
+  runSlackDigestAction: PipedreamConnectPort["runSlackDigestAction"] = async () => {
+    this.invocationCount.runSlackTestAction += 1;
+    return { safeExternalReference: "pd_fake_digest_action", slackTimestamp: "1786779999.000001" };
+  };
 }

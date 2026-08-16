@@ -40,5 +40,26 @@ export function createRealPipedreamConnectAdapter(environment: LiveRecipeEnviron
       const result = await client.actions.run({ id: slackActionCandidate, externalUserId: input.externalUserId, configuredProps: { buildflowTargetReference: input.targetConfigurationReference } }, { maxRetries: 0, projectEnvironment: Pipedream.ProjectEnvironment.Development });
       return { safeExternalReference: safeReference(JSON.stringify(result)) };
     },
+    async runSlackDigestAction(input) {
+      const accounts = await client.accounts.list({ externalUserId: input.externalUserId, app: "slack", includeCredentials: false }, { maxRetries: 0, projectEnvironment: Pipedream.ProjectEnvironment.Development });
+      let slackAccountId = "";
+      for await (const account of accounts) {
+        if (account.id === input.approvedSlackAccountId && account.healthy !== false && !account.dead) {
+          slackAccountId = account.id;
+          break;
+        }
+      }
+      if (!slackAccountId) throw new Error("SLACK_ACCOUNT_NOT_VERIFIED");
+
+      const configuredProps = {
+        slack: { authProvisionId: slackAccountId },
+        conversation: input.targetConfigurationReference,
+        text: input.message,
+      };
+      const result = await client.actions.run({ id: slackActionCandidate, externalUserId: input.externalUserId, configuredProps }, { maxRetries: 0, projectEnvironment: Pipedream.ProjectEnvironment.Development });
+      const returned = result.ret && typeof result.ret === "object" ? result.ret as Record<string, unknown> : {};
+      const slackTimestamp = typeof returned.ts === "string" ? returned.ts : undefined;
+      return { safeExternalReference: safeReference(JSON.stringify(result)), ...(slackTimestamp ? { slackTimestamp } : {}) };
+    },
   };
 }

@@ -6,6 +6,8 @@ export type LiveRecipeEnvironment = {
   pipedreamClientSecret?: string;
   pipedreamProjectId?: string;
   liveTestUserId?: string;
+  approvedSlackAccountId?: string;
+  approvedSlackChannelId?: string;
   appOrigin: string;
   nodeEnvironment: string;
 };
@@ -20,6 +22,8 @@ export function readLiveRecipeEnvironment(source: NodeJS.ProcessEnv = process.en
     pipedreamClientSecret: source.PIPEDREAM_CLIENT_SECRET || undefined,
     pipedreamProjectId: source.PIPEDREAM_PROJECT_ID || undefined,
     liveTestUserId: source.BUILDFLOW_LIVE_TEST_USER_ID || undefined,
+    approvedSlackAccountId: source.BUILDFLOW_LIVE_SLACK_ACCOUNT_ID || undefined,
+    approvedSlackChannelId: source.BUILDFLOW_LIVE_SLACK_CHANNEL_ID || undefined,
     appOrigin: source.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
     nodeEnvironment: source.NODE_ENV || "development",
   };
