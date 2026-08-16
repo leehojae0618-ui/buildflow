@@ -5,8 +5,10 @@ Current-state-only. Completed/historical Sprint detail lives in
 
 ## Repository / HEAD
 
-- Local HEAD: `234b07a` — matches `origin/main` (pushed 2026-08-16).
-- Working Tree: CLEAN.
+- Local HEAD: `5d3ffbb` — matches `origin/main` (pushed 2026-08-16).
+- Working Tree: not clean — this Status update reflecting the Push is
+  pending (streamlined R2 doc sync, no separate approval needed per
+  2026-08-16 direction).
 
 ## Current Sprint
 
