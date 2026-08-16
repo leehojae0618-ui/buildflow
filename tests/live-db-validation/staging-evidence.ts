@@ -75,11 +75,7 @@ export type LiveDbStagingEvidenceSummary = {
   verdict: "PASS" | "FAIL";
 };
 
-/**
- * Builds the ST-B Evidence summary from safe fields only. It accepts already
- * masked identifiers; it never receives or derives a URL, key, or full ref.
- */
-export function createLiveDbStagingEvidenceSummary(input: {
+export type CreateLiveDbStagingEvidenceInput = {
   validationRunId: string;
   maskedProjectRef: string;
   migrationApplied: boolean;
@@ -88,7 +84,60 @@ export function createLiveDbStagingEvidenceSummary(input: {
   cases: readonly LiveDbStagingCaseEvidence[];
   timestamp: string;
   verdict: "PASS" | "FAIL";
-}): LiveDbStagingEvidenceSummary {
+} & StagingEvidenceSafetyOptions;
+
+/**
+ * A summary is only handed back as `SAFE` when nothing unsafe was found in it.
+ * The `UNSAFE` branch still carries a summary so a blocked run leaves Evidence
+ * behind, but a fully redacted one.
+ */
+export type LiveDbStagingEvidenceResult =
+  | { status: "SAFE"; summary: LiveDbStagingEvidenceSummary }
+  | {
+      status: "UNSAFE";
+      safeErrorCode: "LIVE_DB_SECRET_EXPOSURE_DETECTED";
+      summary: LiveDbStagingEvidenceSummary;
+    };
+
+/**
+ * Every free-text field is replaced by a constant rather than reused. Carrying
+ * the original fields over and merely flipping `secretExposureDetected` would
+ * detect the leak while still publishing it.
+ */
+function redactedSummary(timestamp: string): LiveDbStagingEvidenceSummary {
+  return Object.freeze({
+    validationRunId: "unavailable",
+    targetEnvironment: "staging",
+    maskedProjectRef: "unavailable",
+    actorType: "HARNESS",
+    providerMode: LIVE_DB_PROVIDER_MODE,
+    providerAdapterIdentity: LIVE_DB_PROVIDER_ADAPTER_IDENTITY,
+    externalProviderCallCount: 0,
+    executionMode: "STAGING",
+    migrationApplied: false,
+    appliedMigrationCount: 0,
+    timestamp,
+    cases: Object.freeze([]),
+    executedCaseIds: Object.freeze([]),
+    failedCaseIds: Object.freeze([]),
+    skippedCaseIds: Object.freeze([]),
+    secretExposureDetected: true,
+    verdict: "FAIL",
+  });
+}
+
+/**
+ * Builds the ST-B Evidence summary from safe fields only. It accepts already
+ * masked identifiers; it never receives or derives a URL, key, or full ref.
+ *
+ * The built summary is scanned with `hasStagingUnsafeValue` before it is
+ * returned, so a caller that puts a database URL, JWT or raw SQL error into
+ * `actualSafeResult` gets a redacted summary and an explicit failure instead of
+ * Evidence that quietly contains the secret.
+ */
+export function createLiveDbStagingEvidenceSummary(
+  input: CreateLiveDbStagingEvidenceInput,
+): LiveDbStagingEvidenceResult {
   const caseIdsFor = (...statuses: LiveDbCaseExecutionStatus[]) =>
     Object.freeze(
       input.caseResults
@@ -96,7 +145,7 @@ export function createLiveDbStagingEvidenceSummary(input: {
         .map((item) => item.caseId),
     );
 
-  return Object.freeze({
+  const summary: LiveDbStagingEvidenceSummary = Object.freeze({
     validationRunId: input.validationRunId,
     targetEnvironment: "staging",
     maskedProjectRef: input.maskedProjectRef,
@@ -115,4 +164,16 @@ export function createLiveDbStagingEvidenceSummary(input: {
     secretExposureDetected: false,
     verdict: input.verdict,
   });
+
+  const options: StagingEvidenceSafetyOptions = {
+    ...(input.forbiddenProjectRefs ? { forbiddenProjectRefs: input.forbiddenProjectRefs } : {}),
+  };
+  if (hasStagingUnsafeValue(summary, options)) {
+    return {
+      status: "UNSAFE",
+      safeErrorCode: "LIVE_DB_SECRET_EXPOSURE_DETECTED",
+      summary: redactedSummary(input.timestamp),
+    };
+  }
+  return { status: "SAFE", summary };
 }

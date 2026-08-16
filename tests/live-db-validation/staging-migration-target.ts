@@ -68,8 +68,19 @@ export function projectRefFromDatabaseUrl(databaseUrl: string): string | null {
 
   if (hostname.endsWith(".pooler.supabase.com")) {
     // The pooler carries the ref in the username as `postgres.<ref>`.
-    const [role, ref, ...rest] = decodeURIComponent(parsed.username).split(".");
-    if (!role || rest.length > 0 || !ref) return null;
+    // A malformed percent escape makes `decodeURIComponent` throw a URIError,
+    // which would crash the runner instead of failing closed, so it is caught
+    // and reported as an unparseable username like any other bad shape.
+    let username: string;
+    try {
+      username = decodeURIComponent(parsed.username);
+    } catch {
+      return null;
+    }
+    const [role, ref, ...rest] = username.split(".");
+    // Supabase's pooler username is always the `postgres` role; anything else
+    // means the URL is not the shape this parser claims to understand.
+    if (role?.toLowerCase() !== "postgres" || rest.length > 0 || !ref) return null;
     return isRef(ref.toLowerCase()) ? ref.toLowerCase() : null;
   }
 

@@ -30,6 +30,7 @@ const cases: readonly LiveDbValidationCase[] = [
   { id: "approval-create", category: "APPROVAL", classification: "STRUCTURE_ONLY_WITHOUT_DB", expectedResult: "create contract is defined" },
   { id: "approval-approve", category: "APPROVAL", classification: "STRUCTURE_ONLY_WITHOUT_DB", expectedResult: "approve contract is defined" },
   { id: "approval-reject", category: "APPROVAL", classification: "STRUCTURE_ONLY_WITHOUT_DB", expectedResult: "reject contract is defined" },
+  { id: "approval-revoke", category: "APPROVAL", classification: "STRUCTURE_ONLY_WITHOUT_DB", expectedResult: "revoke contract is defined" },
   { id: "approval-consume", category: "APPROVAL", classification: "STRUCTURE_ONLY_WITHOUT_DB", expectedResult: "consume contract is defined" },
   { id: "approval-expiry", category: "APPROVAL", classification: "STRUCTURE_ONLY_WITHOUT_DB", expectedResult: "expiry contract is defined" },
   { id: "approval-binding-mismatch", category: "APPROVAL", classification: "STRUCTURE_ONLY_WITHOUT_DB", expectedResult: "binding mismatch is rejected" },

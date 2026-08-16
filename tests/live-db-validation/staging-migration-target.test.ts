@@ -45,6 +45,42 @@ describe("projectRefFromDatabaseUrl", () => {
     expect(projectRefFromDatabaseUrl("not-a-url")).toBeNull();
     expect(projectRefFromDatabaseUrl(`postgresql://postgres:pw@db..supabase.co:5432/postgres`)).toBeNull();
   });
+
+  it("fails closed instead of throwing on a malformed percent escape in the username", () => {
+    // decodeURIComponent raises URIError here, which would crash the runner
+    // rather than produce a safe block.
+    expect(() =>
+      projectRefFromDatabaseUrl(
+        "postgresql://postgres.ab%zz:pw@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres",
+      ),
+    ).not.toThrow();
+    expect(
+      projectRefFromDatabaseUrl(
+        "postgresql://postgres.ab%zz:pw@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres",
+      ),
+    ).toBeNull();
+  });
+
+  it("rejects a pooler username whose role is not postgres", () => {
+    expect(
+      projectRefFromDatabaseUrl(
+        `postgresql://supabase_admin.${stagingRef}:pw@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres`,
+      ),
+    ).toBeNull();
+    expect(
+      projectRefFromDatabaseUrl(
+        `postgresql://.${stagingRef}:pw@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres`,
+      ),
+    ).toBeNull();
+  });
+
+  it("accepts a percent-encoded pooler username", () => {
+    expect(
+      projectRefFromDatabaseUrl(
+        `postgresql://postgres%2E${stagingRef}:pw@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres`,
+      ),
+    ).toBe(stagingRef);
+  });
 });
 
 describe("LiveDbSecretCarrier", () => {

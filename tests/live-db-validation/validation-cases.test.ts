@@ -8,7 +8,9 @@ import {
 
 describe("LIVE-DB validation case registry", () => {
   it("contains approval, RLS, concurrency, and product-runtime coverage", () => {
-    expect(liveDbValidationCases.filter((item) => item.category === "APPROVAL")).toHaveLength(6);
+    // create / approve / reject / revoke / expiry / consume / binding-mismatch,
+    // matching APR-01..04 in LOCAL_VALIDATION_PLAN.md.
+    expect(liveDbValidationCases.filter((item) => item.category === "APPROVAL")).toHaveLength(7);
     expect(liveDbValidationCases.filter((item) => item.category === "RLS")).toHaveLength(3);
     expect(liveDbValidationCases.filter((item) => item.category === "CONCURRENT_CONSUME")).toHaveLength(2);
     expect(liveDbValidationCases.some((item) => item.category === "PRODUCT_RUNTIME")).toBe(true);
