@@ -1,4 +1,5 @@
 import { CandidateComparison } from "@/features/architecture/components/candidate-comparison";
+import { AgentBuildJourney } from "@/features/autonomous/components/agent-build-journey";
 import { saveClarificationAnswerBatch } from "@/features/projects/actions";
 import { ClarificationInteraction } from "./clarification-interaction";
 import type {
@@ -10,13 +11,14 @@ const labels: Record<string, string> = { AUTO: "자동 구축", PARTIAL: "부분
 
 type Snapshot = { requirement?: Requirement; clarificationQuestions?: ClarificationQuestion[]; clarification?: ClarificationState; clarificationSummary?: { completeness: number; buildReadiness: number }; conversation?: { state: string; missing: string[]; summary: { nextQuestion: { question: string } | null } }; constraints?: { level: string; reason: string }[]; capabilities?: { id: string; label: string; level: string; reason: string }[]; capabilitySummary?: { automation: number; consent: number; manual: number; expert: number; unsupported: number }; architecture?: { summary: string; components: { id: string; name: string; category: string }[]; connections: { from: string; to: string; label: string }[] }; connectors?: { providerId: string; providerName: string; status: string; required: boolean }[]; credentialReferences?: Parameters<typeof CredentialSummary>[0]["references"]; accountConnection?: Parameters<typeof AccountSummary>[0]["initialSession"]; buildPlan?: { summary: string; phases: { id: string; title: string; taskIds: string[] }[]; tasks: { id: string; title: string; action: string; status: string }[]; progress: { percentage: number; completed: number; total: number } }; installation?: Parameters<typeof InstallationWizard>[0]["initialSession"]; testSuite?: { summary: string; result: { status: string; passed: number; warnings: number; failed: number }; healthChecks: { provider: string; status: string }[] }; buildIntelligence?: { buildScore: number; automation: number; estimatedBuildMinutes: number; estimatedSetupMinutes: number; estimatedMonthlyCostCents: number; difficulty: string; riskScore: number; confidence: number; requiredAccounts: string[]; userActions: string[]; summary: string } };
 
-export function RequirementSummary({ snapshot, projectId, selectCandidateAction, startExecutionAction, persistedVerificationRun, autonomousSession }: { snapshot: Snapshot | undefined; projectId?: string; selectCandidateAction?: (formData: FormData) => Promise<{ error?: string }>; startExecutionAction?: (formData: FormData) => Promise<{ error?: string; executionId?: string }>; persistedVerificationRun?: import("@/features/verification/types").VerificationRun | null; autonomousSession?: { id: string; status: string } | null }) {
+export function RequirementSummary({ snapshot, projectId, selectCandidateAction, startExecutionAction, persistedVerificationRun, autonomousSession }: { snapshot: Snapshot | undefined; projectId?: string; selectCandidateAction?: (formData: FormData) => Promise<{ error?: string }>; startExecutionAction?: (formData: FormData) => Promise<{ error?: string; executionId?: string }>; persistedVerificationRun?: import("@/features/verification/types").VerificationRun | null; autonomousSession?: { id: string; status: string; completionReport?: unknown } | null }) {
   if (!snapshot?.requirement) return null;
   const pending = snapshot.clarificationQuestions?.filter((question) => question.required) ?? [];
   const summary = snapshot.capabilitySummary;
   const clarification = snapshot.clarificationSummary;
   const conversation = snapshot.conversation;
   return <section className="mt-8 border border-cyan-400/20 bg-cyan-400/5 p-6">
+    <AgentBuildJourney snapshot={snapshot} session={autonomousSession} />
     <GuidedBuildSummary goal={snapshot.requirement.expectedOutput ?? "AI 서비스"} intelligence={snapshot.buildIntelligence} hasArchitecture={Boolean(snapshot.architecture)} hasPlan={Boolean(snapshot.buildPlan)} />
     <p className="text-xs uppercase tracking-[0.2em] text-cyan-300">Requirement Snapshot</p>
     <h2 className="mt-3 text-lg font-medium">현재까지 이해한 내용</h2>

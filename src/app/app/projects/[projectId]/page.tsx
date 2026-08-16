@@ -11,7 +11,7 @@ import { RequirementSummary } from "@/features/requirements/components/requireme
 import { normalizeArchitectureSnapshot } from "@/features/architecture/fallback";
 import { startBuildExecution } from "@/features/execution/actions";
 import { getLatestVerificationRun } from "@/features/verification/repository";
-import { getLatestAutonomousSession } from "@/features/autonomous/repository";
+import { getAutonomousBuildSession } from "@/features/autonomous/actions";
 
 export default async function ProjectDetailPage({ params, searchParams }: { params: Promise<{ projectId: string }>; searchParams: Promise<{ error?: string; code?: string; stage?: string; recommendation?: string }> }) {
   const { projectId } = await params;
@@ -19,7 +19,7 @@ export default async function ProjectDetailPage({ params, searchParams }: { para
   const project = await getProject(projectId);
   const recommendation = await getLatestRecommendation(projectId);
   const verificationRun = await getLatestVerificationRun(projectId);
-  const autonomousSession = await getLatestAutonomousSession(projectId);
+  const autonomousSession = await getAutonomousBuildSession(projectId);
   const constraints = (project.goal_constraints ?? {}) as Record<string, unknown>;
   const rawRequirementSnapshot = constraints.requirement_snapshot as Record<string, unknown> | undefined;
   const requirementSnapshot = rawRequirementSnapshot ? { ...rawRequirementSnapshot, architecture: normalizeArchitectureSnapshot(rawRequirementSnapshot.architecture) ?? undefined } : undefined;
