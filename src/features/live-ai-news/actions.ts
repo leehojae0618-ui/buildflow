@@ -3,8 +3,9 @@
 import { randomUUID } from "node:crypto";
 import { runApprovedSlackDigestWrite } from "../live-recipe/live-recipe-service";
 import { readLiveRecipeEnvironment } from "../live-recipe/live-environment";
+import type { LiveRecipeEvidence } from "../live-recipe/types";
 import type { NewsDigestSummary, SelectedNewsItem } from "./manual-recipe";
-import { GroqSummaryAdapter, OpenAiNewsRssSource, formatSlackDigestMessage, runNewsFetchGate, runNewsToGroqToSlackGate } from "./real-adapters";
+import { GroqSummaryAdapter, OpenAiNewsRssSource, defaultGroqModel, formatSlackDigestMessage, runNewsFetchGate, runNewsToGroqToSlackGate } from "./real-adapters";
 
 const aiNewsDigestRecipeId = "recipe.ai-news-slack-digest";
 
@@ -65,15 +66,15 @@ export async function requestApprovedAiNewsDigestRun(): Promise<AiNewsDigestRunR
 }
 
 export type AiNewsFetchStepResult =
-  | { ok: true; selectedItems: SelectedNewsItem[]; selectedItemCount: number }
+  | { ok: true; selectedItems: SelectedNewsItem[]; selectedItemCount: number; service: string; completedAt: string }
   | { ok: false; errorCode: AiNewsDigestGateErrorCode };
 
 export type AiNewsSummaryStepResult =
-  | { ok: true; summary: NewsDigestSummary; summaryLineCount: number }
+  | { ok: true; summary: NewsDigestSummary; summaryLineCount: number; service: string; completedAt: string }
   | { ok: false; errorCode: AiNewsDigestGateErrorCode };
 
 export type AiNewsSlackWriteStepResult =
-  | { ok: true; safeSlackReference: string }
+  | { ok: true; safeSlackReference: string; evidence: LiveRecipeEvidence }
   | { ok: false; errorCode: AiNewsDigestGateErrorCode };
 
 /**
@@ -90,7 +91,7 @@ export async function runAiNewsFetchStep(): Promise<AiNewsFetchStepResult> {
   if (!preview.ok) return preview;
   try {
     const gate = await runNewsFetchGate({ source: new OpenAiNewsRssSource() });
-    return { ok: true, selectedItems: gate.selectedItems, selectedItemCount: gate.selectedItems.length };
+    return { ok: true, selectedItems: gate.selectedItems, selectedItemCount: gate.selectedItems.length, service: "OpenAI News RSS", completedAt: new Date().toISOString() };
   } catch {
     return { ok: false, errorCode: "EXTERNAL_ACTION_FAILED" };
   }
@@ -102,7 +103,7 @@ export async function runAiNewsSummaryStep(selectedItems: SelectedNewsItem[]): P
   try {
     const summarizer = new GroqSummaryAdapter({ apiKey: process.env.GROQ_API_KEY });
     const summary = await summarizer.summarize({ items: selectedItems });
-    return { ok: true, summary, summaryLineCount: summary.bullets.length };
+    return { ok: true, summary, summaryLineCount: summary.bullets.length, service: `Groq (${defaultGroqModel})`, completedAt: new Date().toISOString() };
   } catch {
     return { ok: false, errorCode: "EXTERNAL_ACTION_FAILED" };
   }
@@ -121,7 +122,7 @@ export async function runAiNewsSlackWriteStep(selectedItems: SelectedNewsItem[],
       message,
     });
     if (!result.ok) return { ok: false, errorCode: "EXTERNAL_ACTION_FAILED" };
-    return { ok: true, safeSlackReference: result.value.safeExternalReference };
+    return { ok: true, safeSlackReference: result.value.safeExternalReference, evidence: result.evidence };
   } catch {
     return { ok: false, errorCode: "EXTERNAL_ACTION_FAILED" };
   }

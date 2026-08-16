@@ -95,13 +95,21 @@ Current-state-only. Completed/historical Sprint detail lives in
   between the preview and the final result. Detail:
   `docs/sprints/RECIPE-EXECUTION-PROGRESS-001/`.
 
+- `RECIPE-RUN-EVIDENCE-001` (roadmap Step 10) closed: the Manual Run's
+  final result now shows a structured card (사용 서비스 / 완료 시각, from
+  the real `LiveRecipeEvidence` / 결과 / Slack 참조) built from the
+  Evidence `runApprovedSlackDigestWrite` already computed but previously
+  discarded. Detail: `docs/sprints/RECIPE-RUN-EVIDENCE-001/`.
+
 ## Next Eligible Action
 
-- Roadmap Step 10 (Evidence/Result UX): the current result is ephemeral
-  component state, not a persisted Evidence record. Live external actions
-  (including an actual click-through of the Manual Run button with the
-  kill switches on) still require their own separate approval regardless of
-  the streamlined R2 Commit/Push flow noted above.
+- Roadmap Steps 11 (Save Agent/Recipe) and 12 (Run Again/Replay) both need
+  persistence beyond component state (currently lost on refresh), which
+  routes through `LIVE-DB-VALIDATION-001` (PAUSED / BLOCKED BY LOCAL
+  ENVIRONMENT) — next real decision is how to proceed given that block.
+  Live external actions (including an actual click-through of the Manual
+  Run button with the kill switches on) still require their own separate
+  approval regardless of the streamlined R2 Commit/Push flow noted above.
 
 ## Prohibited Without Separate Approval
 
