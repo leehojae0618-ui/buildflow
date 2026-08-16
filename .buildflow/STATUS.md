@@ -31,12 +31,15 @@ Current-state-only. Completed/historical Sprint detail lives in
   `docs/sprints/RECIPE-CLARIFICATION-COMPLETION-001/REPORT.md`. Browser
   interaction was not verified (no headless-browser tool in this
   environment) — see that Sprint's TASK.md "Verification Note".
-- Investigation surfaced that Steps 5-7 are already substantially built in
-  `recipe-first-experience.tsx` (engine/cost/connection/test-write UI), but
-  **Step 8 (Manual Run UI) has no server action wiring the live-verified
-  `runNewsToGroqToSlackGate` / `runApprovedSlackDigestWrite` path to any UI
-  button** — only a generic Slack test message is reachable today. This is
-  the next real gap once Steps 4-7 are confirmed closed.
+- `BUILD-PLAN-APPROVAL-DISPLAY-001` (roadmap Step 5) closed a display gap:
+  `createBuildPackage` already computed `costProfile` and `approvals` but
+  the UI never rendered them. Both are now shown once a Recipe is selected.
+  Detail: `docs/sprints/BUILD-PLAN-APPROVAL-DISPLAY-001/`.
+- Steps 6-7 assessment pending. **Step 8 (Manual Run UI) has no server
+  action wiring the live-verified `runNewsToGroqToSlackGate` /
+  `runApprovedSlackDigestWrite` path to any UI button** — only a generic
+  Slack test message is reachable today. This is the confirmed next real
+  gap once Steps 6-7 are assessed.
 - Implementation Authority: per 2026-08-16 user direction, R2 roadmap steps
   with no live external write/DB/OAuth proceed through Commit + Push
   without a separate pause once Scope is approved per step; live external
