@@ -73,6 +73,19 @@ Current-state-only. Completed/historical Sprint detail lives in
   `attemptId` + display counts; an unknown/forged/out-of-order attempt
   returns `ATTEMPT_NOT_FOUND`. In-memory only (no DB yet). Detail:
   `docs/sprints/RECIPE-MANUAL-RUN-PROVENANCE-001/`.
+- `RECIPE-MANUAL-RUN-PROVENANCE-002` closed: a follow-up audit of -001
+  found two remaining attempt-lifecycle gaps — concurrent
+  `runAiNewsSlackWriteStep` calls for the same `attemptId` each minted a
+  fresh idempotency `requestId`, so they could both reach a live Slack
+  write; and the 10-minute attempt TTL was only swept in
+  `runAiNewsFetchStep`, not checked in the summary/write steps. Fixed by
+  a `FETCHED`/`SUMMARIZED`/`WRITING` state machine on `DigestAttempt`
+  (the write step claims `WRITING` synchronously, before any `await`, so
+  a second concurrent call observes the wrong state and is rejected
+  before it can build a Slack request), a deterministic per-attempt
+  `requestId` (`slack-digest-attempt-${attemptId}`), and a per-request
+  `expiresAt` check (`getLiveAttempt`) in every step. Detail:
+  `docs/sprints/RECIPE-MANUAL-RUN-PROVENANCE-002/`.
 - Implementation Authority: per 2026-08-16 user direction, R2 roadmap steps
   with no live external write/DB/OAuth proceed through Commit + Push
   without a separate pause once Scope is approved per step; live external
@@ -89,18 +102,24 @@ Current-state-only. Completed/historical Sprint detail lives in
   one-shot; write kill switch restored to `false` immediately after)
 - Recipe Execution Contract (Trigger/Input/Processor/Destination/Approval/
   Evidence): IMPLEMENTED, adapters mock-verified against the AI-news Recipe
-  (966 tests passing, 5 skipped, 0 regressions as of `RECIPE-MANUAL-RUN-PROVENANCE-001`);
+  (970 tests passing, 5 skipped, 0 regressions as of `RECIPE-MANUAL-RUN-PROVENANCE-002`);
   no live execution needed for this step
 - Controlled runtime: IMPLEMENTED IN CODE, present in `main`
+- Attempt-token lifecycle (single-process): concurrent duplicate-Slack-send
+  and stale-TTL-reuse both closed by `RECIPE-MANUAL-RUN-PROVENANCE-002`,
+  proven by 4 unit tests (expired-at-C2, expired-at-C3, concurrent-C3,
+  consumed-attempt-replay); no live execution needed for this step
 
 ## Current NOT VERIFIED
 
 - Persistent DB Evidence
 - Production readiness / Deploy
 - Durable full-run Evidence provenance beyond a single process: the
-  attempt store fixed in `RECIPE-MANUAL-RUN-PROVENANCE-001` is in-memory
-  only (lost on process restart, not shared across instances). Real
-  durability still routes through `LIVE-DB-VALIDATION-001` (PAUSED).
+  attempt store is still in-memory only (lost on process restart, not
+  shared across instances) — `RECIPE-MANUAL-RUN-PROVENANCE-002` hardened
+  its single-process lifecycle (concurrency + TTL) but did not add
+  persistence. Real durability still routes through
+  `LIVE-DB-VALIDATION-001` (PAUSED).
 
 ## Known Procedural Finding (historical, not hidden)
 
