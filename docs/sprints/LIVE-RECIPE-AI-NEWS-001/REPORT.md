@@ -4,11 +4,11 @@
 
 ```text
 STATUS: C1 VERIFIED / C2 VERIFIED / C3 GUARDED PATH VERIFIED
-COMPOSITE C1->C2->C3 RECIPE E2E: NOT VERIFIED
-COMMIT: PERFORMED — `c7674f0`, local only
+COMPOSITE C1->C2->C3 RECIPE E2E: VERIFIED LIVE — see Update 2026-08-16 below
+COMMIT: PERFORMED — `c7674f0`, `8d02249`, local only
 PUSH: NOT PERFORMED
 DEPLOY: NOT PERFORMED
-SLACK WRITE: GUARDED PATH VERIFIED — see Update 2026-08-16 below
+SLACK WRITE: GUARDED PATH VERIFIED, COMPOSITE PATH VERIFIED — see Updates 2026-08-16 below
 SCHEDULER: NOT PERFORMED
 ```
 
@@ -178,6 +178,51 @@ The composite News -> Groq -> Guarded Slack single-path execution is now
 implemented and covered by a dedicated opt-in live test, but remains **NOT
 VERIFIED live** until a separate live-execution approval authorizes running it
 with the opt-in flags and real credentials.
+
+## Update — 2026-08-16: Composite Manual Recipe E2E Live Verification
+
+```text
+COMPOSITE C1->C2->C3 RECIPE E2E: VERIFIED LIVE
+ONE CONTINUOUS EXECUTION: News fetch -> Groq summary -> Guarded Slack write
+```
+
+Product Owner approved one live execution of the new composite test. Two
+pre-existing bugs surfaced on first attempt and were fixed within the same
+approved scope before the passing run:
+
+1. The test's `requestId` did not match
+   `slackDigestWriteRequestSchema`'s required `slack-digest-<...>` prefix
+   pattern, so the guarded service correctly failed closed with
+   `WRITE_NOT_APPROVED` (no external write attempted). Fixed by prefixing the
+   generated `requestId` with `slack-digest-`.
+2. The composite path (RSS fetch + Groq call + Slack write, sequential) needs
+   more than Vitest's 5s default; the first corrected attempt timed out
+   before completing. Fixed by setting an explicit 30s test timeout, the same
+   category of correction applied to the C3-only live harness earlier in this
+   Sprint.
+
+Command:
+
+```bash
+BUILDFLOW_LIVE_COMPOSITE_RECIPE_E2E=1 BUILDFLOW_LIVE_SLACK_WRITE_ENABLED=true \
+  npx vitest run src/features/live-ai-news/real-adapters.live.test.ts \
+  -t "Composite gate" --reporter=verbose
+```
+
+Result (one continuous execution, single test run, single Slack write):
+
+```json
+{"gate":"C3_NEWS_TO_GROQ_TO_SLACK","selectedItemCount":3,"summaryLineCount":7,"slackWriteStatus":"SUCCEEDED","safeSlackReference":"pd_8c2fc1fe3318"}
+```
+
+`BUILDFLOW_LIVE_SLACK_WRITE_ENABLED=true` was set only as an inline override
+on this single command; `.env.local` was never modified and the kill switch
+remains `false` at rest (verified after the run). No further live execution
+was performed after this success. Full typecheck, lint, and test suite
+(949 tests) re-passed after the fix.
+
+This closes Step 1 of the roadmap ("Composite Manual Recipe E2E"): News ->
+Groq -> Guard -> Slack succeeded as one execution, with Evidence.
 
 ## Gate C3 Attempt Log
 

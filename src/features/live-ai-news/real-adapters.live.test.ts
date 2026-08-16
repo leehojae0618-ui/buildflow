@@ -60,7 +60,7 @@ describe("LIVE-RECIPE-AI-NEWS-001 controlled live gates", () => {
           approved: true,
           recipeId: "recipe.ai-news-slack-digest",
           targetConfigurationReference: channelId,
-          requestId: `composite-recipe-e2e-${Date.now()}`,
+          requestId: `slack-digest-composite-e2e-${Date.now()}`,
         },
         liveRecipeDependencies: { identityProvider },
       });
@@ -83,5 +83,6 @@ describe("LIVE-RECIPE-AI-NEWS-001 controlled live gates", () => {
         slackWriteStatus: "SUCCEEDED",
       });
     },
+    30_000,
   );
 });
