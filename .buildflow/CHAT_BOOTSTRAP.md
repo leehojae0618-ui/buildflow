@@ -100,7 +100,7 @@ Continue from the first incomplete gate:
 ~~~text
 GitHub inspection
 → document inspection
-→ plan
+→ plan (identify Risk Tier R0-R3, see DEVELOPMENT_CHARTER.md Section 11)
 → user approval
 → Codex implementation
 → Commit verification
@@ -110,7 +110,9 @@ GitHub inspection
 → Notion synchronization
 ~~~
 
-Every approval authority remains separate.
+For R1 (local, fully reversible) work, one Scope approval covers
+implementation + test + Commit together; Push is still always a separate
+approval. For R2/R3 work, every approval authority remains separate.
 
 ## Session Handoff
 

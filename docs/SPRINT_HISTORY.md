@@ -9,11 +9,19 @@
 
 ## 2. Current Sprint
 
-활성 Sprint는 `LIVE-RECIPE-AI-NEWS-001`이며 C1/C2 PASS / GUARDED C3
-REMEDIATION 상태다. OpenAI News RSS Gate C1 live fetch와 Groq Gate C2 live
-summary는 PASS다. C3 Slack side effect는 earlier retry에서 OBSERVED /
-SUCCEEDED지만 guarded BuildFlow execution은 NOT VERIFIED다. 추가 Slack
-write, Scheduler, Commit, Push, Deploy는 별도 승인 전까지 수행하지 않는다.
+활성 Sprint는 `LIVE-RECIPE-AI-NEWS-001`이며, C1(News RSS), C2(Groq 요약),
+C3 guarded path(Slack write)가 **각각 독립적으로 VERIFIED**됐다. News →
+Groq → Guarded Slack을 하나의 코드 경로로 연결한 **Composite Recipe E2E는
+아직 NOT VERIFIED**다 (2026-08-16 기준, 상세는
+`sprints/LIVE-RECIPE-AI-NEWS-001/REPORT.md` "Update — 2026-08-16" 참고).
+guarded C3 write는 `runApprovedSlackDigestWrite` 서비스 경로 자체를 통해
+1회 실행됐고 write kill switch는 즉시 `false`로 복원됐다. 추가 Slack
+write, Scheduler, Deploy는 별도 승인 전까지 수행하지 않는다. 관련 커밋은
+로컬 `69a6aef`까지 GitHub `main`에 Push 완료됐다 (2026-08-16).
+
+이 Sprint의 `c7674f0` 커밋은 live-execution 승인 범위를 넘어 별도 Commit
+승인 없이 생성된 절차 위반(P1)이었다. 소급 승인으로 위장하지 않고, 커밋
+유지 자체를 사후에 별도 승인받은 사실로 기록한다.
 `PRODUCT-RUNTIME-VERTICAL-SLICE-001`의 controlled runtime 구현은 main
 `609eb083`에서 관찰됐으며, 과거 implementation authority provenance는 소급
 주장하지 않는다.
@@ -48,9 +56,12 @@ implementation이 아니다.
 | LV5-NO-KEY-REMEDIATION-001 | No-Key n8n readiness, Guest Lab, and local `USER_SUBMITTED` Evidence/Verdict flow | CLOSED / COMPLETE / USER SPRINT EXIT APPROVED | `54bbc895` | Independent audit PASS after F1/F2 correction; Browser QA, actual n8n Import, and real Make Configuration remain NOT VERIFIED | `sprints/LV5-NO-KEY-REMEDIATION-001/REPORT.md` |
 | BF0-PRODUCT-EXPERIENCE-001 | UI-only Product Experience journey and homepage entry | CLOSED / COMPLETE | `15746f14`, `51011d66` | User Persona QA PASS; User Visual QA PASS; P0/P1/P2 0/0/0; User Sprint Exit approved | `sprints/BF0-PRODUCT-EXPERIENCE-001/EXIT.md` |
 | BF0-UX-SIMPLIFICATION-001 | BF0 UX simplification and guided build experience | CLOSED / COMPLETE / USER SPRINT EXIT APPROVED | `84ac5e2` | Codex regression PASS; final browser gap check PASS; GPT final review PASS; Claude final audit SKIPPED BY PRODUCT OWNER | `sprints/BF0-UX-SIMPLIFICATION-001/REPORT.md`, `sprints/BF0-UX-SIMPLIFICATION-001/CLOSEOUT.md` |
-| PRODUCT-RUNTIME-REAL-AI-SLICE-001 | Direct-input customer-reply Real-AI product path with a disabled-by-default live Provider gate | IMPLEMENTATION IN PROGRESS | Uncommitted | Mock/injected-provider validation pending | `sprints/PRODUCT-RUNTIME-REAL-AI-SLICE-001/` |
-| FIRST-LIVE-RECIPE-E2E-001 | Guarded Pipedream development Slack OAuth/account verification and one approved Slack test write | CLOSED / COMPLETE / LIVE VERIFIED | `a568a15` local only | GPT PM/CTO PASS; Slack API `ok: true`, ts `1786778717.560079`; Push/Deploy NOT PERFORMED | `sprints/FIRST-LIVE-RECIPE-E2E-001/REPORT.md`, `sprints/FIRST-LIVE-RECIPE-E2E-001/CLOSEOUT.md` |
-| LIVE-RECIPE-AI-NEWS-001 | Manual AI news to summary to guarded Slack Recipe | ACTIVE / C1+C2 PASS / GUARDED C3 REMEDIATION | Uncommitted | C1 RSS PASS; C2 Groq PASS; C3 side effect OBSERVED / SUCCEEDED; guarded C3 NOT VERIFIED; Scheduler/Push/Deploy NOT PERFORMED | `sprints/LIVE-RECIPE-AI-NEWS-001/PLAN.md`, `sprints/LIVE-RECIPE-AI-NEWS-001/TASK.md`, `sprints/LIVE-RECIPE-AI-NEWS-001/REPORT.md` |
+| PRODUCT-RUNTIME-REAL-AI-SLICE-001 | Direct-input customer-reply Real-AI product path with a disabled-by-default live Provider gate | COMMITTED / pushed | `e3d0f1f` (pushed) | Browser QA NOT VERIFIED; actual Provider, DB, and external calls NONE | `sprints/PRODUCT-RUNTIME-REAL-AI-SLICE-001/` |
+| RECIPE-FIRST-PRODUCT-RESET-001 | Recipe-first product direction reset | COMMITTED / pushed | `ebd0290` (pushed) | — | `sprints/RECIPE-FIRST-PRODUCT-RESET-001/` |
+| RECIPE-FIRST-BUILD-PACKAGE-001 | Recipe-first build flow / package assembly | COMMITTED / pushed | `ebd0290` (pushed) | — | `sprints/RECIPE-FIRST-BUILD-PACKAGE-001/` |
+| FIRST-LIVE-RECIPE-E2E-001 | Guarded Pipedream development Slack OAuth/account verification and one approved Slack test write | CLOSED / COMPLETE / LIVE VERIFIED | `a568a15` (pushed) | GPT PM/CTO PASS; Slack API `ok: true`, ts `1786778717.560079`; Deploy NOT PERFORMED | `sprints/FIRST-LIVE-RECIPE-E2E-001/REPORT.md`, `sprints/FIRST-LIVE-RECIPE-E2E-001/CLOSEOUT.md` |
+| LIVE-RECIPE-AI-NEWS-001 | Manual AI news to summary to guarded Slack Recipe | ACTIVE / C1, C2, C3 guarded path each VERIFIED independently; Composite E2E NOT VERIFIED | `69a6aef` (pushed) | C1 RSS PASS; C2 Groq PASS; C3 guarded path VERIFIED via `runApprovedSlackDigestWrite`; Composite News->Groq->Slack E2E NOT VERIFIED; Scheduler/Deploy NOT PERFORMED | `sprints/LIVE-RECIPE-AI-NEWS-001/PLAN.md`, `sprints/LIVE-RECIPE-AI-NEWS-001/TASK.md`, `sprints/LIVE-RECIPE-AI-NEWS-001/REPORT.md` |
+| AGENT-BUILD-JOURNEY-UI-001 | Autonomous/Runtime-first (Legacy) path UI — `AgentBuildJourney` wired into `requirement-summary.tsx` | COMMITTED / pushed, out of LIVE-RECIPE-AI-NEWS-001 authority | `07f71ce` (pushed) | Committed as a separate, independently reviewable commit on explicit user direction; no implementation authority beyond that commit asserted | `src/features/autonomous/components/agent-build-journey.tsx` |
 
 ## 4. Gate History
 
@@ -67,3 +78,77 @@ implementation이 아니다.
 - Active Sprint는 하나만 기록한다.
 - Commit hash 또는 Audit 근거를 확인할 수 없으면 `UNKNOWN`으로 기록한다.
 - 상세 구현 내용은 Sprint 문서에 유지하고 이 문서는 이를 복사하지 않는다.
+
+## 6. Completed Lifecycle Closed
+
+Moved from `.buildflow/STATUS.md` (Governance v2 STATUS trim, 2026-08-16) so
+STATUS.md can stay current-state-only.
+
+- `LV5-NO-KEY-REMEDIATION-001`: CLOSED / COMPLETE / USER SPRINT EXIT APPROVED.
+- Technical lifecycle: IMPLEMENTED / VALIDATED / INDEPENDENT AUDIT PASS /
+  COMMITTED / PUSHED.
+- Checkpoint: `54bbc89529c735445b1ef68ea68195c317ea3877`.
+- User Sprint Exit: APPROVED — 2026-08-10.
+- Browser QA: NOT VERIFIED / separate gate.
+- Actual n8n Import: NOT VERIFIED / separate gate.
+- Real Make Configuration: NOT VERIFIED / separate gate.
+- External execution: NOT VERIFIED.
+- Deploy: NOT PERFORMED.
+
+## 7. Historical Runtime and Foundation State
+
+Moved from `.buildflow/STATUS.md` (Governance v2 STATUS trim, 2026-08-16).
+
+- Claude Plan Re-Audit: COMPLETE / CONDITIONAL APPROVAL
+- P1 Document Corrections: COMPLETE
+- Dry Harness Implementation: COMPLETE / PUSHED — `b4eb63f`
+- Claude Implementation Audit: PASS
+- GPT GitHub Review: PASS
+- Runtime Safety Correction: CLOSED / COMPLETE / User Sprint Exit approved
+- Runtime Safety Checkpoints: `a101b9f` / `06fa299`
+- Product Runtime Integration: COMMITTED / included in `a101b9f` / Live DB validation not verified
+- Runtime Approval Foundation: COMMITTED / included in `a101b9f` / Live DB validation not verified
+- MCP Foundation: CLOSED / COMPLETE / INDEPENDENT RE-REVIEW PASS
+- MCP Foundation Checkpoints: `e3344f2` / `4c4b3b6` / `619b480`
+- MCP Foundation Implementation Authority: NONE
+- Production Changes Authorized: NO — LIVE DB VALIDATION REQUIRED
+- Clarification Sprint: CLOSED / COMPLETE / FINAL USER QA PASS — `f84e1ad`
+- Clarification Implementation Authority: NONE
+- CORE-RUNTIME-002: CLOSED / COMPLETE / INDEPENDENT SMOKE REVIEW PASS — `30bd0c6`
+- Visual Closed Beta Slice: USER QA / WAITING FOR USER FEEDBACK
+- Visual Slice Implementation Authority: PAUSED — USER QA
+- Visual Slice Production Changes: NO — QA FINDING REQUIRED
+- Runtime Step Contract: AMENDED / INITIAL-RETRY DISCRIMINATOR / REVALIDATION COMPLETE
+- Previous Runtime Step Contract Checkpoint: `730bde8`
+- Latest Contract Amendment Checkpoint: `59aa291`
+- Previous Field-Matrix Amendment Checkpoint: `ca54d12`
+- Contract Amendment Scope: attemptNumber and predecessor validation only
+- Runtime Step Contract Reopened: YES — limited initial/retry discriminator
+- Previous Result Implementation Sprint Closeout: `3873534`
+- RuntimeExecutionResult: COMPLETE / VALIDATED (`871824e`)
+- Runtime Step Implementation Approval: HISTORICAL / REVALIDATED
+- Runtime Step Implementation Scope: HISTORICAL / LOCKED
+- Runtime Step Implementation Approval Checkpoint: `e743068`
+- Runtime Step Implementation Authority: HISTORICAL / EXPIRED
+- Runtime Step Status: IMPLEMENTATION COMPLETE
+- Runtime Implementation Status: COMPLETE / INDEPENDENTLY REVIEWED / PASS
+- Implementation Completion: COMPLETE
+- Independent Implementation Review: PASS
+- Historical Runtime Step Implementation Checkpoint: `13a2c26`
+- Initial/Retry Implementation Checkpoint: `6764c03`
+- Test Coverage Issue-Resolution Checkpoint: `6de9421`
+- Runtime Step Independent Implementation Re-review:
+  `RUNTIME-STEP-INDEPENDENT-IMPLEMENTATION-REREVIEW-001` — PASS
+- Remaining Findings: P0 0 / P1 0 / P2 0
+- Merge Execution: COMPLETE — ALREADY INTEGRATED INTO LOCAL MAIN
+- Merge Command: NOT REQUIRED
+- Remote Update: COMPLETE — `origin/main` synchronized at `b4eb63f`
+- Push Execution: COMPLETE — normal push; no force push used
+- Future Push Authorization: NOT GRANTED (historical; superseded by later Push approvals recorded per-Sprint)
+- Deploy Authorization: NOT GRANTED
+- Open Gates (historical): Visual Slice User QA; separately approved remote or
+  alternative LIVE-DB validation.
+- Historical Runtime Step Push / Merge: COMPLETE at `883666f`; CORE-RUNTIME-002
+  direct push: COMPLETE at `30bd0c6`; Deploy: NOT PERFORMED
+- Product Focus: AI Agent automatic build, deployment, verification, and BPS
+  Package sharing. General Web App and Platform expansion is on hold.

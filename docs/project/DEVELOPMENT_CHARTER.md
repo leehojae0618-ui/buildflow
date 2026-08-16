@@ -216,10 +216,44 @@ A Sprint is complete only when all of the following are true:
 - Browser-visible progress exists.
 - The project owner can verify the new functionality.
 
-## 11. Sprint Lifecycle and Quality Gate
+## 11. Risk Tiers
 
-Every Sprint uses the following lifecycle. Current operational documents must
-use the same state names.
+Procedure weight scales with risk, not with the fact that a change was made.
+Every task is classified into one tier before work starts:
+
+```text
+R0 — READ ONLY
+Git/GitHub inspection, code reading, analysis, audit.
+No approval required. No Sprint document required.
+
+R1 — LOCAL REVERSIBLE
+Doc corrections, small config cleanup, added tests, simple refactors with no
+production-behavior change. Fully reversible locally (git revert covers it).
+One Scope approval covers implementation + test + Commit together.
+Push is still a separate approval. No Sprint folder required — a
+`docs/SPRINT_HISTORY.md` or `memory/06_change_log.md` line is enough.
+
+R2 — PRODUCT CHANGE
+User-facing features, Runtime/Recipe logic, UI functionality, significant
+refactors. Scope approval covers implementation + test + Commit together.
+Push is a separate approval. Uses the minimal Sprint document set (Section
+11a).
+
+R3 — LIVE / HIGH RISK
+Live external writes (Slack/API), OAuth, DB write or migration, Release,
+Deploy, Production change, any destructive operation. Every external action
+gets its own approval and required evidence. Commit, Push, and Deploy remain
+separate gates. Independent Claude audit may be required per Section 12.
+```
+
+Regardless of tier, the following always require their own separate approval
+and are never bundled into a Scope approval: **live external write, DB write
+or migration, credential or OAuth handling, Push, Merge, Release, Deploy.**
+
+## 11a. Sprint Lifecycle and Quality Gate
+
+The full lifecycle applies to R2 and R3 work. Current operational documents
+must use the same state names.
 
 ```text
 DRAFT
@@ -242,15 +276,26 @@ recorded as `ACTIVE`.
 production code only within the approved Scope. Scope expansion is prohibited.
 
 Every `READY → ACTIVE` transition requires an Activation Record in the Sprint
-directory. It must state activation time, activating authority, frozen Scope,
-authorized implementation boundary, and explicit restrictions.
+directory **for R3 work**. It must state activation time, activating
+authority, frozen Scope, authorized implementation boundary, and explicit
+restrictions. R1/R2 work does not require an Activation Record.
 
 Every completed Sprint requires an Exit Record before `IMPLEMENTED → CODE
-REVIEW`. It must record completed Scope, out-of-scope work, known issues,
-validation evidence, PM review, User QA, and the next Sprint candidate.
+REVIEW` **at a Closed Beta, Release, or other major-milestone Sprint**. It
+must record completed Scope, out-of-scope work, known issues, validation
+evidence, PM review, User QA, and the next Sprint candidate. Routine R1/R2
+Sprints close with their `REPORT.md` instead.
 
-No Sprint advances while any P0, P1, or P2 finding remains unresolved. Findings
-must be corrected and revalidated before the next lifecycle transition.
+The default Sprint document set is `TASK.md` + `REPORT.md`. Add `CONTRACT.md`
+only when an interface, security boundary, or data contract changes; add
+`ACTIVATION.md` only for R3 work; add `CLOSEOUT.md` only for Closed Beta,
+Release, or comparable milestones. R1 work does not require a Sprint folder
+at all — see Section 11.
+
+P0 and P1 findings always block the next lifecycle transition and must be
+corrected and revalidated first. A P2 finding is recorded and the Sprint may
+proceed; P2 findings are re-evaluated as a group at the next Closed Beta,
+Release, or Production gate before that gate can pass.
 
 ## 12. Independent Audit Policy
 

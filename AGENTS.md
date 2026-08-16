@@ -56,7 +56,18 @@ approval, security, release, or change-control gates.
 
 ## Workflow
 
-Every Sprint follows the same operative lifecycle:
+Every task is classified into a Risk Tier (R0-R3, see
+`docs/project/DEVELOPMENT_CHARTER.md` Section 11) before work starts.
+Procedure weight scales with the tier:
+
+- **R0** (read-only inspection/analysis/audit): no approval, no Sprint
+  document.
+- **R1** (local, fully reversible: doc fixes, small config cleanup, tests,
+  simple refactors): one Scope approval covers implementation + test +
+  Commit together; no Sprint folder required. Push is still separate.
+- **R2** (product change: features, Runtime/Recipe logic, UI, significant
+  refactors) and **R3** (Live/OAuth/DB write/Release/Deploy/destructive)
+  follow the full lifecycle below.
 
 ```text
 DRAFT → PM REVIEW → FROZEN → READY → ACTIVE → IMPLEMENTED → CODE REVIEW → USER QA → DONE
@@ -68,21 +79,26 @@ DRAFT → PM REVIEW → FROZEN → READY → ACTIVE → IMPLEMENTED → CODE REV
 - `ACTIVE` means implementation has officially started. The developer may
   modify production code only within the approved Scope; Scope expansion is
   prohibited.
-- Every `READY → ACTIVE` transition requires an Activation Record in the Sprint
-  directory stating activation time, activating authority, frozen Scope,
-  implementation authority, and explicit restrictions.
+- Every `READY → ACTIVE` transition requires an Activation Record in the
+  Sprint directory for **R3** work, stating activation time, activating
+  authority, frozen Scope, implementation authority, and explicit
+  restrictions.
 - Every completed Sprint requires an Exit Record before `IMPLEMENTED → CODE
-  REVIEW`. It records completed Scope, out-of-scope work, known issues,
-  validation evidence, PM review, User QA, and the next Sprint candidate.
-- Any P0, P1, or P2 finding is resolved and revalidated before the Sprint may
-  advance to its next lifecycle state.
+  REVIEW` at a **Closed Beta, Release, or major-milestone** Sprint. It
+  records completed Scope, out-of-scope work, known issues, validation
+  evidence, PM review, User QA, and the next Sprint candidate. Routine R1/R2
+  work closes with its `REPORT.md` instead.
+- P0 or P1 findings always block advancing to the next lifecycle state until
+  corrected and revalidated. A P2 finding is recorded and the Sprint may
+  proceed; open P2s are re-evaluated together at the next Beta, Release, or
+  Production gate.
 
 ## Product Review and Change Control
 
 - A Sprint scope is frozen after approval. Mid-Sprint ideas are not implemented unless classified as an emergency fix.
 - Change classes: A (security/data-loss/critical DB issue: immediate), B (efficiency or direction improvement: backlog for review), C (new idea: document only).
 - Product Review occurs every five Sprints and is recorded in `docs/project/PRODUCT_REVIEW.md`.
-- Implementation Complete, PM Review, Commit Approval, and Push Approval are separate gates. Codex must not commit before explicit Commit Approval.
+- Implementation Complete, PM Review, Commit Approval, and Push Approval are separate gates for R2/R3 work. For R1 work, Commit Approval may be granted together with the Scope approval; Push Approval always remains separate regardless of tier. Codex must not commit before explicit Commit Approval.
 - One active Sprint is allowed at a time; unrelated ideas are recorded for later review.
 - Every Sprint `REPORT.md` must include an `MVP Impact` section. Use a quantified percentage only when there is an agreed measurement basis; otherwise record a qualitative impact and why it is not quantified.
 - `docs/project/RELEASE_NOTES.md` records only user-visible product changes. Internal refactoring, documentation-only changes, test changes, and Technical Debt updates do not belong there.
@@ -306,7 +322,10 @@ All BuildFlow work follows this sequence:
 
 A later step is not complete merely because an earlier step passed.
 Implementation, Commit, Push, Merge, Release, Deploy, and external-action
-authorities are separate.
+authorities are separate for R2/R3 work. For R1 work (see `DEVELOPMENT_CHARTER.md`
+Section 11), Implementation and Commit may share one Scope approval; Push,
+Merge, Release, Deploy, and external-action authorities remain separate at
+every tier.
 
 ### Fixed GPT Response Format
 
