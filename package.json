@@ -13,6 +13,7 @@
     "test": "vitest run",
     "live-db:validate:dry": "vitest run tests/live-db-validation",
     "live-db:validate:staging": "vitest run tests/live-db-validation/staging-connection-guard.test.ts",
+    "live-db:execute:staging": "vitest run tests/live-db-validation/staging-execution.live.test.ts",
     "db:seed": "npx supabase db query --linked --file supabase/seed.sql"
   },
   "dependencies": {

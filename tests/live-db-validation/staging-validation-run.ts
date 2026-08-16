@@ -1,25 +1,36 @@
 import type { RuntimeApprovalBinding } from "../../src/features/runtime-approval/types";
-import { runApprovalValidation } from "./approval-validation-runner";
+import {
+  assertApprovalFixtures,
+  runApprovalExpiry,
+  runApprovalLifecycle,
+} from "./approval-validation-runner";
 import {
   createExplicitRepositoryInjection,
   createLiveDbClient,
   liveDbClientIdentityFailure,
-  type LiveDbClientFactory,
 } from "./live-db-client";
 import {
-  executeStagingMigration,
-  type LiveDbMigrationExecutor,
-} from "./staging-migration-executor";
+  runRlsValidation,
+  validateRlsActorSet,
+  type LiveDbRlsActor,
+  type LiveDbRlsFixtureCheck,
+} from "./rls-validation-runner";
+import { createLiveDbRecordCounter } from "./runtime-record-counters";
+import {
+  verifyImmutabilityTrigger,
+  verifyStagingSchema,
+  type LiveDbSchemaClient,
+} from "./schema-verification";
 import {
   createLiveDbStagingEvidenceSummary,
   type LiveDbStagingCaseEvidence,
   type LiveDbStagingEvidenceSummary,
 } from "./staging-evidence";
 import {
-  runRlsValidation,
-  type LiveDbRlsActor,
-  type LiveDbRlsFixtureCheck,
-} from "./rls-validation-runner";
+  executeStagingMigration,
+  type LiveDbMigrationExecutor,
+} from "./staging-migration-executor";
+import { resolveStagingMigrationTarget } from "./staging-migration-target";
 import type {
   LiveDbCaseResult,
   LiveDbClientIdentityCandidate,
@@ -31,20 +42,17 @@ import { liveDbValidationCases } from "./validation-cases";
 export type StagingApprovalInput = {
   binding: RuntimeApprovalBinding;
   mismatchedBinding: RuntimeApprovalBinding;
-  expiredApprovalId: string | undefined;
 };
 
 export type StagingRlsInput = {
-  approvalId: string;
-  confirmFixture: ((approvalId: string) => Promise<LiveDbRlsFixtureCheck>) | undefined;
   actors: readonly LiveDbRlsActor[] | undefined;
   /**
    * The caller's declaration about how the three actor clients were built.
    *
    * Actors are closures, so their origin cannot be inspected the way the
    * approval repository's can: this is an attestation, checked but not proven.
-   * Constructing the actors here instead would mean owning owner/other/anon
-   * session creation, which is deliberately out of this boundary's scope.
+   * Constructing them here would mean owning owner/other/anon session creation,
+   * which is deliberately outside this boundary.
    */
   identity: LiveDbClientIdentityCandidate | undefined;
 };
@@ -53,17 +61,15 @@ export type StagingValidationRunInput = {
   environment: LiveDbEnvironmentInput;
   /** No default: an un-injected executor blocks instead of shelling out. */
   migrationExecutor: LiveDbMigrationExecutor | undefined;
-  /**
-   * Builds the dedicated LIVE_DB Supabase clients. There is no default, so this
-   * boundary cannot open a real connection unless a factory is handed to it.
-   */
-  clientFactory: LiveDbClientFactory | undefined;
   approval: StagingApprovalInput;
   rls: StagingRlsInput;
   timestamp: string;
+  clock: () => number;
+  wait: (milliseconds: number) => Promise<void>;
   validationRunId?: string;
   /** Full project refs that must never appear in Evidence. */
   forbiddenProjectRefs?: readonly string[];
+  maxExpiryWaitMs?: number;
 };
 
 export type StagingValidationRunResult = {
@@ -83,9 +89,9 @@ const expectedResultByCaseId = new Map(
 );
 
 /**
- * Projects case results into Evidence rows. Both fields written here come from
- * the harness's own safe vocabulary — a registry string and a safe error code —
- * so no database message can reach Evidence through this path.
+ * Projects case results into Evidence rows. Both free-text fields come from the
+ * harness's own safe vocabulary — a registry string and a safe error code — so
+ * no database message can reach Evidence through this path.
  */
 function toCaseEvidence(results: readonly LiveDbCaseResult[]): LiveDbStagingCaseEvidence[] {
   return results.map((item) => ({
@@ -98,19 +104,65 @@ function toCaseEvidence(results: readonly LiveDbCaseResult[]): LiveDbStagingCase
   }));
 }
 
+const passCase = (caseId: string): LiveDbCaseResult => ({
+  caseId,
+  executionStatus: "EXECUTED_PASS",
+  verdict: "PASS",
+});
+
+const failCase = (caseId: string, safeErrorCode: LiveDbSafeErrorCode): LiveDbCaseResult => ({
+  caseId,
+  executionStatus: "EXECUTED_FAIL",
+  verdict: "FAIL",
+  safeErrorCode,
+});
+
 /**
- * The single ST-B execution path: environment guard and migration target
- * resolution, then the migration, then APR, then RLS, then Evidence.
+ * Everything knowable without a database, checked in one place before the
+ * migration runs.
+ *
+ * The ordering is the point: applying a migration is the first irreversible
+ * thing ST-B does, so no static defect — a bad target, a missing dependency, a
+ * malformed actor set, an unprefixed fixture, an unusable timestamp — may be
+ * discovered after it. Each check here is pure or constructs objects only.
+ */
+function runPreflight(input: StagingValidationRunInput): LiveDbSafeErrorCode | undefined {
+  const target = resolveStagingMigrationTarget(input.environment);
+  if (target.status === "BLOCKED") return target.safeErrorCode;
+
+  if (typeof input.migrationExecutor !== "function") {
+    return "LIVE_DB_MIGRATION_EXECUTOR_NOT_INJECTED";
+  }
+  if (typeof input.clock !== "function" || typeof input.wait !== "function") {
+    return "LIVE_DB_PREFLIGHT_INCOMPLETE";
+  }
+
+  const actorCheck = validateRlsActorSet(input.rls.actors);
+  if (actorCheck.status === "INVALID") return actorCheck.safeErrorCode;
+  const identityFailure = liveDbClientIdentityFailure(input.rls.identity);
+  if (identityFailure) return identityFailure;
+
+  const fixtureFailure = assertApprovalFixtures(input.approval);
+  if (fixtureFailure) return fixtureFailure;
+
+  // A timestamp that is not an ISO instant cannot anchor Evidence, and finding
+  // that out after the migration would be the same mistake in miniature.
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(input.timestamp)) {
+    return "LIVE_DB_PREFLIGHT_INCOMPLETE";
+  }
+  return undefined;
+}
+
+/**
+ * The single ST-B execution path: preflight, migration, MIG-01, APR, RLS, the
+ * expiry wait, then Evidence.
  *
  * It exists so the guarded boundaries and the code that actually touches the
- * database are the same code. Every step is reached only through an explicitly
- * injected dependency, and a block at any step stops the ones after it — in
- * particular a blocked migration never reaches an approval or RLS probe.
- *
- * It builds the LIVE_DB clients and the approval repository itself, from the
- * environment the guard just approved, so their target cannot diverge from the
- * migration's. It issues no query and spawns no process of its own, and without
- * an injected client factory it cannot open a connection at all.
+ * database are the same code. It builds the LIVE_DB clients and the approval
+ * repository itself, from the environment the guard approved, so their target
+ * cannot diverge from the migration's — there is no injection point through
+ * which a foreign client could arrive. A block at any step stops the ones after
+ * it, and nothing reaches the database until every static check has passed.
  */
 export async function runStagingValidation(
   input: StagingValidationRunInput,
@@ -118,15 +170,12 @@ export async function runStagingValidation(
   const validationRunId = input.validationRunId ?? "live-db-validation-001-staging";
   const caseResults: LiveDbCaseResult[] = [];
 
-  const finish = (
-    outcome: {
-      safeErrorCode?: LiveDbSafeErrorCode;
-      maskedProjectRef: string;
-      migrationApplied: boolean;
-      appliedMigrationCount: number;
-    },
-  ): StagingValidationRunResult => {
-    const verdict = outcome.safeErrorCode ? "FAIL" : "PASS";
+  const finish = (outcome: {
+    safeErrorCode?: LiveDbSafeErrorCode;
+    maskedProjectRef: string;
+    migrationApplied: boolean;
+    appliedMigrationCount: number;
+  }): StagingValidationRunResult => {
     const evidence = createLiveDbStagingEvidenceSummary({
       validationRunId,
       maskedProjectRef: outcome.maskedProjectRef,
@@ -135,106 +184,139 @@ export async function runStagingValidation(
       caseResults,
       cases: toCaseEvidence(caseResults),
       timestamp: input.timestamp,
-      verdict,
+      verdict: outcome.safeErrorCode ? "FAIL" : "PASS",
       ...(input.forbiddenProjectRefs ? { forbiddenProjectRefs: input.forbiddenProjectRefs } : {}),
     });
     // An unsafe summary blocks the run even when every case passed: publishing
     // a secret is itself a failure of ST-B, not a footnote to a green result.
     if (evidence.status === "UNSAFE") {
-      return {
-        status: "BLOCKED",
-        safeErrorCode: evidence.safeErrorCode,
-        evidence: evidence.summary,
-      };
+      return { status: "BLOCKED", safeErrorCode: evidence.safeErrorCode, evidence: evidence.summary };
     }
     return outcome.safeErrorCode
       ? { status: "BLOCKED", safeErrorCode: outcome.safeErrorCode, evidence: evidence.summary }
       : { status: "PASSED", evidence: evidence.summary };
   };
-
-  // Guard and migration. `executeStagingMigration` runs the ST-A environment
-  // guard and the dual-binding target resolution before it builds any argv, so
-  // reaching its APPLIED branch is what makes the steps below safe to run.
-  const migration = await executeStagingMigration(input.environment, input.migrationExecutor);
-  if (migration.status === "BLOCKED") {
-    return finish({
-      safeErrorCode: migration.safeErrorCode,
+  const blockedBeforeMigration = (safeErrorCode: LiveDbSafeErrorCode) =>
+    finish({
+      safeErrorCode,
       maskedProjectRef: "unavailable",
       migrationApplied: false,
       appliedMigrationCount: 0,
     });
-  }
-  const applied = {
-    maskedProjectRef: migration.targetProjectRefMasked,
-    migrationApplied: true,
-    appliedMigrationCount: migration.appliedMigrationCount,
-  };
 
-  // The approval repository is built here rather than accepted, so "it uses a
-  // dedicated LIVE_DB client" is a fact this boundary establishes instead of a
-  // claim it trusts. SupabaseRuntimeApprovalRepository defaults its client to
-  // createSupabaseAdminClient(), which would reach the application project; an
-  // accepted repository could carry that default in unnoticed, and the
-  // migration above would have been the only step that stayed on staging.
-  //
-  // Both clients come from the same environment the guard just approved, so
-  // their target is the migration's target by construction.
-  if (typeof input.clientFactory !== "function") {
-    return finish({ ...applied, safeErrorCode: "LIVE_DB_CLIENT_NOT_EXPLICITLY_INJECTED" });
-  }
+  const preflightFailure = runPreflight(input);
+  if (preflightFailure) return blockedBeforeMigration(preflightFailure);
+
+  // Object construction only — no query is issued here.
   const configuration = {
     ...(input.environment.liveDbSupabaseUrl ? { url: input.environment.liveDbSupabaseUrl } : {}),
     ...(input.environment.liveDbServiceRoleKey
       ? { serviceRoleKey: input.environment.liveDbServiceRoleKey }
       : {}),
   };
-  const approvalClient = createLiveDbClient(configuration, input.clientFactory);
-  if (approvalClient.status === "BLOCKED") {
-    return finish({ ...applied, safeErrorCode: approvalClient.safeErrorCode });
-  }
-  const evidenceClient = createLiveDbClient(configuration, input.clientFactory);
-  if (evidenceClient.status === "BLOCKED") {
-    return finish({ ...applied, safeErrorCode: evidenceClient.safeErrorCode });
-  }
+  const approvalClient = createLiveDbClient(configuration);
+  if (approvalClient.status === "BLOCKED") return blockedBeforeMigration(approvalClient.safeErrorCode);
+  const evidenceClient = createLiveDbClient(configuration);
+  if (evidenceClient.status === "BLOCKED") return blockedBeforeMigration(evidenceClient.safeErrorCode);
   const injection = createExplicitRepositoryInjection(approvalClient.client, evidenceClient.client);
-  if ("status" in injection) {
-    return finish({ ...applied, safeErrorCode: injection.safeErrorCode });
-  }
+  if ("status" in injection) return blockedBeforeMigration(injection.safeErrorCode);
 
-  // RLS actors cannot be constructed here, so their origin is attested instead.
-  const rlsIdentityFailure = liveDbClientIdentityFailure(input.rls.identity);
-  if (rlsIdentityFailure) {
-    return finish({ ...applied, safeErrorCode: rlsIdentityFailure });
-  }
+  const schemaClient = approvalClient.client as unknown as LiveDbSchemaClient;
+  const counter = createLiveDbRecordCounter(schemaClient);
 
-  const approval = await runApprovalValidation({
+  // Preflight is complete: this is the first irreversible step.
+  const migration = await executeStagingMigration(input.environment, input.migrationExecutor);
+  if (migration.status === "BLOCKED") return blockedBeforeMigration(migration.safeErrorCode);
+  const applied = {
+    maskedProjectRef: migration.targetProjectRefMasked,
+    migrationApplied: true,
+    appliedMigrationCount: migration.appliedMigrationCount,
+  };
+
+  // MIG-01, structural half.
+  const schema = await verifyStagingSchema(schemaClient);
+  if (schema.status === "BLOCKED") {
+    caseResults.push(failCase("migration-schema-objects", schema.safeErrorCode));
+    return finish({ ...applied, safeErrorCode: schema.safeErrorCode });
+  }
+  caseResults.push(passCase("migration-schema-objects"));
+
+  const lifecycle = await runApprovalLifecycle({
     repository: injection.approvalRepository,
+    counter,
     ...input.approval,
   });
-  caseResults.push(...approval.caseResults);
-  if (approval.status === "BLOCKED") {
-    // The fallbacks matter: a blocked runner that reported no code must still
-    // block here rather than fall through to a PASS verdict.
+  caseResults.push(...lifecycle.caseResults);
+  if (lifecycle.status === "BLOCKED") {
     return finish({
       ...applied,
-      safeErrorCode: approval.safeErrorCode ?? "LIVE_DB_APPROVAL_UNEXPECTED_OUTCOME",
+      safeErrorCode: lifecycle.safeErrorCode ?? "LIVE_DB_APPROVAL_UNEXPECTED_OUTCOME",
     });
   }
 
-  const rls = await runRlsValidation(input.rls);
+  // MIG-01, behavioural half. Runs against the expiry fixture, which is the one
+  // row still untouched at this point, and leaves it unchanged.
+  const probeApprovalId = lifecycle.triggerProbeApprovalId;
+  if (!probeApprovalId) {
+    return finish({ ...applied, safeErrorCode: "LIVE_DB_SCHEMA_VERIFICATION_FAILED" });
+  }
+  const trigger = await verifyImmutabilityTrigger(schemaClient, probeApprovalId);
+  if (trigger.status === "BLOCKED") {
+    caseResults.push(failCase("migration-immutability-trigger", trigger.safeErrorCode));
+    return finish({ ...applied, safeErrorCode: trigger.safeErrorCode });
+  }
+  caseResults.push(passCase("migration-immutability-trigger"));
+
+  // RLS. The fixture check runs with the service-role client this boundary
+  // already holds, so an owner reading zero rows is never confused with a row
+  // that was never there.
+  const confirmFixture = async (approvalId: string): Promise<LiveDbRlsFixtureCheck> => {
+    const counted = await counter.countApprovalEvents(approvalId);
+    if (counted.status === "ERRORED") {
+      return { status: "ERRORED", safeErrorCode: counted.safeErrorCode };
+    }
+    return counted.count > 0 ? { status: "PRESENT" } : { status: "ABSENT" };
+  };
+  const rls = await runRlsValidation({
+    approvalId: probeApprovalId,
+    confirmFixture,
+    actors: input.rls.actors,
+  });
   caseResults.push(...rls.caseResults);
   if (rls.status === "BLOCKED") {
+    return finish({ ...applied, safeErrorCode: rls.safeErrorCode ?? "LIVE_DB_RLS_ACCESS_VIOLATION" });
+  }
+
+  // The expiry fixture's TTL has been running down since the lifecycle began.
+  const expiry = await runApprovalExpiry({
+    repository: injection.approvalRepository,
+    binding: input.approval.binding,
+    expiry: lifecycle.expiry,
+    clock: input.clock,
+    wait: input.wait,
+    ...(input.maxExpiryWaitMs !== undefined ? { maxWaitMs: input.maxExpiryWaitMs } : {}),
+  });
+  caseResults.push(...expiry.caseResults);
+  if (expiry.status === "BLOCKED") {
     return finish({
       ...applied,
-      safeErrorCode: rls.safeErrorCode ?? "LIVE_DB_RLS_ACCESS_VIOLATION",
+      safeErrorCode: expiry.safeErrorCode ?? "LIVE_DB_APPROVAL_UNEXPECTED_OUTCOME",
     });
+  }
+
+  // Matrix column: ST-B writes no Runtime Evidence at all — that is ST-C's gate.
+  const evidenceRows = await counter.countRuntimeEvidence();
+  if (evidenceRows.status === "ERRORED") {
+    return finish({ ...applied, safeErrorCode: evidenceRows.safeErrorCode });
+  }
+  if (evidenceRows.count !== 0) {
+    return finish({ ...applied, safeErrorCode: "LIVE_DB_RUNTIME_EVIDENCE_UNEXPECTED" });
   }
 
   // Keeps Evidence and the case registry from drifting apart: a case id the
   // registry does not know would otherwise be published with a placeholder
   // expected result and silently weaken the record.
-  const unknownCase = caseResults.find((item) => !expectedResultByCaseId.has(item.caseId));
-  if (unknownCase) {
+  if (caseResults.some((item) => !expectedResultByCaseId.has(item.caseId))) {
     return finish({ ...applied, safeErrorCode: "LIVE_DB_VALIDATION_REGISTRY_INVALID" });
   }
 

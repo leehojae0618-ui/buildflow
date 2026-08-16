@@ -2,20 +2,82 @@ import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 
 /**
- * The composition root builds its own repositories, so the adapters are mocked
- * rather than injected. `state` is hoisted because a vi.mock factory runs
- * before the module body.
+ * The composition root builds its own clients and repositories, so the adapters
+ * and the Supabase SDK are mocked rather than injected. `state` is hoisted
+ * because a vi.mock factory runs before the module body.
  */
 const state = vi.hoisted(() => ({
   approvalConstructions: [] as unknown[],
   evidenceConstructions: [] as unknown[],
+  createdClients: [] as { url: string; key: string }[],
+  /** Every table/rpc call the root's service-role client made. */
+  calls: [] as string[],
+  events: new Map<string, string[]>(),
+  evidenceRows: 0,
+  triggerRejects: true,
+  schemaPresent: true,
+  /**
+   * The fake database's clock. The root reads it and the injected `wait`
+   * advances it, so the expiry case exercises the real wait-then-probe path
+   * instead of starting out already past the TTL.
+   */
+  nowMs: Date.parse("2026-08-17T00:00:00.000Z"),
+  reset() {
+    this.approvalConstructions.length = 0;
+    this.evidenceConstructions.length = 0;
+    this.createdClients.length = 0;
+    this.calls.length = 0;
+    this.events.clear();
+    this.evidenceRows = 0;
+    this.triggerRejects = true;
+    this.schemaPresent = true;
+    this.nowMs = Date.parse("2026-08-17T00:00:00.000Z");
+  },
+}));
+
+vi.mock("@supabase/supabase-js", () => ({
+  createClient: (url: string, key: string) => {
+    state.createdClients.push({ url, key });
+    const missing = { code: "PGRST205", message: "not found" };
+    const raised = { code: "P0001", message: "RUNTIME_APPROVAL_NOT_FOUND" };
+    return {
+      from(table: string) {
+        state.calls.push(`from:${table}`);
+        return {
+          select() {
+            const outcome = state.schemaPresent
+              ? { error: null, count: table === "runtime_evidence_records" ? state.evidenceRows : 0 }
+              : { error: missing, count: null };
+            return {
+              then: (resolve: (value: unknown) => unknown) => Promise.resolve(outcome).then(resolve),
+              eq: (_column: string, value: string) =>
+                Promise.resolve(
+                  table === "runtime_approval_events"
+                    ? { error: null, count: (state.events.get(value) ?? []).length }
+                    : outcome,
+                ),
+            };
+          },
+          update() {
+            return {
+              eq: async () => ({ error: state.triggerRejects ? raised : null }),
+            };
+          },
+        };
+      },
+      rpc(fn: string) {
+        state.calls.push(`rpc:${fn}`);
+        return Promise.resolve({ error: state.schemaPresent ? raised : missing, data: null });
+      },
+    };
+  },
 }));
 
 vi.mock("../../src/features/runtime-approval/runtime-approval-supabase", async () => {
   const { validateRuntimeApprovalBinding } = await import(
     "../../src/features/runtime-approval/validator"
   );
-  const NOW = Date.parse("2026-08-17T00:00:00.000Z");
+  const TTL_MS = 900_000;
   const ok = (value: unknown) => ({ status: "OK", value, failures: [] });
   const failed = (code: string) => ({ status: "FAILED", failures: [{ code }] });
 
@@ -27,29 +89,27 @@ vi.mock("../../src/features/runtime-approval/runtime-approval-supabase", async (
 
       constructor(readonly client: unknown) {
         state.approvalConstructions.push(client);
-        this.rows.set("approval-pre-aged", {
-          approvalId: "approval-pre-aged",
-          bindingChecksum: "pre-aged-fixture-checksum",
-          status: "PENDING",
-          expiresAt: new Date(NOW - 60_000).toISOString(),
-        });
+      }
+
+      private record(approvalId: string, event: string) {
+        state.events.set(approvalId, [...(state.events.get(approvalId) ?? []), event]);
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       async create(input: any) {
         if (!validateRuntimeApprovalBinding(input.binding)) return failed("RUNTIME_APPROVAL_INVALID");
-        const duplicate = [...this.rows.values()].some(
-          (row) => row.bindingChecksum === input.binding.bindingChecksum,
-        );
-        if (duplicate) return failed("RUNTIME_APPROVAL_PERSISTENCE_FAILED");
+        if ([...this.rows.values()].some((row) => row.bindingChecksum === input.binding.bindingChecksum)) {
+          return failed("RUNTIME_APPROVAL_PERSISTENCE_FAILED");
+        }
         this.sequence += 1;
         const value = {
           ...input.binding,
           approvalId: `approval-${this.sequence}`,
           status: "PENDING",
-          expiresAt: new Date(NOW + 900_000).toISOString(),
+          expiresAt: new Date(state.nowMs + TTL_MS).toISOString(),
         };
         this.rows.set(value.approvalId, value);
+        this.record(value.approvalId, "CREATED");
         return ok(value);
       }
 
@@ -57,12 +117,19 @@ vi.mock("../../src/features/runtime-approval/runtime-approval-supabase", async (
       async decide(input: any) {
         const row = this.rows.get(input.approvalId);
         if (!row) return failed("RUNTIME_APPROVAL_NOT_FOUND");
-        if (Date.parse(row.expiresAt) <= NOW) return failed("RUNTIME_APPROVAL_EXPIRED");
+        if (row.status === "EXPIRED") return failed("RUNTIME_APPROVAL_NOT_APPROVED");
+        // The TTL is checked before the transition, as decide_runtime_approval
+        // _request does, so a fixture left alone long enough answers EXPIRED.
+        if (Date.parse(row.expiresAt) <= state.nowMs) {
+          this.rows.set(input.approvalId, { ...row, status: "EXPIRED" });
+          this.record(input.approvalId, "EXPIRED");
+          return failed("RUNTIME_APPROVAL_EXPIRED");
+        }
         const status =
           input.decision === "APPROVE" ? "APPROVED" : input.decision === "REJECT" ? "REJECTED" : "REVOKED";
-        const value = { ...row, status };
-        this.rows.set(input.approvalId, value);
-        return ok(value);
+        this.rows.set(input.approvalId, { ...row, status });
+        this.record(input.approvalId, status);
+        return ok({ ...row, status });
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,9 +142,9 @@ vi.mock("../../src/features/runtime-approval/runtime-approval-supabase", async (
         if (row.bindingChecksum !== input.binding.bindingChecksum) {
           return failed("RUNTIME_APPROVAL_BINDING_MISMATCH");
         }
-        const value = { ...row, status: "CONSUMED" };
-        this.rows.set(input.approvalId, value);
-        return ok(value);
+        this.rows.set(input.approvalId, { ...row, status: "CONSUMED" });
+        this.record(input.approvalId, "CONSUMED");
+        return ok({ ...row, status: "CONSUMED" });
       }
 
       async get(approvalId: string) {
@@ -99,10 +166,8 @@ vi.mock("../../src/features/agents/runtime-evidence-supabase", () => ({
 import type { RuntimeApprovalBinding } from "../../src/features/runtime-approval/types";
 import { checksumRuntimeApprovalBinding } from "../../src/features/runtime-approval/validator";
 import { loadLiveDbEnvironment } from "./environment-loader";
-import type { LiveDbClientFactory } from "./live-db-client";
 import type {
   LiveDbRlsActor,
-  LiveDbRlsFixtureCheck,
   LiveDbRlsMutateOutcome,
   LiveDbRlsReadOutcome,
   LiveDbRlsRpcOutcome,
@@ -112,7 +177,7 @@ import type {
   LiveDbMigrationExecutor,
   LiveDbMigrationExecutorOutcome,
 } from "./staging-migration-executor";
-import type { LiveDbClientIdentityCandidate } from "./types";
+import { LIVE_DB_TEST_PREFIX, type LiveDbClientIdentityCandidate } from "./types";
 import { runStagingValidation, type StagingValidationRunInput } from "./staging-validation-run";
 
 const stagingRef = "stagingabc";
@@ -132,9 +197,9 @@ const core = {
   projectId: "11111111-1111-4111-8111-111111111111",
   userId: "22222222-2222-4222-8222-222222222222",
   scope: "CORE_RUNTIME_PROVIDER_EXECUTION" as const,
-  runtimeExecutionRequestId: "33333333-3333-4333-8333-333333333333",
+  runtimeExecutionRequestId: `${LIVE_DB_TEST_PREFIX}request`,
   runtimeExecutionRequestChecksum: hex("request-1"),
-  runtimePlanId: "44444444-4444-4444-8444-444444444444",
+  runtimePlanId: `${LIVE_DB_TEST_PREFIX}plan`,
   runtimePlanChecksum: hex("plan-1"),
   provider: "openai" as const,
   model: "gpt-4o-mini",
@@ -188,31 +253,29 @@ const appliedExecutor: LiveDbMigrationExecutor = vi.fn(
   }),
 );
 
-const confirmFixture = vi.fn(async (): Promise<LiveDbRlsFixtureCheck> => ({ status: "PRESENT" }));
-const clientFactory: LiveDbClientFactory = vi.fn(() => ({ marker: "live-db" }) as never);
-
-const rlsInput = (overrides: Partial<StagingValidationRunInput["rls"]> = {}) => ({
-  approvalId: "approval-1",
-  confirmFixture,
-  actors: passingActors(),
-  identity: validIdentity,
-  ...overrides,
-});
-
-const run = (overrides: Partial<StagingValidationRunInput> = {}) =>
-  runStagingValidation({
+/** `setup` runs after the reset, so a test can shape the fake database. */
+const run = (overrides: Partial<StagingValidationRunInput> = {}, setup?: () => void) => {
+  state.reset();
+  setup?.();
+  return runStagingValidation({
     environment: loadLiveDbEnvironment("connection", validStagingSource),
     migrationExecutor: appliedExecutor,
-    clientFactory,
-    approval: { binding, mismatchedBinding, expiredApprovalId: "approval-pre-aged" },
-    rls: rlsInput(),
+    approval: { binding, mismatchedBinding },
+    rls: { actors: passingActors(), identity: validIdentity },
     timestamp: "2026-08-17T00:00:00.000Z",
+    clock: () => state.nowMs,
+    // Advancing the fake clock is what makes the fixture expire, so the run
+    // genuinely waits the TTL out rather than starting past it.
+    wait: async (milliseconds: number) => {
+      state.nowMs += milliseconds;
+    },
     forbiddenProjectRefs: [stagingRef, productionRef],
     ...overrides,
   });
+};
 
 describe("ST-B staging validation composition root", () => {
-  it("runs guard, migration, approval, RLS and evidence as one path", async () => {
+  it("runs preflight, migration, MIG-01, APR, RLS, expiry and evidence as one path", async () => {
     const result = await run();
 
     expect(result.status).toBe("PASSED");
@@ -227,125 +290,138 @@ describe("ST-B staging validation composition root", () => {
       failedCaseIds: [],
     });
     expect(result.evidence.executedCaseIds).toEqual([
+      "migration-schema-objects",
       "approval-create",
       "approval-approve",
       "approval-reject",
       "approval-revoke",
-      "approval-expiry",
       "approval-consume",
       "consume-replay-blocked",
       "approval-binding-mismatch",
+      "migration-immutability-trigger",
       "rls-owner-read",
       "rls-cross-user-denied",
       "rls-anon-denied",
+      "approval-expiry",
     ]);
   });
 
-  it("builds the approval repository from the guarded environment rather than accepting one", async () => {
-    state.approvalConstructions.length = 0;
-    state.evidenceConstructions.length = 0;
+  it("records the client identity CONTRACT.md requires", async () => {
+    const { evidence } = await run();
+    expect(evidence).toMatchObject({
+      supabaseClientMode: "LIVE_DB_EXPLICIT_INJECTION",
+      appClientFactoryUsed: false,
+      adminClientFactoryUsed: false,
+      serverClientFactoryUsed: false,
+    });
+  });
 
+  it("builds its own clients from the guarded environment, accepting none", async () => {
     const result = await run();
 
     expect(result.status).toBe("PASSED");
-    // The repository was constructed here, with the client this root built, so
-    // it cannot have fallen back to createSupabaseAdminClient().
+    expect(state.createdClients).toEqual([
+      { url: `https://${stagingRef}.supabase.co`, key: "test-service-role-placeholder" },
+      { url: `https://${stagingRef}.supabase.co`, key: "test-service-role-placeholder" },
+    ]);
+    // The repository was constructed here, so it cannot have fallen back to
+    // createSupabaseAdminClient().
     expect(state.approvalConstructions).toHaveLength(1);
-    expect(state.approvalConstructions[0]).toMatchObject({ marker: "live-db" });
     expect(state.evidenceConstructions).toHaveLength(1);
-    expect(clientFactory).toHaveBeenCalledWith(
-      `https://${stagingRef}.supabase.co`,
-      "test-service-role-placeholder",
-    );
   });
 
-  it("cannot open a connection when no client factory is injected", async () => {
-    const rls = rlsInput();
-    const result = await run({ clientFactory: undefined, rls });
+  describe("preflight runs before anything irreversible", () => {
+    const cases: [string, Partial<StagingValidationRunInput>, string][] = [
+      [
+        "a target the guard rejects",
+        {
+          environment: loadLiveDbEnvironment("connection", {
+            ...validStagingSource,
+            LIVE_DB_DATABASE_URL: `postgresql://postgres:pw@db.${productionRef}.supabase.co:5432/postgres`,
+          }),
+        },
+        "LIVE_DB_DB_URL_TARGET_MISMATCH",
+      ],
+      ["a missing migration executor", { migrationExecutor: undefined }, "LIVE_DB_MIGRATION_EXECUTOR_NOT_INJECTED"],
+      [
+        "an incomplete actor set",
+        { rls: { actors: [passingActors()[0]], identity: validIdentity } },
+        "LIVE_DB_RLS_ACTOR_NOT_INJECTED",
+      ],
+      [
+        "a missing identity attestation",
+        { rls: { actors: passingActors(), identity: undefined } },
+        "LIVE_DB_CLIENT_NOT_EXPLICITLY_INJECTED",
+      ],
+      [
+        "an admin-factory attestation",
+        { rls: { actors: passingActors(), identity: { ...validIdentity, adminClientFactoryUsed: true } } },
+        "LIVE_DB_ADMIN_CLIENT_FACTORY_USED",
+      ],
+      [
+        "an unprefixed fixture identifier",
+        {
+          approval: {
+            binding: (() => {
+              const unprefixed = { ...core, runtimeExecutionRequestId: "no-prefix" };
+              return { ...unprefixed, bindingChecksum: checksumRuntimeApprovalBinding(unprefixed) };
+            })(),
+            mismatchedBinding,
+          },
+        },
+        "LIVE_DB_FIXTURE_PREFIX_REQUIRED",
+      ],
+      ["an unusable timestamp", { timestamp: "2026-08-17 00:00:00" }, "LIVE_DB_PREFLIGHT_INCOMPLETE"],
+    ];
 
-    expect(result.status).toBe("BLOCKED");
-    expect(result.safeErrorCode).toBe("LIVE_DB_CLIENT_NOT_EXPLICITLY_INJECTED");
-    expect(rls.actors[0].read).not.toHaveBeenCalled();
-  });
-
-  it("blocks when the RLS actors carry no identity attestation", async () => {
-    const rls = rlsInput({ identity: undefined });
-    const result = await run({ rls });
-
-    expect(result.safeErrorCode).toBe("LIVE_DB_CLIENT_NOT_EXPLICITLY_INJECTED");
-    expect(rls.actors[0].read).not.toHaveBeenCalled();
-  });
-
-  it("blocks an RLS attestation that admits an application or admin factory", async () => {
-    for (const [field, code] of [
-      ["appClientFactoryUsed", "LIVE_DB_APP_CLIENT_FACTORY_USED"],
-      ["adminClientFactoryUsed", "LIVE_DB_ADMIN_CLIENT_FACTORY_USED"],
-      ["serverClientFactoryUsed", "LIVE_DB_SERVER_CLIENT_FACTORY_USED"],
-    ] as const) {
+    it.each(cases)("blocks on %s without applying a migration", async (_label, overrides, code) => {
+      const executor = vi.fn(
+        async (): Promise<LiveDbMigrationExecutorOutcome> => ({
+          status: "APPLIED",
+          appliedMigrationCount: 3,
+        }),
+      );
       const result = await run({
-        rls: rlsInput({ identity: { ...validIdentity, [field]: true } }),
+        ...(overrides.migrationExecutor === undefined && "migrationExecutor" in overrides
+          ? {}
+          : { migrationExecutor: executor }),
+        ...overrides,
       });
+
+      expect(result.status).toBe("BLOCKED");
       expect(result.safeErrorCode).toBe(code);
-    }
-
-    expect(
-      (await run({ rls: rlsInput({ identity: { ...validIdentity, supabaseClientMode: "other" } }) }))
-        .safeErrorCode,
-    ).toBe("LIVE_DB_CLIENT_MODE_INVALID");
-    expect(
-      (
-        await run({
-          rls: rlsInput({ identity: { ...validIdentity, repositoryDefaultClientFallbackUsed: true } }),
-        })
-      ).safeErrorCode,
-    ).toBe("LIVE_DB_CLIENT_NOT_EXPLICITLY_INJECTED");
+      expect(executor).not.toHaveBeenCalled();
+      // Nothing was constructed either, so no connection could have opened.
+      expect(state.createdClients).toHaveLength(0);
+      expect(state.approvalConstructions).toHaveLength(0);
+      expect(result.evidence).toMatchObject({
+        migrationApplied: false,
+        appliedMigrationCount: 0,
+        maskedProjectRef: "unavailable",
+        verdict: "FAIL",
+      });
+    });
   });
 
-  it("stops before touching approvals when the migration boundary blocks", async () => {
-    state.approvalConstructions.length = 0;
-    const rls = rlsInput();
-
-    const result = await run({
-      environment: loadLiveDbEnvironment("connection", {
-        ...validStagingSource,
-        // The database URL now points at the production project.
-        LIVE_DB_DATABASE_URL: `postgresql://postgres:pw@db.${productionRef}.supabase.co:5432/postgres`,
-      }),
-      rls,
+  it("blocks when the migration left a required object missing", async () => {
+    // The executor reported success, but the objects are not there — which is
+    // exactly the partial migration MIG-01 exists to catch.
+    const result = await run({}, () => {
+      state.schemaPresent = false;
     });
-
     expect(result.status).toBe("BLOCKED");
-    expect(result.safeErrorCode).toBe("LIVE_DB_DB_URL_TARGET_MISMATCH");
-    // No client and no repository are built once the target is in doubt.
-    expect(state.approvalConstructions).toHaveLength(0);
-    expect(rls.actors[0].read).not.toHaveBeenCalled();
-    expect(result.evidence).toMatchObject({
-      migrationApplied: false,
-      appliedMigrationCount: 0,
-      maskedProjectRef: "unavailable",
-      verdict: "FAIL",
-    });
+    expect(result.safeErrorCode).toBe("LIVE_DB_SCHEMA_OBJECT_MISSING");
+    expect(result.evidence.failedCaseIds).toEqual(["migration-schema-objects"]);
   });
 
-  it("blocks when no migration executor is injected", async () => {
-    const rls = rlsInput();
-    const result = await run({ migrationExecutor: undefined, rls });
-
-    expect(result.safeErrorCode).toBe("LIVE_DB_MIGRATION_EXECUTOR_NOT_INJECTED");
-    expect(rls.actors[0].read).not.toHaveBeenCalled();
-  });
-
-  it("stops before RLS when approval validation blocks", async () => {
-    const rls = rlsInput();
-    const result = await run({
-      approval: { binding, mismatchedBinding, expiredApprovalId: undefined },
-      rls,
+  it("blocks when the immutability trigger does not reject the probe", async () => {
+    const result = await run({}, () => {
+      // The update succeeds, which means the trigger is not attached.
+      state.triggerRejects = false;
     });
-
     expect(result.status).toBe("BLOCKED");
-    expect(result.safeErrorCode).toBe("LIVE_DB_APPROVAL_EXPIRED_FIXTURE_NOT_INJECTED");
-    expect(rls.actors[0].read).not.toHaveBeenCalled();
-    expect(result.evidence.verdict).toBe("FAIL");
+    expect(result.safeErrorCode).toBe("LIVE_DB_IMMUTABILITY_TRIGGER_MISSING");
+    expect(result.evidence.failedCaseIds).toEqual(["migration-immutability-trigger"]);
   });
 
   it("blocks and records the failed case when RLS finds an access violation", async () => {
@@ -353,16 +429,22 @@ describe("ST-B staging validation composition root", () => {
     const invoked: LiveDbRlsRpcOutcome = { status: "INVOKED" };
     actors[2].rpc = vi.fn(async () => invoked);
 
-    const result = await run({ rls: rlsInput({ actors }) });
+    const result = await run({ rls: { actors, identity: validIdentity } });
 
     expect(result.status).toBe("BLOCKED");
     expect(result.safeErrorCode).toBe("LIVE_DB_RLS_ACCESS_VIOLATION");
     expect(result.evidence.failedCaseIds).toEqual(["rls-anon-denied"]);
-    expect(result.evidence.verdict).toBe("FAIL");
+  });
+
+  it("blocks when ST-B left Runtime Evidence behind, which is ST-C's gate", async () => {
+    const result = await run({}, () => {
+      state.evidenceRows = 1;
+    });
+    expect(result.status).toBe("BLOCKED");
+    expect(result.safeErrorCode).toBe("LIVE_DB_RUNTIME_EVIDENCE_UNEXPECTED");
   });
 
   it("blocks a run whose evidence would carry a secret, even when every case passed", async () => {
-    // A run id that embeds the full project ref: passing cases, unsafe record.
     const result = await run({ validationRunId: `live-db-validation-001-${stagingRef}` });
 
     expect(result.status).toBe("BLOCKED");

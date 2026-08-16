@@ -141,7 +141,13 @@ function deniedRpcVerdict(outcome: LiveDbRlsRpcOutcome): ProbeVerdict {
   return isAuthorizationDenial(outcome.safeErrorCode) ? "SATISFIED" : "INFRASTRUCTURE_ERROR";
 }
 
-function validateActors(
+/**
+ * Exported so a composition root can check the actor set during preflight,
+ * before anything touches the database. A malformed actor set is knowable
+ * without a connection, and finding it out after a migration has already been
+ * applied would mean changing the database to learn something static.
+ */
+export function validateRlsActorSet(
   actors: readonly LiveDbRlsActor[] | undefined,
 ): { status: "VALID" } | { status: "INVALID"; safeErrorCode: LiveDbSafeErrorCode } {
   if (!actors || actors.length !== liveDbRlsActorClasses.length) {
@@ -208,7 +214,7 @@ async function runActorProbes(
  * creates no client, no auth user, and issues no query of its own.
  */
 export async function runRlsValidation(input: RlsValidationInput): Promise<RlsValidationResult> {
-  const actorCheck = validateActors(input.actors);
+  const actorCheck = validateRlsActorSet(input.actors);
   if (actorCheck.status === "INVALID") {
     return { status: "BLOCKED", safeErrorCode: actorCheck.safeErrorCode, caseResults: [] };
   }

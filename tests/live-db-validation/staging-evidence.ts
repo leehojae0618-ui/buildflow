@@ -1,4 +1,5 @@
 import {
+  LIVE_DB_CLIENT_MODE,
   LIVE_DB_PROVIDER_ADAPTER_IDENTITY,
   LIVE_DB_PROVIDER_MODE,
   type LiveDbCaseExecutionStatus,
@@ -63,6 +64,17 @@ export type LiveDbStagingEvidenceSummary = {
   providerMode: typeof LIVE_DB_PROVIDER_MODE;
   providerAdapterIdentity: typeof LIVE_DB_PROVIDER_ADAPTER_IDENTITY;
   externalProviderCallCount: 0;
+  /**
+   * The four client-identity fields CONTRACT.md requires validation evidence to
+   * record. They are constants because this boundary constructs the approval
+   * repository from the guarded LIVE_DB environment itself — no application,
+   * admin or server factory is reachable from the path that produces this
+   * summary, so the values cannot be anything else.
+   */
+  supabaseClientMode: typeof LIVE_DB_CLIENT_MODE;
+  appClientFactoryUsed: false;
+  adminClientFactoryUsed: false;
+  serverClientFactoryUsed: false;
   executionMode: "STAGING";
   migrationApplied: boolean;
   appliedMigrationCount: number;
@@ -120,6 +132,10 @@ function redactedSummary(timestamp: string): LiveDbStagingEvidenceSummary {
     providerMode: LIVE_DB_PROVIDER_MODE,
     providerAdapterIdentity: LIVE_DB_PROVIDER_ADAPTER_IDENTITY,
     externalProviderCallCount: 0,
+    supabaseClientMode: LIVE_DB_CLIENT_MODE,
+    appClientFactoryUsed: false,
+    adminClientFactoryUsed: false,
+    serverClientFactoryUsed: false,
     executionMode: "STAGING",
     migrationApplied: false,
     appliedMigrationCount: 0,
@@ -160,6 +176,10 @@ export function createLiveDbStagingEvidenceSummary(
     providerMode: LIVE_DB_PROVIDER_MODE,
     providerAdapterIdentity: LIVE_DB_PROVIDER_ADAPTER_IDENTITY,
     externalProviderCallCount: 0,
+    supabaseClientMode: LIVE_DB_CLIENT_MODE,
+    appClientFactoryUsed: false,
+    adminClientFactoryUsed: false,
+    serverClientFactoryUsed: false,
     executionMode: "STAGING",
     migrationApplied: input.migrationApplied,
     appliedMigrationCount: input.appliedMigrationCount,

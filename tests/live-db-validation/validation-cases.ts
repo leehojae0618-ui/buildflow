@@ -1,5 +1,6 @@
 export type LiveDbValidationCategory =
   | "ENVIRONMENT"
+  | "MIGRATION"
   | "APPROVAL"
   | "RLS"
   | "CONCURRENT_CONSUME"
@@ -27,6 +28,8 @@ const cases: readonly LiveDbValidationCase[] = [
   { id: "client-explicit-injection", category: "PRODUCT_RUNTIME", classification: "UNIT_TESTABLE_WITHOUT_DB", expectedResult: "explicit repository clients are accepted" },
   { id: "registry-integrity", category: "PRODUCT_RUNTIME", classification: "UNIT_TESTABLE_WITHOUT_DB", expectedResult: "validation registry is structurally valid" },
   { id: "evidence-safety", category: "PRODUCT_RUNTIME", classification: "UNIT_TESTABLE_WITHOUT_DB", expectedResult: "dry evidence contains no secret-shaped values" },
+  { id: "migration-schema-objects", category: "MIGRATION", classification: "REQUIRES_STAGING", expectedResult: "required tables and RPCs exist" },
+  { id: "migration-immutability-trigger", category: "MIGRATION", classification: "REQUIRES_STAGING", expectedResult: "immutable binding trigger rejects the update" },
   { id: "approval-create", category: "APPROVAL", classification: "STRUCTURE_ONLY_WITHOUT_DB", expectedResult: "create contract is defined" },
   { id: "approval-approve", category: "APPROVAL", classification: "STRUCTURE_ONLY_WITHOUT_DB", expectedResult: "approve contract is defined" },
   { id: "approval-reject", category: "APPROVAL", classification: "STRUCTURE_ONLY_WITHOUT_DB", expectedResult: "reject contract is defined" },
