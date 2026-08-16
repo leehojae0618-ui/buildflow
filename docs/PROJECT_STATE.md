@@ -150,12 +150,27 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
 
 - Recipe-First Product Reset 및 Build Package는 local checkpoint `ebd0290`에
   구현되어 있으며 NOT PUSHED다.
-- 현재 활성 implementation Sprint는 `FIRST-LIVE-RECIPE-E2E-001 / PHASE-A`다.
-  server-only Pipedream Connect/Slack 경계와 default-off kill switches를
-  로컬로 구현한다.
-- Commit, Push, Deploy, Pipedream/Slack/Provider/API/OAuth, external engine
-  creation/execution, credential storage, DB migration, MCP invocation은
-  허용되지 않는다.
+- `FIRST-LIVE-RECIPE-E2E-001 / LIVE GATE A+B`는 CLOSED / COMPLETE / LIVE
+  VERIFIED다. Pipedream development에서 Slack OAuth/account verification을
+  완료했고, Product Owner가 승인한 corrective retry 1회가 `aiwork`
+  `#새-채널` (`C0BQB1ACGFP`)에 실제 Slack 메시지를 전송했다. Slack API
+  응답은 `ok: true`, timestamp는 `1786778717.560079`이며 write kill switch는
+  OFF로 복구됐다.
+- 현재 활성 implementation Sprint는 `LIVE-RECIPE-AI-NEWS-001`이다. 범위는
+  local manual Recipe contract, fake adapter, real OpenAI News RSS adapter,
+  Groq summary adapter, controlled Gate C1/C2 validation, 그리고 non-live
+  guarded C3 safety remediation이다.
+- Gate C1 live OpenAI News RSS fetch는 PASS다. `https://openai.com/news/rss.xml`
+  에서 최근 항목 3개를 선택했고 Slack write는 `NOT_PERFORMED`로 유지됐다.
+- Gate C2 live Groq call은 PASS다. Groq OpenAI-compatible API와
+  `openai/gpt-oss-20b`로 요약 7줄이 생성됐고 Slack write는 `NOT_PERFORMED`로
+  유지됐다. Mock validation과 typecheck/lint는 PASS다.
+- Gate C3 external Slack side effect는 earlier approved retry에서 OBSERVED /
+  SUCCEEDED다. 하지만 당시 harness는 guarded BuildFlow service를 통과하지
+  않았으므로 guarded C3 execution은 NOT VERIFIED다. Manual Live Recipe E2E는
+  PARTIAL / REMEDIATION REQUIRED이며, 새 live retry는 승인되지 않았다.
+- Commit, Push, Deploy, additional Slack write, Scheduler, production Pipedream, DB
+  migration, MCP invocation, additional news/API source는 허용되지 않는다.
 - `BF0-UX-SIMPLIFICATION-001`은 `CLOSED / COMPLETE / USER SPRINT EXIT
   APPROVED`다. 최종 checkpoint는
   `84ac5e2da7c3642d322b69adaf76fe2186af7b63`이며 Push는 COMPLETE다. Codex
@@ -189,8 +204,9 @@ typecheck, lint, build 통과를 기록하지만 실제 Supabase DB/RPC/RLS 검�
   IMPLEMENTED / USER QA / WAITING FOR USER FEEDBACK 상태이며, implementation
   authority는 PAUSED — USER QA다.
 - Open gates는 Visual Slice User QA, 별도 사용자 승인이 필요한 LIVE-DB 원격 또는
-  대체 검증, local Real-AI checkpoint의 PM/CTO Commit Review, 그리고 current
-  Recipe-First Build Package Slice의 implementation validation이다.
+  대체 검증, local Real-AI checkpoint의 PM/CTO Commit Review,
+  `LIVE-RECIPE-AI-NEWS-001`의 guarded C3 remediation 및 별도 live retry
+  승인 gate다.
 
 근거 문서:
 

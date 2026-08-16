@@ -2,7 +2,7 @@
 
 ## Status
 
-IMPLEMENTATION COMPLETE — INDEPENDENT REVIEW ACTIVE
+CLOSED / COMPLETE — INDEPENDENT RE-REVIEW PASS
 
 ## Summary
 
@@ -65,16 +65,19 @@ The following work was intentionally not included:
 
 ## Validation Status
 
-Final quality gate: PASS
+Final quality gate after remediation: PASS
 
-- `npm test`: PASS — 41 test files, 189 tests
+- MCP focused tests: PASS — 18 tests
+- `npm test`: PASS — 63 files / 668 tests, 1 gated live test skipped
 - `npm run lint`: PASS
 - `npm run typecheck`: PASS
 - `npm run build`: PASS
 - `git diff --check`: PASS
 - Secret pattern scan: PASS
 
-PM/CTO Review is required before Commit Approval.
+The independent review identified P1-001, P1-002, and P2-001. The approved
+remediation was committed at `619b480`; its independent re-review passed with
+P0/P1/P2 `0/0/0`.
 
 ## MVP Impact
 
@@ -112,9 +115,9 @@ Remaining follow-up belongs to later approved Sprints:
 ## Commit and Push
 
 - Implementation commit: `e3344f2 feat: add mcp foundation contracts`
-- Report commit: pending PM Review and Commit Approval
-- Push: prohibited until separate approval
+- Report and remediation commits: included in `origin/main`
+- Push: complete for the approved closeout baseline
 
 ## PM/CTO Review Request
 
-MCP-FOUNDATION-001 is ready for PM/CTO Review.
+MCP-FOUNDATION-001 is closed. Any follow-up requires a new approved Sprint.

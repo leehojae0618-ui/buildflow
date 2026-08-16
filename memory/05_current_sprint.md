@@ -1,5 +1,44 @@
 # Current Sprint Memory
 
+## 2026-07-25 — Clarification Interaction Engineering Review Complete
+
+- `BUILDFLOW-CLARIFICATION-INTERACTION-001` completed STEP-8 UI Integration
+  and passed PM/CTO engineering review across STEP-1 through STEP-8.
+- Current Sprint state: `USER QA / IMPLEMENTED`; Engineering Review:
+  `COMPLETE / APPROVED`; Implementation Authority: `PAUSED — USER QA`.
+- Production changes are prohibited pending a documented User QA finding and
+  approved correction scope. Commit, Push, Merge, and Deploy remain unapproved.
+- The Visual Closed Beta Slice remains independently in USER QA / waiting for
+  user feedback; it is not an active implementation Sprint.
+
+## 2026-07-24 — Visual Closed Beta Slice Scope Freeze and Ready State
+
+- PM/CTO approved `BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001` Scope with
+  `ADDENDUM-A.md`. The Scope is FROZEN and the Sprint is READY / NOT ACTIVE.
+- The approved Journey is read-only: it may display persisted Project,
+  Requirement Snapshot, Session, and completion-report state, but cannot start
+  or resume sessions, poll for state advancement, invoke Provisioning, Provider,
+  MCP, or Runtime execution.
+- Implementation Approval is APPROVED and Implementation Authority is `PENDING
+  ACTIVE` for the read-only Visual Journey scope. Production changes remain
+  prohibited until a separate `ACTIVE` transition is recorded.
+
+## 2026-07-24 — Visual Closed Beta Slice Activation
+
+- Activated `BUILDFLOW-VISUAL-CLOSED-BETA-SLICE-001` at 15:50:56 KST.
+- The sole ACTIVE Sprint is limited to the four paths recorded in
+  `ACTIVATION.md`; its Journey is read-only and persisted-state-only.
+- Provider, MCP, Provisioning, polling that advances state, Runtime execution,
+  persistence, DB/API, deployment, and Scope expansion remain prohibited.
+
+## 2026-07-24 — Visual Closed Beta Slice Code Review
+
+- PM/CTO Code Review: APPROVED WITH QA GATE. Scope and Addendum A compliance,
+  read-only boundary, evidence boundary, file scope, lint, typecheck, tests,
+  and build passed.
+- Implementation is complete; the Sprint is in USER QA. Additional code changes
+  are paused pending browser QA findings.
+
 ## 2026-07-23 — Development Charter and Repository Synchronization
 
 - Established the binding BuildFlow Development Charter at checkpoint

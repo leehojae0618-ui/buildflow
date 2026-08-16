@@ -9,11 +9,14 @@
 
 ## 2. Current Sprint
 
-활성 Sprint는 `PRODUCT-RUNTIME-REAL-AI-SLICE-001`이며 IMPLEMENTATION IN
-PROGRESS 상태다. Live Provider, DB, external action, Commit, Push, Deploy는
-별도 승인 전까지 수행하지 않는다. `PRODUCT-RUNTIME-VERTICAL-SLICE-001`의
-controlled runtime 구현은 main `609eb083`에서 관찰됐으며, 과거 implementation
-authority provenance는 소급 주장하지 않는다.
+활성 Sprint는 `LIVE-RECIPE-AI-NEWS-001`이며 C1/C2 PASS / GUARDED C3
+REMEDIATION 상태다. OpenAI News RSS Gate C1 live fetch와 Groq Gate C2 live
+summary는 PASS다. C3 Slack side effect는 earlier retry에서 OBSERVED /
+SUCCEEDED지만 guarded BuildFlow execution은 NOT VERIFIED다. 추가 Slack
+write, Scheduler, Commit, Push, Deploy는 별도 승인 전까지 수행하지 않는다.
+`PRODUCT-RUNTIME-VERTICAL-SLICE-001`의 controlled runtime 구현은 main
+`609eb083`에서 관찰됐으며, 과거 implementation authority provenance는 소급
+주장하지 않는다.
 
 `LIVE-DB-VALIDATION-001`은 `PAUSED / BLOCKED BY LOCAL ENVIRONMENT`다. 이는
 종료나 저장소 구현 실패가 아니며, Local Supabase 환경의 반복 healthcheck
@@ -46,6 +49,8 @@ implementation이 아니다.
 | BF0-PRODUCT-EXPERIENCE-001 | UI-only Product Experience journey and homepage entry | CLOSED / COMPLETE | `15746f14`, `51011d66` | User Persona QA PASS; User Visual QA PASS; P0/P1/P2 0/0/0; User Sprint Exit approved | `sprints/BF0-PRODUCT-EXPERIENCE-001/EXIT.md` |
 | BF0-UX-SIMPLIFICATION-001 | BF0 UX simplification and guided build experience | CLOSED / COMPLETE / USER SPRINT EXIT APPROVED | `84ac5e2` | Codex regression PASS; final browser gap check PASS; GPT final review PASS; Claude final audit SKIPPED BY PRODUCT OWNER | `sprints/BF0-UX-SIMPLIFICATION-001/REPORT.md`, `sprints/BF0-UX-SIMPLIFICATION-001/CLOSEOUT.md` |
 | PRODUCT-RUNTIME-REAL-AI-SLICE-001 | Direct-input customer-reply Real-AI product path with a disabled-by-default live Provider gate | IMPLEMENTATION IN PROGRESS | Uncommitted | Mock/injected-provider validation pending | `sprints/PRODUCT-RUNTIME-REAL-AI-SLICE-001/` |
+| FIRST-LIVE-RECIPE-E2E-001 | Guarded Pipedream development Slack OAuth/account verification and one approved Slack test write | CLOSED / COMPLETE / LIVE VERIFIED | `a568a15` local only | GPT PM/CTO PASS; Slack API `ok: true`, ts `1786778717.560079`; Push/Deploy NOT PERFORMED | `sprints/FIRST-LIVE-RECIPE-E2E-001/REPORT.md`, `sprints/FIRST-LIVE-RECIPE-E2E-001/CLOSEOUT.md` |
+| LIVE-RECIPE-AI-NEWS-001 | Manual AI news to summary to guarded Slack Recipe | ACTIVE / C1+C2 PASS / GUARDED C3 REMEDIATION | Uncommitted | C1 RSS PASS; C2 Groq PASS; C3 side effect OBSERVED / SUCCEEDED; guarded C3 NOT VERIFIED; Scheduler/Push/Deploy NOT PERFORMED | `sprints/LIVE-RECIPE-AI-NEWS-001/PLAN.md`, `sprints/LIVE-RECIPE-AI-NEWS-001/TASK.md`, `sprints/LIVE-RECIPE-AI-NEWS-001/REPORT.md` |
 
 ## 4. Gate History
 

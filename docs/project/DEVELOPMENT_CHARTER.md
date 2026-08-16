@@ -216,7 +216,55 @@ A Sprint is complete only when all of the following are true:
 - Browser-visible progress exists.
 - The project owner can verify the new functionality.
 
-## 11. Primary Success Metric
+## 11. Sprint Lifecycle and Quality Gate
+
+Every Sprint uses the following lifecycle. Current operational documents must
+use the same state names.
+
+```text
+DRAFT
+→ PM REVIEW
+→ FROZEN
+→ READY
+→ ACTIVE
+→ IMPLEMENTED
+→ CODE REVIEW
+→ USER QA
+→ DONE
+```
+
+`READY` confirms that the Scope is frozen and implementation preparation is
+complete. Implementation Authority is `PENDING ACTIVE` at this stage. It does
+not itself begin production changes; code work begins only when the Sprint is
+recorded as `ACTIVE`.
+
+`ACTIVE` means implementation has officially started. The developer may modify
+production code only within the approved Scope. Scope expansion is prohibited.
+
+Every `READY → ACTIVE` transition requires an Activation Record in the Sprint
+directory. It must state activation time, activating authority, frozen Scope,
+authorized implementation boundary, and explicit restrictions.
+
+Every completed Sprint requires an Exit Record before `IMPLEMENTED → CODE
+REVIEW`. It must record completed Scope, out-of-scope work, known issues,
+validation evidence, PM review, User QA, and the next Sprint candidate.
+
+No Sprint advances while any P0, P1, or P2 finding remains unresolved. Findings
+must be corrected and revalidated before the next lifecycle transition.
+
+## 12. Independent Audit Policy
+
+Routine local Sprint flow is `GPT direction and scope → Codex implementation
+and validation → GPT PM/CTO review → next development`. Claude is not required
+as a per-Sprint checkpoint.
+
+Independent Claude audit is required immediately before the first Live E2E
+that involves OAuth, credential handling, or an external write, and before a
+Closed Beta or Release checkpoint. It may be added for a suspected P0/P1
+security issue or a substantial Core contract change. This audit policy does
+not relax any approval, security, or external-action gate.
+
+## 13. Primary Success Metric
 
 BuildFlow is not judged by the number of files, contracts, reports, or commits.
 

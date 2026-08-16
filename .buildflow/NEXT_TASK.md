@@ -2,7 +2,7 @@
 
 ## Status
 
-ACTIVE IMPLEMENTATION SPRINT — FIRST-LIVE-RECIPE-E2E-001 / PHASE-A
+ACTIVE IMPLEMENTATION SPRINT — LIVE-RECIPE-AI-NEWS-001
 
 ## Current Direction
 
@@ -10,11 +10,17 @@ BuildFlow is now Recipe-First: natural-language intent, canonical Recipe search
 and ranking, service connection planning, approved build/install, verification,
 and management. BF0 and Runtime-first flows remain preserved Legacy paths.
 
-`FIRST-LIVE-RECIPE-E2E-001 / PHASE-A` is authorized for local implementation
-only. It prepares default-off Pipedream Connect and Slack test-write boundaries.
-Commit, Push, Deploy, live Pipedream/Slack/Provider/API/OAuth, external workflow
-creation or execution, credential storage, DB migration, and MCP invocation
-remain prohibited.
+`FIRST-LIVE-RECIPE-E2E-001 / LIVE GATE A+B` is closed with live Slack evidence:
+Pipedream development Slack account verification succeeded and one approved
+corrective test write reached `aiwork` `#새-채널` with Slack API `ok: true` and
+timestamp `1786778717.560079`. Commit, Push, Deploy, Production, Scheduler, RSS,
+and AI execution were not performed.
+
+`LIVE-RECIPE-AI-NEWS-001` has C1 live OpenAI News RSS and C2 live Groq summary
+PASS evidence. A prior C3 Slack side effect was observed as succeeded, but the
+direct harness did not verify the guarded BuildFlow path. The active work is
+non-live C3 safety remediation; new Slack writes, Scheduler activation, Commit,
+Push, Deploy, DB migration, and MCP invocation remain prohibited.
 
 Routine local Sprint flow is GPT scope, Codex implementation and validation,
 then GPT PM/CTO review. Claude independent audit is reserved for the first Live

@@ -1,40 +1,60 @@
 # BuildFlow Status
 
 - Workflow Status: ACTIVE IMPLEMENTATION SPRINT
-- Current Sprint: FIRST-LIVE-RECIPE-E2E-001 / PHASE-A
-- Sprint Status: IMPLEMENTATION IN PROGRESS
+- Current Sprint: LIVE-RECIPE-AI-NEWS-001
+- Sprint Status: C1/C2 PASS / GUARDED C3 REMEDIATION
 - Active Sprint Count: 1
-- Latest Completed Sprint: BF0-UX-SIMPLIFICATION-001
+- Latest Completed Sprint: FIRST-LIVE-RECIPE-E2E-001 / LIVE GATE A+B
 - BF0: CLOSED / COMPLETE / USER SPRINT EXIT APPROVED
 - BF0 Product Checkpoint: `84ac5e2da7c3642d322b69adaf76fe2186af7b63`
 - BF0 Exit-record Checkpoint: `51011d66c3a3fea9ec7b2058592fbabfbdd4f78d`
 - BF0 Claude Final Audit: SKIPPED BY PRODUCT OWNER
 - BF0 Deploy: NOT PERFORMED
-- Implementation Authority: APPROVED — FIRST-LIVE-RECIPE-E2E-001 / PHASE-A local scope only
+- Implementation Authority: APPROVED — LIVE-RECIPE-AI-NEWS-001 guarded C3 safety remediation only
 - Commit, Push, and Deploy Authority: NONE
-- Live Provider, DB, Migration, and External Action Authority: NONE
+- Live Provider, DB, Migration, and External Action Authority: C1 RSS and C2 Groq performed; C3 side effect observed once; no new external execution authorized; DB/Migration/Scheduler authority NONE
 - Repository-observed controlled runtime: PRESENT IN MAIN / `609eb083`
 - Controlled Runtime: IMPLEMENTED IN CODE
-- External Provider Call: NONE
-- External Service Action: NONE
+- External Provider Call: C2 GROQ OBSERVED
+- External Service Action: C3 SLACK SIDE EFFECT OBSERVED
 - Persistent DB Evidence: NOT VERIFIED
 - Historical implementation authority provenance: NOT RETROACTIVELY ASSERTED
 - Production Ready: NO
 
 ## Current Live Recipe Sprint
 
+- `FIRST-LIVE-RECIPE-E2E-001 / LIVE GATE A+B`: CLOSED / COMPLETE / LIVE
+  VERIFIED. Slack OAuth/account verification passed through Pipedream
+  development; one approved corrective Slack test write reached the
+  Pipedream-connected `aiwork` workspace `#새-채널` with Slack API `ok: true`
+  and timestamp `1786778717.560079`. Write kill switch was restored OFF.
 - `RECIPE-FIRST-PRODUCT-RESET-001` and `RECIPE-FIRST-BUILD-PACKAGE-001`:
   local checkpoint `ebd0290` / NOT PUSHED.
-- `FIRST-LIVE-RECIPE-E2E-001 / PHASE-A`: ACTIVE / LOCAL IMPLEMENTATION ONLY.
+- `LIVE-RECIPE-AI-NEWS-001`: ACTIVE / C1+C2 PASS / GUARDED C3 REMEDIATION. It
+  now includes real OpenAI News RSS and Groq summary adapters. Gate C1 live RSS
+  fetch passed against `https://openai.com/news/rss.xml`, selecting 3 recent
+  OpenAI News items. Gate C2 live Groq summary passed using `openai/gpt-oss-20b`
+  with 7 summary lines generated. An earlier approved C3 retry observed one
+  Slack digest side effect as succeeded, but its direct harness bypassed the
+  guarded BuildFlow service. The guarded C3 path is NOT VERIFIED; no new write
+  is authorized while destination and idempotency remediation is validated.
 - Product direction: Recipe-First Integration/Orchestration. Agent/Runtime-first
   flows remain Legacy / Not Primary Product Path and are not deleted.
-- Allowed: server-only Pipedream Connect/Slack boundary, default-off kill
-  switches, fake-adapter validation, truthful Recipe UI, and minimal official
-  state alignment.
-- Prohibited: Commit, Push, Deploy, live Pipedream/Slack/OAuth/provider/API,
-  external engine execution, credential storage, DB migration, MCP invocation.
+- Allowed: local port contracts, deterministic normalization/selection, fake
+  news/source/summarizer/Slack-output validation, real OpenAI News RSS Gate C1,
+  Groq Gate C2 live validation, truthful Evidence labeling, and
+  minimal official state alignment.
+- Prohibited: Commit, Push, Deploy, additional Slack write, Scheduler,
+  production Pipedream, DB migration, MCP invocation, additional news/API
+  sources.
 - `PRODUCT-RUNTIME-REAL-AI-SLICE-001` checkpoint: local `e3d0f1f` / NOT PUSHED.
   Browser QA remains NOT VERIFIED; actual Provider, DB, and external calls: NONE.
+- `AGENT-BUILD-JOURNEY-UI-001`: Autonomous/Runtime-first (Legacy) path UI —
+  `AgentBuildJourney` wired into `requirement-summary.tsx` and the project
+  detail page reads `getAutonomousBuildSession`. OUT OF
+  `LIVE-RECIPE-AI-NEWS-001` guarded-C3 authority; committed as a separate,
+  independently reviewable commit on explicit user direction during working
+  tree cleanup. No implementation authority beyond that commit is asserted.
 
 ## Paused Work
 

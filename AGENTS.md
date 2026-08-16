@@ -56,7 +56,26 @@ approval, security, release, or change-control gates.
 
 ## Workflow
 
-PLANNING → READY → IN_PROGRESS → REVIEW → QA → DONE
+Every Sprint follows the same operative lifecycle:
+
+```text
+DRAFT → PM REVIEW → FROZEN → READY → ACTIVE → IMPLEMENTED → CODE REVIEW → USER QA → DONE
+```
+
+- `READY` confirms that Scope is frozen and implementation preparation is
+  complete; it is not permission to change production code. Implementation
+  Authority is `PENDING ACTIVE` at this stage.
+- `ACTIVE` means implementation has officially started. The developer may
+  modify production code only within the approved Scope; Scope expansion is
+  prohibited.
+- Every `READY → ACTIVE` transition requires an Activation Record in the Sprint
+  directory stating activation time, activating authority, frozen Scope,
+  implementation authority, and explicit restrictions.
+- Every completed Sprint requires an Exit Record before `IMPLEMENTED → CODE
+  REVIEW`. It records completed Scope, out-of-scope work, known issues,
+  validation evidence, PM review, User QA, and the next Sprint candidate.
+- Any P0, P1, or P2 finding is resolved and revalidated before the Sprint may
+  advance to its next lifecycle state.
 
 ## Product Review and Change Control
 
@@ -203,8 +222,9 @@ GPT must inspect the latest GitHub state and applicable official documents
 before project decisions; identify the active Sprint, current gate, and
 authority boundary; separate confirmed facts from analysis and recommendation;
 prepare approved execution instructions; review Commit and validation evidence;
-coordinate an independent Claude audit; complete PM/CTO review; request User
-Sprint Exit approval; and synchronize approved results to Notion when required.
+coordinate an independent Claude audit when the risk policy requires it;
+complete PM/CTO review; request User Sprint Exit approval; and synchronize
+approved results to Notion when required.
 
 GPT must not claim that code, documents, a Commit, Push, audit, deployment, or
 Notion synchronization was completed unless the relevant evidence confirms it.
@@ -233,6 +253,17 @@ verdict; and recommend remediation or the next gate.
 Claude remains read-only unless a separately approved remediation task is
 explicitly assigned. Claude does not replace GPT's PM/CTO review or the user's
 final approval.
+
+### Independent Audit Policy
+
+Routine local implementation follows `GPT Scope → Codex implementation and
+validation → GPT PM/CTO review`. Claude is not a mandatory per-Sprint gate.
+
+Claude independent audit is required before the first Live E2E involving OAuth,
+credential handling, or external write, and before a Closed Beta or Release
+checkpoint. GPT may request it earlier for a suspected P0/P1 security issue or
+a substantial Core contract change. Audit requirements do not grant external
+execution authority.
 
 ### Shared Repository Inspection Order
 
@@ -268,7 +299,7 @@ All BuildFlow work follows this sequence:
 5. User approval
 6. Codex implementation
 7. Validation result and Commit-hash confirmation
-8. Claude independent audit
+8. Risk-triggered Claude independent audit when required
 9. GPT final PM/CTO review
 10. User Sprint Exit approval
 11. Approved Notion documentation synchronization

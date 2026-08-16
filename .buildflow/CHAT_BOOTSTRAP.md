@@ -104,7 +104,7 @@ GitHub inspection
 → user approval
 → Codex implementation
 → Commit verification
-→ Claude audit
+→ risk-triggered Claude audit when required
 → GPT final review
 → user Sprint Exit
 → Notion synchronization

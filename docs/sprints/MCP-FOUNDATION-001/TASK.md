@@ -2,7 +2,7 @@
 
 ## Status
 
-IMPLEMENTATION COMPLETE / INDEPENDENT REVIEW ACTIVE
+CLOSED / COMPLETE / INDEPENDENT RE-REVIEW PASS
 
 ## Title
 
@@ -110,7 +110,8 @@ Allowed work:
 
 ## Current Gate
 
-Implementation was committed at `e3344f2` and its implementation report was
-recorded at `4c4b3b6`. The current authorized work is an independent,
-read-only review. No MCP connection, Tool invocation, or corrective code change
-is authorized unless the review identifies and approves a finding.
+Implementation was committed at `e3344f2`, reported at `4c4b3b6`, and its
+P1/P2 contract remediation was committed at `619b480`. The independent
+re-review passed with P0/P1/P2 `0/0/0`. This Sprint is closed; no MCP
+connection, Tool invocation, or corrective code change is authorized without a
+new approved Sprint.
