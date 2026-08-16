@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(echo \"=== Repo state ===\"; git rev-parse HEAD && git rev-parse origin/main && git status --short | head -20 && git rev-list --left-right --count origin/main...HEAD *)",
+      "Read(//private/tmp/buildflow-supabase-retry-003.tQt0hv/**)",
+      "Bash(python3 -c ' *)",
+      "Read(//tmp/**)",
+      "Bash(md5 -q)",
+      "Bash(git -C /Users/hojelee/Documents/Codex/buildflow rev-list --left-right --count origin/main...HEAD)",
+      "Bash(git -C /Users/hojelee/Documents/Codex/buildflow status --short)",
+      "Bash(git -C /Users/hojelee/Documents/Codex/buildflow rev-parse HEAD)",
+      "Bash(git -C /Users/hojelee/Documents/Codex/buildflow rev-parse origin/main)",
+      "Bash(grep -E \"health_status|create$|start$|kill|die$|stop$|destroy\" /tmp/runE_timeline.txt)",
+      "Bash(awk '{print $3, $0}')",
+      "Bash(sort -t'|' -k2 -rn)"
+    ]
+  }
+}
