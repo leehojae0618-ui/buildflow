@@ -11,7 +11,10 @@ import {
   checksumRuntimeApprovalBinding,
   validateRuntimeApprovalBinding,
 } from "../../src/features/runtime-approval/validator";
-import type { LiveDbRecordCounter } from "./runtime-record-counters";
+import type {
+  LiveDbApprovalEventType,
+  LiveDbRecordCounter,
+} from "./runtime-record-counters";
 import { LIVE_DB_TEST_PREFIX, type LiveDbCaseResult, type LiveDbSafeErrorCode } from "./types";
 
 export type ApprovalValidationDeps = {
@@ -258,10 +261,23 @@ export async function runApprovalLifecycle(
       userId: deps.binding.userId,
       decision,
     });
-  /** Matrix column: each transition must leave exactly one matching event. */
-  const eventsAre = async (approvalId: string, expected: number) => {
-    const counted = await counter.countApprovalEvents(approvalId);
-    return counted.status === "COUNTED" && counted.count === expected;
+  /**
+   * Matrix column: each transition must leave exactly the matching event.
+   * Checked per type, because a total alone cannot tell a correct journal from
+   * one that recorded the wrong transition.
+   */
+  const eventsAre = async (
+    approvalId: string,
+    expected: Partial<Record<LiveDbApprovalEventType, number>>,
+  ) => {
+    for (const [eventType, count] of Object.entries(expected)) {
+      const counted = await counter.countApprovalEvents(
+        approvalId,
+        eventType as LiveDbApprovalEventType,
+      );
+      if (counted.status !== "COUNTED" || counted.count !== count) return false;
+    }
+    return true;
   };
 
   // The expiry fixture goes first so its TTL runs down during everything below.
@@ -275,7 +291,7 @@ export async function runApprovalLifecycle(
   // APR-01 create
   const primary = await createFixture(fixtureLabels.consume);
   if (!primary) return failCase("approval-create", "LIVE_DB_APPROVAL_UNEXPECTED_OUTCOME", withExpiry);
-  if (!(await eventsAre(primary.approvalId, 1))) {
+  if (!(await eventsAre(primary.approvalId, { CREATED: 1 }))) {
     return failCase("approval-create", "LIVE_DB_APPROVAL_EVENT_COUNT_MISMATCH", withExpiry);
   }
   caseResults.push(pass("approval-create"));
@@ -285,7 +301,7 @@ export async function runApprovalLifecycle(
   if (!isOk(approved) || approved.value.status !== "APPROVED") {
     return failCase("approval-approve", "LIVE_DB_APPROVAL_UNEXPECTED_OUTCOME", withExpiry);
   }
-  if (!(await eventsAre(primary.approvalId, 2))) {
+  if (!(await eventsAre(primary.approvalId, { APPROVED: 1, REJECTED: 0, REVOKED: 0 }))) {
     return failCase("approval-approve", "LIVE_DB_APPROVAL_EVENT_COUNT_MISMATCH", withExpiry);
   }
   caseResults.push(pass("approval-approve"));
@@ -297,7 +313,7 @@ export async function runApprovalLifecycle(
   if (!isOk(rejected) || rejected.value.status !== "REJECTED") {
     return failCase("approval-reject", "LIVE_DB_APPROVAL_UNEXPECTED_OUTCOME", withExpiry);
   }
-  if (!(await eventsAre(rejectTarget.approvalId, 2))) {
+  if (!(await eventsAre(rejectTarget.approvalId, { CREATED: 1, REJECTED: 1, APPROVED: 0 }))) {
     return failCase("approval-reject", "LIVE_DB_APPROVAL_EVENT_COUNT_MISMATCH", withExpiry);
   }
   caseResults.push(pass("approval-reject"));
@@ -314,7 +330,7 @@ export async function runApprovalLifecycle(
   if (!isOk(revoked) || revoked.value.status !== "REVOKED") {
     return failCase("approval-revoke", "LIVE_DB_APPROVAL_UNEXPECTED_OUTCOME", withExpiry);
   }
-  if (!(await eventsAre(revokeTarget.approvalId, 3))) {
+  if (!(await eventsAre(revokeTarget.approvalId, { CREATED: 1, APPROVED: 1, REVOKED: 1 }))) {
     return failCase("approval-revoke", "LIVE_DB_APPROVAL_EVENT_COUNT_MISMATCH", withExpiry);
   }
   caseResults.push(pass("approval-revoke"));
@@ -327,7 +343,7 @@ export async function runApprovalLifecycle(
   if (!isOk(consumed) || consumed.value.status !== "CONSUMED") {
     return failCase("approval-consume", "LIVE_DB_APPROVAL_UNEXPECTED_OUTCOME", withExpiry);
   }
-  if (!(await eventsAre(primary.approvalId, 3))) {
+  if (!(await eventsAre(primary.approvalId, { CONSUMED: 1 }))) {
     return failCase("approval-consume", "LIVE_DB_APPROVAL_EVENT_COUNT_MISMATCH", withExpiry);
   }
   caseResults.push(pass("approval-consume"));
@@ -341,7 +357,7 @@ export async function runApprovalLifecycle(
     return failCase("consume-replay-blocked", "LIVE_DB_APPROVAL_UNEXPECTED_OUTCOME", withExpiry);
   }
   // A refused replay must also leave no second CONSUMED behind.
-  if (!(await eventsAre(primary.approvalId, 3))) {
+  if (!(await eventsAre(primary.approvalId, { CONSUMED: 1 }))) {
     return failCase("consume-replay-blocked", "LIVE_DB_APPROVAL_EVENT_COUNT_MISMATCH", withExpiry);
   }
   caseResults.push(pass("consume-replay-blocked"));
@@ -368,7 +384,7 @@ export async function runApprovalLifecycle(
   }
   // Matrix column: the refused consume leaves the request unconsumed, so only
   // its CREATED and APPROVED events exist.
-  if (!(await eventsAre(mismatchTarget.approvalId, 2))) {
+  if (!(await eventsAre(mismatchTarget.approvalId, { CREATED: 1, APPROVED: 1, CONSUMED: 0 }))) {
     return failCase("approval-binding-mismatch", "LIVE_DB_APPROVAL_EVENT_COUNT_MISMATCH", withExpiry);
   }
   caseResults.push(pass("approval-binding-mismatch"));
@@ -378,6 +394,7 @@ export async function runApprovalLifecycle(
 
 export type ApprovalExpiryDeps = {
   repository: RuntimeApprovalRepository | undefined;
+  counter: LiveDbRecordCounter | undefined;
   binding: RuntimeApprovalBinding;
   expiry: { approvalId: string; expiresAtMs: number } | undefined;
   clock: () => number;
@@ -406,13 +423,16 @@ export type ApprovalExpiryResult = {
 export async function runApprovalExpiry(
   deps: ApprovalExpiryDeps,
 ): Promise<ApprovalExpiryResult> {
-  const { repository, expiry } = deps;
+  const { repository, counter, expiry } = deps;
   if (!repository) {
     return {
       status: "BLOCKED",
       safeErrorCode: "LIVE_DB_APPROVAL_REPOSITORY_NOT_INJECTED",
       caseResults: [],
     };
+  }
+  if (!counter) {
+    return { status: "BLOCKED", safeErrorCode: "LIVE_DB_COUNTER_NOT_INJECTED", caseResults: [] };
   }
   if (!expiry) {
     return {
@@ -446,6 +466,28 @@ export async function runApprovalExpiry(
       safeErrorCode: "LIVE_DB_APPROVAL_UNEXPECTED_OUTCOME",
       caseResults: [fail("approval-expiry", "LIVE_DB_APPROVAL_UNEXPECTED_OUTCOME")],
     };
+  }
+
+  // The refusal is only half the case: expiry has to be journalled too, and the
+  // fixture must not have been transitioned by anything else along the way.
+  const expected: Partial<Record<LiveDbApprovalEventType, number>> = {
+    CREATED: 1,
+    EXPIRED: 1,
+    APPROVED: 0,
+    CONSUMED: 0,
+  };
+  for (const [eventType, count] of Object.entries(expected)) {
+    const counted = await counter.countApprovalEvents(
+      expiry.approvalId,
+      eventType as LiveDbApprovalEventType,
+    );
+    if (counted.status !== "COUNTED" || counted.count !== count) {
+      return {
+        status: "BLOCKED",
+        safeErrorCode: "LIVE_DB_APPROVAL_EVENT_COUNT_MISMATCH",
+        caseResults: [fail("approval-expiry", "LIVE_DB_APPROVAL_EVENT_COUNT_MISMATCH")],
+      };
+    }
   }
   return { status: "PASSED", caseResults: [pass("approval-expiry")] };
 }

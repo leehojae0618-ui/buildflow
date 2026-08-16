@@ -171,9 +171,9 @@ class FakeApprovalRepository implements RuntimeApprovalRepository {
 }
 
 const counterFor = (repository: FakeApprovalRepository, evidenceCount = 0): LiveDbRecordCounter => ({
-  countApprovalEvents: async (approvalId): Promise<CountResult> => ({
+  countApprovalEvents: async (approvalId, eventType): Promise<CountResult> => ({
     status: "COUNTED",
-    count: (repository.events.get(approvalId) ?? []).length,
+    count: (repository.events.get(approvalId) ?? []).filter((item) => item === eventType).length,
   }),
   countRuntimeEvidence: async (): Promise<CountResult> => ({
     status: "COUNTED",
@@ -301,6 +301,32 @@ describe("ST-B approval lifecycle (APR-01..04)", () => {
     expect(repository.events.get("approval-5")).toEqual(["CREATED", "APPROVED"]);
   });
 
+  it("fails when the journal records the wrong transition, not merely the wrong number", async () => {
+    // A request left APPROVED but journalled as REJECTED still totals two
+    // events, so a bare count would call this correct.
+    class MisjournallingRepository extends FakeApprovalRepository {
+      override async decide(input: DecideRuntimeApprovalInput) {
+        const result = await super.decide(input);
+        if (input.decision === "APPROVE") {
+          const events = this.events.get(input.approvalId) ?? [];
+          this.events.set(
+            input.approvalId,
+            events.map((event) => (event === "APPROVED" ? "REJECTED" : event)),
+          );
+        }
+        return result;
+      }
+    }
+    const repository = new MisjournallingRepository();
+    const result = await runLifecycle({}, repository);
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.safeErrorCode).toBe("LIVE_DB_APPROVAL_EVENT_COUNT_MISMATCH");
+    expect(result.caseResults.at(-1)).toMatchObject({ caseId: "approval-approve", verdict: "FAIL" });
+    // The total is right, which is exactly why the per-type check is needed.
+    expect(repository.events.get("approval-2")).toHaveLength(2);
+  });
+
   it("fails a case whose event count is wrong even when the RPC result looked right", async () => {
     const repository = new FakeApprovalRepository();
     const counter: LiveDbRecordCounter = {
@@ -377,6 +403,7 @@ describe("ST-B approval lifecycle (APR-01..04)", () => {
 describe("ST-B approval expiry (APR-02 expire)", () => {
   const expiryDeps = (repository: FakeApprovalRepository, clockMs: number, expiresAtMs: number) => ({
     repository,
+    counter: counterFor(repository),
     binding,
     expiry: { approvalId: "approval-1", expiresAtMs },
     clock: () => clockMs,
@@ -410,6 +437,7 @@ describe("ST-B approval expiry (APR-02 expire)", () => {
     const wait = vi.fn(async () => undefined);
     const result = await runApprovalExpiry({
       repository,
+      counter: counterFor(repository),
       binding,
       expiry: { approvalId: "approval-1", expiresAtMs: NOW + TTL_MS },
       clock: () => NOW + TTL_MS + 5_000,
@@ -428,6 +456,7 @@ describe("ST-B approval expiry (APR-02 expire)", () => {
     const repository = new FakeApprovalRepository();
     const result = await runApprovalExpiry({
       repository,
+      counter: counterFor(repository),
       binding,
       expiry: { approvalId: "approval-1", expiresAtMs: NOW + TTL_MS },
       clock: () => NOW,
@@ -444,8 +473,10 @@ describe("ST-B approval expiry (APR-02 expire)", () => {
         return failed("RUNTIME_APPROVAL_NOT_APPROVED");
       }
     }
+    const alreadyExpired = new AlreadyExpiredRepository();
     const result = await runApprovalExpiry({
-      repository: new AlreadyExpiredRepository(),
+      repository: alreadyExpired,
+      counter: counterFor(alreadyExpired),
       binding,
       expiry: { approvalId: "approval-1", expiresAtMs: NOW },
       clock: () => NOW + 10_000,
@@ -455,14 +486,51 @@ describe("ST-B approval expiry (APR-02 expire)", () => {
     expect(result.caseResults.at(-1)).toMatchObject({ caseId: "approval-expiry", verdict: "FAIL" });
   });
 
+  it("requires the expiry to be journalled, not just refused", async () => {
+    // The RPC answers EXPIRED but no EXPIRED event is written: the refusal is
+    // real and the audit trail is not, which the count check has to catch.
+    class SilentExpiryRepository extends FakeApprovalRepository {
+      override async decide() {
+        return failed("RUNTIME_APPROVAL_EXPIRED");
+      }
+    }
+    const repository = new SilentExpiryRepository();
+    await repository.create({ binding: fixtureBinding(binding, "apr02-expire") });
+
+    const result = await runApprovalExpiry({
+      repository,
+      counter: counterFor(repository),
+      binding,
+      expiry: { approvalId: "approval-1", expiresAtMs: NOW },
+      clock: () => NOW + 10_000,
+      wait: vi.fn(async () => undefined),
+    });
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.safeErrorCode).toBe("LIVE_DB_APPROVAL_EVENT_COUNT_MISMATCH");
+    expect(result.caseResults.at(-1)).toMatchObject({ caseId: "approval-expiry", verdict: "FAIL" });
+  });
+
+  it("fails closed without a counter, since the journal cannot be checked", async () => {
+    const repository = new FakeApprovalRepository();
+    expect(
+      await runApprovalExpiry({
+        ...expiryDeps(repository, NOW + 10_000, NOW),
+        counter: undefined,
+      }),
+    ).toMatchObject({ safeErrorCode: "LIVE_DB_COUNTER_NOT_INJECTED" });
+  });
+
   it("fails when the pre-aged fixture is accepted instead of refused", async () => {
     class NeverExpiringRepository extends FakeApprovalRepository {
       override async decide() {
         return ok({ ...binding, approvalId: "approval-1", status: "APPROVED" } as RuntimeApprovalRequest);
       }
     }
+    const neverExpiring = new NeverExpiringRepository();
     const result = await runApprovalExpiry({
-      repository: new NeverExpiringRepository(),
+      repository: neverExpiring,
+      counter: counterFor(neverExpiring),
       binding,
       expiry: { approvalId: "approval-1", expiresAtMs: NOW },
       clock: () => NOW + 10_000,

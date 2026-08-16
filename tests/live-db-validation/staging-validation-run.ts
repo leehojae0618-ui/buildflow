@@ -117,16 +117,32 @@ const failCase = (caseId: string, safeErrorCode: LiveDbSafeErrorCode): LiveDbCas
   safeErrorCode,
 });
 
+export type StagingEnvironmentPreflightInput = {
+  environment: LiveDbEnvironmentInput;
+  migrationExecutor: LiveDbMigrationExecutor | undefined;
+  approval: StagingApprovalInput;
+  timestamp: string;
+  clock: () => number;
+  wait: (milliseconds: number) => Promise<void>;
+};
+
 /**
- * Everything knowable without a database, checked in one place before the
- * migration runs.
+ * The checks that need neither a database nor a session, so they can run before
+ * anything at all is contacted.
  *
- * The ordering is the point: applying a migration is the first irreversible
- * thing ST-B does, so no static defect — a bad target, a missing dependency, a
- * malformed actor set, an unprefixed fixture, an unusable timestamp — may be
- * discovered after it. Each check here is pure or constructs objects only.
+ * `resolveStagingMigrationTarget` carries the whole target contract: the ST-A
+ * guard (production target, app-URL collision, unknown production ref,
+ * OPENAI_API_KEY presence, LIVE_DB_EXECUTION_CONFIRMED) plus the dual-binding
+ * agreement between the Supabase URL and the database URL.
+ *
+ * Exported because the entrypoint has to run it *before* it signs anyone in.
+ * A guard that runs after an authentication request has already left the
+ * process is not a guard — the contact it was meant to prevent has happened,
+ * whatever the guard then decides.
  */
-function runPreflight(input: StagingValidationRunInput): LiveDbSafeErrorCode | undefined {
+export function preflightStagingEnvironment(
+  input: StagingEnvironmentPreflightInput,
+): LiveDbSafeErrorCode | undefined {
   const target = resolveStagingMigrationTarget(input.environment);
   if (target.status === "BLOCKED") return target.safeErrorCode;
 
@@ -137,11 +153,6 @@ function runPreflight(input: StagingValidationRunInput): LiveDbSafeErrorCode | u
     return "LIVE_DB_PREFLIGHT_INCOMPLETE";
   }
 
-  const actorCheck = validateRlsActorSet(input.rls.actors);
-  if (actorCheck.status === "INVALID") return actorCheck.safeErrorCode;
-  const identityFailure = liveDbClientIdentityFailure(input.rls.identity);
-  if (identityFailure) return identityFailure;
-
   const fixtureFailure = assertApprovalFixtures(input.approval);
   if (fixtureFailure) return fixtureFailure;
 
@@ -151,6 +162,27 @@ function runPreflight(input: StagingValidationRunInput): LiveDbSafeErrorCode | u
     return "LIVE_DB_PREFLIGHT_INCOMPLETE";
   }
   return undefined;
+}
+
+/**
+ * Everything knowable without a database, checked in one place before the
+ * migration runs.
+ *
+ * Applying a migration is the first irreversible thing this function does, so
+ * no static defect — a bad target, a missing dependency, a malformed actor set,
+ * an unprefixed fixture, an unusable timestamp — may be discovered after it.
+ *
+ * The environment half is re-run here even though the entrypoint already ran
+ * it. It is pure, so repeating it costs nothing, and this boundary must fail
+ * closed on its own rather than trusting a caller to have checked.
+ */
+function runPreflight(input: StagingValidationRunInput): LiveDbSafeErrorCode | undefined {
+  const environmentFailure = preflightStagingEnvironment(input);
+  if (environmentFailure) return environmentFailure;
+
+  const actorCheck = validateRlsActorSet(input.rls.actors);
+  if (actorCheck.status === "INVALID") return actorCheck.safeErrorCode;
+  return liveDbClientIdentityFailure(input.rls.identity);
 }
 
 /**
@@ -271,7 +303,9 @@ export async function runStagingValidation(
   // already holds, so an owner reading zero rows is never confused with a row
   // that was never there.
   const confirmFixture = async (approvalId: string): Promise<LiveDbRlsFixtureCheck> => {
-    const counted = await counter.countApprovalEvents(approvalId);
+    // Every approval has exactly one CREATED event, so its presence is the
+    // service-role proof that the row exists at all.
+    const counted = await counter.countApprovalEvents(approvalId, "CREATED");
     if (counted.status === "ERRORED") {
       return { status: "ERRORED", safeErrorCode: counted.safeErrorCode };
     }
@@ -290,6 +324,7 @@ export async function runStagingValidation(
   // The expiry fixture's TTL has been running down since the lifecycle began.
   const expiry = await runApprovalExpiry({
     repository: injection.approvalRepository,
+    counter,
     binding: input.approval.binding,
     expiry: lifecycle.expiry,
     clock: input.clock,

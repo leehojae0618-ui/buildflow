@@ -48,15 +48,27 @@ vi.mock("@supabase/supabase-js", () => ({
             const outcome = state.schemaPresent
               ? { error: null, count: table === "runtime_evidence_records" ? state.evidenceRows : 0 }
               : { error: missing, count: null };
-            return {
-              then: (resolve: (value: unknown) => unknown) => Promise.resolve(outcome).then(resolve),
-              eq: (_column: string, value: string) =>
-                Promise.resolve(
-                  table === "runtime_approval_events"
-                    ? { error: null, count: (state.events.get(value) ?? []).length }
-                    : outcome,
-                ),
+            // Chainable, like a PostgREST builder: approval events are narrowed
+            // by approval id and then by event type, and the fake has to model
+            // the second filter or a per-type assertion proves nothing.
+            const filters: Record<string, string> = {};
+            const query = {
+              then(resolve: (value: unknown) => unknown) {
+                if (table !== "runtime_approval_events" || !state.schemaPresent) {
+                  return Promise.resolve(outcome).then(resolve);
+                }
+                const events = state.events.get(filters.approval_id ?? "") ?? [];
+                const matching = filters.event_type
+                  ? events.filter((event) => event === filters.event_type)
+                  : events;
+                return Promise.resolve({ error: null, count: matching.length }).then(resolve);
+              },
+              eq(column: string, value: string) {
+                filters[column] = value;
+                return query;
+              },
             };
+            return query;
           },
           update() {
             return {

@@ -35,10 +35,12 @@ const clientWith = (overrides: Overrides = {}) => {
       };
       return {
         select() {
-          return {
+          // Chainable, like a PostgREST builder, so a two-filter count works.
+          const query = {
             then: (resolve: (value: unknown) => unknown) => Promise.resolve(outcome).then(resolve),
-            eq: async () => outcome,
-          } as never;
+            eq: () => query,
+          };
+          return query as never;
         },
         update(values: Record<string, unknown>) {
           calls.push(`update:${table}:${Object.keys(values).join(",")}`);
@@ -161,8 +163,36 @@ describe("createLiveDbRecordCounter", () => {
       counts: { runtime_approval_events: 3, runtime_evidence_records: 0 },
     });
     const counter = createLiveDbRecordCounter(client);
-    expect(await counter.countApprovalEvents("approval-1")).toEqual({ status: "COUNTED", count: 3 });
+    expect(await counter.countApprovalEvents("approval-1", "CREATED")).toEqual({
+      status: "COUNTED",
+      count: 3,
+    });
     expect(await counter.countRuntimeEvidence()).toEqual({ status: "COUNTED", count: 0 });
+  });
+
+  it("narrows events by type as well as by approval", async () => {
+    const filters: string[] = [];
+    const client = {
+      from: () => ({
+        select: () => {
+          const query = {
+            then: (resolve: (value: unknown) => unknown) =>
+              Promise.resolve({ error: null, count: 1 }).then(resolve),
+            eq: (column: string, value: string) => {
+              filters.push(`${column}=${value}`);
+              return query;
+            },
+          };
+          return query as never;
+        },
+        update: () => ({ eq: async () => ({ error: null }) }),
+      }),
+      rpc: vi.fn(),
+    } as unknown as LiveDbSchemaClient;
+
+    await createLiveDbRecordCounter(client).countApprovalEvents("approval-1", "CONSUMED");
+    // Without the second filter a REJECTED row would satisfy a CONSUMED check.
+    expect(filters).toEqual(["approval_id=approval-1", "event_type=CONSUMED"]);
   });
 
   it("reports an error rather than a zero when the count is unavailable", async () => {

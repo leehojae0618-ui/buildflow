@@ -18,7 +18,10 @@ export type LiveDbActorClient = {
     select(columns: string, options: { head: true; count: "exact" }): {
       eq(column: string, value: string): PromiseLike<LiveDbCountOutcome>;
     };
-    update(values: Record<string, unknown>): {
+    update(
+      values: Record<string, unknown>,
+      options: { count: "exact" },
+    ): {
       eq(column: string, value: string): PromiseLike<{ error: unknown; count?: number | null }>;
     };
   };
@@ -96,17 +99,26 @@ function mutateProbe(client: LiveDbActorClient) {
     let error: unknown;
     let count: number | null | undefined;
     try {
+      // `count: "exact"` is requested explicitly: PostgREST does not report
+      // affected rows by default, and an absent count read as zero would be a
+      // write that "proved" denial without anyone having counted anything.
       ({ error, count } = await client
         .from("runtime_approval_requests")
-        .update({ status: "CONSUMED" })
+        .update({ status: "CONSUMED" }, { count: "exact" })
         .eq("id", approvalId));
     } catch (thrown) {
       return { status: "REJECTED", safeErrorCode: classifyRlsError(thrown) };
     }
     if (error) return { status: "REJECTED", safeErrorCode: classifyRlsError(error) };
+    if (typeof count !== "number") {
+      // The statement succeeded but the database did not say how many rows it
+      // touched, so denial cannot be shown. That is an infrastructure fault,
+      // which the runner fails on rather than reading as a policy holding.
+      return { status: "REJECTED", safeErrorCode: "LIVE_DB_RLS_INFRASTRUCTURE_ERROR" };
+    }
     // A policy that filters rather than raises leaves the statement successful
     // and the row untouched, which the runner reads as denial.
-    return { status: "APPLIED", changedRowCount: count ?? 0 };
+    return { status: "APPLIED", changedRowCount: count };
   };
 }
 

@@ -8,9 +8,13 @@ import type { LiveDbSafeErrorCode } from "./types";
  */
 export type LiveDbCountOutcome = { error: unknown; count: number | null };
 
-/** Chainable and awaitable, matching how PostgREST builders behave. */
+/**
+ * Chainable and awaitable, matching how PostgREST builders behave. Chaining
+ * matters because an approval's events are narrowed twice — by approval id and
+ * then by event type.
+ */
 export type LiveDbCountQuery = PromiseLike<LiveDbCountOutcome> & {
-  eq(column: string, value: string): PromiseLike<LiveDbCountOutcome>;
+  eq(column: string, value: string): LiveDbCountQuery;
 };
 
 export type LiveDbSchemaClient = {

@@ -14,7 +14,10 @@ import {
 } from "./staging-env-file";
 import type { LiveDbStagingEvidenceSummary } from "./staging-evidence";
 import { createSupabaseMigrationExecutor } from "./supabase-migration-executor";
-import { runStagingValidation } from "./staging-validation-run";
+import {
+  preflightStagingEnvironment,
+  runStagingValidation,
+} from "./staging-validation-run";
 import { LIVE_DB_TEST_PREFIX, type LiveDbSafeErrorCode } from "./types";
 
 /**
@@ -134,6 +137,30 @@ export async function runStagingValidationEntrypoint(
     return { status: "BLOCKED", safeErrorCode: "LIVE_DB_OWNER_IDENTITY_MISSING" };
   }
 
+  const now = options.now ?? (() => new Date());
+  const runId = options.runId ?? `staging-${now().getTime()}`;
+  const approval = buildStagingBindings({ projectId, userId }, runId);
+  const migrationExecutor = createSupabaseMigrationExecutor();
+  const clock = () => now().getTime();
+  const wait = options.wait ?? sleep;
+  const timestamp = now().toISOString();
+
+  // Every environment check runs here, before a single request leaves the
+  // process. Signing the owner and the other user in is a real call to the
+  // project named in the env file, so it must not happen until that project has
+  // been proven to be the approved staging target: a production URL, an
+  // app-project collision, or a blank LIVE_DB_EXECUTION_CONFIRMED has to stop
+  // the run while it is still purely local.
+  const environmentFailure = preflightStagingEnvironment({
+    environment,
+    migrationExecutor,
+    approval,
+    timestamp,
+    clock,
+    wait,
+  });
+  if (environmentFailure) return { status: "BLOCKED", safeErrorCode: environmentFailure };
+
   const actorSet = await createRlsActorSet({
     ownerClient: authClient(url, anonKey) as unknown as LiveDbAuthClient,
     otherClient: authClient(url, anonKey) as unknown as LiveDbAuthClient,
@@ -151,16 +178,14 @@ export async function runStagingValidationEntrypoint(
     return { status: "BLOCKED", safeErrorCode: actorSet.safeErrorCode };
   }
 
-  const now = options.now ?? (() => new Date());
-  const runId = options.runId ?? `staging-${now().getTime()}`;
   const result = await runStagingValidation({
     environment,
-    migrationExecutor: createSupabaseMigrationExecutor(),
-    approval: buildStagingBindings({ projectId, userId }, runId),
+    migrationExecutor,
+    approval,
     rls: { actors: actorSet.actors, identity: actorSet.identity },
-    timestamp: now().toISOString(),
-    clock: () => now().getTime(),
-    wait: options.wait ?? sleep,
+    timestamp,
+    clock,
+    wait,
     validationRunId: `${LIVE_DB_TEST_PREFIX}${runId}`,
     ...(source.LIVE_DB_KNOWN_PRODUCTION_PROJECT_REF
       ? { forbiddenProjectRefs: [source.LIVE_DB_KNOWN_PRODUCTION_PROJECT_REF] }

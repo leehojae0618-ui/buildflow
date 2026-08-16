@@ -1,4 +1,23 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+/** Records every authentication attempt so ordering can be asserted. */
+const auth = vi.hoisted(() => ({ signIns: [] as string[] }));
+
+vi.mock("@supabase/supabase-js", () => ({
+  createClient: () => ({
+    from: () => ({
+      select: () => ({ eq: async () => ({ error: null, count: 0 }) }),
+      update: () => ({ eq: async () => ({ error: null, count: 0 }) }),
+    }),
+    rpc: async () => ({ error: null, data: null }),
+    auth: {
+      signInWithPassword: async ({ email }: { email: string }) => {
+        auth.signIns.push(email);
+        return { error: null };
+      },
+    },
+  }),
+}));
 
 import { validateRuntimeApprovalBinding } from "../../src/features/runtime-approval/validator";
 import { assertApprovalFixtures } from "./approval-validation-runner";
@@ -59,6 +78,63 @@ describe("runStagingValidationEntrypoint preconditions", () => {
     LIVE_DB_OTHER_EMAIL: "other@example.test",
     LIVE_DB_OTHER_PASSWORD: "other-pw",
   };
+
+  beforeEach(() => {
+    auth.signIns.length = 0;
+  });
+
+  /**
+   * The ordering guarantee this gate turns on: signing a user in is a real
+   * request to whatever project the env file names, so it must not happen until
+   * that project has been proven to be the approved staging target.
+   */
+  it.each([
+    [
+      "the URL points at the known production project",
+      { LIVE_DB_SUPABASE_URL: "https://productionxyz.supabase.co" },
+      "LIVE_DB_PRODUCTION_TARGET_MATCH",
+    ],
+    [
+      "execution was never confirmed",
+      { LIVE_DB_EXECUTION_CONFIRMED: undefined },
+      "LIVE_DB_EXECUTION_CONFIRMATION_REQUIRED",
+    ],
+    [
+      "the target collides with the application project",
+      { NEXT_PUBLIC_SUPABASE_URL: "https://stagingabc.supabase.co" },
+      "LIVE_DB_APP_TARGET_MATCH",
+    ],
+    [
+      "an OpenAI key is reachable",
+      { OPENAI_API_KEY: "sk-should-stop-the-run" },
+      "LIVE_DB_OPENAI_KEY_PRESENT",
+    ],
+    [
+      "the database URL names a different project than the Supabase URL",
+      {
+        LIVE_DB_DATABASE_URL:
+          "postgresql://postgres:pw@db.someotherproject.supabase.co:5432/postgres",
+      },
+      "LIVE_DB_DB_URL_TARGET_MISMATCH",
+    ],
+    [
+      "the production ref is unknown, so the guard cannot clear the target",
+      { LIVE_DB_KNOWN_PRODUCTION_PROJECT_REF: undefined },
+      "LIVE_DB_PRODUCTION_IDENTITY_UNKNOWN",
+    ],
+  ])("signs nobody in when %s", async (_label, overrides, code) => {
+    const result = await runStagingValidationEntrypoint({ source: { ...source, ...overrides } });
+
+    expect(result).toMatchObject({ status: "BLOCKED", safeErrorCode: code });
+    expect(auth.signIns).toEqual([]);
+  });
+
+  it("signs the two users in only once the environment guard has passed", async () => {
+    // The guard clears, so the run proceeds to authentication — which is what
+    // makes the assertions above meaningful rather than vacuous.
+    await runStagingValidationEntrypoint({ source });
+    expect(auth.signIns).toEqual(["owner@example.test", "other@example.test"]);
+  });
 
   it("blocks before building anything when the anon key is absent", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");

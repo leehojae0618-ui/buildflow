@@ -191,6 +191,57 @@ describe("actor probes against the strict RLS runner", () => {
     expect(validation.safeErrorCode).toBe("LIVE_DB_RLS_ACCESS_VIOLATION");
   });
 
+  it("asks for the affected-row count explicitly", async () => {
+    const seen: { values: unknown; options: unknown }[] = [];
+    const client = {
+      from: () => ({
+        select: () => ({ eq: async () => ({ error: null, count: 0 }) }),
+        update: (values: unknown, options: unknown) => {
+          seen.push({ values, options });
+          return { eq: async () => ({ error: null, count: 0 }) };
+        },
+      }),
+      rpc: async () => ({ error: permissionDenied, data: null }),
+      auth: { signInWithPassword: vi.fn(async () => ({ error: null })) },
+    } as unknown as LiveDbAuthClient;
+
+    const result = await build({ anonClient: client });
+    if (result.status !== "READY") throw new Error("expected READY");
+    await result.actors.find((actor) => actor.actorClass === "ANONYMOUS")?.mutate?.("approval-1");
+
+    // PostgREST does not report affected rows unless asked, so without this the
+    // "no rows changed" proof would be an assumption.
+    expect(seen).toEqual([{ values: { status: "CONSUMED" }, options: { count: "exact" } }]);
+  });
+
+  it("does not treat an unavailable row count as proof that nothing changed", async () => {
+    const client = {
+      from: () => ({
+        select: () => ({ eq: async () => ({ error: null, count: 0 }) }),
+        // Succeeded, but said nothing about how many rows it touched.
+        update: () => ({ eq: async () => ({ error: null }) }),
+      }),
+      rpc: async () => ({ error: permissionDenied, data: null }),
+      auth: { signInWithPassword: vi.fn(async () => ({ error: null })) },
+    } as unknown as LiveDbAuthClient;
+
+    const result = await build({ anonClient: client });
+    if (result.status !== "READY") throw new Error("expected READY");
+    const anon = result.actors.find((actor) => actor.actorClass === "ANONYMOUS");
+    expect(await anon?.mutate?.("approval-1")).toEqual({
+      status: "REJECTED",
+      safeErrorCode: "LIVE_DB_RLS_INFRASTRUCTURE_ERROR",
+    });
+
+    const validation = await runRlsValidation({
+      approvalId: "approval-1",
+      confirmFixture,
+      actors: result.actors,
+    });
+    expect(validation.status).toBe("BLOCKED");
+    expect(validation.safeErrorCode).toBe("LIVE_DB_RLS_INFRASTRUCTURE_ERROR");
+  });
+
   it("emits no raw database message through any probe", async () => {
     const leaky = {
       code: "42501",

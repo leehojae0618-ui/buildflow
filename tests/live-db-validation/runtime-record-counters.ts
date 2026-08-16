@@ -13,8 +13,31 @@ import type { LiveDbSafeErrorCode } from "./types";
  * It only ever asks for counts. No row content is read, so nothing here can
  * carry a payload into Evidence.
  */
+/** The event vocabulary the migration's CHECK constraint allows. */
+export const liveDbApprovalEventTypes = [
+  "CREATED",
+  "APPROVED",
+  "REJECTED",
+  "REVOKED",
+  "EXPIRED",
+  "CONSUMED",
+] as const;
+export type LiveDbApprovalEventType = (typeof liveDbApprovalEventTypes)[number];
+
 export type LiveDbRecordCounter = {
-  countApprovalEvents: (approvalId: string) => Promise<CountResult>;
+  /**
+   * Counts one approval's events, narrowed to a single type.
+   *
+   * The type is required rather than optional because a bare total cannot
+   * distinguish the event that should have been written from one that should
+   * not: a request left APPROVED but journalled as REJECTED still totals two.
+   * The matrix asks for "one CREATED", "one matching event", "one CONSUMED",
+   * and that is what this answers.
+   */
+  countApprovalEvents: (
+    approvalId: string,
+    eventType: LiveDbApprovalEventType,
+  ) => Promise<CountResult>;
   countRuntimeEvidence: () => Promise<CountResult>;
 };
 
@@ -45,12 +68,13 @@ export function createLiveDbRecordCounter(client: LiveDbSchemaClient): LiveDbRec
   };
 
   return {
-    countApprovalEvents: (approvalId) =>
+    countApprovalEvents: (approvalId, eventType) =>
       count(() =>
         client
           .from("runtime_approval_events")
           .select("*", { head: true, count: "exact" })
-          .eq("approval_id", approvalId),
+          .eq("approval_id", approvalId)
+          .eq("event_type", eventType),
       ),
     countRuntimeEvidence: () =>
       count(() => client.from("runtime_evidence_records").select("*", { head: true, count: "exact" })),
