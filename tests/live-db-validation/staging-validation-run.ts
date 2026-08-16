@@ -1,6 +1,11 @@
-import type { RuntimeApprovalRepository } from "../../src/features/runtime-approval/repository";
 import type { RuntimeApprovalBinding } from "../../src/features/runtime-approval/types";
 import { runApprovalValidation } from "./approval-validation-runner";
+import {
+  createExplicitRepositoryInjection,
+  createLiveDbClient,
+  liveDbClientIdentityFailure,
+  type LiveDbClientFactory,
+} from "./live-db-client";
 import {
   executeStagingMigration,
   type LiveDbMigrationExecutor,
@@ -15,11 +20,15 @@ import {
   type LiveDbRlsActor,
   type LiveDbRlsFixtureCheck,
 } from "./rls-validation-runner";
-import type { LiveDbCaseResult, LiveDbEnvironmentInput, LiveDbSafeErrorCode } from "./types";
+import type {
+  LiveDbCaseResult,
+  LiveDbClientIdentityCandidate,
+  LiveDbEnvironmentInput,
+  LiveDbSafeErrorCode,
+} from "./types";
 import { liveDbValidationCases } from "./validation-cases";
 
 export type StagingApprovalInput = {
-  repository: RuntimeApprovalRepository | undefined;
   binding: RuntimeApprovalBinding;
   mismatchedBinding: RuntimeApprovalBinding;
   expiredApprovalId: string | undefined;
@@ -29,12 +38,26 @@ export type StagingRlsInput = {
   approvalId: string;
   confirmFixture: ((approvalId: string) => Promise<LiveDbRlsFixtureCheck>) | undefined;
   actors: readonly LiveDbRlsActor[] | undefined;
+  /**
+   * The caller's declaration about how the three actor clients were built.
+   *
+   * Actors are closures, so their origin cannot be inspected the way the
+   * approval repository's can: this is an attestation, checked but not proven.
+   * Constructing the actors here instead would mean owning owner/other/anon
+   * session creation, which is deliberately out of this boundary's scope.
+   */
+  identity: LiveDbClientIdentityCandidate | undefined;
 };
 
 export type StagingValidationRunInput = {
   environment: LiveDbEnvironmentInput;
   /** No default: an un-injected executor blocks instead of shelling out. */
   migrationExecutor: LiveDbMigrationExecutor | undefined;
+  /**
+   * Builds the dedicated LIVE_DB Supabase clients. There is no default, so this
+   * boundary cannot open a real connection unless a factory is handed to it.
+   */
+  clientFactory: LiveDbClientFactory | undefined;
   approval: StagingApprovalInput;
   rls: StagingRlsInput;
   timestamp: string;
@@ -84,8 +107,10 @@ function toCaseEvidence(results: readonly LiveDbCaseResult[]): LiveDbStagingCase
  * injected dependency, and a block at any step stops the ones after it — in
  * particular a blocked migration never reaches an approval or RLS probe.
  *
- * This function issues no query, spawns no process and constructs no client of
- * its own; it composes the boundaries that do.
+ * It builds the LIVE_DB clients and the approval repository itself, from the
+ * environment the guard just approved, so their target cannot diverge from the
+ * migration's. It issues no query and spawns no process of its own, and without
+ * an injected client factory it cannot open a connection at all.
  */
 export async function runStagingValidation(
   input: StagingValidationRunInput,
@@ -145,7 +170,47 @@ export async function runStagingValidation(
     appliedMigrationCount: migration.appliedMigrationCount,
   };
 
-  const approval = await runApprovalValidation(input.approval);
+  // The approval repository is built here rather than accepted, so "it uses a
+  // dedicated LIVE_DB client" is a fact this boundary establishes instead of a
+  // claim it trusts. SupabaseRuntimeApprovalRepository defaults its client to
+  // createSupabaseAdminClient(), which would reach the application project; an
+  // accepted repository could carry that default in unnoticed, and the
+  // migration above would have been the only step that stayed on staging.
+  //
+  // Both clients come from the same environment the guard just approved, so
+  // their target is the migration's target by construction.
+  if (typeof input.clientFactory !== "function") {
+    return finish({ ...applied, safeErrorCode: "LIVE_DB_CLIENT_NOT_EXPLICITLY_INJECTED" });
+  }
+  const configuration = {
+    ...(input.environment.liveDbSupabaseUrl ? { url: input.environment.liveDbSupabaseUrl } : {}),
+    ...(input.environment.liveDbServiceRoleKey
+      ? { serviceRoleKey: input.environment.liveDbServiceRoleKey }
+      : {}),
+  };
+  const approvalClient = createLiveDbClient(configuration, input.clientFactory);
+  if (approvalClient.status === "BLOCKED") {
+    return finish({ ...applied, safeErrorCode: approvalClient.safeErrorCode });
+  }
+  const evidenceClient = createLiveDbClient(configuration, input.clientFactory);
+  if (evidenceClient.status === "BLOCKED") {
+    return finish({ ...applied, safeErrorCode: evidenceClient.safeErrorCode });
+  }
+  const injection = createExplicitRepositoryInjection(approvalClient.client, evidenceClient.client);
+  if ("status" in injection) {
+    return finish({ ...applied, safeErrorCode: injection.safeErrorCode });
+  }
+
+  // RLS actors cannot be constructed here, so their origin is attested instead.
+  const rlsIdentityFailure = liveDbClientIdentityFailure(input.rls.identity);
+  if (rlsIdentityFailure) {
+    return finish({ ...applied, safeErrorCode: rlsIdentityFailure });
+  }
+
+  const approval = await runApprovalValidation({
+    repository: injection.approvalRepository,
+    ...input.approval,
+  });
   caseResults.push(...approval.caseResults);
   if (approval.status === "BLOCKED") {
     // The fallbacks matter: a blocked runner that reported no code must still

@@ -7,12 +7,19 @@ import type {
   RuntimeApprovalFailureCode,
   RuntimeApprovalRequest,
 } from "../../src/features/runtime-approval/types";
-import { validateRuntimeApprovalBinding } from "../../src/features/runtime-approval/validator";
+import {
+  checksumRuntimeApprovalBinding,
+  validateRuntimeApprovalBinding,
+} from "../../src/features/runtime-approval/validator";
 import type { LiveDbCaseResult, LiveDbSafeErrorCode } from "./types";
 
 export type ApprovalValidationInput = {
   /** Explicit injection only. There is no default repository. */
   repository: RuntimeApprovalRepository | undefined;
+  /**
+   * Template for every request this runner creates. It is never inserted
+   * verbatim — see `fixtureBinding`.
+   */
   binding: RuntimeApprovalBinding;
   /**
    * A binding that reaches the RPC and is then refused by the stored row.
@@ -35,9 +42,55 @@ export type ApprovalValidationInput = {
    * rejects any update that changes `expires_at`, so not even service-role SQL
    * can backdate a fresh request. Operators therefore create this fixture ahead
    * of the run. A missing fixture blocks instead of silently passing.
+   *
+   * It must have been created from its own binding: `binding_checksum` is
+   * UNIQUE, so a fixture built from this run's template would collide with the
+   * requests below.
    */
   expiredApprovalId: string | undefined;
 };
+
+/**
+ * Labels that make each fixture's binding distinct. `binding_checksum` carries
+ * a UNIQUE constraint, so reusing one binding across the lifecycle cases would
+ * make every create after the first fail on the real database — while an
+ * in-memory double that skips the constraint reports the whole run green.
+ */
+const fixtureLabels = {
+  consume: "apr03-consume",
+  reject: "apr02-reject",
+  revoke: "apr02-revoke",
+  mismatch: "apr04-mismatch",
+} as const;
+
+/**
+ * Derives a distinct but still valid binding for one fixture.
+ *
+ * The request id is what varies: it is part of the checksummed core, so the
+ * derived binding gets its own `bindingChecksum`, and a validation fixture
+ * standing for its own execution request is what the field means anyway.
+ */
+export function fixtureBinding(
+  template: RuntimeApprovalBinding,
+  label: string,
+): RuntimeApprovalBinding {
+  // Listed field by field rather than spread-minus-checksum, so a new field on
+  // RuntimeApprovalBinding surfaces as a type error here instead of silently
+  // joining the checksummed core.
+  const core = {
+    projectId: template.projectId,
+    userId: template.userId,
+    scope: template.scope,
+    runtimeExecutionRequestId: `${template.runtimeExecutionRequestId}-${label}`,
+    runtimeExecutionRequestChecksum: template.runtimeExecutionRequestChecksum,
+    runtimePlanId: template.runtimePlanId,
+    runtimePlanChecksum: template.runtimePlanChecksum,
+    provider: template.provider,
+    model: template.model,
+    safeInputChecksum: template.safeInputChecksum,
+  };
+  return { ...core, bindingChecksum: checksumRuntimeApprovalBinding(core) };
+}
 
 export type ApprovalValidationResult = {
   status: "PASSED" | "BLOCKED";
@@ -120,10 +173,13 @@ function assertFixtures(input: ApprovalValidationInput): LiveDbSafeErrorCode | u
   if (!validateRuntimeApprovalBinding(mismatched)) {
     return "LIVE_DB_APPROVAL_MISMATCH_FIXTURE_INVALID";
   }
+  // Compared against the binding APR-04's target row will actually hold, not
+  // against the template, since the template is never stored.
+  const mismatchTargetBinding = fixtureBinding(input.binding, fixtureLabels.mismatch);
   if (
     mismatched.projectId !== input.binding.projectId ||
     mismatched.userId !== input.binding.userId ||
-    mismatched.bindingChecksum === input.binding.bindingChecksum
+    mismatched.bindingChecksum === mismatchTargetBinding.bindingChecksum
   ) {
     return "LIVE_DB_APPROVAL_MISMATCH_FIXTURE_INVALID";
   }
@@ -180,10 +236,16 @@ export async function runApprovalValidation(
     return blocked("LIVE_DB_APPROVAL_UNEXPECTED_OUTCOME");
   };
 
-  /** Creates an isolated request so no case observes another case's state. */
-  const createFixture = async () => {
-    const created = await repository.create({ binding: input.binding });
-    return isOk(created) && created.value.status === "PENDING" ? created.value.approvalId : null;
+  /**
+   * Creates an isolated request, with its own binding, so no case observes
+   * another case's state and no create collides on the UNIQUE binding checksum.
+   */
+  const createFixture = async (label: string) => {
+    const fixture = fixtureBinding(input.binding, label);
+    const created = await repository.create({ binding: fixture });
+    return isOk(created) && created.value.status === "PENDING"
+      ? { approvalId: created.value.approvalId, binding: fixture }
+      : null;
   };
   const decide = (approvalId: string, decision: "APPROVE" | "REJECT" | "REVOKE") =>
     repository.decide({
@@ -194,31 +256,31 @@ export async function runApprovalValidation(
     });
 
   // APR-01 create
-  const primaryApprovalId = await createFixture();
-  if (!primaryApprovalId) return failCase("approval-create");
+  const primary = await createFixture(fixtureLabels.consume);
+  if (!primary) return failCase("approval-create");
   caseResults.push(pass("approval-create"));
 
   // APR-02 approve
-  const approved = await decide(primaryApprovalId, "APPROVE");
+  const approved = await decide(primary.approvalId, "APPROVE");
   if (!isOk(approved) || approved.value.status !== "APPROVED") return failCase("approval-approve");
   caseResults.push(pass("approval-approve"));
 
   // APR-02 reject, on its own request so the approved one stays consumable.
-  const rejectTarget = await createFixture();
+  const rejectTarget = await createFixture(fixtureLabels.reject);
   if (!rejectTarget) return failCase("approval-reject");
-  const rejected = await decide(rejectTarget, "REJECT");
+  const rejected = await decide(rejectTarget.approvalId, "REJECT");
   if (!isOk(rejected) || rejected.value.status !== "REJECTED") return failCase("approval-reject");
   caseResults.push(pass("approval-reject"));
 
   // APR-02 revoke. Revoked from APPROVED rather than PENDING: withdrawing an
   // already-usable approval is the transition that actually has to hold.
-  const revokeTarget = await createFixture();
+  const revokeTarget = await createFixture(fixtureLabels.revoke);
   if (!revokeTarget) return failCase("approval-revoke");
-  const revokeApproved = await decide(revokeTarget, "APPROVE");
+  const revokeApproved = await decide(revokeTarget.approvalId, "APPROVE");
   if (!isOk(revokeApproved) || revokeApproved.value.status !== "APPROVED") {
     return failCase("approval-revoke");
   }
-  const revoked = await decide(revokeTarget, "REVOKE");
+  const revoked = await decide(revokeTarget.approvalId, "REVOKE");
   if (!isOk(revoked) || revoked.value.status !== "REVOKED") return failCase("approval-revoke");
   caseResults.push(pass("approval-revoke"));
 
@@ -229,18 +291,18 @@ export async function runApprovalValidation(
   if (!blockedWith(expired, expiredFailureCodes)) return failCase("approval-expiry");
   caseResults.push(pass("approval-expiry"));
 
-  // APR-03 consume
+  // APR-03 consume, with the binding this request was actually created from.
   const consumed = await repository.consume({
-    approvalId: primaryApprovalId,
-    binding: input.binding,
+    approvalId: primary.approvalId,
+    binding: primary.binding,
   });
   if (!isOk(consumed) || consumed.value.status !== "CONSUMED") return failCase("approval-consume");
   caseResults.push(pass("approval-consume"));
 
   // APR-03 replay
   const replayed = await repository.consume({
-    approvalId: primaryApprovalId,
-    binding: input.binding,
+    approvalId: primary.approvalId,
+    binding: primary.binding,
   });
   if (!blockedWith(replayed, replayBlockedFailureCodes)) {
     return failCase("consume-replay-blocked");
@@ -252,14 +314,14 @@ export async function runApprovalValidation(
   // consumed. The RPC compares the binding only after it has cleared CONSUMED,
   // REVOKED, expiry and non-APPROVED status, so a reused request would answer
   // with one of those codes and never reach the comparison at all.
-  const mismatchTarget = await createFixture();
+  const mismatchTarget = await createFixture(fixtureLabels.mismatch);
   if (!mismatchTarget) return failCase("approval-binding-mismatch");
-  const mismatchApproved = await decide(mismatchTarget, "APPROVE");
+  const mismatchApproved = await decide(mismatchTarget.approvalId, "APPROVE");
   if (!isOk(mismatchApproved) || mismatchApproved.value.status !== "APPROVED") {
     return failCase("approval-binding-mismatch");
   }
   const mismatched = await repository.consume({
-    approvalId: mismatchTarget,
+    approvalId: mismatchTarget.approvalId,
     binding: input.mismatchedBinding,
   });
   if (!blockedWith(mismatched, bindingMismatchFailureCodes)) {

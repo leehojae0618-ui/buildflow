@@ -6,6 +6,7 @@ import type { Database } from "../../src/types/database";
 import {
   LIVE_DB_CLIENT_MODE,
   type LiveDbClientIdentity,
+  type LiveDbClientIdentityCandidate,
   type LiveDbSafeErrorCode,
 } from "./types";
 
@@ -56,6 +57,36 @@ export function createLiveDbClient(
     return { status: "BLOCKED", safeErrorCode: "LIVE_DB_SERVICE_ROLE_KEY_MISSING" };
   }
   return { status: "READY", client: factory(configuration.url, configuration.serviceRoleKey), identity: identity() };
+}
+
+/**
+ * Validates a caller's declaration about how its Supabase access was built.
+ *
+ * This is an attestation check, not a proof: it can only confirm that the
+ * caller claims no application, admin or server factory was used and no
+ * repository default was relied on. Use it where the boundary cannot construct
+ * the access itself — for anything it can construct, build it instead.
+ */
+export function liveDbClientIdentityFailure(
+  identity: LiveDbClientIdentityCandidate | undefined,
+): LiveDbSafeErrorCode | undefined {
+  if (!identity) return "LIVE_DB_CLIENT_NOT_EXPLICITLY_INJECTED";
+  if (identity.supabaseClientMode !== LIVE_DB_CLIENT_MODE) return "LIVE_DB_CLIENT_MODE_INVALID";
+  if (identity.appClientFactoryUsed === true) return "LIVE_DB_APP_CLIENT_FACTORY_USED";
+  if (identity.adminClientFactoryUsed === true) return "LIVE_DB_ADMIN_CLIENT_FACTORY_USED";
+  if (identity.serverClientFactoryUsed === true) return "LIVE_DB_SERVER_CLIENT_FACTORY_USED";
+  if (identity.repositoryDefaultClientFallbackUsed === true) {
+    return "LIVE_DB_CLIENT_NOT_EXPLICITLY_INJECTED";
+  }
+  // An omitted or non-false flag is not a denial, so it cannot be trusted.
+  if (
+    identity.appClientFactoryUsed !== false ||
+    identity.adminClientFactoryUsed !== false ||
+    identity.serverClientFactoryUsed !== false
+  ) {
+    return "LIVE_DB_CLIENT_NOT_EXPLICITLY_INJECTED";
+  }
+  return undefined;
 }
 
 /**

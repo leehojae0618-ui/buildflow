@@ -1,23 +1,105 @@
 import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 
-import type {
-  RuntimeApprovalRepository,
-  RuntimeApprovalRepositoryResult,
-} from "../../src/features/runtime-approval/repository";
-import type {
-  ConsumeRuntimeApprovalInput,
-  CreateRuntimeApprovalInput,
-  DecideRuntimeApprovalInput,
-  RuntimeApprovalBinding,
-  RuntimeApprovalFailureCode,
-  RuntimeApprovalRequest,
-} from "../../src/features/runtime-approval/types";
-import {
-  checksumRuntimeApprovalBinding,
-  validateRuntimeApprovalBinding,
-} from "../../src/features/runtime-approval/validator";
+/**
+ * The composition root builds its own repositories, so the adapters are mocked
+ * rather than injected. `state` is hoisted because a vi.mock factory runs
+ * before the module body.
+ */
+const state = vi.hoisted(() => ({
+  approvalConstructions: [] as unknown[],
+  evidenceConstructions: [] as unknown[],
+}));
+
+vi.mock("../../src/features/runtime-approval/runtime-approval-supabase", async () => {
+  const { validateRuntimeApprovalBinding } = await import(
+    "../../src/features/runtime-approval/validator"
+  );
+  const NOW = Date.parse("2026-08-17T00:00:00.000Z");
+  const ok = (value: unknown) => ({ status: "OK", value, failures: [] });
+  const failed = (code: string) => ({ status: "FAILED", failures: [{ code }] });
+
+  return {
+    SupabaseRuntimeApprovalRepository: class {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      private readonly rows = new Map<string, any>();
+      private sequence = 0;
+
+      constructor(readonly client: unknown) {
+        state.approvalConstructions.push(client);
+        this.rows.set("approval-pre-aged", {
+          approvalId: "approval-pre-aged",
+          bindingChecksum: "pre-aged-fixture-checksum",
+          status: "PENDING",
+          expiresAt: new Date(NOW - 60_000).toISOString(),
+        });
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      async create(input: any) {
+        if (!validateRuntimeApprovalBinding(input.binding)) return failed("RUNTIME_APPROVAL_INVALID");
+        const duplicate = [...this.rows.values()].some(
+          (row) => row.bindingChecksum === input.binding.bindingChecksum,
+        );
+        if (duplicate) return failed("RUNTIME_APPROVAL_PERSISTENCE_FAILED");
+        this.sequence += 1;
+        const value = {
+          ...input.binding,
+          approvalId: `approval-${this.sequence}`,
+          status: "PENDING",
+          expiresAt: new Date(NOW + 900_000).toISOString(),
+        };
+        this.rows.set(value.approvalId, value);
+        return ok(value);
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      async decide(input: any) {
+        const row = this.rows.get(input.approvalId);
+        if (!row) return failed("RUNTIME_APPROVAL_NOT_FOUND");
+        if (Date.parse(row.expiresAt) <= NOW) return failed("RUNTIME_APPROVAL_EXPIRED");
+        const status =
+          input.decision === "APPROVE" ? "APPROVED" : input.decision === "REJECT" ? "REJECTED" : "REVOKED";
+        const value = { ...row, status };
+        this.rows.set(input.approvalId, value);
+        return ok(value);
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      async consume(input: any) {
+        if (!validateRuntimeApprovalBinding(input.binding)) return failed("RUNTIME_APPROVAL_INVALID");
+        const row = this.rows.get(input.approvalId);
+        if (!row) return failed("RUNTIME_APPROVAL_NOT_FOUND");
+        if (row.status === "CONSUMED") return failed("RUNTIME_APPROVAL_CONSUMED");
+        if (row.status !== "APPROVED") return failed("RUNTIME_APPROVAL_NOT_APPROVED");
+        if (row.bindingChecksum !== input.binding.bindingChecksum) {
+          return failed("RUNTIME_APPROVAL_BINDING_MISMATCH");
+        }
+        const value = { ...row, status: "CONSUMED" };
+        this.rows.set(input.approvalId, value);
+        return ok(value);
+      }
+
+      async get(approvalId: string) {
+        const row = this.rows.get(approvalId);
+        return row ? ok(row) : failed("RUNTIME_APPROVAL_NOT_FOUND");
+      }
+    },
+  };
+});
+
+vi.mock("../../src/features/agents/runtime-evidence-supabase", () => ({
+  SupabaseRuntimeEvidenceRepository: class {
+    constructor(readonly client: unknown) {
+      state.evidenceConstructions.push(client);
+    }
+  },
+}));
+
+import type { RuntimeApprovalBinding } from "../../src/features/runtime-approval/types";
+import { checksumRuntimeApprovalBinding } from "../../src/features/runtime-approval/validator";
 import { loadLiveDbEnvironment } from "./environment-loader";
+import type { LiveDbClientFactory } from "./live-db-client";
 import type {
   LiveDbRlsActor,
   LiveDbRlsFixtureCheck,
@@ -30,6 +112,7 @@ import type {
   LiveDbMigrationExecutor,
   LiveDbMigrationExecutorOutcome,
 } from "./staging-migration-executor";
+import type { LiveDbClientIdentityCandidate } from "./types";
 import { runStagingValidation, type StagingValidationRunInput } from "./staging-validation-run";
 
 const stagingRef = "stagingabc";
@@ -64,75 +147,6 @@ const mismatchedBinding: RuntimeApprovalBinding = {
   bindingChecksum: checksumRuntimeApprovalBinding(mismatchedCore),
 };
 
-const NOW = Date.parse("2026-08-17T00:00:00.000Z");
-const EXPIRED_APPROVAL_ID = "approval-pre-aged";
-
-const ok = <T>(value: T): RuntimeApprovalRepositoryResult<T> => ({ status: "OK", value, failures: [] });
-const failed = (code: RuntimeApprovalFailureCode): RuntimeApprovalRepositoryResult<never> => ({
-  status: "FAILED",
-  failures: [{ code }],
-});
-
-/** Follows the same precondition order as the Supabase-backed repository. */
-class FakeRepository implements RuntimeApprovalRepository {
-  private readonly rows = new Map<string, RuntimeApprovalRequest>();
-  private sequence = 0;
-
-  constructor() {
-    this.rows.set(EXPIRED_APPROVAL_ID, {
-      ...binding,
-      approvalId: EXPIRED_APPROVAL_ID,
-      status: "PENDING",
-      createdAt: new Date(NOW - 3_600_000).toISOString(),
-      expiresAt: new Date(NOW - 60_000).toISOString(),
-    });
-  }
-
-  async create(input: CreateRuntimeApprovalInput) {
-    if (!validateRuntimeApprovalBinding(input.binding)) return failed("RUNTIME_APPROVAL_INVALID");
-    this.sequence += 1;
-    const value: RuntimeApprovalRequest = {
-      ...input.binding,
-      approvalId: `approval-${this.sequence}`,
-      status: "PENDING",
-      createdAt: new Date(NOW).toISOString(),
-      expiresAt: new Date(NOW + 900_000).toISOString(),
-    };
-    this.rows.set(value.approvalId, value);
-    return ok(value);
-  }
-
-  async decide(input: DecideRuntimeApprovalInput) {
-    const row = this.rows.get(input.approvalId);
-    if (!row) return failed("RUNTIME_APPROVAL_NOT_FOUND");
-    if (Date.parse(row.expiresAt) <= NOW) return failed("RUNTIME_APPROVAL_EXPIRED");
-    const status =
-      input.decision === "APPROVE" ? "APPROVED" : input.decision === "REJECT" ? "REJECTED" : "REVOKED";
-    const value = { ...row, status } as RuntimeApprovalRequest;
-    this.rows.set(input.approvalId, value);
-    return ok(value);
-  }
-
-  async consume(input: ConsumeRuntimeApprovalInput) {
-    if (!validateRuntimeApprovalBinding(input.binding)) return failed("RUNTIME_APPROVAL_INVALID");
-    const row = this.rows.get(input.approvalId);
-    if (!row) return failed("RUNTIME_APPROVAL_NOT_FOUND");
-    if (row.status === "CONSUMED") return failed("RUNTIME_APPROVAL_CONSUMED");
-    if (row.status !== "APPROVED") return failed("RUNTIME_APPROVAL_NOT_APPROVED");
-    if (row.bindingChecksum !== input.binding.bindingChecksum) {
-      return failed("RUNTIME_APPROVAL_BINDING_MISMATCH");
-    }
-    const value = { ...row, status: "CONSUMED" } as RuntimeApprovalRequest;
-    this.rows.set(input.approvalId, value);
-    return ok(value);
-  }
-
-  async get(approvalId: string) {
-    const row = this.rows.get(approvalId);
-    return row ? ok(row) : failed("RUNTIME_APPROVAL_NOT_FOUND");
-  }
-}
-
 const visible: LiveDbRlsReadOutcome = { status: "READ", rowCount: 1 };
 const filtered: LiveDbRlsReadOutcome = { status: "READ", rowCount: 0 };
 const noRowsChanged: LiveDbRlsMutateOutcome = { status: "APPLIED", changedRowCount: 0 };
@@ -160,6 +174,13 @@ const passingActors = (): LiveDbRlsActor[] => [
   },
 ];
 
+const validIdentity: LiveDbClientIdentityCandidate = {
+  supabaseClientMode: "LIVE_DB_EXPLICIT_INJECTION",
+  appClientFactoryUsed: false,
+  adminClientFactoryUsed: false,
+  serverClientFactoryUsed: false,
+};
+
 const appliedExecutor: LiveDbMigrationExecutor = vi.fn(
   async (): Promise<LiveDbMigrationExecutorOutcome> => ({
     status: "APPLIED",
@@ -168,18 +189,23 @@ const appliedExecutor: LiveDbMigrationExecutor = vi.fn(
 );
 
 const confirmFixture = vi.fn(async (): Promise<LiveDbRlsFixtureCheck> => ({ status: "PRESENT" }));
+const clientFactory: LiveDbClientFactory = vi.fn(() => ({ marker: "live-db" }) as never);
+
+const rlsInput = (overrides: Partial<StagingValidationRunInput["rls"]> = {}) => ({
+  approvalId: "approval-1",
+  confirmFixture,
+  actors: passingActors(),
+  identity: validIdentity,
+  ...overrides,
+});
 
 const run = (overrides: Partial<StagingValidationRunInput> = {}) =>
   runStagingValidation({
     environment: loadLiveDbEnvironment("connection", validStagingSource),
     migrationExecutor: appliedExecutor,
-    approval: {
-      repository: new FakeRepository(),
-      binding,
-      mismatchedBinding,
-      expiredApprovalId: EXPIRED_APPROVAL_ID,
-    },
-    rls: { approvalId: "approval-1", confirmFixture, actors: passingActors() },
+    clientFactory,
+    approval: { binding, mismatchedBinding, expiredApprovalId: "approval-pre-aged" },
+    rls: rlsInput(),
     timestamp: "2026-08-17T00:00:00.000Z",
     forbiddenProjectRefs: [stagingRef, productionRef],
     ...overrides,
@@ -215,10 +241,69 @@ describe("ST-B staging validation composition root", () => {
     ]);
   });
 
+  it("builds the approval repository from the guarded environment rather than accepting one", async () => {
+    state.approvalConstructions.length = 0;
+    state.evidenceConstructions.length = 0;
+
+    const result = await run();
+
+    expect(result.status).toBe("PASSED");
+    // The repository was constructed here, with the client this root built, so
+    // it cannot have fallen back to createSupabaseAdminClient().
+    expect(state.approvalConstructions).toHaveLength(1);
+    expect(state.approvalConstructions[0]).toMatchObject({ marker: "live-db" });
+    expect(state.evidenceConstructions).toHaveLength(1);
+    expect(clientFactory).toHaveBeenCalledWith(
+      `https://${stagingRef}.supabase.co`,
+      "test-service-role-placeholder",
+    );
+  });
+
+  it("cannot open a connection when no client factory is injected", async () => {
+    const rls = rlsInput();
+    const result = await run({ clientFactory: undefined, rls });
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.safeErrorCode).toBe("LIVE_DB_CLIENT_NOT_EXPLICITLY_INJECTED");
+    expect(rls.actors[0].read).not.toHaveBeenCalled();
+  });
+
+  it("blocks when the RLS actors carry no identity attestation", async () => {
+    const rls = rlsInput({ identity: undefined });
+    const result = await run({ rls });
+
+    expect(result.safeErrorCode).toBe("LIVE_DB_CLIENT_NOT_EXPLICITLY_INJECTED");
+    expect(rls.actors[0].read).not.toHaveBeenCalled();
+  });
+
+  it("blocks an RLS attestation that admits an application or admin factory", async () => {
+    for (const [field, code] of [
+      ["appClientFactoryUsed", "LIVE_DB_APP_CLIENT_FACTORY_USED"],
+      ["adminClientFactoryUsed", "LIVE_DB_ADMIN_CLIENT_FACTORY_USED"],
+      ["serverClientFactoryUsed", "LIVE_DB_SERVER_CLIENT_FACTORY_USED"],
+    ] as const) {
+      const result = await run({
+        rls: rlsInput({ identity: { ...validIdentity, [field]: true } }),
+      });
+      expect(result.safeErrorCode).toBe(code);
+    }
+
+    expect(
+      (await run({ rls: rlsInput({ identity: { ...validIdentity, supabaseClientMode: "other" } }) }))
+        .safeErrorCode,
+    ).toBe("LIVE_DB_CLIENT_MODE_INVALID");
+    expect(
+      (
+        await run({
+          rls: rlsInput({ identity: { ...validIdentity, repositoryDefaultClientFallbackUsed: true } }),
+        })
+      ).safeErrorCode,
+    ).toBe("LIVE_DB_CLIENT_NOT_EXPLICITLY_INJECTED");
+  });
+
   it("stops before touching approvals when the migration boundary blocks", async () => {
-    const repository = new FakeRepository();
-    const createSpy = vi.spyOn(repository, "create");
-    const actors = passingActors();
+    state.approvalConstructions.length = 0;
+    const rls = rlsInput();
 
     const result = await run({
       environment: loadLiveDbEnvironment("connection", {
@@ -226,14 +311,14 @@ describe("ST-B staging validation composition root", () => {
         // The database URL now points at the production project.
         LIVE_DB_DATABASE_URL: `postgresql://postgres:pw@db.${productionRef}.supabase.co:5432/postgres`,
       }),
-      approval: { repository, binding, mismatchedBinding, expiredApprovalId: EXPIRED_APPROVAL_ID },
-      rls: { approvalId: "approval-1", confirmFixture, actors },
+      rls,
     });
 
     expect(result.status).toBe("BLOCKED");
     expect(result.safeErrorCode).toBe("LIVE_DB_DB_URL_TARGET_MISMATCH");
-    expect(createSpy).not.toHaveBeenCalled();
-    expect(actors[0].read).not.toHaveBeenCalled();
+    // No client and no repository are built once the target is in doubt.
+    expect(state.approvalConstructions).toHaveLength(0);
+    expect(rls.actors[0].read).not.toHaveBeenCalled();
     expect(result.evidence).toMatchObject({
       migrationApplied: false,
       appliedMigrationCount: 0,
@@ -243,31 +328,23 @@ describe("ST-B staging validation composition root", () => {
   });
 
   it("blocks when no migration executor is injected", async () => {
-    const actors = passingActors();
-    const result = await run({
-      migrationExecutor: undefined,
-      rls: { approvalId: "approval-1", confirmFixture, actors },
-    });
+    const rls = rlsInput();
+    const result = await run({ migrationExecutor: undefined, rls });
 
     expect(result.safeErrorCode).toBe("LIVE_DB_MIGRATION_EXECUTOR_NOT_INJECTED");
-    expect(actors[0].read).not.toHaveBeenCalled();
+    expect(rls.actors[0].read).not.toHaveBeenCalled();
   });
 
   it("stops before RLS when approval validation blocks", async () => {
-    const actors = passingActors();
+    const rls = rlsInput();
     const result = await run({
-      approval: {
-        repository: new FakeRepository(),
-        binding,
-        mismatchedBinding,
-        expiredApprovalId: undefined,
-      },
-      rls: { approvalId: "approval-1", confirmFixture, actors },
+      approval: { binding, mismatchedBinding, expiredApprovalId: undefined },
+      rls,
     });
 
     expect(result.status).toBe("BLOCKED");
     expect(result.safeErrorCode).toBe("LIVE_DB_APPROVAL_EXPIRED_FIXTURE_NOT_INJECTED");
-    expect(actors[0].read).not.toHaveBeenCalled();
+    expect(rls.actors[0].read).not.toHaveBeenCalled();
     expect(result.evidence.verdict).toBe("FAIL");
   });
 
@@ -276,7 +353,7 @@ describe("ST-B staging validation composition root", () => {
     const invoked: LiveDbRlsRpcOutcome = { status: "INVOKED" };
     actors[2].rpc = vi.fn(async () => invoked);
 
-    const result = await run({ rls: { approvalId: "approval-1", confirmFixture, actors } });
+    const result = await run({ rls: rlsInput({ actors }) });
 
     expect(result.status).toBe("BLOCKED");
     expect(result.safeErrorCode).toBe("LIVE_DB_RLS_ACCESS_VIOLATION");

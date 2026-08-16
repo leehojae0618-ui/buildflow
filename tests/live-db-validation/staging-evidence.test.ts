@@ -178,4 +178,28 @@ describe("createLiveDbStagingEvidenceSummary", () => {
     });
     expect(hasStagingUnsafeValue(result.summary)).toBe(false);
   });
+
+  it("does not carry an unsafe timestamp into the redacted summary", () => {
+    // timestamp is the only value redaction has a reason to keep, which makes
+    // it the only field a secret could still ride out on.
+    const result = build({
+      timestamp: "postgresql://postgres:pw@db.stagingabc.supabase.co:5432/postgres",
+    });
+    expect(result.status).toBe("UNSAFE");
+    expect(result.summary.timestamp).toBe("unavailable");
+    expect(hasStagingUnsafeValue(result.summary)).toBe(false);
+  });
+
+  it("keeps a well-formed timestamp when redacting for an unrelated leak", () => {
+    const result = build({ cases: [{ ...safeCases[0], actualSafeResult: "sb_secret_abcdefgh1234" }] });
+    expect(result.summary.timestamp).toBe("2026-08-17T00:00:00.000Z");
+  });
+
+  it("drops a timestamp that is merely malformed, not only one that is unsafe", () => {
+    const result = build({
+      timestamp: "2026-08-17 00:00:00",
+      cases: [{ ...safeCases[0], actualSafeResult: "sb_secret_abcdefgh1234" }],
+    });
+    expect(result.summary.timestamp).toBe("unavailable");
+  });
 });

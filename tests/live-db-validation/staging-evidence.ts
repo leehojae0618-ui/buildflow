@@ -99,10 +99,17 @@ export type LiveDbStagingEvidenceResult =
       summary: LiveDbStagingEvidenceSummary;
     };
 
+/** Exactly the shape `Date#toISOString` produces, and nothing else. */
+const isoTimestamp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+
 /**
- * Every free-text field is replaced by a constant rather than reused. Carrying
- * the original fields over and merely flipping `secretExposureDetected` would
- * detect the leak while still publishing it.
+ * Every field is replaced by a constant rather than reused, including the
+ * timestamp: it is the one value a redacted summary has any reason to carry
+ * over, which makes it the one field a secret could still ride out on. A
+ * timestamp that is not exactly an ISO instant is dropped entirely.
+ *
+ * Carrying the original fields over and merely flipping `secretExposureDetected`
+ * would detect the leak while still publishing it.
  */
 function redactedSummary(timestamp: string): LiveDbStagingEvidenceSummary {
   return Object.freeze({
@@ -116,7 +123,7 @@ function redactedSummary(timestamp: string): LiveDbStagingEvidenceSummary {
     executionMode: "STAGING",
     migrationApplied: false,
     appliedMigrationCount: 0,
-    timestamp,
+    timestamp: isoTimestamp.test(timestamp) ? timestamp : "unavailable",
     cases: Object.freeze([]),
     executedCaseIds: Object.freeze([]),
     failedCaseIds: Object.freeze([]),
@@ -169,10 +176,13 @@ export function createLiveDbStagingEvidenceSummary(
     ...(input.forbiddenProjectRefs ? { forbiddenProjectRefs: input.forbiddenProjectRefs } : {}),
   };
   if (hasStagingUnsafeValue(summary, options)) {
+    const redacted = redactedSummary(input.timestamp);
     return {
       status: "UNSAFE",
       safeErrorCode: "LIVE_DB_SECRET_EXPOSURE_DETECTED",
-      summary: redactedSummary(input.timestamp),
+      // Scanned again rather than assumed clean: the redacted summary is what
+      // actually gets published, so it is what has to be checked.
+      summary: hasStagingUnsafeValue(redacted, options) ? redactedSummary("") : redacted,
     };
   }
   return { status: "SAFE", summary };

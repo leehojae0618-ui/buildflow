@@ -17,7 +17,7 @@ import {
   checksumRuntimeApprovalBinding,
   validateRuntimeApprovalBinding,
 } from "../../src/features/runtime-approval/validator";
-import { runApprovalValidation } from "./approval-validation-runner";
+import { fixtureBinding, runApprovalValidation } from "./approval-validation-runner";
 import { hasStagingUnsafeValue } from "./staging-evidence";
 
 const hex = (seed: string) => createHash("sha256").update(seed).digest("hex");
@@ -83,9 +83,11 @@ class FakeApprovalRepository implements RuntimeApprovalRepository {
   private sequence = 0;
 
   constructor() {
-    // The pre-aged fixture an operator supplies: past its TTL, still PENDING.
+    // The pre-aged fixture an operator supplies: past its TTL, still PENDING,
+    // and created from its own binding so it does not occupy a checksum this
+    // run needs.
     this.rows.set(EXPIRED_APPROVAL_ID, {
-      ...binding,
+      ...fixtureBinding(binding, "operator-expired"),
       approvalId: EXPIRED_APPROVAL_ID,
       status: "PENDING",
       createdAt: new Date(NOW - 3_600_000).toISOString(),
@@ -99,6 +101,13 @@ class FakeApprovalRepository implements RuntimeApprovalRepository {
 
   async create(input: CreateRuntimeApprovalInput) {
     if (!validateRuntimeApprovalBinding(input.binding)) return failed("RUNTIME_APPROVAL_INVALID");
+    // runtime_approval_requests.binding_checksum is UNIQUE. The RPC surfaces the
+    // violation as an error the repository cannot map, so it lands on its
+    // generic persistence failure.
+    const duplicate = [...this.rows.values()].some(
+      (row) => row.bindingChecksum === input.binding.bindingChecksum,
+    );
+    if (duplicate) return failed("RUNTIME_APPROVAL_PERSISTENCE_FAILED");
     this.sequence += 1;
     const approvalId = `approval-${this.sequence}`;
     const value: RuntimeApprovalRequest = {
@@ -203,10 +212,12 @@ describe("ST-B approval validation runner (APR-01..04)", () => {
     });
   });
 
-  it("rejects a mismatch fixture that does not actually differ", async () => {
-    expect(await run({ mismatchedBinding: binding })).toMatchObject({
-      safeErrorCode: "LIVE_DB_APPROVAL_MISMATCH_FIXTURE_INVALID",
-    });
+  it("rejects a mismatch fixture that matches the row APR-04 will target", async () => {
+    // The template is never stored, so equality has to be judged against the
+    // binding the mismatch target is actually created from.
+    expect(await run({ mismatchedBinding: fixtureBinding(binding, "apr04-mismatch") })).toMatchObject(
+      { safeErrorCode: "LIVE_DB_APPROVAL_MISMATCH_FIXTURE_INVALID" },
+    );
   });
 
   it("rejects a mismatch fixture owned by a different user", async () => {
@@ -259,6 +270,35 @@ describe("ST-B approval validation runner (APR-01..04)", () => {
     const approvalIds = created.map((item) => (item.status === "OK" ? item.value.approvalId : null));
     expect(new Set(approvalIds).size).toBe(4);
     expect(approvalIds).not.toContain(null);
+
+    // Each fixture also needs its own binding, because binding_checksum is UNIQUE.
+    const checksums = createSpy.mock.calls.map(([call]) => call.binding.bindingChecksum);
+    expect(new Set(checksums).size).toBe(4);
+    expect(checksums).not.toContain(binding.bindingChecksum);
+  });
+
+  it("would fail on the real UNIQUE constraint if fixtures shared one binding", async () => {
+    // Guards the fake itself: if it stops modelling the constraint, this test
+    // stops proving that per-fixture bindings are what keep the run working.
+    const repository = new FakeApprovalRepository();
+    const first = await repository.create({ binding });
+    expect(first.status).toBe("OK");
+    const second = await repository.create({ binding });
+    expect(second).toMatchObject({
+      status: "FAILED",
+      failures: [{ code: "RUNTIME_APPROVAL_PERSISTENCE_FAILED" }],
+    });
+  });
+
+  it("derives a distinct, still-valid binding per label", () => {
+    const left = fixtureBinding(binding, "one");
+    const right = fixtureBinding(binding, "two");
+    expect(validateRuntimeApprovalBinding(left)).toBe(true);
+    expect(validateRuntimeApprovalBinding(right)).toBe(true);
+    expect(left.bindingChecksum).not.toBe(right.bindingChecksum);
+    expect(left.bindingChecksum).not.toBe(binding.bindingChecksum);
+    expect(left.projectId).toBe(binding.projectId);
+    expect(left.userId).toBe(binding.userId);
   });
 
   it("does not accept RUNTIME_APPROVAL_INVALID as proof of a binding mismatch", async () => {
