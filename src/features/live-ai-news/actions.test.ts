@@ -1,0 +1,53 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { prepareAiNewsDigestRun, requestApprovedAiNewsDigestRun } from "./actions";
+
+const envKeys = ["BUILDFLOW_LIVE_CONNECT_ENABLED", "BUILDFLOW_LIVE_SLACK_WRITE_ENABLED", "BUILDFLOW_LIVE_SLACK_CHANNEL_ID", "GROQ_API_KEY"] as const;
+let originalEnv: Record<string, string | undefined>;
+
+beforeEach(() => {
+  originalEnv = Object.fromEntries(envKeys.map((key) => [key, process.env[key]]));
+  for (const key of envKeys) delete process.env[key];
+});
+
+afterEach(() => {
+  for (const key of envKeys) {
+    if (originalEnv[key] === undefined) delete process.env[key];
+    else process.env[key] = originalEnv[key];
+  }
+  vi.restoreAllMocks();
+});
+
+describe("AI news digest Server Action gates (roadmap Step 7+8)", () => {
+  it("blocks with LIVE_DISABLED when the connect switch is off", async () => {
+    expect(await prepareAiNewsDigestRun()).toEqual({ ok: false, errorCode: "LIVE_DISABLED" });
+  });
+
+  it("blocks with WRITE_DISABLED when connect is on but write is off", async () => {
+    process.env.BUILDFLOW_LIVE_CONNECT_ENABLED = "true";
+    expect(await prepareAiNewsDigestRun()).toEqual({ ok: false, errorCode: "WRITE_DISABLED" });
+  });
+
+  it("blocks with CONFIGURATION_MISSING when switches are on but channel/API key are missing", async () => {
+    process.env.BUILDFLOW_LIVE_CONNECT_ENABLED = "true";
+    process.env.BUILDFLOW_LIVE_SLACK_WRITE_ENABLED = "true";
+    expect(await prepareAiNewsDigestRun()).toEqual({ ok: false, errorCode: "CONFIGURATION_MISSING" });
+  });
+
+  it("previews the server-resolved destination once fully configured, with no external call", async () => {
+    process.env.BUILDFLOW_LIVE_CONNECT_ENABLED = "true";
+    process.env.BUILDFLOW_LIVE_SLACK_WRITE_ENABLED = "true";
+    process.env.BUILDFLOW_LIVE_SLACK_CHANNEL_ID = "C_APPROVED";
+    process.env.GROQ_API_KEY = "test-key";
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("should not be called"));
+
+    expect(await prepareAiNewsDigestRun()).toEqual({ ok: true, recipeId: "recipe.ai-news-slack-digest", targetConfigurationReference: "C_APPROVED" });
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("short-circuits before any News/Groq call when the kill switch is off", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("should not be called"));
+
+    expect(await requestApprovedAiNewsDigestRun()).toEqual({ ok: false, errorCode: "LIVE_DISABLED" });
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+});

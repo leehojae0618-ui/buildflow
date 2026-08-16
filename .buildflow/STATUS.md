@@ -35,11 +35,21 @@ Current-state-only. Completed/historical Sprint detail lives in
   `createBuildPackage` already computed `costProfile` and `approvals` but
   the UI never rendered them. Both are now shown once a Recipe is selected.
   Detail: `docs/sprints/BUILD-PLAN-APPROVAL-DISPLAY-001/`.
-- Steps 6-7 assessment pending. **Step 8 (Manual Run UI) has no server
-  action wiring the live-verified `runNewsToGroqToSlackGate` /
-  `runApprovedSlackDigestWrite` path to any UI button** — only a generic
-  Slack test message is reachable today. This is the confirmed next real
-  gap once Steps 6-7 are assessed.
+- Roadmap Step 6 (Connection UX) assessed as already adequately satisfied:
+  every required service shows READY/NOT_CONNECTED status, and Slack (the
+  one live-integrated service) has a real guarded connect flow; the other 7
+  catalog services are explicitly documented as OAuth-not-performed-yet
+  (existing, intentional scope — Step 19 territory, not a gap).
+- `RECIPE-MANUAL-RUN-001` (roadmap Steps 7+8, combined) closed the
+  confirmed gap: a real "Recipe 실행" button now exists in
+  `recipe-first-experience.tsx`, gated by a new Server Action boundary
+  (`src/features/live-ai-news/actions.ts`) that re-checks the live kill
+  switches *before* any News/Groq call — a safety property C3's own guard
+  alone did not provide, since it only gated the final Slack write, not C1
+  RSS fetch or C2 Groq call. Proven by 5 unit tests that spy on
+  `globalThis.fetch` and assert it is never called while disabled. No live
+  execution occurred; `BUILDFLOW_LIVE_SLACK_WRITE_ENABLED` remains `false`
+  at rest. Detail: `docs/sprints/RECIPE-MANUAL-RUN-001/`.
 - Implementation Authority: per 2026-08-16 user direction, R2 roadmap steps
   with no live external write/DB/OAuth proceed through Commit + Push
   without a separate pause once Scope is approved per step; live external
@@ -81,11 +91,12 @@ Current-state-only. Completed/historical Sprint detail lives in
 
 ## Next Eligible Action
 
-- Roadmap Step 5 (Build Plan/cost/permissions — likely already mostly
-  satisfied, needs confirmation) then Step 6 (Connection UX) and Step 7
-  (Approval UX), or reprioritize directly to Step 8 (Manual Run UI) to close
-  the confirmed gap. Live external actions still require their own separate
-  approval regardless of the streamlined R2 Commit/Push flow noted above.
+- Roadmap Step 9 (Execution Progress UI) and Step 10 (Evidence/Result UX):
+  the new "Recipe 실행" section only shows a final success/failure message,
+  not step-by-step progress or persisted Evidence. Live external actions
+  (including an actual click-through of the new Manual Run button with the
+  kill switches on) still require their own separate approval regardless of
+  the streamlined R2 Commit/Push flow noted above.
 
 ## Prohibited Without Separate Approval
 
