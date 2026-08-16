@@ -17,9 +17,10 @@ timestamp `1786778717.560079`. Commit, Push, Deploy, Production, Scheduler, RSS,
 and AI execution were not performed.
 
 `LIVE-RECIPE-AI-NEWS-001` has C1 live OpenAI News RSS and C2 live Groq summary
-PASS evidence. A prior C3 Slack side effect was observed as succeeded, but the
-direct harness did not verify the guarded BuildFlow path. The active work is
-non-live C3 safety remediation; new Slack writes, Scheduler activation, Commit,
+PASS evidence. The guarded C3 Slack digest path (`runApprovedSlackDigestWrite`,
+destination-lock + idempotency) was verified live 2026-08-16 through its own
+guarded service function (not a direct-harness bypass); write kill switch was
+restored OFF immediately after. Further Slack writes, Scheduler activation,
 Push, Deploy, DB migration, and MCP invocation remain prohibited.
 
 Routine local Sprint flow is GPT scope, Codex implementation and validation,

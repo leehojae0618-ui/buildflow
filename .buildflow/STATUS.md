@@ -2,7 +2,7 @@
 
 - Workflow Status: ACTIVE IMPLEMENTATION SPRINT
 - Current Sprint: LIVE-RECIPE-AI-NEWS-001
-- Sprint Status: C1/C2 PASS / GUARDED C3 REMEDIATION
+- Sprint Status: C1/C2/C3 PASS / GUARDED C3 PATH VERIFIED
 - Active Sprint Count: 1
 - Latest Completed Sprint: FIRST-LIVE-RECIPE-E2E-001 / LIVE GATE A+B
 - BF0: CLOSED / COMPLETE / USER SPRINT EXIT APPROVED
@@ -11,12 +11,12 @@
 - BF0 Claude Final Audit: SKIPPED BY PRODUCT OWNER
 - BF0 Deploy: NOT PERFORMED
 - Implementation Authority: APPROVED — LIVE-RECIPE-AI-NEWS-001 guarded C3 safety remediation only
-- Commit, Push, and Deploy Authority: NONE
-- Live Provider, DB, Migration, and External Action Authority: C1 RSS and C2 Groq performed; C3 side effect observed once; no new external execution authorized; DB/Migration/Scheduler authority NONE
+- Commit, Push, and Deploy Authority: local commit performed on explicit user direction during working-tree cleanup and guarded C3 verification 2026-08-16; Push and Deploy Authority: NONE
+- Live Provider, DB, Migration, and External Action Authority: C1 RSS and C2 Groq performed; guarded C3 digest write performed once through `runApprovedSlackDigestWrite` on explicit user direction 2026-08-16; write kill switch restored OFF immediately after; no further external execution authorized; DB/Migration/Scheduler authority NONE
 - Repository-observed controlled runtime: PRESENT IN MAIN / `609eb083`
 - Controlled Runtime: IMPLEMENTED IN CODE
 - External Provider Call: C2 GROQ OBSERVED
-- External Service Action: C3 SLACK SIDE EFFECT OBSERVED
+- External Service Action: C3 SLACK SIDE EFFECT VERIFIED THROUGH GUARDED PATH
 - Persistent DB Evidence: NOT VERIFIED
 - Historical implementation authority provenance: NOT RETROACTIVELY ASSERTED
 - Production Ready: NO
@@ -30,14 +30,22 @@
   and timestamp `1786778717.560079`. Write kill switch was restored OFF.
 - `RECIPE-FIRST-PRODUCT-RESET-001` and `RECIPE-FIRST-BUILD-PACKAGE-001`:
   local checkpoint `ebd0290` / NOT PUSHED.
-- `LIVE-RECIPE-AI-NEWS-001`: ACTIVE / C1+C2 PASS / GUARDED C3 REMEDIATION. It
-  now includes real OpenAI News RSS and Groq summary adapters. Gate C1 live RSS
-  fetch passed against `https://openai.com/news/rss.xml`, selecting 3 recent
-  OpenAI News items. Gate C2 live Groq summary passed using `openai/gpt-oss-20b`
-  with 7 summary lines generated. An earlier approved C3 retry observed one
-  Slack digest side effect as succeeded, but its direct harness bypassed the
-  guarded BuildFlow service. The guarded C3 path is NOT VERIFIED; no new write
-  is authorized while destination and idempotency remediation is validated.
+- `LIVE-RECIPE-AI-NEWS-001`: ACTIVE / C1+C2+C3 PASS / GUARDED C3 PATH VERIFIED.
+  It now includes real OpenAI News RSS and Groq summary adapters. Gate C1 live
+  RSS fetch passed against `https://openai.com/news/rss.xml`, selecting 3
+  recent OpenAI News items. Gate C2 live Groq summary passed using
+  `openai/gpt-oss-20b` with 7 summary lines generated. Gate C3 was re-run
+  2026-08-16 through the guarded `runApprovedSlackDigestWrite` service path
+  itself (destination-lock + idempotency, not a direct harness bypass), using
+  `src/features/live-recipe/live-recipe-service.live.test.ts`
+  (`BUILDFLOW_LIVE_SLACK_DIGEST_WRITE=1`, one-shot, opt-in only). The test's
+  own assertions confirmed `ok: true`, `connectionState: CONNECTED_VERIFIED`,
+  `evidence.actionType: AI_NEWS_DIGEST`, `evidence.status: SUCCEEDED`; the raw
+  Slack timestamp/safe external reference were not captured to the terminal
+  (Vitest suppresses console output for passing tests by default) and the test
+  was deliberately not re-run to avoid a duplicate live write. Write kill
+  switch (`BUILDFLOW_LIVE_SLACK_WRITE_ENABLED`) was restored to `false`
+  immediately after. No further Slack write is authorized.
 - Product direction: Recipe-First Integration/Orchestration. Agent/Runtime-first
   flows remain Legacy / Not Primary Product Path and are not deleted.
 - Allowed: local port contracts, deterministic normalization/selection, fake
