@@ -5,10 +5,8 @@ Current-state-only. Completed/historical Sprint detail lives in
 
 ## Repository / HEAD
 
-- Local HEAD: `3e123d0` — matches `origin/main` (pushed 2026-08-16).
-- Working Tree: not clean — this Status update reflecting the Push is
-  pending (streamlined R2 doc sync, no separate approval needed per
-  2026-08-16 direction).
+- Local HEAD: `b024292` — matches `origin/main` (pushed 2026-08-16).
+- Working Tree: clean.
 
 ## Current Sprint
 
@@ -50,6 +48,16 @@ Current-state-only. Completed/historical Sprint detail lives in
   `globalThis.fetch` and assert it is never called while disabled. No live
   execution occurred; `BUILDFLOW_LIVE_SLACK_WRITE_ENABLED` remains `false`
   at rest. Detail: `docs/sprints/RECIPE-MANUAL-RUN-001/`.
+- `RECIPE-EXECUTION-PROGRESS-001` (roadmap Step 9) closed: "Recipe 실행"
+  now sequences 3 granular Server Actions (fetch/summarize/write), each
+  independently gated the same way, and shows a live step-by-step checklist
+  between the preview and the final result. Detail:
+  `docs/sprints/RECIPE-EXECUTION-PROGRESS-001/`.
+- `RECIPE-RUN-EVIDENCE-001` (roadmap Step 10) closed: the Manual Run's
+  final result now shows a structured card (사용 서비스 / 완료 시각, from
+  the real `LiveRecipeEvidence` / 결과 / Slack 참조) built from the
+  Evidence `runApprovedSlackDigestWrite` already computed but previously
+  discarded. Detail: `docs/sprints/RECIPE-RUN-EVIDENCE-001/`.
 - Implementation Authority: per 2026-08-16 user direction, R2 roadmap steps
   with no live external write/DB/OAuth proceed through Commit + Push
   without a separate pause once Scope is approved per step; live external
@@ -73,7 +81,16 @@ Current-state-only. Completed/historical Sprint detail lives in
 
 - Persistent DB Evidence
 - Production readiness / Deploy
-- Natural-language → Recipe conversion (roadmap Step 3, not started)
+- Durable full-run Evidence provenance: C1/C2 step results
+  (`selectedItems`, `summary`) round-trip through the browser between
+  `runAiNewsFetchStep` → `runAiNewsSummaryStep` → `runAiNewsSlackWriteStep`
+  (`recipe-first-experience.tsx`) with no runtime schema validation or
+  server-side attempt binding on the way back in. Kill switches / channel
+  lock / idempotency still guard the final Slack write itself, so this is
+  not a live-risk while `BUILDFLOW_LIVE_SLACK_WRITE_ENABLED` stays `false`,
+  but `LiveRecipeEvidence` does not prove the Slack message content
+  actually came from this server's News/Groq calls. Flagged for a
+  provenance-hardening pass before Step 11/12 (persistence/replay).
 
 ## Known Procedural Finding (historical, not hidden)
 
@@ -88,18 +105,6 @@ Current-state-only. Completed/historical Sprint detail lives in
 - `LIVE-DB-VALIDATION-001` remains PAUSED / BLOCKED BY LOCAL ENVIRONMENT
   (Local Supabase healthcheck failure on the 8GB M1 environment); see
   `docs/SPRINT_HISTORY.md` Section 2.
-
-- `RECIPE-EXECUTION-PROGRESS-001` (roadmap Step 9) closed: "Recipe 실행"
-  now sequences 3 granular Server Actions (fetch/summarize/write), each
-  independently gated the same way, and shows a live step-by-step checklist
-  between the preview and the final result. Detail:
-  `docs/sprints/RECIPE-EXECUTION-PROGRESS-001/`.
-
-- `RECIPE-RUN-EVIDENCE-001` (roadmap Step 10) closed: the Manual Run's
-  final result now shows a structured card (사용 서비스 / 완료 시각, from
-  the real `LiveRecipeEvidence` / 결과 / Slack 참조) built from the
-  Evidence `runApprovedSlackDigestWrite` already computed but previously
-  discarded. Detail: `docs/sprints/RECIPE-RUN-EVIDENCE-001/`.
 
 ## Next Eligible Action
 
