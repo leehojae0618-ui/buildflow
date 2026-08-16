@@ -1,8 +1,10 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
+import { runApprovedSlackDigestWrite } from "../live-recipe/live-recipe-service";
 import { readLiveRecipeEnvironment } from "../live-recipe/live-environment";
-import { GroqSummaryAdapter, OpenAiNewsRssSource, runNewsToGroqToSlackGate } from "./real-adapters";
+import type { NewsDigestSummary, SelectedNewsItem } from "./manual-recipe";
+import { GroqSummaryAdapter, OpenAiNewsRssSource, formatSlackDigestMessage, runNewsFetchGate, runNewsToGroqToSlackGate } from "./real-adapters";
 
 const aiNewsDigestRecipeId = "recipe.ai-news-slack-digest";
 
@@ -57,6 +59,69 @@ export async function requestApprovedAiNewsDigestRun(): Promise<AiNewsDigestRunR
       summaryLineCount: result.summary.bullets.length,
       safeSlackReference: result.evidence.safeSlackReference ?? "",
     };
+  } catch {
+    return { ok: false, errorCode: "EXTERNAL_ACTION_FAILED" };
+  }
+}
+
+export type AiNewsFetchStepResult =
+  | { ok: true; selectedItems: SelectedNewsItem[]; selectedItemCount: number }
+  | { ok: false; errorCode: AiNewsDigestGateErrorCode };
+
+export type AiNewsSummaryStepResult =
+  | { ok: true; summary: NewsDigestSummary; summaryLineCount: number }
+  | { ok: false; errorCode: AiNewsDigestGateErrorCode };
+
+export type AiNewsSlackWriteStepResult =
+  | { ok: true; safeSlackReference: string }
+  | { ok: false; errorCode: AiNewsDigestGateErrorCode };
+
+/**
+ * Step-by-step variants of `requestApprovedAiNewsDigestRun` (roadmap
+ * Step 9): each step re-checks the same gate independently, so calling any
+ * one of these in isolation is exactly as safe as the combined run. The
+ * client is expected to call them in order (fetch -> summary -> write) and
+ * update UI between each awaited call to show real progress; the external
+ * call count (one RSS fetch, one Groq call, one Slack write) matches the
+ * combined run exactly.
+ */
+export async function runAiNewsFetchStep(): Promise<AiNewsFetchStepResult> {
+  const preview = await prepareAiNewsDigestRun();
+  if (!preview.ok) return preview;
+  try {
+    const gate = await runNewsFetchGate({ source: new OpenAiNewsRssSource() });
+    return { ok: true, selectedItems: gate.selectedItems, selectedItemCount: gate.selectedItems.length };
+  } catch {
+    return { ok: false, errorCode: "EXTERNAL_ACTION_FAILED" };
+  }
+}
+
+export async function runAiNewsSummaryStep(selectedItems: SelectedNewsItem[]): Promise<AiNewsSummaryStepResult> {
+  const preview = await prepareAiNewsDigestRun();
+  if (!preview.ok) return preview;
+  try {
+    const summarizer = new GroqSummaryAdapter({ apiKey: process.env.GROQ_API_KEY });
+    const summary = await summarizer.summarize({ items: selectedItems });
+    return { ok: true, summary, summaryLineCount: summary.bullets.length };
+  } catch {
+    return { ok: false, errorCode: "EXTERNAL_ACTION_FAILED" };
+  }
+}
+
+export async function runAiNewsSlackWriteStep(selectedItems: SelectedNewsItem[], summary: NewsDigestSummary): Promise<AiNewsSlackWriteStepResult> {
+  const preview = await prepareAiNewsDigestRun();
+  if (!preview.ok) return preview;
+  try {
+    const message = formatSlackDigestMessage(summary, selectedItems);
+    const result = await runApprovedSlackDigestWrite({
+      approved: true,
+      recipeId: preview.recipeId,
+      targetConfigurationReference: preview.targetConfigurationReference,
+      requestId: `slack-digest-ui-run-${randomUUID()}`,
+      message,
+    });
+    if (!result.ok) return { ok: false, errorCode: "EXTERNAL_ACTION_FAILED" };
+    return { ok: true, safeSlackReference: result.value.safeExternalReference };
   } catch {
     return { ok: false, errorCode: "EXTERNAL_ACTION_FAILED" };
   }

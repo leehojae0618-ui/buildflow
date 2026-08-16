@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { prepareAiNewsDigestRun, requestApprovedAiNewsDigestRun } from "./actions";
+import { prepareAiNewsDigestRun, requestApprovedAiNewsDigestRun, runAiNewsFetchStep, runAiNewsSlackWriteStep, runAiNewsSummaryStep } from "./actions";
 
 const envKeys = ["BUILDFLOW_LIVE_CONNECT_ENABLED", "BUILDFLOW_LIVE_SLACK_WRITE_ENABLED", "BUILDFLOW_LIVE_SLACK_CHANNEL_ID", "GROQ_API_KEY"] as const;
 let originalEnv: Record<string, string | undefined>;
@@ -48,6 +48,27 @@ describe("AI news digest Server Action gates (roadmap Step 7+8)", () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("should not be called"));
 
     expect(await requestApprovedAiNewsDigestRun()).toEqual({ ok: false, errorCode: "LIVE_DISABLED" });
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe("AI news digest step-by-step gates (roadmap Step 9)", () => {
+  it("each granular step independently blocks with LIVE_DISABLED and makes no external call when the kill switch is off", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("should not be called"));
+
+    expect(await runAiNewsFetchStep()).toEqual({ ok: false, errorCode: "LIVE_DISABLED" });
+    expect(await runAiNewsSummaryStep([])).toEqual({ ok: false, errorCode: "LIVE_DISABLED" });
+    expect(await runAiNewsSlackWriteStep([], { headline: "h", bullets: [], sourceItemIds: [] })).toEqual({ ok: false, errorCode: "LIVE_DISABLED" });
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("each granular step independently blocks with WRITE_DISABLED when connect is on but write is off", async () => {
+    process.env.BUILDFLOW_LIVE_CONNECT_ENABLED = "true";
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("should not be called"));
+
+    expect(await runAiNewsFetchStep()).toEqual({ ok: false, errorCode: "WRITE_DISABLED" });
+    expect(await runAiNewsSummaryStep([])).toEqual({ ok: false, errorCode: "WRITE_DISABLED" });
+    expect(await runAiNewsSlackWriteStep([], { headline: "h", bullets: [], sourceItemIds: [] })).toEqual({ ok: false, errorCode: "WRITE_DISABLED" });
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 });

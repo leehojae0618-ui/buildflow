@@ -89,12 +89,17 @@ Current-state-only. Completed/historical Sprint detail lives in
   (Local Supabase healthcheck failure on the 8GB M1 environment); see
   `docs/SPRINT_HISTORY.md` Section 2.
 
+- `RECIPE-EXECUTION-PROGRESS-001` (roadmap Step 9) closed: "Recipe 실행"
+  now sequences 3 granular Server Actions (fetch/summarize/write), each
+  independently gated the same way, and shows a live step-by-step checklist
+  between the preview and the final result. Detail:
+  `docs/sprints/RECIPE-EXECUTION-PROGRESS-001/`.
+
 ## Next Eligible Action
 
-- Roadmap Step 9 (Execution Progress UI) and Step 10 (Evidence/Result UX):
-  the new "Recipe 실행" section only shows a final success/failure message,
-  not step-by-step progress or persisted Evidence. Live external actions
-  (including an actual click-through of the new Manual Run button with the
+- Roadmap Step 10 (Evidence/Result UX): the current result is ephemeral
+  component state, not a persisted Evidence record. Live external actions
+  (including an actual click-through of the Manual Run button with the
   kill switches on) still require their own separate approval regardless of
   the streamlined R2 Commit/Push flow noted above.
 
