@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import { runApprovedSlackDigestWrite, type LiveRecipeServiceDependencies } from "../live-recipe/live-recipe-service";
 import type { SlackDigestWriteRequest } from "../live-recipe/types";
+import type { RecipeDestinationPort, RecipeInputPort, RecipeProcessorPort } from "../recipes/execution-contract";
 import { normalizeNewsItems, type AiSummaryPort, type NewsDigestSummary, type NewsItem, type NewsSourcePort, type SelectedNewsItem } from "./manual-recipe";
 
 export const openAiNewsFeedUrl = "https://openai.com/news/rss.xml";
@@ -322,6 +323,37 @@ function stableId(input: string): string {
     hash = Math.imul(hash, 16777619);
   }
   return `openai-news-${(hash >>> 0).toString(16)}`;
+}
+
+// Recipe Execution Contract adapters (roadmap Step 2): wrap this Recipe's
+// existing, unmodified News/Groq/Slack pieces so they conform to the generic
+// Input/Processor/Destination ports in `../recipes/execution-contract`. Each
+// wrapper is a thin pass-through; none of it changes the wrapped behavior.
+
+export function toNewsRecipeInputPort(source: NewsSourcePort): RecipeInputPort<NewsItem> {
+  return () => source.fetchNews();
+}
+
+export function toGroqRecipeProcessorPort(summarizer: AiSummaryPort): RecipeProcessorPort<{ items: SelectedNewsItem[] }, NewsDigestSummary> {
+  return (input) => summarizer.summarize(input);
+}
+
+export function toSlackDigestRecipeDestinationPort(
+  dependencies?: LiveRecipeServiceDependencies,
+): RecipeDestinationPort<string, { safeExternalReference: string; slackTimestamp?: string }> {
+  return (request) => {
+    if (request.recipeId !== "recipe.ai-news-slack-digest") {
+      return Promise.reject(new Error("UNSUPPORTED_RECIPE_FOR_SLACK_DIGEST_DESTINATION"));
+    }
+    const slackRequest: SlackDigestWriteRequest = {
+      approved: request.approved,
+      recipeId: request.recipeId,
+      targetConfigurationReference: request.targetConfigurationReference,
+      requestId: request.requestId,
+      message: request.payload,
+    };
+    return runApprovedSlackDigestWrite(slackRequest, dependencies);
+  };
 }
 
 function normalizeSummaryBullets(content: string): string[] {

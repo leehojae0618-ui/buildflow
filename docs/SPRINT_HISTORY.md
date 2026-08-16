@@ -9,15 +9,23 @@
 
 ## 2. Current Sprint
 
-활성 Sprint는 `LIVE-RECIPE-AI-NEWS-001`이며, C1(News RSS), C2(Groq 요약),
-C3 guarded path(Slack write)가 **각각 독립적으로 VERIFIED**됐다. News →
-Groq → Guarded Slack을 하나의 코드 경로로 연결한 **Composite Recipe E2E는
-아직 NOT VERIFIED**다 (2026-08-16 기준, 상세는
-`sprints/LIVE-RECIPE-AI-NEWS-001/REPORT.md` "Update — 2026-08-16" 참고).
-guarded C3 write는 `runApprovedSlackDigestWrite` 서비스 경로 자체를 통해
-1회 실행됐고 write kill switch는 즉시 `false`로 복원됐다. 추가 Slack
-write, Scheduler, Deploy는 별도 승인 전까지 수행하지 않는다. 관련 커밋은
-로컬 `69a6aef`까지 GitHub `main`에 Push 완료됐다 (2026-08-16).
+`LIVE-RECIPE-AI-NEWS-001`은 CLOSED / COMPLETE다. C1(News RSS), C2(Groq
+요약), C3 guarded path(Slack write) 각각의 독립 검증에 이어, News → Groq →
+Guarded Slack을 하나의 코드 경로로 연결한 **Composite Recipe E2E가
+2026-08-16 라이브로 VERIFIED**됐다 (`runNewsToGroqToSlackGate`, 1회 승인
+실행, 결과 `slackWriteStatus: SUCCEEDED`, `safeSlackReference:
+pd_8c2fc1fe3318`; 상세는 `sprints/LIVE-RECIPE-AI-NEWS-001/REPORT.md`
+"Update — 2026-08-16: Composite Manual Recipe E2E Live Verification" 참고).
+write kill switch는 해당 단일 명령에만 인라인으로 켰고 `.env.local`은
+변경하지 않아 평시 `false`를 유지한다. 이어서 같은 날 `RECIPE-EXECUTION-
+CONTRACT-001`이 진행되어 AI-news 전용 코드였던 Input/Processor/Destination
+조각을 제네릭 Recipe Execution Contract(Trigger/Input/Processor/
+Destination/Approval/Evidence)에 맞춘 얇은 adapter로 감쌌다 (기존 guarded
+경로는 무수정, 회귀 테스트 4건 추가, 953개 테스트 전체 PASS). 두 Sprint
+모두 종료되어 현재 활성 Sprint는 없다; 다음은 로드맵 Step 3(자연어 →
+Recipe 변환)이다. 관련 커밋은 로컬 `57eb5d6`까지 GitHub `main`에 Push
+완료됐다 (2026-08-16); `RECIPE-EXECUTION-CONTRACT-001`의 커밋은 별도
+승인 대기 중이다.
 
 이 Sprint의 `c7674f0` 커밋은 live-execution 승인 범위를 넘어 별도 Commit
 승인 없이 생성된 절차 위반(P1)이었다. 소급 승인으로 위장하지 않고, 커밋
@@ -60,8 +68,9 @@ implementation이 아니다.
 | RECIPE-FIRST-PRODUCT-RESET-001 | Recipe-first product direction reset | COMMITTED / pushed | `ebd0290` (pushed) | — | `sprints/RECIPE-FIRST-PRODUCT-RESET-001/` |
 | RECIPE-FIRST-BUILD-PACKAGE-001 | Recipe-first build flow / package assembly | COMMITTED / pushed | `ebd0290` (pushed) | — | `sprints/RECIPE-FIRST-BUILD-PACKAGE-001/` |
 | FIRST-LIVE-RECIPE-E2E-001 | Guarded Pipedream development Slack OAuth/account verification and one approved Slack test write | CLOSED / COMPLETE / LIVE VERIFIED | `a568a15` (pushed) | GPT PM/CTO PASS; Slack API `ok: true`, ts `1786778717.560079`; Deploy NOT PERFORMED | `sprints/FIRST-LIVE-RECIPE-E2E-001/REPORT.md`, `sprints/FIRST-LIVE-RECIPE-E2E-001/CLOSEOUT.md` |
-| LIVE-RECIPE-AI-NEWS-001 | Manual AI news to summary to guarded Slack Recipe | ACTIVE / C1, C2, C3 guarded path each VERIFIED independently; Composite E2E NOT VERIFIED | `69a6aef` (pushed) | C1 RSS PASS; C2 Groq PASS; C3 guarded path VERIFIED via `runApprovedSlackDigestWrite`; Composite News->Groq->Slack E2E NOT VERIFIED; Scheduler/Deploy NOT PERFORMED | `sprints/LIVE-RECIPE-AI-NEWS-001/PLAN.md`, `sprints/LIVE-RECIPE-AI-NEWS-001/TASK.md`, `sprints/LIVE-RECIPE-AI-NEWS-001/REPORT.md` |
+| LIVE-RECIPE-AI-NEWS-001 | Manual AI news to summary to guarded Slack Recipe | CLOSED / COMPLETE — C1, C2, C3 guarded path, and Composite C1->C2->C3 E2E all VERIFIED (Composite live 2026-08-16) | `57eb5d6` (pushed) | C1 RSS PASS; C2 Groq PASS; C3 guarded path VERIFIED; Composite News->Groq->Guarded Slack E2E VERIFIED LIVE (`safeSlackReference: pd_8c2fc1fe3318`); Scheduler/Deploy NOT PERFORMED | `sprints/LIVE-RECIPE-AI-NEWS-001/PLAN.md`, `sprints/LIVE-RECIPE-AI-NEWS-001/TASK.md`, `sprints/LIVE-RECIPE-AI-NEWS-001/REPORT.md` |
 | AGENT-BUILD-JOURNEY-UI-001 | Autonomous/Runtime-first (Legacy) path UI — `AgentBuildJourney` wired into `requirement-summary.tsx` | COMMITTED / pushed, out of LIVE-RECIPE-AI-NEWS-001 authority | `07f71ce` (pushed) | Committed as a separate, independently reviewable commit on explicit user direction; no implementation authority beyond that commit asserted | `src/features/autonomous/components/agent-build-journey.tsx` |
+| RECIPE-EXECUTION-CONTRACT-001 | Generic Trigger/Input/Processor/Destination/Approval/Evidence Recipe Execution Contract, adapted from the AI-news Recipe without changing its guarded behavior | IMPLEMENTED / VALIDATED, COMMIT PENDING APPROVAL | pending | typecheck/lint PASS; 953 tests PASS (+4 equivalence tests, 0 regressions); no live execution | `sprints/RECIPE-EXECUTION-CONTRACT-001/TASK.md`, `sprints/RECIPE-EXECUTION-CONTRACT-001/CONTRACT.md`, `sprints/RECIPE-EXECUTION-CONTRACT-001/REPORT.md` |
 
 ## 4. Gate History
 
