@@ -12,6 +12,7 @@
     "db:types": "npx supabase gen types typescript --linked --schema public > src/types/database.ts",
     "test": "vitest run",
     "live-db:validate:dry": "vitest run tests/live-db-validation",
+    "live-db:validate:staging": "vitest run tests/live-db-validation/staging-connection-guard.test.ts",
     "db:seed": "npx supabase db query --linked --file supabase/seed.sql"
   },
   "dependencies": {

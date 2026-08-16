@@ -29,7 +29,8 @@ export type LiveDbSafeErrorCode =
   | "LIVE_DB_ADMIN_CLIENT_FACTORY_USED"
   | "LIVE_DB_SERVER_CLIENT_FACTORY_USED"
   | "LIVE_DB_CLIENT_MODE_INVALID"
-  | "LIVE_DB_VALIDATION_REGISTRY_INVALID";
+  | "LIVE_DB_VALIDATION_REGISTRY_INVALID"
+  | "LIVE_DB_STAGING_TARGET_REQUIRED";
 
 export type LiveDbEnvironmentInput = {
   targetEnvironment?: string;
