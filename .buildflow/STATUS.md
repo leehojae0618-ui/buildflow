@@ -5,16 +5,14 @@ Current-state-only. Completed/historical Sprint detail lives in
 
 ## Repository / HEAD
 
-- Local HEAD: `57eb5d6` — matches `origin/main` (pushed 2026-08-16).
-- Working Tree: not clean — `RECIPE-EXECUTION-CONTRACT-001` implementation
-  and this Status update are pending Commit Approval.
+- Local HEAD: `234b07a` — matches `origin/main` (pushed 2026-08-16).
+- Working Tree: CLEAN.
 
 ## Current Sprint
 
 - No active implementation Sprint. `LIVE-RECIPE-AI-NEWS-001` (roadmap
-  Step 1) is CLOSED / COMPLETE — see `docs/SPRINT_HISTORY.md` Section 3.
-  `RECIPE-EXECUTION-CONTRACT-001` (roadmap Step 2) is IMPLEMENTED /
-  VALIDATED, Commit pending approval. Detail:
+  Step 1) and `RECIPE-EXECUTION-CONTRACT-001` (roadmap Step 2) are both
+  CLOSED / COMPLETE — committed (`234b07a`) and pushed. Detail:
   `docs/sprints/RECIPE-EXECUTION-CONTRACT-001/TASK.md`,
   `docs/sprints/RECIPE-EXECUTION-CONTRACT-001/CONTRACT.md`,
   `docs/sprints/RECIPE-EXECUTION-CONTRACT-001/REPORT.md`.
@@ -29,7 +27,11 @@ Current-state-only. Completed/historical Sprint detail lives in
   `pipedream-port.ts`) was modified; no live execution occurred.
 - Implementation Authority: `RECIPE-EXECUTION-CONTRACT-001` Scope +
   Implementation Authority approved 2026-08-16 (R2; implementation + test +
-  Commit bundled per `DEVELOPMENT_CHARTER.md` §11); Commit not yet performed.
+  Commit bundled per `DEVELOPMENT_CHARTER.md` §11); Commit and Push both
+  performed. Per 2026-08-16 user direction, subsequent R2 roadmap steps with
+  no live external write/DB/OAuth may proceed through Commit + Push without
+  a separate pause at each one (Scope approval per step is still required;
+  live external actions always remain their own separate approval gate).
 
 ## Current Verified Capability
 
@@ -67,9 +69,9 @@ Current-state-only. Completed/historical Sprint detail lives in
 
 ## Next Eligible Action
 
-- User decision: Commit Approval for `RECIPE-EXECUTION-CONTRACT-001`
-  (implementation + docs), then Push Approval, and/or proceed to roadmap
-  Step 3 (natural-language → Recipe conversion).
+- Roadmap Step 3: natural-language → Recipe conversion. Scope proposal to
+  follow; live external actions still require their own separate approval
+  regardless of the streamlined R2 Commit/Push flow noted above.
 
 ## Prohibited Without Separate Approval
 
