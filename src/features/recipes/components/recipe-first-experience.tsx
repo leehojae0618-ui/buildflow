@@ -14,6 +14,7 @@ const digestGateErrorLabel: Record<AiNewsDigestGateErrorCode, string> = {
   WRITE_DISABLED: "Live Slack 쓰기는 비활성화되어 있습니다.",
   CONFIGURATION_MISSING: "실행에 필요한 서버 설정(대상 채널 또는 AI Provider)이 아직 준비되지 않았습니다.",
   EXTERNAL_ACTION_FAILED: "Recipe 실행 중 외부 호출이 실패했습니다.",
+  ATTEMPT_NOT_FOUND: "실행 정보를 찾을 수 없습니다. 처음부터 다시 실행해 주세요.",
 };
 
 const examples = [
@@ -88,11 +89,11 @@ export function RecipeFirstExperience() {
     if (!fetchResult.ok) { setDigestRunResult(fetchResult); setDigestRunning(false); return; }
     setDigestSteps((steps) => [...steps, { label: "1. 뉴스 수집", detail: `${fetchResult.selectedItemCount}건 확인`, service: fetchResult.service, completedAt: fetchResult.completedAt }]);
 
-    const summaryResult = await runAiNewsSummaryStep(fetchResult.selectedItems);
+    const summaryResult = await runAiNewsSummaryStep(fetchResult.attemptId);
     if (!summaryResult.ok) { setDigestRunResult(summaryResult); setDigestRunning(false); return; }
     setDigestSteps((steps) => [...steps, { label: "2. AI 요약", detail: `${summaryResult.summaryLineCount}줄 생성`, service: summaryResult.service, completedAt: summaryResult.completedAt }]);
 
-    const writeResult = await runAiNewsSlackWriteStep(fetchResult.selectedItems, summaryResult.summary);
+    const writeResult = await runAiNewsSlackWriteStep(fetchResult.attemptId);
     if (!writeResult.ok) { setDigestRunResult(writeResult); setDigestRunning(false); return; }
     setDigestSteps((steps) => [...steps, { label: "3. Slack 전송", detail: writeResult.safeSlackReference, service: "Slack (Pipedream)", completedAt: writeResult.evidence.completedAt ?? writeResult.evidence.requestedAt }]);
     setDigestEvidence(writeResult.evidence);

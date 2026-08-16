@@ -9,7 +9,29 @@ import { GroqSummaryAdapter, OpenAiNewsRssSource, defaultGroqModel, formatSlackD
 
 const aiNewsDigestRecipeId = "recipe.ai-news-slack-digest";
 
-export type AiNewsDigestGateErrorCode = "LIVE_DISABLED" | "WRITE_DISABLED" | "CONFIGURATION_MISSING" | "EXTERNAL_ACTION_FAILED";
+export type AiNewsDigestGateErrorCode = "LIVE_DISABLED" | "WRITE_DISABLED" | "CONFIGURATION_MISSING" | "EXTERNAL_ACTION_FAILED" | "ATTEMPT_NOT_FOUND";
+
+/**
+ * Server-owned store for in-flight stepped Manual Run attempts (roadmap
+ * Step 9 provenance hardening). `runAiNewsFetchStep` / `runAiNewsSummaryStep`
+ * write the real `selectedItems` / `summary` here and hand the browser only
+ * an opaque `attemptId`; later steps read the value back out of this map
+ * instead of trusting whatever the browser sends, so a forged client
+ * request can no longer substitute its own news items or summary text into
+ * the Slack write. In-memory only (lost on process restart) — acceptable
+ * for a single-process dev/local deployment with no persistence layer yet;
+ * revisit once Recipe runs move behind a real DB-backed attempt record.
+ */
+const attemptTtlMs = 10 * 60 * 1000;
+type DigestAttempt = { selectedItems: SelectedNewsItem[]; summary?: NewsDigestSummary; createdAt: number };
+const digestAttempts = new Map<string, DigestAttempt>();
+
+function pruneExpiredAttempts(): void {
+  const cutoff = Date.now() - attemptTtlMs;
+  for (const [id, attempt] of digestAttempts) {
+    if (attempt.createdAt < cutoff) digestAttempts.delete(id);
+  }
+}
 
 export type AiNewsDigestPreview =
   | { ok: true; recipeId: typeof aiNewsDigestRecipeId; targetConfigurationReference: string }
@@ -66,11 +88,11 @@ export async function requestApprovedAiNewsDigestRun(): Promise<AiNewsDigestRunR
 }
 
 export type AiNewsFetchStepResult =
-  | { ok: true; selectedItems: SelectedNewsItem[]; selectedItemCount: number; service: string; completedAt: string }
+  | { ok: true; attemptId: string; selectedItemCount: number; service: string; completedAt: string }
   | { ok: false; errorCode: AiNewsDigestGateErrorCode };
 
 export type AiNewsSummaryStepResult =
-  | { ok: true; summary: NewsDigestSummary; summaryLineCount: number; service: string; completedAt: string }
+  | { ok: true; attemptId: string; summaryLineCount: number; service: string; completedAt: string }
   | { ok: false; errorCode: AiNewsDigestGateErrorCode };
 
 export type AiNewsSlackWriteStepResult =
@@ -79,41 +101,53 @@ export type AiNewsSlackWriteStepResult =
 
 /**
  * Step-by-step variants of `requestApprovedAiNewsDigestRun` (roadmap
- * Step 9): each step re-checks the same gate independently, so calling any
- * one of these in isolation is exactly as safe as the combined run. The
- * client is expected to call them in order (fetch -> summary -> write) and
- * update UI between each awaited call to show real progress; the external
- * call count (one RSS fetch, one Groq call, one Slack write) matches the
- * combined run exactly.
+ * Step 9, provenance-hardened per the follow-up Sprint): each step
+ * re-checks the same gate independently, so calling any one of these in
+ * isolation is exactly as safe as the combined run w.r.t. the kill
+ * switches. The client calls them in order (fetch -> summary -> write) and
+ * updates UI between each awaited call to show real progress, but only
+ * ever receives an opaque `attemptId` plus display counts — never the
+ * actual news items or summary text — so it has nothing to forge back in.
+ * `selectedItems` / `summary` live solely in `digestAttempts` server-side
+ * between steps. The external call count (one RSS fetch, one Groq call,
+ * one Slack write) matches the combined run exactly.
  */
 export async function runAiNewsFetchStep(): Promise<AiNewsFetchStepResult> {
   const preview = await prepareAiNewsDigestRun();
   if (!preview.ok) return preview;
   try {
+    pruneExpiredAttempts();
     const gate = await runNewsFetchGate({ source: new OpenAiNewsRssSource() });
-    return { ok: true, selectedItems: gate.selectedItems, selectedItemCount: gate.selectedItems.length, service: "OpenAI News RSS", completedAt: new Date().toISOString() };
+    const attemptId = randomUUID();
+    digestAttempts.set(attemptId, { selectedItems: gate.selectedItems, createdAt: Date.now() });
+    return { ok: true, attemptId, selectedItemCount: gate.selectedItems.length, service: "OpenAI News RSS", completedAt: new Date().toISOString() };
   } catch {
     return { ok: false, errorCode: "EXTERNAL_ACTION_FAILED" };
   }
 }
 
-export async function runAiNewsSummaryStep(selectedItems: SelectedNewsItem[]): Promise<AiNewsSummaryStepResult> {
+export async function runAiNewsSummaryStep(attemptId: string): Promise<AiNewsSummaryStepResult> {
   const preview = await prepareAiNewsDigestRun();
   if (!preview.ok) return preview;
+  const attempt = digestAttempts.get(attemptId);
+  if (!attempt) return { ok: false, errorCode: "ATTEMPT_NOT_FOUND" };
   try {
     const summarizer = new GroqSummaryAdapter({ apiKey: process.env.GROQ_API_KEY });
-    const summary = await summarizer.summarize({ items: selectedItems });
-    return { ok: true, summary, summaryLineCount: summary.bullets.length, service: `Groq (${defaultGroqModel})`, completedAt: new Date().toISOString() };
+    const summary = await summarizer.summarize({ items: attempt.selectedItems });
+    attempt.summary = summary;
+    return { ok: true, attemptId, summaryLineCount: summary.bullets.length, service: `Groq (${defaultGroqModel})`, completedAt: new Date().toISOString() };
   } catch {
     return { ok: false, errorCode: "EXTERNAL_ACTION_FAILED" };
   }
 }
 
-export async function runAiNewsSlackWriteStep(selectedItems: SelectedNewsItem[], summary: NewsDigestSummary): Promise<AiNewsSlackWriteStepResult> {
+export async function runAiNewsSlackWriteStep(attemptId: string): Promise<AiNewsSlackWriteStepResult> {
   const preview = await prepareAiNewsDigestRun();
   if (!preview.ok) return preview;
+  const attempt = digestAttempts.get(attemptId);
+  if (!attempt || !attempt.summary) return { ok: false, errorCode: "ATTEMPT_NOT_FOUND" };
   try {
-    const message = formatSlackDigestMessage(summary, selectedItems);
+    const message = formatSlackDigestMessage(attempt.summary, attempt.selectedItems);
     const result = await runApprovedSlackDigestWrite({
       approved: true,
       recipeId: preview.recipeId,
@@ -121,9 +155,11 @@ export async function runAiNewsSlackWriteStep(selectedItems: SelectedNewsItem[],
       requestId: `slack-digest-ui-run-${randomUUID()}`,
       message,
     });
+    digestAttempts.delete(attemptId);
     if (!result.ok) return { ok: false, errorCode: "EXTERNAL_ACTION_FAILED" };
     return { ok: true, safeSlackReference: result.value.safeExternalReference, evidence: result.evidence };
   } catch {
+    digestAttempts.delete(attemptId);
     return { ok: false, errorCode: "EXTERNAL_ACTION_FAILED" };
   }
 }

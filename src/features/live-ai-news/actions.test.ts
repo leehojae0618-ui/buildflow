@@ -57,8 +57,8 @@ describe("AI news digest step-by-step gates (roadmap Step 9)", () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("should not be called"));
 
     expect(await runAiNewsFetchStep()).toEqual({ ok: false, errorCode: "LIVE_DISABLED" });
-    expect(await runAiNewsSummaryStep([])).toEqual({ ok: false, errorCode: "LIVE_DISABLED" });
-    expect(await runAiNewsSlackWriteStep([], { headline: "h", bullets: [], sourceItemIds: [] })).toEqual({ ok: false, errorCode: "LIVE_DISABLED" });
+    expect(await runAiNewsSummaryStep("unused-attempt-id")).toEqual({ ok: false, errorCode: "LIVE_DISABLED" });
+    expect(await runAiNewsSlackWriteStep("unused-attempt-id")).toEqual({ ok: false, errorCode: "LIVE_DISABLED" });
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
@@ -67,8 +67,42 @@ describe("AI news digest step-by-step gates (roadmap Step 9)", () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("should not be called"));
 
     expect(await runAiNewsFetchStep()).toEqual({ ok: false, errorCode: "WRITE_DISABLED" });
-    expect(await runAiNewsSummaryStep([])).toEqual({ ok: false, errorCode: "WRITE_DISABLED" });
-    expect(await runAiNewsSlackWriteStep([], { headline: "h", bullets: [], sourceItemIds: [] })).toEqual({ ok: false, errorCode: "WRITE_DISABLED" });
+    expect(await runAiNewsSummaryStep("unused-attempt-id")).toEqual({ ok: false, errorCode: "WRITE_DISABLED" });
+    expect(await runAiNewsSlackWriteStep("unused-attempt-id")).toEqual({ ok: false, errorCode: "WRITE_DISABLED" });
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe("AI news digest attempt-token provenance (Step 9 hardening)", () => {
+  function enableGates() {
+    process.env.BUILDFLOW_LIVE_CONNECT_ENABLED = "true";
+    process.env.BUILDFLOW_LIVE_SLACK_WRITE_ENABLED = "true";
+    process.env.BUILDFLOW_LIVE_SLACK_CHANNEL_ID = "C_APPROVED";
+    process.env.GROQ_API_KEY = "test-key";
+  }
+
+  it("rejects a forged/unknown attemptId at the summary step instead of accepting client-supplied data", async () => {
+    enableGates();
+    expect(await runAiNewsSummaryStep("attacker-supplied-id")).toEqual({ ok: false, errorCode: "ATTEMPT_NOT_FOUND" });
+  });
+
+  it("rejects a forged/unknown attemptId at the write step", async () => {
+    enableGates();
+    expect(await runAiNewsSlackWriteStep("attacker-supplied-id")).toEqual({ ok: false, errorCode: "ATTEMPT_NOT_FOUND" });
+  });
+
+  it("rejects calling the write step before the summary step has populated the attempt", async () => {
+    enableGates();
+    vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: async () => "<rss><channel></channel></rss>",
+    } as Response);
+
+    const fetchResult = await runAiNewsFetchStep();
+    expect(fetchResult.ok).toBe(true);
+    if (!fetchResult.ok) return;
+
+    expect(await runAiNewsSlackWriteStep(fetchResult.attemptId)).toEqual({ ok: false, errorCode: "ATTEMPT_NOT_FOUND" });
   });
 });

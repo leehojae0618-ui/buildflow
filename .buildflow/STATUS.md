@@ -5,8 +5,14 @@ Current-state-only. Completed/historical Sprint detail lives in
 
 ## Repository / HEAD
 
-- Local HEAD: `b024292` — matches `origin/main` (pushed 2026-08-16).
-- Working Tree: clean.
+- Local HEAD: matches `origin/main`, working tree clean, immediately
+  after this commit is pushed (this file is committed together with the
+  code change it describes, so run `git rev-parse HEAD` for the exact
+  hash rather than trusting a hardcoded one here — a hardcoded hash in
+  this file can only ever name a commit *before* itself, which is exactly
+  the self-contradiction an earlier audit found: `b024292`, the commit
+  that introduced this convention, named `3e123d0` as "Local HEAD" and
+  was immediately one commit stale on arrival).
 
 ## Current Sprint
 
@@ -58,6 +64,15 @@ Current-state-only. Completed/historical Sprint detail lives in
   the real `LiveRecipeEvidence` / 결과 / Slack 참조) built from the
   Evidence `runApprovedSlackDigestWrite` already computed but previously
   discarded. Detail: `docs/sprints/RECIPE-RUN-EVIDENCE-001/`.
+- `RECIPE-MANUAL-RUN-PROVENANCE-001` closed: an independent audit found
+  Step 9's stepped Server Actions (`runAiNewsSummaryStep`,
+  `runAiNewsSlackWriteStep`) took `selectedItems`/`summary` back from the
+  browser with no runtime validation or server-side provenance binding.
+  Fixed by an opaque server-owned `attemptId` (in-memory `digestAttempts`
+  Map in `live-ai-news/actions.ts`) — the browser now only ever sees
+  `attemptId` + display counts; an unknown/forged/out-of-order attempt
+  returns `ATTEMPT_NOT_FOUND`. In-memory only (no DB yet). Detail:
+  `docs/sprints/RECIPE-MANUAL-RUN-PROVENANCE-001/`.
 - Implementation Authority: per 2026-08-16 user direction, R2 roadmap steps
   with no live external write/DB/OAuth proceed through Commit + Push
   without a separate pause once Scope is approved per step; live external
@@ -74,23 +89,18 @@ Current-state-only. Completed/historical Sprint detail lives in
   one-shot; write kill switch restored to `false` immediately after)
 - Recipe Execution Contract (Trigger/Input/Processor/Destination/Approval/
   Evidence): IMPLEMENTED, adapters mock-verified against the AI-news Recipe
-  (953 tests passing, 0 regressions); no live execution needed for this step
+  (966 tests passing, 5 skipped, 0 regressions as of `RECIPE-MANUAL-RUN-PROVENANCE-001`);
+  no live execution needed for this step
 - Controlled runtime: IMPLEMENTED IN CODE, present in `main`
 
 ## Current NOT VERIFIED
 
 - Persistent DB Evidence
 - Production readiness / Deploy
-- Durable full-run Evidence provenance: C1/C2 step results
-  (`selectedItems`, `summary`) round-trip through the browser between
-  `runAiNewsFetchStep` → `runAiNewsSummaryStep` → `runAiNewsSlackWriteStep`
-  (`recipe-first-experience.tsx`) with no runtime schema validation or
-  server-side attempt binding on the way back in. Kill switches / channel
-  lock / idempotency still guard the final Slack write itself, so this is
-  not a live-risk while `BUILDFLOW_LIVE_SLACK_WRITE_ENABLED` stays `false`,
-  but `LiveRecipeEvidence` does not prove the Slack message content
-  actually came from this server's News/Groq calls. Flagged for a
-  provenance-hardening pass before Step 11/12 (persistence/replay).
+- Durable full-run Evidence provenance beyond a single process: the
+  attempt store fixed in `RECIPE-MANUAL-RUN-PROVENANCE-001` is in-memory
+  only (lost on process restart, not shared across instances). Real
+  durability still routes through `LIVE-DB-VALIDATION-001` (PAUSED).
 
 ## Known Procedural Finding (historical, not hidden)
 
