@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createBuildPackage, evaluateEngineCompatibility } from "./build-package";
+import { applyBuildPackageClarification, createBuildPackage, evaluateEngineCompatibility } from "./build-package";
 import { getExecutionEngineAdapter } from "./engine-adapters";
 import { analyzeRecipeIntent } from "./intent";
 import { recipeRankingPolicy, rankRecipes, recommendRecipes, retrieveRecipes } from "./catalog";
@@ -78,6 +78,36 @@ describe("Recipe-First product domain", () => {
     expect(buildPackage.connections).toEqual(expect.arrayContaining([expect.objectContaining({ serviceId: "rss", status: "READY" }), expect.objectContaining({ serviceId: "slack", status: "NOT_CONNECTED", connectionType: "OAUTH" }), expect.objectContaining({ serviceId: "groq", status: "NOT_CONNECTED", connectionType: "API_KEY" })]));
     expect(buildPackage.missingInformation.map((item) => item.question)).toEqual(["몇 시에 실행할까요?", "어느 Slack 채널로 보낼까요?"]);
     expect(buildPackage.testPlan.every((item) => item.status === "PLANNED")).toBe(true);
+  });
+
+  it("completes a build package once all missing information is answered (roadmap Step 4)", () => {
+    const recommendation = recommendRecipes(aiNewsGoal);
+    const buildPackage = createBuildPackage({ recipe: recommendation.results[0].recipe, intent: recommendation.intent });
+
+    const partiallyAnswered = applyBuildPackageClarification(buildPackage, { "schedule-time": "매일 오전 9시" });
+    expect(partiallyAnswered.missingInformation.map((item) => item.id)).toEqual(["slack-delivery"]);
+    expect(partiallyAnswered.configurationRequirements.find((item) => item.id === "schedule-time")?.defaultValue).toBe("매일 오전 9시");
+
+    const fullyAnswered = applyBuildPackageClarification(partiallyAnswered, { "slack-delivery": "#ai-news" });
+    expect(fullyAnswered.missingInformation).toEqual([]);
+    expect(fullyAnswered.configurationRequirements.find((item) => item.id === "slack-delivery")?.defaultValue).toBe("#ai-news");
+  });
+
+  it("ignores empty or whitespace-only clarification answers instead of fabricating a value", () => {
+    const recommendation = recommendRecipes(aiNewsGoal);
+    const buildPackage = createBuildPackage({ recipe: recommendation.results[0].recipe, intent: recommendation.intent });
+
+    const result = applyBuildPackageClarification(buildPackage, { "schedule-time": "   ", "slack-delivery": "" });
+    expect(result.missingInformation).toEqual(buildPackage.missingInformation);
+    expect(result).toEqual(buildPackage);
+  });
+
+  it("ignores answers for ids that are not currently missing information", () => {
+    const recommendation = recommendRecipes(aiNewsGoal);
+    const buildPackage = createBuildPackage({ recipe: recommendation.results[0].recipe, intent: recommendation.intent });
+
+    const result = applyBuildPackageClarification(buildPackage, { "not-a-real-id": "무시되어야 함" });
+    expect(result).toEqual(buildPackage);
   });
 
   it("varies engine ranking with Recipe characteristics and keeps limits visible", () => {

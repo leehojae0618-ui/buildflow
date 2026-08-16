@@ -135,6 +135,22 @@ function testPlan(recipe: Recipe) {
   return steps;
 }
 
+export function applyBuildPackageClarification(buildPackage: BuildPackage, answers: Record<string, string>): BuildPackage {
+  const resolvedIds = new Set(
+    buildPackage.missingInformation
+      .filter((item) => (answers[item.id] ?? "").trim().length > 0)
+      .map((item) => item.id),
+  );
+  if (!resolvedIds.size) return buildPackage;
+
+  const configurationRequirements = buildPackage.configurationRequirements.map((item) =>
+    resolvedIds.has(item.id) ? { ...item, defaultValue: answers[item.id].trim() } : item,
+  );
+  const missingInformation = buildPackage.missingInformation.filter((item) => !resolvedIds.has(item.id));
+
+  return buildPackageSchema.parse({ ...buildPackage, configurationRequirements, missingInformation });
+}
+
 export function createBuildPackage(input: BuildPackageInput): BuildPackage {
   const engineCompatibility = evaluateEngineCompatibility(input.recipe);
   const compatible = engineCompatibility.filter((item) => item.supported);

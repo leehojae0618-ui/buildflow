@@ -10,28 +10,35 @@ Current-state-only. Completed/historical Sprint detail lives in
 
 ## Current Sprint
 
-- No active implementation Sprint. `LIVE-RECIPE-AI-NEWS-001` (roadmap
-  Step 1) and `RECIPE-EXECUTION-CONTRACT-001` (roadmap Step 2) are both
-  CLOSED / COMPLETE — committed (`234b07a`) and pushed. Detail:
-  `docs/sprints/RECIPE-EXECUTION-CONTRACT-001/TASK.md`,
-  `docs/sprints/RECIPE-EXECUTION-CONTRACT-001/CONTRACT.md`,
-  `docs/sprints/RECIPE-EXECUTION-CONTRACT-001/REPORT.md`.
-- `RECIPE-EXECUTION-CONTRACT-001` scope: added
-  `src/features/recipes/execution-contract.ts` (generic
-  `RecipeInputPort`/`RecipeProcessorPort`/`RecipeDestinationPort`, reusing
-  `Recipe["trigger"]` and `LiveRecipeEvidence` rather than redefining them),
-  plus three thin adapter functions in
-  `src/features/live-ai-news/real-adapters.ts` that conform the existing
-  AI-news Recipe's News/Groq/Slack pieces to it. No existing guarded file
-  (`live-recipe-service.ts`, `pipedream-real-adapter.ts`,
-  `pipedream-port.ts`) was modified; no live execution occurred.
-- Implementation Authority: `RECIPE-EXECUTION-CONTRACT-001` Scope +
-  Implementation Authority approved 2026-08-16 (R2; implementation + test +
-  Commit bundled per `DEVELOPMENT_CHARTER.md` §11); Commit and Push both
-  performed. Per 2026-08-16 user direction, subsequent R2 roadmap steps with
-  no live external write/DB/OAuth may proceed through Commit + Push without
-  a separate pause at each one (Scope approval per step is still required;
-  live external actions always remain their own separate approval gate).
+- No active implementation Sprint. Roadmap Steps 1-2 are CLOSED / COMPLETE.
+  Step 3 (natural-language → Recipe) was found already implemented by an
+  earlier Sprint (`RECIPE-FIRST-BUILD-PACKAGE-001`, `ebd0290`, pushed
+  pre-2026-08-16) — `analyzeRecipeIntent` + `recommendRecipes` already turn
+  e.g. "매일 AI 뉴스를 찾아서 중요한 것만 요약해서 Slack으로 보내줘" into a
+  ranked, structured Recipe; confirmed still passing (14/14 tests). It is a
+  fixed-catalog keyword/pattern matcher (21 seed Recipes), not an LLM-based
+  open-ended generator; the user accepted this as meeting Step 3's stated
+  bar and deferred any LLM-based expansion to a later, separately-scoped
+  roadmap item.
+- `RECIPE-CLARIFICATION-COMPLETION-001` (roadmap Step 4) is IMPLEMENTED /
+  VALIDATED: `applyBuildPackageClarification` lets a user answer a Build
+  Package's `missingInformation` questions and complete it client-side; the
+  UI (`recipe-first-experience.tsx`) now has real inputs instead of a
+  read-only question list. Detail:
+  `docs/sprints/RECIPE-CLARIFICATION-COMPLETION-001/TASK.md`,
+  `docs/sprints/RECIPE-CLARIFICATION-COMPLETION-001/REPORT.md`. Browser
+  interaction was not verified (no headless-browser tool in this
+  environment) — see that Sprint's TASK.md "Verification Note".
+- Investigation surfaced that Steps 5-7 are already substantially built in
+  `recipe-first-experience.tsx` (engine/cost/connection/test-write UI), but
+  **Step 8 (Manual Run UI) has no server action wiring the live-verified
+  `runNewsToGroqToSlackGate` / `runApprovedSlackDigestWrite` path to any UI
+  button** — only a generic Slack test message is reachable today. This is
+  the next real gap once Steps 4-7 are confirmed closed.
+- Implementation Authority: per 2026-08-16 user direction, R2 roadmap steps
+  with no live external write/DB/OAuth proceed through Commit + Push
+  without a separate pause once Scope is approved per step; live external
+  actions always remain their own separate approval gate.
 
 ## Current Verified Capability
 
@@ -69,9 +76,11 @@ Current-state-only. Completed/historical Sprint detail lives in
 
 ## Next Eligible Action
 
-- Roadmap Step 3: natural-language → Recipe conversion. Scope proposal to
-  follow; live external actions still require their own separate approval
-  regardless of the streamlined R2 Commit/Push flow noted above.
+- Roadmap Step 5 (Build Plan/cost/permissions — likely already mostly
+  satisfied, needs confirmation) then Step 6 (Connection UX) and Step 7
+  (Approval UX), or reprioritize directly to Step 8 (Manual Run UI) to close
+  the confirmed gap. Live external actions still require their own separate
+  approval regardless of the streamlined R2 Commit/Push flow noted above.
 
 ## Prohibited Without Separate Approval
 
