@@ -5,7 +5,9 @@
 ```text
 Sprint: LIVE-DB-VALIDATION-001
 Work Unit: SUPABASE-STAGING-VALIDATION-PLAN
-Status: PLAN DRAFT / NOT EXECUTION APPROVED
+Status: ST-A IMPLEMENTED (commit 6773b45, pushed to origin/main
+  2026-08-17); ST-B/ST-C/ST-D remain NOT EXECUTION APPROVED — no DB
+  connection, migration, SQL/RPC, or staging write has occurred
 Baseline: e5fda3026904 (main HEAD at draft time)
 Supersedes for target selection only: LOCAL_VALIDATION_PLAN.md Gates L1-L9
   remain NOT APPROVED and Local startup remains not authorized (repeated
@@ -123,10 +125,15 @@ LIVE_DB_SUPABASE_URL=
 LIVE_DB_SUPABASE_ANON_KEY=
 LIVE_DB_SUPABASE_SERVICE_ROLE_KEY=
 LIVE_DB_DATABASE_URL=
-LIVE_DB_EXECUTION_CONFIRMED=true
+LIVE_DB_EXECUTION_CONFIRMED=
 LIVE_DB_KNOWN_PRODUCTION_PROJECT_REF=
 NEXT_PUBLIC_SUPABASE_URL=
 ```
+
+`LIVE_DB_EXECUTION_CONFIRMED` stays blank while filling in the rest of this
+file and stays blank until ST-B is explicitly approved. It is set to `true`
+only immediately before an approved ST-B execution, and returned to blank
+afterward — it is a safety switch, not a default-on setting.
 
 - `.env.local` is never modified.
 - Raw values are never pasted into chat, logs, commits, or test fixtures by
