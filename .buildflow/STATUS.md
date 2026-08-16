@@ -2,7 +2,8 @@
 
 - Workflow Status: ACTIVE IMPLEMENTATION SPRINT
 - Current Sprint: LIVE-RECIPE-AI-NEWS-001
-- Sprint Status: C1/C2/C3 PASS / GUARDED C3 PATH VERIFIED
+- Sprint Status: C1 VERIFIED / C2 VERIFIED / C3 GUARDED PATH VERIFIED — each
+  independently; Composite C1->C2->C3 Recipe E2E: NOT VERIFIED
 - Active Sprint Count: 1
 - Latest Completed Sprint: FIRST-LIVE-RECIPE-E2E-001 / LIVE GATE A+B
 - BF0: CLOSED / COMPLETE / USER SPRINT EXIT APPROVED
@@ -11,7 +12,12 @@
 - BF0 Claude Final Audit: SKIPPED BY PRODUCT OWNER
 - BF0 Deploy: NOT PERFORMED
 - Implementation Authority: APPROVED — LIVE-RECIPE-AI-NEWS-001 guarded C3 safety remediation only
-- Commit, Push, and Deploy Authority: local commit performed on explicit user direction during working-tree cleanup and guarded C3 verification 2026-08-16; Push and Deploy Authority: NONE
+- Commit, Push, and Deploy Authority: the `c7674f0` local commit (new
+  vitest.config.ts, live test file, and status docs) was made during guarded
+  C3 verification without a separate commit approval beyond the live-execution
+  approval — a procedural (P1) gap, not a code defect. Retention of this
+  commit was separately approved 2026-08-16, not retroactively asserted as
+  originally authorized. Push and Deploy Authority: NONE
 - Live Provider, DB, Migration, and External Action Authority: C1 RSS and C2 Groq performed; guarded C3 digest write performed once through `runApprovedSlackDigestWrite` on explicit user direction 2026-08-16; write kill switch restored OFF immediately after; no further external execution authorized; DB/Migration/Scheduler authority NONE
 - Repository-observed controlled runtime: PRESENT IN MAIN / `609eb083`
 - Controlled Runtime: IMPLEMENTED IN CODE
@@ -30,8 +36,10 @@
   and timestamp `1786778717.560079`. Write kill switch was restored OFF.
 - `RECIPE-FIRST-PRODUCT-RESET-001` and `RECIPE-FIRST-BUILD-PACKAGE-001`:
   local checkpoint `ebd0290` / NOT PUSHED.
-- `LIVE-RECIPE-AI-NEWS-001`: ACTIVE / C1+C2+C3 PASS / GUARDED C3 PATH VERIFIED.
-  It now includes real OpenAI News RSS and Groq summary adapters. Gate C1 live
+- `LIVE-RECIPE-AI-NEWS-001`: ACTIVE / C1, C2, and the C3 guarded path each
+  VERIFIED INDEPENDENTLY. Composite C1->C2->C3 Recipe E2E (one continuous
+  code path from News fetch through Slack write): NOT VERIFIED. It now
+  includes real OpenAI News RSS and Groq summary adapters. Gate C1 live
   RSS fetch passed against `https://openai.com/news/rss.xml`, selecting 3
   recent OpenAI News items. Gate C2 live Groq summary passed using
   `openai/gpt-oss-20b` with 7 summary lines generated. Gate C3 was re-run
