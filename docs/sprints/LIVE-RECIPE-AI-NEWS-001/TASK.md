@@ -47,3 +47,38 @@ Slack write: NOT PERFORMED
 Scheduler: NOT PERFORMED
 Commit / Push / Deploy: NOT AUTHORIZED
 ```
+
+## Composite Manual Recipe E2E — Scope (2026-08-16)
+
+```text
+RISK TIER: R2 -> R3 (implementation R2; live external write remains its own R3 gate)
+SCOPE + IMPLEMENTATION AUTHORITY: APPROVED 2026-08-16
+LIVE COMPOSITE EXECUTION AUTHORITY: NOT APPROVED — separate gate
+COMMIT: NOT APPROVED (this Scope covers implementation + test only)
+PUSH: NOT APPROVED
+```
+
+Goal: connect C1 (News fetch) -> C2 (Groq summary) -> C3 (guarded Slack write)
+as one continuous execution path, reusing `runApprovedSlackDigestWrite` so the
+composite path carries the exact same destination-lock, idempotency, kill
+switch, and non-production guards already verified for C3 in isolation.
+
+Scope:
+
+- `runNewsToGroqToSlackGate` (`src/features/live-ai-news/real-adapters.ts`) is
+  the single-path function; it already existed with mocked-adapter test
+  coverage (`real-adapters.test.ts`) and is the composite implementation.
+- Add one new opt-in live test in `real-adapters.live.test.ts`, gated by its
+  own distinct flag `BUILDFLOW_LIVE_COMPOSITE_RECIPE_E2E=1` (separate from the
+  individual C1/C2/C3 gate flags), that calls `runNewsToGroqToSlackGate` with
+  real `OpenAiNewsRssSource`, real `GroqSummaryAdapter`, and the real
+  `runApprovedSlackDigestWrite` path (no adapter/environment fakes injected).
+- The test remains skipped by default; it also still requires the existing
+  service-level guards (`BUILDFLOW_LIVE_CONNECT_ENABLED`,
+  `BUILDFLOW_LIVE_SLACK_WRITE_ENABLED`, approved account/channel match,
+  non-production environment) to actually perform a write.
+- No change to `runApprovedSlackDigestWrite` or any existing guard logic.
+
+Not in scope: actually running the composite live test with the opt-in flags
+set to true (that live execution is its own separate approval), Scheduler,
+Commit, Push, Deploy, additional Slack writes, DB persistence.

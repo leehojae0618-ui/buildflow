@@ -133,6 +133,52 @@ work (`c7674f0`) was made without a separate commit approval beyond the
 live-execution approval; local commit retention was approved after the fact
 on 2026-08-16, not retroactively asserted as originally authorized.
 
+## Update — 2026-08-16: Composite Manual Recipe E2E Implementation
+
+```text
+STATUS: COMPOSITE CODE PATH IMPLEMENTED / MOCK-VERIFIED
+LIVE COMPOSITE EXECUTION: NOT PERFORMED — separate approval required
+COMMIT: NOT PERFORMED
+PUSH: NOT PERFORMED
+```
+
+`runNewsToGroqToSlackGate` (`src/features/live-ai-news/real-adapters.ts`)
+already connected C1 -> C2 -> C3 as one function that calls
+`runApprovedSlackDigestWrite`, so it carries the same destination-lock,
+idempotency, kill-switch, and non-production guards verified for the guarded
+C3 path. It already had mocked-adapter test coverage
+(`real-adapters.test.ts`, "runs Gate C3 with exactly one injected Slack
+write").
+
+Added one new opt-in live test to `real-adapters.live.test.ts` — "Composite
+gate runs News -> Groq -> Guarded Slack write as one continuous execution
+path" — gated by its own distinct flag
+(`BUILDFLOW_LIVE_COMPOSITE_RECIPE_E2E=1`, separate from the individual C1/C2/C3
+gate flags) plus the existing service-level guards. It is skipped by default
+and was not executed live in this change.
+
+Validation:
+
+```text
+npx vitest run src/features/live-ai-news --reporter=verbose
+PASS — 2 test files passed, 1 live file skipped by default (composite test
+included and skipped); 12 tests passed, 3 skipped
+
+npx vitest run
+PASS — 93 test files passed, 3 skipped; 949 tests passed, 5 skipped
+
+npm run typecheck
+PASS
+
+npm run lint
+PASS
+```
+
+The composite News -> Groq -> Guarded Slack single-path execution is now
+implemented and covered by a dedicated opt-in live test, but remains **NOT
+VERIFIED live** until a separate live-execution approval authorizes running it
+with the opt-in flags and real credentials.
+
 ## Gate C3 Attempt Log
 
 ```text
