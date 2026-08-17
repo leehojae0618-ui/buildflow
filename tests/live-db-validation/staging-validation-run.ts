@@ -15,6 +15,10 @@ import {
   type LiveDbRlsActor,
   type LiveDbRlsFixtureCheck,
 } from "./rls-validation-runner";
+import {
+  ensureOwnerProjectFixture,
+  type LiveDbProjectClient,
+} from "./owner-project-fixture";
 import { createLiveDbRecordCounter } from "./runtime-record-counters";
 import {
   verifyImmutabilityTrigger,
@@ -272,6 +276,23 @@ export async function runStagingValidation(
     return finish({ ...applied, safeErrorCode: schema.safeErrorCode });
   }
   caseResults.push(passCase("migration-schema-objects"));
+
+  // The owner project row APR-01 is authorised against. It has to be provisioned
+  // here rather than by the operator beforehand: `public.projects` is created by
+  // the migration two steps above, so on a clean staging project there is no
+  // table to put it in until now. The identity comes from the binding itself, so
+  // what this guarantees and what the create RPC checks are the same pair.
+  const projectClient = approvalClient.client as unknown as LiveDbProjectClient;
+  const fixture = await ensureOwnerProjectFixture(projectClient, {
+    projectId: input.approval.binding.projectId,
+    userId: input.approval.binding.userId,
+    title: validationRunId,
+  });
+  if (fixture.status === "BLOCKED") {
+    caseResults.push(failCase("owner-project-fixture", fixture.safeErrorCode));
+    return finish({ ...applied, safeErrorCode: fixture.safeErrorCode });
+  }
+  caseResults.push(passCase("owner-project-fixture"));
 
   const lifecycle = await runApprovalLifecycle({
     repository: injection.approvalRepository,

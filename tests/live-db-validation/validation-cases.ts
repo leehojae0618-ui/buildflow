@@ -30,6 +30,7 @@ const cases: readonly LiveDbValidationCase[] = [
   { id: "evidence-safety", category: "PRODUCT_RUNTIME", classification: "UNIT_TESTABLE_WITHOUT_DB", expectedResult: "dry evidence contains no secret-shaped values" },
   { id: "migration-schema-objects", category: "MIGRATION", classification: "REQUIRES_STAGING", expectedResult: "required tables and RPCs exist" },
   { id: "migration-immutability-trigger", category: "MIGRATION", classification: "REQUIRES_STAGING", expectedResult: "immutable binding trigger rejects the update" },
+  { id: "owner-project-fixture", category: "MIGRATION", classification: "REQUIRES_STAGING", expectedResult: "owner project row exists and is owned by the requester" },
   { id: "approval-create", category: "APPROVAL", classification: "STRUCTURE_ONLY_WITHOUT_DB", expectedResult: "create contract is defined" },
   { id: "approval-approve", category: "APPROVAL", classification: "STRUCTURE_ONLY_WITHOUT_DB", expectedResult: "approve contract is defined" },
   { id: "approval-reject", category: "APPROVAL", classification: "STRUCTURE_ONLY_WITHOUT_DB", expectedResult: "reject contract is defined" },

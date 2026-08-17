@@ -2,7 +2,7 @@
 
 ## Status
 
-ACTIVE IMPLEMENTATION SPRINT — LIVE-RECIPE-AI-NEWS-001
+ACTIVE IMPLEMENTATION SPRINT — LIVE-DB-VALIDATION-001 (ST-B code gates complete; ST-B R3 not approved)
 
 ## Current Direction
 
@@ -38,9 +38,14 @@ approval. Its implementation Commit is
 `a101b9f293048f6399d65ba2b45e43e798c26faf`; its closeout preparation Commit
 is `06fa299dc610a3da9bc7de5b6474b7bde38859c3`.
 
-`LIVE-DB-VALIDATION-001` is PAUSED / BLOCKED BY LOCAL ENVIRONMENT. Its Planning
-Foundation is complete and pushed at `7a9d63a`; the dry harness is pushed at
-`b4eb63f`. Repeated Local Supabase healthcheck failures on the 8GB M1 host
+`LIVE-DB-VALIDATION-001` is ACTIVE, not paused. Local DB validation remains
+unauthorized, but the sprint moved to disposable hosted staging: ST-A and every
+ST-B code gate are implemented and pushed through `2fb7451`, and the executable
+path is `npm run live-db:execute:staging`. ST-B R3 itself is NOT APPROVED and no
+DB connection, migration, SQL/RPC, or staging write has occurred. Remaining
+before R3: complete `ACTIVATION.md`, populate the owner/other identity values in
+the gitignored `.env.live-db.staging`, and create the two staging auth users.
+Its Planning Foundation is pushed at `7a9d63a`; the dry harness at `b4eb63f`. Repeated Local Supabase healthcheck failures on the 8GB M1 host
 mean Local DB validation is not viable as-is. The Sprint is not closed or
 completed; no further Local startup is authorized, and a remote validation
 environment remains a separately approved future option.

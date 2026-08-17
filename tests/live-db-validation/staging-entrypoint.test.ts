@@ -3,6 +3,19 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 /** Records every authentication attempt so ordering can be asserted. */
 const auth = vi.hoisted(() => ({ signIns: [] as string[] }));
 
+/**
+ * The entrypoint builds the real Supabase CLI executor, which spawns a process.
+ * Stubbed here so the ordering assertions below cannot cause `npm test` to run
+ * `supabase db push` on a machine that has the CLI installed. The stub fails, so
+ * a run that gets this far stops immediately at the migration.
+ */
+vi.mock("./supabase-migration-executor", () => ({
+  createSupabaseMigrationExecutor: () => async () => ({
+    status: "FAILED",
+    safeErrorCode: "LIVE_DB_MIGRATION_EXECUTION_FAILED",
+  }),
+}));
+
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({
     from: () => ({

@@ -22,7 +22,17 @@ const state = vi.hoisted(() => ({
    * instead of starting out already past the TTL.
    */
   nowMs: Date.parse("2026-08-17T00:00:00.000Z"),
+  /** Owner project fixture state. */
+  projects: new Map<string, { id: string; user_id: string }>(),
+  projectReadError: null as unknown,
+  projectInsertError: null as unknown,
+  /** Records that the fixture step ran at all, for the sequencing assertions. */
+  fixtureCalls: [] as string[],
   reset() {
+    this.projects.clear();
+    this.projectReadError = null;
+    this.projectInsertError = null;
+    this.fixtureCalls.length = 0;
     this.approvalConstructions.length = 0;
     this.evidenceConstructions.length = 0;
     this.createdClients.length = 0;
@@ -67,8 +77,23 @@ vi.mock("@supabase/supabase-js", () => ({
                 filters[column] = value;
                 return query;
               },
+              // The owner-project fixture reads a single row rather than a count.
+              async maybeSingle() {
+                state.fixtureCalls.push(`select:${table}`);
+                if (state.projectReadError) return { data: null, error: state.projectReadError };
+                return { data: state.projects.get(filters.id ?? "") ?? null, error: null };
+              },
             };
             return query;
+          },
+          async insert(values: Record<string, unknown>) {
+            state.fixtureCalls.push(`insert:${table}`);
+            if (state.projectInsertError) return { error: state.projectInsertError };
+            state.projects.set(String(values.id), {
+              id: String(values.id),
+              user_id: String(values.user_id),
+            });
+            return { error: null };
           },
           update() {
             return {
@@ -303,6 +328,7 @@ describe("ST-B staging validation composition root", () => {
     });
     expect(result.evidence.executedCaseIds).toEqual([
       "migration-schema-objects",
+      "owner-project-fixture",
       "approval-create",
       "approval-approve",
       "approval-reject",
@@ -434,6 +460,107 @@ describe("ST-B staging validation composition root", () => {
     expect(result.status).toBe("BLOCKED");
     expect(result.safeErrorCode).toBe("LIVE_DB_IMMUTABILITY_TRIGGER_MISSING");
     expect(result.evidence.failedCaseIds).toEqual(["migration-immutability-trigger"]);
+  });
+
+  describe("owner project fixture sequencing", () => {
+    it("provisions the row the create RPC will be authorised against", async () => {
+      const result = await run();
+
+      expect(result.status).toBe("PASSED");
+      // The identity comes from the binding, so what the fixture guarantees and
+      // what create_runtime_approval_request checks are the same pair.
+      expect(state.projects.get(binding.projectId)).toEqual({
+        id: binding.projectId,
+        user_id: binding.userId,
+      });
+      // Read, insert, read back.
+      expect(state.fixtureCalls).toEqual([
+        "select:projects",
+        "insert:projects",
+        "select:projects",
+      ]);
+    });
+
+    it("reuses an existing row owned by the requester without writing", async () => {
+      const result = await run({}, () => {
+        state.projects.set(binding.projectId, {
+          id: binding.projectId,
+          user_id: binding.userId,
+        });
+      });
+
+      expect(result.status).toBe("PASSED");
+      expect(state.fixtureCalls).toEqual(["select:projects"]);
+    });
+
+    it("blocks on a row owned by someone else and runs no approval case", async () => {
+      const result = await run({}, () => {
+        state.projects.set(binding.projectId, {
+          id: binding.projectId,
+          user_id: "99999999-9999-4999-8999-999999999999",
+        });
+      });
+
+      expect(result.status).toBe("BLOCKED");
+      expect(result.safeErrorCode).toBe("LIVE_DB_PROJECT_FIXTURE_OWNER_MISMATCH");
+      expect(result.evidence.failedCaseIds).toEqual(["owner-project-fixture"]);
+      expect(state.fixtureCalls.some((call) => call.startsWith("insert:"))).toBe(false);
+      // APR, the trigger probe, RLS and expiry are all downstream of the fixture.
+      expect(state.approvalConstructions).toHaveLength(1);
+      expect(state.events.size).toBe(0);
+    });
+
+    it("stops APR, RLS and expiry when the fixture cannot be provisioned", async () => {
+      const actors = passingActors();
+      const result = await run({ rls: { actors, identity: validIdentity } }, () => {
+        state.projectInsertError = { code: "23503", message: "foreign key violation" };
+      });
+
+      expect(result.status).toBe("BLOCKED");
+      expect(result.safeErrorCode).toBe("LIVE_DB_PROJECT_FIXTURE_SETUP_FAILED");
+      expect(state.events.size).toBe(0);
+      expect(actors[0].read).not.toHaveBeenCalled();
+      expect(result.evidence.executedCaseIds).toEqual(["migration-schema-objects"]);
+    });
+
+    it("blocks when the fixture cannot even be read", async () => {
+      const result = await run({}, () => {
+        state.projectReadError = { code: "08006", message: "connection failure" };
+      });
+      expect(result.safeErrorCode).toBe("LIVE_DB_PROJECT_FIXTURE_SETUP_FAILED");
+      expect(state.events.size).toBe(0);
+    });
+
+    it("never reaches the fixture when the migration fails", async () => {
+      const failedOutcome: LiveDbMigrationExecutorOutcome = {
+        status: "FAILED",
+        safeErrorCode: "LIVE_DB_MIGRATION_EXECUTION_FAILED",
+      };
+      const result = await run({ migrationExecutor: vi.fn(async () => failedOutcome) });
+
+      expect(result.status).toBe("BLOCKED");
+      expect(state.fixtureCalls).toEqual([]);
+    });
+
+    it("never reaches the fixture when schema verification fails", async () => {
+      const result = await run({}, () => {
+        state.schemaPresent = false;
+      });
+
+      expect(result.safeErrorCode).toBe("LIVE_DB_SCHEMA_OBJECT_MISSING");
+      expect(state.fixtureCalls).toEqual([]);
+    });
+
+    it("uses the guarded LIVE_DB client, with no application or default fallback", async () => {
+      await run();
+      // Both clients came from the guarded environment; none was accepted from
+      // outside and no second factory exists.
+      expect(state.createdClients).toEqual([
+        { url: `https://${stagingRef}.supabase.co`, key: "test-service-role-placeholder" },
+        { url: `https://${stagingRef}.supabase.co`, key: "test-service-role-placeholder" },
+      ]);
+      expect(state.approvalConstructions).toHaveLength(1);
+    });
   });
 
   it("blocks and records the failed case when RLS finds an access violation", async () => {

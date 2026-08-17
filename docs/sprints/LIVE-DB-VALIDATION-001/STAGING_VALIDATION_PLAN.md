@@ -5,9 +5,11 @@
 ```text
 Sprint: LIVE-DB-VALIDATION-001
 Work Unit: SUPABASE-STAGING-VALIDATION-PLAN
-Status: ST-A IMPLEMENTED (commit 6773b45, pushed to origin/main
-  2026-08-17); ST-B/ST-C/ST-D remain NOT EXECUTION APPROVED — no DB
-  connection, migration, SQL/RPC, or staging write has occurred
+Status: ST-A and the ST-B code gates (ST-B0, ST-B0-FIX, ST-B0-FIX2,
+  ST-B-EXEC, ST-B-EXEC FINAL FIX, ST-B fixture setup) are IMPLEMENTED and
+  pushed to origin/main; the executable path is `npm run
+  live-db:execute:staging`. ST-B/ST-C/ST-D remain NOT EXECUTION APPROVED —
+  no DB connection, migration, SQL/RPC, or staging write has occurred
 Baseline: e5fda3026904 (main HEAD at draft time)
 Supersedes for target selection only: LOCAL_VALIDATION_PLAN.md Gates L1-L9
   remain NOT APPROVED and Local startup remains not authorized (repeated
@@ -60,7 +62,8 @@ ST-B / ST-C       — DB-touching gates that use what ST-A built
 | Gate | Purpose | Touches a real DB | Separate approval | Status |
 | --- | --- | --- | --- | --- |
 | ST-A | Implement staging execution mode: `live-db-client.ts` staging connection path, a `LIVE_DB_TARGET_ENV=staging` branch through `environment-guard.ts` (already defined in `CONTRACT.md`/`HARNESS_SCOPE.md`, not yet wired to a live connector), and a new `live-db:validate:staging` script that runs ST-B's cases only in dry-check-then-connect order | No | Required | APPROVED / IMPLEMENTED (`staging-connection-guard.ts`, 2026-08-16) |
-| ST-B | Tooling/account confirm + migration apply + RPC lifecycle + RLS matrix, bundled as one execution pass (per 2026-08-16 user decision: narrow first pass) | Yes | Required | NOT APPROVED |
+| ST-B code gates | Build the executable ST-B path: guarded migration boundary, APR/RLS runners, single composition root, `.env.live-db.staging`-only loader, MIG-01 schema and trigger verification, RLS actor/session builder with Postgres→safe-code mapping, real Supabase CLI executor, per-`event_type` journal checks, Evidence client-identity fields, and the post-migration owner project fixture | No | Required (each) | APPROVED / IMPLEMENTED (ST-B0 `86c204a`, FIX `43e74ed`, FIX2 `836046f`, ST-B-EXEC `e95927d`, FINAL FIX `2fb7451`, fixture setup 2026-08-17) |
+| ST-B | Tooling/account confirm + migration apply + RPC lifecycle + RLS matrix, bundled as one execution pass (per 2026-08-16 user decision: narrow first pass). Requires `ACTIVATION.md` to be completed first | Yes | Required | NOT APPROVED |
 | ST-C | Concurrent consume + Fake-Provider Product Runtime E2E, as a follow-up gate after ST-B is independently audited | Yes | Required | NOT APPROVED |
 | ST-D | Cleanup of `live-db-validation-001-*` fixtures and disposable-project disposal decision | Yes (destructive) | Required, explicit | NOT APPROVED |
 | ST-E | Evidence audit of ST-B and, separately, ST-C | No | Review only | NOT STARTED |

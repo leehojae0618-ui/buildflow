@@ -86,10 +86,12 @@ Current-state-only. Completed/historical Sprint detail lives in
   `requestId` (`slack-digest-attempt-${attemptId}`), and a per-request
   `expiresAt` check (`getLiveAttempt`) in every step. Detail:
   `docs/sprints/RECIPE-MANUAL-RUN-PROVENANCE-002/`.
-- Implementation Authority: per 2026-08-16 user direction, R2 roadmap steps
-  with no live external write/DB/OAuth proceed through Commit + Push
-  without a separate pause once Scope is approved per step; live external
-  actions always remain their own separate approval gate.
+- Implementation Authority: per `DEVELOPMENT_CHARTER.md` §11, an R2 Scope
+  approval covers implementation + test + Commit together. **Push is always
+  its own separate approval**, as are live external write, DB write or
+  migration, credential/OAuth handling, Merge, Release, and Deploy. (This
+  supersedes the earlier 2026-08-16 wording, corrected 2026-08-17, which
+  described R2 as proceeding through Push without a separate pause.)
 
 ## Current Verified Capability
 
@@ -143,7 +145,7 @@ Current-state-only. Completed/historical Sprint detail lives in
   ENVIRONMENT) — next real decision is how to proceed given that block.
   Live external actions (including an actual click-through of the Manual
   Run button with the kill switches on) still require their own separate
-  approval regardless of the streamlined R2 Commit/Push flow noted above.
+  approval, as does every Push, per the Implementation Authority note above.
 
 ## Prohibited Without Separate Approval
 

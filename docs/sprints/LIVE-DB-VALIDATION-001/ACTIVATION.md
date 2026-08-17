@@ -29,9 +29,29 @@ ST-B, narrow first pass, as fixed by `STAGING_VALIDATION_PLAN.md`:
 ```text
 ENV-STG-01  staging target guard
 MIG-01      migration apply + schema object verification
+            + owner project fixture create/reuse/verify
 APR-01..04  approval lifecycle, events, binding mismatch
 RLS-01..03  owner / other authenticated / anon
 ```
+
+Execution order inside the run:
+
+```text
+preflight (no contact)
+→ owner/other sign-in
+→ migration
+→ schema verification
+→ owner project fixture: create or reuse, read back, verify ownership
+→ APR lifecycle
+→ immutability trigger
+→ RLS
+→ expiry
+→ Evidence
+```
+
+A blocked fixture step stops APR, the trigger probe, RLS and expiry. An existing
+project row owned by anyone other than `LIVE_DB_OWNER_USER_ID` blocks the run and
+is never rewritten.
 
 `CON-01` (concurrent consume) and `EVD-01` (Fake-Provider Product Runtime E2E)
 are ST-C and are not authorized by this record. Cleanup is ST-D. Disposal of the
@@ -67,12 +87,21 @@ These are prerequisites of the gate, not steps the harness performs.
 1. **Disposable staging project** created by the user, with
    `.env.live-db.staging` populated. `LIVE_DB_KNOWN_PRODUCTION_PROJECT_REF` must
    name the real production project; if it is blank the guard fails closed.
-2. **Owner user** in `auth.users`, and a **`public.projects` row owned by that
-   user**. `create_runtime_approval_request` raises
-   `RUNTIME_APPROVAL_NOT_AUTHORIZED` unless
-   `projects.user_id = approval.requester_user_id`, so APR-01 fails immediately
-   without it. Supply both ids as `LIVE_DB_OWNER_USER_ID` and
-   `LIVE_DB_OWNER_PROJECT_ID`.
+2. **Owner user** in `auth.users`. Supply its id as `LIVE_DB_OWNER_USER_ID`, and
+   the project id the run should use as `LIVE_DB_OWNER_PROJECT_ID`.
+
+   The **`public.projects` row is not a precondition** — the harness provisions
+   it during the run. It could not be a precondition: `public.projects` is
+   created by `20260714000100_initial_schema.sql`, one of the migrations this
+   run applies, so on a clean disposable staging project the table does not
+   exist until ST-B is already underway. `LIVE_DB_OWNER_PROJECT_ID` may name a
+   row that does not exist yet; the harness creates it, reads it back, and
+   verifies the ownership `create_runtime_approval_request` requires.
+
+   The auth user *is* a precondition, because `projects.user_id` references
+   `auth.users` and creating accounts is outside this harness's authority. A
+   missing owner account surfaces as a blocked fixture step, not as a
+   workaround.
 3. **A second authenticated user** for RLS-02, distinct from the owner. Supply
    `LIVE_DB_OWNER_EMAIL` / `LIVE_DB_OWNER_PASSWORD` and `LIVE_DB_OTHER_EMAIL` /
    `LIVE_DB_OTHER_PASSWORD`; the harness signs in with them and never creates a
