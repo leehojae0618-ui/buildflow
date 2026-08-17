@@ -39,9 +39,12 @@ approval. Its implementation Commit is
 is `06fa299dc610a3da9bc7de5b6474b7bde38859c3`.
 
 `LIVE-DB-VALIDATION-001` is ACTIVE, not paused. Local DB validation remains
-unauthorized, but the sprint moved to disposable hosted staging: ST-A and every
-ST-B code gate are implemented and pushed through `2fb7451`, and the executable
-path is `npm run live-db:execute:staging`. ST-B R3 itself is NOT APPROVED and no
+unauthorized, but the sprint moved to disposable hosted staging. ST-A and every
+ST-B code gate are implemented and validated, through the FINAL FIX checkpoint
+`2fb7451` and the owner project fixture checkpoint `98425bd`. Which of those
+checkpoints have reached `origin/main` is a live Git fact, not a documented one
+— verify it at task start rather than trusting this line. The executable path is
+`npm run live-db:execute:staging`. ST-B R3 itself is NOT APPROVED and no
 DB connection, migration, SQL/RPC, or staging write has occurred. Remaining
 before R3: complete `ACTIVATION.md`, populate the owner/other identity values in
 the gitignored `.env.live-db.staging`, and create the two staging auth users.

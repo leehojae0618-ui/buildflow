@@ -2,7 +2,7 @@
 
 ## Task ID
 
-LIVE-RECIPE-AI-NEWS-001
+LIVE-DB-VALIDATION-001
 
 ## Project State
 
@@ -35,7 +35,12 @@ LIVE-DB EXECUTABLE LOCAL VALIDATION GATE: NONE (Local remains unauthorized)
 LIVE-DB EXECUTABLE STAGING GATE: `npm run live-db:execute:staging` — inert
   unless LIVE_DB_EXECUTION_CONFIRMED and LIVE_DB_ST_B_EXECUTE are both true;
   both are unset
-LIVE-DB HEAD: 2fb7451 + ST-B owner project fixture (pushed through 2fb7451)
+LIVE-DB ST-B CODE GATE CHECKPOINTS: ST-B0 86c204a / FIX 43e74ed /
+  FIX2 836046f / ST-B-EXEC e95927d / FINAL FIX 2fb7451 /
+  OWNER PROJECT FIXTURE R2 98425bd
+LIVE-DB OWNER PROJECT FIXTURE R2: IMPLEMENTED / VALIDATED
+LIVE-DB SYNC STATE (which checkpoints reached origin/main): VERIFY DIRECTLY
+  AT TASK START
 LIVE-DB EXECUTION AUTHORITY: NONE
 LIVE-DB REASON: repeated Local Supabase healthcheck failure on 8GB M1 host; no further Local startup authorized
 LIVE-DB FUTURE OPTION: separately approved remote validation environment
